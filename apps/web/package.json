@@ -1,0 +1,37 @@
+{
+  "name": "@apps/web",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3000",
+    "start": "vite --port 3000",
+    "build": "vite build && tsc",
+    "serve": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@packages/shared-ui": "workspace:*",
+    "@tanstack/react-router": "1.121.34",
+    "@tanstack/react-router-devtools": "1.121.34",
+    "@tanstack/router-plugin": "1.121.37",
+    "better-auth": "1.2.10",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "tailwindcss": "0.0.0-insiders.b24457a"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "0.0.0-insiders.b24457a",
+    "@testing-library/dom": "10.4.0",
+    "@testing-library/react": "16.2.0",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@vitejs/plugin-react": "4.6.0",
+    "jsdom": "26.0.0",
+    "typescript": "5.8.3",
+    "vite": "7.0.0",
+    "vitest": "3.0.5",
+    "web-vitals": "4.2.4"
+  },
+  "overrides": {
+    "@tanstack/react-router": "1.121.37"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "name": "@apps/server",
+  "type": "module",
+  "scripts": {
+    "build": "rimraf dist/ && tsc",
+    "start": "tsx dist/index.js",
+    "dev": "tsx --watch src/index.ts",
+    "drizzle:migrate": "drizzle-kit migrate",
+    "drizzle:generate": "drizzle-kit generate",
+    "drizzle:studio": "drizzle-kit studio",
+    "clean": "rimraf dist/ node_modules/",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@epic-web/invariant": "1.0.0",
+    "@fastify/autoload": "6.3.1",
+    "@fastify/cors": "11.0.1",
+    "@fastify/etag": "6.0.3",
+    "@fastify/formbody": "8.0.2",
+    "@fastify/helmet": "13.0.1",
+    "@fastify/multipart": "9.0.3",
+    "@fastify/rate-limit": "10.3.0",
+    "@fastify/sensible": "6.0.3",
+    "argon2": "0.43.0",
+    "better-auth": "1.2.12",
+    "dotenv": "17.0.1",
+    "drizzle-orm": "0.44.2",
+    "env-schema": "6.0.1",
+    "extensionless": "1.9.9",
+    "fastify": "5.4.0",
+    "fastify-allow": "2.1.1",
+    "fastify-favicon": "5.0.0",
+    "fastify-healthcheck": "5.1.0",
+    "fastify-ip": "1.2.0",
+    "fastify-nodemailer": "5.0.0",
+    "fastify-plugin": "5.0.1",
+    "fluent-json-schema": "6.0.0",
+    "ioredis": "5.6.1",
+    "isbot": "5.1.28",
+    "pg": "8.16.3"
+  },
+  "devDependencies": {
+    "@types/node": "24.0.10",
+    "@types/pg": "8.15.4",
+    "drizzle-kit": "0.31.4",
+    "rimraf": "6.0.1",
+    "tsconfig-paths": "4.2.0",
+    "tsx": "4.20.3",
+    "typescript": "5.8.3"
+  }
+}

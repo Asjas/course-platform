@@ -1,0 +1,82 @@
+import argon2 from "argon2";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import {
+  admin,
+  anonymous,
+  haveIBeenPwned,
+  username,
+} from "better-auth/plugins";
+import { db } from "~/db";
+import { redis } from "~/lib/redis";
+
+const ONE_HOUR = 3600;
+const ONE_YEAR = 31_556_952;
+
+export const auth = betterAuth({
+  appName: "Codewizard Training",
+  trustedOrigins: ["http://localhost:3000", "https://codewizard.training"],
+  secret: process.env.BETTER_AUTH_SECRET,
+  session: {
+    expiresIn: ONE_YEAR,
+    cookieCache: {
+      enabled: true,
+      maxAge: ONE_HOUR,
+    },
+  },
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    sendEmailVerificationOnSignUp: true,
+    autoSignInAfterVerification: true,
+    password: {
+      hash: async function (password) {
+        const hashedPassword = await argon2.hash(password, {
+          secret: Buffer.from(process.env.PEPPER_SECRET),
+        });
+
+        return hashedPassword;
+      },
+      verify: async function ({ hash, password }) {
+        const verified = await argon2.verify(hash, password, {
+          secret: Buffer.from(process.env.PEPPER_SECRET),
+        });
+
+        return verified;
+      },
+    },
+    async sendVerificationEmail() {
+      console.log("Send email to verify email address");
+    },
+    async sendResetPassword(url, user) {
+      console.log("Send email to reset password");
+    },
+  },
+  rateLimit: { enabled: true, storage: "secondary-storage" },
+  secondaryStorage: {
+    get: async (key) => {
+      return await redis.get(key);
+    },
+    set: async (key, value, ttl) => {
+      await redis.set(key, value, "EX", ttl);
+    },
+    delete: async (key) => {
+      await redis.del(key);
+    },
+  },
+  database: drizzleAdapter(db, {
+    provider: "pg",
+  }),
+  plugins: [
+    admin(),
+    haveIBeenPwned(),
+    anonymous(),
+    username({
+      usernameValidator: (username) => {
+        const invalidUsernames = ["admin", "support"];
+
+        return !invalidUsernames.includes(username);
+      },
+    }),
+  ],
+});
