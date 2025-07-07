@@ -8,8 +8,6 @@ WORKDIR /app
 COPY . .
 RUN npm i -g pnpm@9.15.9
 RUN pnpm i
-
 RUN pnpm run build
-RUN ln -s node_modules/.bin/tsx tsx
 
-CMD ["tsx", "dist/index.js"]
+CMD ["./node_modules/.bin/tsx", "dist/index.js"]
