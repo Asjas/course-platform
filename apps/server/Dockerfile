@@ -11,4 +11,4 @@ RUN pnpm i
 
 RUN pnpm run build
 
-CMD ["tsx", "dist/index.js"]
+CMD ["./node_modules/.bin/tsx", "dist/index.js"]
