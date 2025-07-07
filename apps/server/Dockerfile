@@ -10,6 +10,6 @@ RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 
 RUN pnpm run build
-RUN ln -s /app/node_modules/.bin/tsx /app/tsx
+RUN ln -s node_modules/.bin/tsx tsx
 
 CMD ["tsx", "dist/index.js"]
