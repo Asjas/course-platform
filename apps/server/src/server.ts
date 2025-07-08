@@ -29,10 +29,20 @@ async function createServer(config: Config) {
   await server.register(FastifyIP);
 
   await server.register(FastifyRateLimit, {
-    allowList: ["127.0.0.1"],
+    allowList: config.NODE_ENV === "development" ? ["127.0.0.1"] : [],
     max: 100,
     redis: redis,
     timeWindow: "1 minute",
+    nameSpace: "codewizard-rate-limit-",
+    onBanReach: function (req, key) {
+      console.log("callback on ban");
+    },
+    onExceeding: function (req, key) {
+      console.log("callback on exceeding");
+    },
+    onExceeded: function (req, key) {
+      console.log("callback on exceeded");
+    },
   });
 
   await server.register(FastifyCors, {
@@ -86,10 +96,10 @@ async function createServer(config: Config) {
 
   server.setNotFoundHandler(
     {
-      preHandler: server.rateLimit(),
+      preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
     },
     function (_request, reply) {
-      reply.code(404).send("Not found!");
+      reply.code(404).send({ 404: "Not found!" });
     },
   );
 

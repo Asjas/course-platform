@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rimraf dist/ && tsc",
     "start": "tsx dist/index.js",
-    "dev": "tsx --watch src/index.ts",
+    "dev": "tsx watch src/index.ts",
     "drizzle:migrate": "drizzle-kit migrate",
     "drizzle:generate": "drizzle-kit generate",
     "drizzle:studio": "drizzle-kit studio",
