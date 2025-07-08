@@ -138,3 +138,6 @@ dist
 # Wrangler
 .wrangler
 .dev.vars
+
+# Tanstack router
+.tanstack

@@ -26,7 +26,6 @@
     "dotenv": "17.0.1",
     "drizzle-orm": "0.44.2",
     "env-schema": "6.0.1",
-    "extensionless": "1.9.9",
     "fastify": "5.4.0",
     "fastify-allow": "2.1.1",
     "fastify-favicon": "5.0.0",

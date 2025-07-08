@@ -2,11 +2,15 @@
   "name": "@apps/web",
   "type": "module",
   "scripts": {
+    "deploy": "wrangler deploy",
     "dev": "vite --port 3000",
+    "wrangler:dev": "wrangler dev",
     "start": "vite --port 3000",
     "build": "vite build && tsc",
     "serve": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "typegen": "wrangler types"
   },
   "dependencies": {
     "@packages/shared-ui": "workspace:*",
@@ -16,10 +20,12 @@
     "better-auth": "1.2.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "tailwindcss": "0.0.0-insiders.b24457a"
+    "tailwindcss": "4.1.11"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "0.0.0-insiders.b24457a",
+    "@cloudflare/vite-plugin": "1.9.1",
+    "@cloudflare/workers-types": "4.20250708.0",
+    "@tailwindcss/vite": "4.1.11",
     "@testing-library/dom": "10.4.0",
     "@testing-library/react": "16.2.0",
     "@types/react": "19.1.8",
@@ -28,8 +34,10 @@
     "jsdom": "26.0.0",
     "typescript": "5.8.3",
     "vite": "7.0.0",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.0.5",
-    "web-vitals": "4.2.4"
+    "web-vitals": "4.2.4",
+    "wrangler": "4.23.0"
   },
   "overrides": {
     "@tanstack/react-router": "1.121.37"
