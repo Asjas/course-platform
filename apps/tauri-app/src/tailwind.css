@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  text-wrap: wrap;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
+.dark,
+:root[class~="dark"] {
+}
+
+[id] {
+  scroll-margin-top: 60px;
+}
+
+/* https://webkit.org/blog/16831/line-height-units/ */
+p {
+  margin-block: 1lh;
+}

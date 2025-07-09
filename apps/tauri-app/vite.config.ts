@@ -9,10 +9,15 @@ const host = process.env.TAURI_DEV_HOST || "localhost";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    tanstackRouter({ target: "react", autoCodeSplitting: true }),
+    tanstackRouter({
+      target: "react",
+      autoCodeSplitting: true,
+      quoteStyle: "double",
+    }),
     react(),
     tailwindcss(),
   ],
+  build: { target: "esnext" },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
   // 1. prevent vite from obscuring rust errors

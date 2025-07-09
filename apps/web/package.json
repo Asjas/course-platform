@@ -14,32 +14,32 @@
   },
   "dependencies": {
     "@packages/shared-ui": "workspace:*",
-    "@tanstack/react-router": "1.121.34",
-    "@tanstack/react-router-devtools": "1.121.34",
-    "@tanstack/router-plugin": "1.121.37",
+    "@tanstack/react-router": "1.125.6",
+    "@tanstack/react-router-devtools": "1.125.6",
+    "@tanstack/router-plugin": "1.125.6",
     "better-auth": "1.2.12",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "tailwindcss": "4.1.11"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.9.1",
-    "@cloudflare/workers-types": "4.20250708.0",
+    "@cloudflare/workers-types": "4.20250709.0",
     "@tailwindcss/vite": "4.1.11",
     "@testing-library/dom": "10.4.0",
-    "@testing-library/react": "16.2.0",
+    "@testing-library/react": "16.3.0",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@vitejs/plugin-react": "4.6.0",
-    "jsdom": "26.0.0",
+    "jsdom": "26.1.0",
+    "tailwindcss": "4.1.11",
     "typescript": "5.8.3",
-    "vite": "7.0.0",
+    "vite": "7.0.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.0.5",
-    "web-vitals": "4.2.4",
-    "wrangler": "4.23.0"
+    "vitest": "3.0.9",
+    "web-vitals": "5.0.3",
+    "wrangler": "4.24.0"
   },
   "overrides": {
-    "@tanstack/react-router": "1.121.37"
+    "@tanstack/react-router": "1.125.6"
   }
 }
