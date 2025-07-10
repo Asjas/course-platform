@@ -54,8 +54,8 @@ importers:
         specifier: 1.2.12
         version: 1.2.12
       dotenv:
-        specifier: 17.1.0
-        version: 17.1.0
+        specifier: 17.2.0
+        version: 17.2.0
       drizzle-orm:
         specifier: 0.44.2
         version: 0.44.2(@cloudflare/workers-types@4.20250709.0)(@types/pg@8.15.4)(kysely@0.28.2)(pg@8.16.3)
@@ -2627,8 +2627,8 @@ packages:
     resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
     engines: {node: '>=12'}
 
-  dotenv@17.1.0:
-    resolution: {integrity: sha512-tG9VUTJTuju6GcXgbdsOuRhupE8cb4mRgY5JLRCh4MtGoVo3/gfGUtOMwmProM6d0ba2mCFvv+WrpYJV6qgJXQ==}
+  dotenv@17.2.0:
+    resolution: {integrity: sha512-Q4sgBT60gzd0BB0lSyYD3xM4YxrXA9y4uBDof1JNYGzOXrQdQ6yX+7XIAqoFOGQFOTK1D3Hts5OllpxMDZFONQ==}
     engines: {node: '>=12'}
 
   drizzle-kit@0.31.4:
@@ -6056,7 +6056,7 @@ snapshots:
 
   dotenv@16.5.0: {}
 
-  dotenv@17.1.0: {}
+  dotenv@17.2.0: {}
 
   drizzle-kit@0.31.4:
     dependencies:
