@@ -22,7 +22,7 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "1.9.1",
+    "@cloudflare/vite-plugin": "1.9.4",
     "@cloudflare/workers-types": "4.20250710.0",
     "@tailwindcss/vite": "4.1.11",
     "@testing-library/dom": "10.4.0",
