@@ -1,0 +1,35 @@
+localhost {
+  root * /srv/app
+  encode
+  try_files {path} /index.html
+  file_server
+
+  header /index.html Cache-Control "public, max-age=0, must-revalidate"
+  header /assets/* Cache-Control "public, max-age=32165414"
+  header /* Cache-Control "public, max-age=300"
+
+  header * Permissions-Policy interest-cohort=()
+	header * Strict-Transport-Security max-age=31536000;
+	header * X-Content-Type-Options nosniff
+	header * X-Frame-Options DENY
+
+  respond /health 200
+}
+
+https://codewizard.training {
+  root * /srv/app
+  encode
+  try_files {path} /index.html
+  file_server
+
+  header /index.html Cache-Control "public, max-age=0, must-revalidate"
+  header /assets/* Cache-Control "public, max-age=32165414"
+  header /* Cache-Control "public, max-age=300"
+
+  header * Permissions-Policy interest-cohort=()
+	header * Strict-Transport-Security max-age=31536000;
+	header * X-Content-Type-Options nosniff
+	header * X-Frame-Options DENY
+
+  respond /health 200
+}
