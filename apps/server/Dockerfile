@@ -10,6 +10,6 @@ WORKDIR /app
 COPY . .
 RUN npm i -g pnpm@9.15.9
 RUN pnpm i
-RUN pnpm run -filter "./apps/server" build
+RUN pnpm run build
 
 CMD ["./node_modules/.bin/tsx", "dist/index.js"]
