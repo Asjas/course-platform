@@ -1,35 +1,37 @@
-localhost {
-  root * /srv/app
-  encode
-  try_files {path} /index.html
-  file_server
+codewizard.training {
+	root * /srv/app
+	encode gzip zstd
+	try_files {path} /index.html
+	file_server
+	tls {
+		issuer acme
+	}
 
-  header /index.html Cache-Control "public, max-age=0, must-revalidate"
-  header /assets/* Cache-Control "public, max-age=32165414"
-  header /* Cache-Control "public, max-age=300"
+	header /index.html Cache-Control "public, max-age=60, must-revalidate"
+	header /assets/* Cache-Control "public, max-age=31556952, immutable"
 
-  header * Permissions-Policy interest-cohort=()
-	header * Strict-Transport-Security max-age=31536000;
-	header * X-Content-Type-Options nosniff
-	header * X-Frame-Options DENY
+	header {
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self';"
+		Permissions-Policy interest-cohort=()
+		Strict-Transport-Security max-age=31556952;
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+	}
 
-  respond /health 200
-}
+	respond /health 200 {
+		body `{"status": "ok"}`
+	}
 
-https://codewizard.training {
-  root * /srv/app
-  encode
-  try_files {path} /index.html
-  file_server
+	log {
+		output file /var/log/caddy/access.log
+		format json
+	}
 
-  header /index.html Cache-Control "public, max-age=0, must-revalidate"
-  header /assets/* Cache-Control "public, max-age=32165414"
-  header /* Cache-Control "public, max-age=300"
-
-  header * Permissions-Policy interest-cohort=()
-	header * Strict-Transport-Security max-age=31536000;
-	header * X-Content-Type-Options nosniff
-	header * X-Frame-Options DENY
-
-  respond /health 200
+	rate_limit {
+		zone dynamic {
+			key {remote_host}
+			events 100
+			window 1m
+		}
+	}
 }

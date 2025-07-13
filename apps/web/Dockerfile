@@ -1,7 +1,5 @@
 FROM node:22.17.0-alpine3.22 AS builder
 
-RUN apk --no-cache add curl bash
-
 RUN mkdir /app
 WORKDIR /app
 
@@ -13,9 +11,11 @@ RUN pnpm run -filter "./apps/web" build
 
 FROM caddy:2.10.0-alpine
 
+RUN apk --no-cache add curl bash
+
 COPY --from=builder /app/apps/web/dist/ /srv/app
-COPY /apps/web/Caddyfile /etc/caddy/Caddyfile
+COPY --from=builder /app/apps/web/Caddyfile /etc/caddy/Caddyfile
 
-EXPOSE 80 443 2019
+EXPOSE 80 443
 
-CMD ["caddy", "start"]
+CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
