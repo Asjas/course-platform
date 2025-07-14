@@ -1,9 +1,13 @@
 {
 	admin off
-  debug
+  auto_https off
 }
 
 :80 {
+	redir https://{host}{uri} permanent
+}
+
+:443 {
 	@static_asset {
 		path_regexp static \.(html|css|js|txt|json|jpg|png|ico|svg|woff|woff2)$
 	}
@@ -17,6 +21,9 @@
 	try_files {path} /index.html
 	file_server @static_asset
 	log
+	tls {
+		issuer acme
+	}
 
 	header /index.html Cache-Control "public, max-age=60, must-revalidate"
 	header @hashed_asset Cache-Control "public, max-age=31556952, immutable"
