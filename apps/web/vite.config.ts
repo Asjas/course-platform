@@ -52,6 +52,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  css: { transformer: "lightningcss" },
+  build: { cssMinify: "lightningcss" },
   resolve: {
     alias: {
       "~": resolve(__dirname, "./src"),

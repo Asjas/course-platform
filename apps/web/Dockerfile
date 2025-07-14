@@ -20,7 +20,7 @@ RUN pnpm run -filter "./apps/web" build
 # Final image with Caddy and built assets
 FROM caddy:2.10.0-alpine
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache curl bash
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
