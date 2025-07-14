@@ -21,7 +21,7 @@
     "@fastify/multipart": "9.0.3",
     "@fastify/rate-limit": "10.3.0",
     "@fastify/sensible": "6.0.3",
-    "argon2": "0.43.0",
+    "argon2": "0.43.1",
     "better-auth": "1.2.12",
     "dotenv": "17.2.0",
     "drizzle-orm": "0.44.2",
