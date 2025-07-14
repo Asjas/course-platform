@@ -19,6 +19,15 @@
       content="Course platform. Learn Remix (React), Next.js, Vite, Fastify and more."
     />
     <title>Codewizard Training</title>
+    <script
+      type="module"
+      async
+    >
+      // https://vite.dev/guide/build.html#load-error-handling
+      window.addEventListener("vite:preloadError", (event) => {
+        window.location.reload();
+      });
+    </script>
   </head>
   <body>
     <div id="app"></div>

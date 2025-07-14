@@ -3,7 +3,6 @@ import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import { defineConfig } from "vite";
-import { createProductionServerPlugin } from "vite-create-production-server-plugin";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
@@ -51,7 +50,6 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
-    createProductionServerPlugin(),
   ],
   css: { transformer: "lightningcss" },
   build: { cssMinify: "lightningcss" },

@@ -2,15 +2,12 @@
   "name": "@apps/web",
   "type": "module",
   "scripts": {
-    "deploy": "wrangler deploy",
     "dev": "vite --port 3000",
-    "wrangler:dev": "wrangler dev",
     "start": "vite --port 3000",
     "build": "vite build && tsc",
-    "serve": "vite build -- --serve",
+    "preview": "vite preview",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "typegen": "wrangler types"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@packages/shared-ui": "workspace:*",
@@ -19,8 +16,7 @@
     "@tanstack/router-plugin": "1.127.5",
     "better-auth": "1.2.12",
     "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "serve-static": "2.2.0"
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.11",
@@ -34,7 +30,6 @@
     "tailwindcss": "4.1.11",
     "typescript": "5.8.3",
     "vite": "7.0.4",
-    "vite-create-production-server-plugin": "0.0.2-a",
     "vite-plugin-pwa": "1.0.1",
     "vitest": "3.2.4",
     "web-vitals": "5.0.3"
