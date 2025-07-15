@@ -12,7 +12,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       manifestFilename: "manifest.json",
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg}", "manifest.json"],
+        globPatterns: ["**/*.{html,css,js,json,ico,png,svg}"],
         clientsClaim: true,
         skipWaiting: true,
         cleanupOutdatedCaches: true,
