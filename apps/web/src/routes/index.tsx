@@ -16,9 +16,7 @@ function App() {
           className="App-logo"
           alt="logo"
         />
-        <p>
-          Edit <code>src/routes/index.tsx</code> and save to reload.
-        </p>
+        <p>Codewizard Training</p>
         <a
           className="App-link"
           href="https://reactjs.org"
