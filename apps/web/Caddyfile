@@ -1,7 +1,3 @@
-{
-	admin off
-}
-
 :80 {
 	@static_asset {
 		path_regexp static \.(html|css|js|txt|json|jpg|png|ico|svg|woff|woff2)$
