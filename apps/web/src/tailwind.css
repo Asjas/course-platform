@@ -15,9 +15,9 @@ body {
   }
 }
 
-.dark,
+/* .dark,
 :root[class~="dark"] {
-}
+} */
 
 [id] {
   scroll-margin-top: 60px;
