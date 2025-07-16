@@ -27,7 +27,7 @@ RUN apk add --no-cache curl bash
 
 COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
-COPY --from=vite-builder /app/apps/web/Caddyfile /etc/caddy/Caddyfile
+COPY --from=vite-builder /app/apps/web/config/Caddyfile /etc/caddy/Caddyfile
 
 EXPOSE 80
 
