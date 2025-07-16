@@ -1,4 +1,4 @@
-FROM node:22.17.0-alpine3.22
+FROM node:22.17.1-alpine3.22
 
 RUN apk --no-cache add curl bash
 
