@@ -11,6 +11,7 @@ export default defineConfig({
       injectRegister: "inline",
       registerType: "autoUpdate",
       manifestFilename: "manifest.json",
+      // outDir: resolve(__dirname, "dist/assets"),
       workbox: {
         globPatterns: ["**/*.{html,css,js,json,ico,png,svg}"],
         clientsClaim: true,
