@@ -8,7 +8,7 @@ RUN CGO_ENABLED=1 xcaddy build \
     --with github.com/dunglas/caddy-cbrotli
 
 # Build Vite application
-FROM node:22.17.0-alpine3.22 AS vite-builder
+FROM node:22.17.1-alpine3.22 AS vite-builder
 
 RUN apk add --no-cache bash fd gzip brotli zstd
 
