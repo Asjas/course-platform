@@ -1,34 +1,33 @@
-# Build custom Caddy with plugins
-FROM caddy:2.10.0-builder-alpine AS caddy-builder
+FROM alpine:3.22 AS nginx-builder
 
-RUN apk add --no-cache brotli-dev gcc musl-dev
+ARG NGINX_VERSION=1.29.0
+RUN apk add --no-cache build-base git pcre-dev zlib-dev openssl-dev linux-headers
+RUN wget https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && tar -zxvf nginx-${NGINX_VERSION}.tar.gz
+RUN git clone --recurse-submodules https://github.com/google/ngx_brotli.git
+WORKDIR /nginx-${NGINX_VERSION}
+RUN ./configure --with-http_gzip_static_module --add-module=/ngx_brotli --prefix=/opt/nginx RUN make && make install
 
-RUN CGO_ENABLED=1 xcaddy build \
-    --with github.com/mholt/caddy-ratelimit \
-    --with github.com/dunglas/caddy-cbrotli
-
-# Build Vite application
 FROM node:22.17.1-alpine3.22 AS vite-builder
 
 RUN apk add --no-cache bash fd gzip brotli zstd
 
 WORKDIR /app
-
 COPY . .
 RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run -filter "./apps/web" build
-RUN fd --type f --size +1400b --regex '\.(html|css|js|json|svg)$' --exec bash -c 'brotli --best "$1" && gzip --best -k "$1" && zstd --ultra -22 -k "$1"' _ {} \;
+RUN fd --type f --size +1400b --regex '.(html|css|js|json|svg)$' --exec bash -c 'brotli --best "$1" && gzip --best -k "$1" && zstd --ultra -22 -k "$1"' _ {} ;
 
-# Final image with Caddy and built assets
-FROM caddy:2.10.0-alpine
+FROM alpine:3.22
 
-RUN apk add --no-cache curl bash
+RUN apk add --no-cache pcre zlib openssl curl bash
 
-COPY --from=caddy-builder /usr/bin/caddy /usr/bin/caddy
+COPY --from=nginx-builder /opt/nginx /opt/nginx
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
-COPY --from=vite-builder /app/apps/web/config/Caddyfile /etc/caddy/Caddyfile
+COPY --from=vite-builder /app/apps/web/config/nginx.conf /etc/nginx/nginx.conf
+
+RUN mkdir -p /var/log/nginx
 
 EXPOSE 80
 
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile"]
+CMD ["/opt/nginx/sbin/nginx", "-g", "daemon off;"]
