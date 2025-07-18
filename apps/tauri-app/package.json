@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@packages/shared-ui": "workspace:*",
-    "@tanstack/react-router": "1.127.9",
-    "@tanstack/react-router-devtools": "1.127.9",
-    "@tanstack/router-plugin": "1.127.9",
+    "@tanstack/react-router": "1.128.4",
+    "@tanstack/react-router-devtools": "1.128.4",
+    "@tanstack/router-plugin": "1.128.4",
     "@tauri-apps/api": "2.6.0",
     "@tauri-apps/plugin-opener": "2.4.0",
     "better-auth": "1.2.12",
