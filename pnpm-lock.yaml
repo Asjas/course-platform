@@ -75,8 +75,8 @@ importers:
         specifier: 5.1.0
         version: 5.1.0
       fastify-ip:
-        specifier: 1.2.0
-        version: 1.2.0
+        specifier: 2.0.0
+        version: 2.0.0
       fastify-nodemailer:
         specifier: 5.0.0
         version: 5.0.0
@@ -2881,9 +2881,9 @@ packages:
     resolution: {integrity: sha512-GlCPdDJlJwDftS7K5RAH4EV9oYH7JOJ4aG9w2wD4fdReSO8KYASIIJu4to1RGlpzVoXJIPqByIYrfmaEPVautQ==}
     engines: {node: '>=20.9.0'}
 
-  fastify-ip@1.2.0:
-    resolution: {integrity: sha512-n7BqGlEMZmaG/zEdrp7/fShBUNWfgT6EKXfC3FERTzuSPZSo8gxfq0kjD8PhAjD1I1o7oqo5Wc/m7jr+Fn+HRg==}
-    engines: {node: '>=18.x'}
+  fastify-ip@2.0.0:
+    resolution: {integrity: sha512-7mQyAc7sapawpiriEFoJyQIs41nNIO42UCzgMKrjNGsIegnevj2VhOlXLLTa+q7cxXfJ5fDGmOAdQpaIgA9ObA==}
+    engines: {node: '>=20.x'}
 
   fastify-nodemailer@5.0.0:
     resolution: {integrity: sha512-xOUhkqbHUDnwa33Y+ITg+bmUVkiBGHD7aqWGKCIdZ09NmOiD/LWnqSaomJNAwoA65DyK/Js56qbYeG1hDlLonA==}
@@ -7098,7 +7098,7 @@ snapshots:
     dependencies:
       '@fastify/under-pressure': 9.0.3
 
-  fastify-ip@1.2.0:
+  fastify-ip@2.0.0:
     dependencies:
       fastify-plugin: 5.0.1
 
