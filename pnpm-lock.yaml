@@ -51,8 +51,8 @@ importers:
         specifier: 0.43.1
         version: 0.43.1
       better-auth:
-        specifier: 1.2.12
-        version: 1.2.12
+        specifier: 1.3.1
+        version: 1.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       dotenv:
         specifier: 17.2.0
         version: 17.2.0
@@ -139,8 +139,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0
       better-auth:
-        specifier: 1.2.12
-        version: 1.2.12
+        specifier: 1.3.1
+        version: 1.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -191,8 +191,8 @@ importers:
         specifier: 1.128.6
         version: 1.128.6(@tanstack/react-router@1.128.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(vite@7.0.4(@types/node@24.0.15)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3))
       better-auth:
-        specifier: 1.2.12
-        version: 1.2.12
+        specifier: 1.3.1
+        version: 1.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react:
         specifier: 19.1.0
         version: 19.1.0
@@ -2436,8 +2436,16 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  better-auth@1.2.12:
-    resolution: {integrity: sha512-YicCyjQ+lxb7YnnaCewrVOjj3nPVa0xcfrOJK7k5MLMX9Mt9UnJ8GYaVQNHOHLyVxl92qc3C758X1ihqAUzm4w==}
+  better-auth@1.3.1:
+    resolution: {integrity: sha512-whsRGZU0Qn/QIw6NpVhSdSxeK+ijJzy3XH8NXBHJj3mLP+BToHrYfHpyyMInaQ0So1bNKj/1qcQ+B2qc9VjmBg==}
+    peerDependencies:
+      react: ^18.0.0 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
 
   better-call@1.0.12:
     resolution: {integrity: sha512-ssq5OfB9Ungv2M1WVrRnMBomB0qz1VKuhkY2WxjHaLtlsHoSe9EPolj1xf7xf8LY9o3vfk3Rx6rCWI4oVHeBRg==}
@@ -3232,8 +3240,8 @@ packages:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
 
-  jose@6.0.11:
-    resolution: {integrity: sha512-QxG7EaliDARm1O1S8BGakqncGT9s25bKL1WSf6/oa17Tkqwi8D2ZNglqCF+DsYF88/rV66Q/Q2mFAy697E1DUg==}
+  jose@5.10.0:
+    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -6641,7 +6649,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  better-auth@1.2.12:
+  better-auth@1.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@better-auth/utils': 0.2.5
       '@better-fetch/fetch': 1.1.18
@@ -6651,10 +6659,13 @@ snapshots:
       '@simplewebauthn/server': 13.1.2
       better-call: 1.0.12
       defu: 6.1.4
-      jose: 6.0.11
+      jose: 5.10.0
       kysely: 0.28.2
       nanostores: 0.11.4
-      zod: 3.25.76
+      zod: 4.0.5
+    optionalDependencies:
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   better-call@1.0.12:
     dependencies:
@@ -7482,7 +7493,7 @@ snapshots:
 
   jiti@2.4.2: {}
 
-  jose@6.0.11: {}
+  jose@5.10.0: {}
 
   js-tokens@4.0.0: {}
 
