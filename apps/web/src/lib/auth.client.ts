@@ -1,10 +1,10 @@
-import { toast } from "@packages/shared-ui/ui/sonner";
 import {
   adminClient,
   anonymousClient,
   usernameClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import { toast } from "~/components/ui/sonner";
 
 export const authClient = createAuthClient({
   plugins: [adminClient(), anonymousClient(), usernameClient()],
