@@ -182,8 +182,8 @@ importers:
         specifier: 1.3.6
         version: 1.3.6(@tanstack/query-core@5.83.0)(@tanstack/react-query@5.83.0(react@19.1.0))(better-auth@1.3.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@daveyplate/better-auth-ui':
-        specifier: 2.1.0
-        version: 2.1.0(hqoyllw7ummhbxiwf737btuuwu)
+        specifier: 2.1.2
+        version: 2.1.2(hqoyllw7ummhbxiwf737btuuwu)
       '@packages/shared-ui':
         specifier: workspace:*
         version: link:../../packages/shared-ui
@@ -950,8 +950,8 @@ packages:
       react: '>=18.0.0'
       react-dom: '>=18.0.0'
 
-  '@daveyplate/better-auth-ui@2.1.0':
-    resolution: {integrity: sha512-BUJ1OJ9uD2guuoAOScj2dJ0q6RpUbVSIIHDm2TlRKoaU6t0ptZ7YrvM97COTC4q7UJHmji7vPbshES8xqkKxGA==}
+  '@daveyplate/better-auth-ui@2.1.2':
+    resolution: {integrity: sha512-pGxpNY05V1yIw5M8wAyeWjBg04GTGtz1sY/tcc2RGui/ydMzQKPZJSum6a2nOoykZWKd+ksD0EgMahC4xKIsPQ==}
     peerDependencies:
       '@daveyplate/better-auth-tanstack': ^1.3.6
       '@hookform/resolvers': '>=5.0.0'
@@ -5825,7 +5825,7 @@ snapshots:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
-  '@daveyplate/better-auth-ui@2.1.0(hqoyllw7ummhbxiwf737btuuwu)':
+  '@daveyplate/better-auth-ui@2.1.2(hqoyllw7ummhbxiwf737btuuwu)':
     dependencies:
       '@better-fetch/fetch': 1.1.18
       '@daveyplate/better-auth-tanstack': 1.3.6(@tanstack/query-core@5.83.0)(@tanstack/react-query@5.83.0(react@19.1.0))(better-auth@1.3.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
