@@ -79,4 +79,4 @@ export const auth = betterAuth({
       },
     }),
   ],
-});
+}) as ReturnType<typeof betterAuth>;
