@@ -1,6 +1,7 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { ThemeProvider } from "~/components/theme-provider";
+import { UIProvider } from "~/lib/auth-ui.provider";
 
 export const Route = createRootRoute({
   component: () => (
@@ -9,7 +10,9 @@ export const Route = createRootRoute({
         defaultTheme="dark"
         storageKey="cw-ui-theme"
       >
-        <Outlet />
+        <UIProvider>
+          <Outlet />
+        </UIProvider>
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-right" />
     </>
