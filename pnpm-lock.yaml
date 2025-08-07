@@ -58,7 +58,7 @@ importers:
         version: 17.2.1
       drizzle-orm:
         specifier: 0.44.3
-        version: 0.44.3(@types/pg@8.15.4)(kysely@0.28.3)(pg@8.16.3)
+        version: 0.44.3(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3)
       env-schema:
         specifier: 6.0.1
         version: 6.0.1
@@ -100,8 +100,8 @@ importers:
         specifier: 24.1.0
         version: 24.1.0
       '@types/pg':
-        specifier: 8.15.4
-        version: 8.15.4
+        specifier: 8.15.5
+        version: 8.15.5
       drizzle-kit:
         specifier: 0.31.4
         version: 0.31.4
@@ -2585,8 +2585,8 @@ packages:
   '@types/node@24.1.0':
     resolution: {integrity: sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==}
 
-  '@types/pg@8.15.4':
-    resolution: {integrity: sha512-I6UNVBAoYbvuWkkU3oosC8yxqH21f4/Jc4DK71JLG3dT2mdlGe1z+ep/LQGXaKaOgcvUrsQoPRqfgtMcvZiJhg==}
+  '@types/pg@8.15.5':
+    resolution: {integrity: sha512-LF7lF6zWEKxuT3/OR8wAZGzkg4ENGXFNyiV/JeOt9z5B+0ZVwbql9McqX5c/WStFq1GaGso7H1AzP/qSzmlCKQ==}
 
   '@types/react-dom@19.1.6':
     resolution: {integrity: sha512-4hOiT/dwO8Ko0gV1m/TJZYk3y0KBnY9vzDh7W+DH17b2HFSOGgdj33dhihPeuy3l0q23+4e+hoXHV6hCC4dCXw==}
@@ -4497,6 +4497,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -7318,7 +7319,7 @@ snapshots:
     dependencies:
       undici-types: 7.8.0
 
-  '@types/pg@8.15.4':
+  '@types/pg@8.15.5':
     dependencies:
       '@types/node': 24.1.0
       pg-protocol: 1.10.3
@@ -7787,9 +7788,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.3(@types/pg@8.15.4)(kysely@0.28.3)(pg@8.16.3):
+  drizzle-orm@0.44.3(@types/pg@8.15.5)(kysely@0.28.3)(pg@8.16.3):
     optionalDependencies:
-      '@types/pg': 8.15.4
+      '@types/pg': 8.15.5
       kysely: 0.28.3
       pg: 8.16.3
 
