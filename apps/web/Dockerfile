@@ -1,4 +1,4 @@
-FROM node:22.17.1-alpine3.22 AS vite-builder
+FROM node:22.18.0-alpine3.22 AS vite-builder
 
 ARG VITE_BETTER_AUTH_URL
 ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
