@@ -148,8 +148,8 @@ importers:
         specifier: 19.1.1
         version: 19.1.1(react@19.1.1)
       web-vitals:
-        specifier: 5.0.3
-        version: 5.0.3
+        specifier: 5.1.0
+        version: 5.1.0
     devDependencies:
       '@tailwindcss/vite':
         specifier: 4.1.11
@@ -273,8 +273,8 @@ importers:
         specifier: 3.2.4
         version: 3.2.4(@types/node@24.2.1)(jiti@2.5.1)(jsdom@26.1.0)(lightningcss@1.30.1)(terser@5.43.1)(tsx@4.20.3)
       web-vitals:
-        specifier: 5.0.3
-        version: 5.0.3
+        specifier: 5.1.0
+        version: 5.1.0
 
   packages/shared-ui:
     dependencies:
@@ -4907,8 +4907,8 @@ packages:
   warning@4.0.3:
     resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
 
-  web-vitals@5.0.3:
-    resolution: {integrity: sha512-4KmOFYxj7qT6RAdCH0SWwq8eKeXNhAFXR4PmgF6nrWFmrJ41n7lq3UCA6UK0GebQ4uu+XP8e8zGjaDO3wZlqTg==}
+  web-vitals@5.1.0:
+    resolution: {integrity: sha512-ArI3kx5jI0atlTtmV0fWU3fjpLmq/nD3Zr1iFFlJLaqa5wLBkUSzINwBPySCX/8jRyjlmy1Volw1kz1g9XE4Jg==}
 
   web-worker@1.5.0:
     resolution: {integrity: sha512-RiMReJrTAiA+mBjGONMnjVDP2u3p9R1vkcGz6gDIrOMT3oGuYwX2WRMYI9ipkphSuE5XKEhydbhNEJh4NY9mlw==}
@@ -9615,7 +9615,7 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  web-vitals@5.0.3: {}
+  web-vitals@5.1.0: {}
 
   web-worker@1.5.0: {}
 
