@@ -52,7 +52,10 @@ export const auth = betterAuth({
       console.log("Send email to reset password");
     },
   },
-  rateLimit: { enabled: true, storage: "secondary-storage" },
+  rateLimit: {
+    enabled: true,
+    storage: "secondary-storage",
+  },
   secondaryStorage: {
     get: async (key) => {
       return await redis.get(key);
