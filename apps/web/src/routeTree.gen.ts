@@ -10,68 +10,68 @@
 
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as IndexRouteImport } from "./routes/index"
-import { Route as AuthSignUpRouteImport } from "./routes/auth/sign-up"
-import { Route as AuthSignInRouteImport } from "./routes/auth/sign-in"
-import { Route as AuthForgotPasswordRouteImport } from "./routes/auth/forgot-password"
+import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
+import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
+import { Route as authForgotpasswordRouteImport } from "./routes/(auth)/forgotpassword"
 
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignUpRoute = AuthSignUpRouteImport.update({
-  id: "/auth/sign-up",
-  path: "/auth/sign-up",
+const authSignupRoute = authSignupRouteImport.update({
+  id: "/(auth)/signup",
+  path: "/signup",
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthSignInRoute = AuthSignInRouteImport.update({
-  id: "/auth/sign-in",
-  path: "/auth/sign-in",
+const authSigninRoute = authSigninRouteImport.update({
+  id: "/(auth)/signin",
+  path: "/signin",
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
-  id: "/auth/forgot-password",
-  path: "/auth/forgot-password",
+const authForgotpasswordRoute = authForgotpasswordRouteImport.update({
+  id: "/(auth)/forgotpassword",
+  path: "/forgotpassword",
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
-  "/auth/forgot-password": typeof AuthForgotPasswordRoute
-  "/auth/sign-in": typeof AuthSignInRoute
-  "/auth/sign-up": typeof AuthSignUpRoute
+  "/forgotpassword": typeof authForgotpasswordRoute
+  "/signin": typeof authSigninRoute
+  "/signup": typeof authSignupRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
-  "/auth/forgot-password": typeof AuthForgotPasswordRoute
-  "/auth/sign-in": typeof AuthSignInRoute
-  "/auth/sign-up": typeof AuthSignUpRoute
+  "/forgotpassword": typeof authForgotpasswordRoute
+  "/signin": typeof authSigninRoute
+  "/signup": typeof authSignupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
-  "/auth/forgot-password": typeof AuthForgotPasswordRoute
-  "/auth/sign-in": typeof AuthSignInRoute
-  "/auth/sign-up": typeof AuthSignUpRoute
+  "/(auth)/forgotpassword": typeof authForgotpasswordRoute
+  "/(auth)/signin": typeof authSigninRoute
+  "/(auth)/signup": typeof authSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/auth/forgot-password" | "/auth/sign-in" | "/auth/sign-up"
+  fullPaths: "/" | "/forgotpassword" | "/signin" | "/signup"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/auth/forgot-password" | "/auth/sign-in" | "/auth/sign-up"
+  to: "/" | "/forgotpassword" | "/signin" | "/signup"
   id:
     | "__root__"
     | "/"
-    | "/auth/forgot-password"
-    | "/auth/sign-in"
-    | "/auth/sign-up"
+    | "/(auth)/forgotpassword"
+    | "/(auth)/signin"
+    | "/(auth)/signup"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
-  AuthSignInRoute: typeof AuthSignInRoute
-  AuthSignUpRoute: typeof AuthSignUpRoute
+  authForgotpasswordRoute: typeof authForgotpasswordRoute
+  authSigninRoute: typeof authSigninRoute
+  authSignupRoute: typeof authSignupRoute
 }
 
 declare module "@tanstack/react-router" {
@@ -83,25 +83,25 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/auth/sign-up": {
-      id: "/auth/sign-up"
-      path: "/auth/sign-up"
-      fullPath: "/auth/sign-up"
-      preLoaderRoute: typeof AuthSignUpRouteImport
+    "/(auth)/signup": {
+      id: "/(auth)/signup"
+      path: "/signup"
+      fullPath: "/signup"
+      preLoaderRoute: typeof authSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/auth/sign-in": {
-      id: "/auth/sign-in"
-      path: "/auth/sign-in"
-      fullPath: "/auth/sign-in"
-      preLoaderRoute: typeof AuthSignInRouteImport
+    "/(auth)/signin": {
+      id: "/(auth)/signin"
+      path: "/signin"
+      fullPath: "/signin"
+      preLoaderRoute: typeof authSigninRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/auth/forgot-password": {
-      id: "/auth/forgot-password"
-      path: "/auth/forgot-password"
-      fullPath: "/auth/forgot-password"
-      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+    "/(auth)/forgotpassword": {
+      id: "/(auth)/forgotpassword"
+      path: "/forgotpassword"
+      fullPath: "/forgotpassword"
+      preLoaderRoute: typeof authForgotpasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -109,9 +109,9 @@ declare module "@tanstack/react-router" {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
-  AuthSignInRoute: AuthSignInRoute,
-  AuthSignUpRoute: AuthSignUpRoute,
+  authForgotpasswordRoute: authForgotpasswordRoute,
+  authSigninRoute: authSigninRoute,
+  authSignupRoute: authSignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
