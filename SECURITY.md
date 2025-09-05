@@ -2,4 +2,5 @@
 
 ## Reporting a Vulnerability
 
-Any security vulnerabilities can be reported via email to asjasroos@proton.me.
+Any security vulnerabilities can be reported via email to
+security@codewizard.training.
