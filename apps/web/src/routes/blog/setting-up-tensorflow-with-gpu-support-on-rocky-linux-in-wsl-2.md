@@ -5,31 +5,25 @@ This guide walks through setting up TensorFlow with GPU support on Rocky Linux
 already installed Rocky Linux on WSL 2 using the
 [official Rocky Linux WSL 2 install guide](https://docs.rockylinux.org/guides/interoperability/import_rocky_to_wsl/?h=wsl#import-rocky-linux-to-wsl).
 
-We'll verify NUMA support, install necessary system packages, set up `Python`
-with `pyenv`, install `Miniforge3` for environment management, and configure the
-`NVIDIA CUDA Toolkit` for GPU acceleration.
+We'll verify NUMA support, install necessary system packages, install `Python`
+with [uv](https://docs.astral.sh/uv/), install `Miniforge3` for environment
+management, and configure the `NVIDIA CUDA Toolkit` for GPU acceleration.
 
 ## Update WSL 2 and verify WSL Kernel NUMA Support
 
 The default WSL 2 version (especially on Windows 10) ships with an older version
-of the Linux kernel as well as a older WSL 2 version. So first things first,
+of WSL 2 as well as an older version of the Linux kernel. So first things first,
 let's update `wsl`.
 
-Open your `cmd prompt` or `powershell` and run the following command to check
-the current wsl version and wsl kernel version.
-
-```ps
-wsl --version
-```
-
-Now run the following command to update WSL 2.
+Open your `cmd prompt` or `powershell` and run the following command to update
+WSL 2.
 
 ```ps
 wsl --update
 ```
 
 After updating `wsl` my `cmd prompt` output shows the following when I run
-`wsl --version` for a second time.
+`wsl --version`.
 
 ```ps
 WSL version: 2.5.10.0
@@ -41,43 +35,16 @@ DXCore version: 10.0.26100.1-240331-1435.ge-release
 Windows version: 10.0.19045.6216
 ```
 
-On Windows 10 my version of the Kernel version was originally `5.10` but as you
-can see it is now on `6.6.87`. Yours may be on an even newer version, the point
-of this process is just make sure that `wsl` is on it's newest version. I would
-recommend running this command periodically to keep `wsl` updated through Task
-Scheduler.
+Yours may be on an even newer version, the point of this process is just make
+sure that `wsl` is on it's newest version. I would recommend running this
+command periodically to keep `wsl` updated through Task Scheduler.
 
 Now close your `cmd prompt` or `powershell` and open your WSL Rocky Linux
 instance.
 
-Before we install Python or Tensorflow, we need to confirm that the WSL 2 kernel
-has Non-Uniform Memory Access (NUMA) enabled. NUMA is a memory design for
-multiprocessor systems where memory access time depends on its location relative
-to the processor. For TensorFlow, NUMA optimizes memory allocation in
-multi-CPU/GPU setups, reducing latency for large models and datasets.
-
-Run the following command inside your WSL Rocky linux instance to check NUMA
-support:
-
-```bash
-zgrep CONFIG_NUMA /proc/config.gz
-```
-
-**Expected Output**:
-
-```bash
-# CONFIG_NUMA_BALANCING is not set
-CONFIG_NUMA=y
-# CONFIG_NUMA_EMU is not set
-CONFIG_NUMA_KEEP_MEMINFO=y
-```
-
-The output `CONFIG_NUMA=y` confirms NUMA is enabled, ensuring your kernel is
-ready for high-performance computing tasks like TensorFlow.
-
 ## Install System Dependencies for Rocky Linux
 
-To prepare Rocky Linux for TensorFlow and CUDA, install required development
+To prepare Rocky Linux for `TensorFlow` and `CUDA`, install required development
 tools and libraries. These enable building software, installing drivers, and
 supporting additional repositories like EPEL.
 
@@ -96,71 +63,46 @@ sudo dnf install tar bzip2 make automake gcc gcc-c++ pciutils elfutils-libelf-de
 > disabled by default on Rocky Linux 9/10 for security and stability, so enable
 > it only when needed.
 
-## Install Python with pyenv
+## Install Python with uv
 
-For precise control over Python versions, use `pyenv` instead of
-`dnf install python`. The `dnf` method installs the latest Python version, which
-may auto-update and break TensorFlow compatibility. Pyenv allows installing
-specific versions, which is critical since TensorFlow 2.20.0 officially supports
-Python 3.9 – 3.12 (though it worked for me with 3.13.5 in testing, I would
-recommend 3.12 for stability).
+For precise control over Python versions, use `uv` instead of `dnf`. The `dnf`
+method installs the latest Python version, which may auto-update and break
+TensorFlow compatibility. `uv` allows installing specific versions, which is
+critical since TensorFlow 2.20.0 officially supports Python 3.9 – 3.12 (although
+it worked for me with 3.13.5 in testing, I would recommend 3.12 for stability).
 
-### Install pyenv Dependencies
+### Install uv
 
-Install additional packages required for building Python with pyenv:
+Use the official uv installer:
 
 ```bash
-sudo dnf install git patch zlib-devel bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel -y
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-### Install pyenv
+### Shell autocompletion
 
-Use the official pyenv installer:
-
-```bash
-curl https://pyenv.run | bash
-```
-
-This clones `pyenv` to `~/.pyenv` and updates your shell configuration. For
-`zsh` add the following to `~/.zshrc`:
+This sets up `uv` and `uvx` autocompletions in your shell. If you are using
+something other than `zsh` then you can follow the
+[official documentation to set up autocompletions](https://docs.astral.sh/uv/getting-started/installation/#shell-autocompletion)
+for your shell.
 
 ```bash
-echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
-echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
-echo 'eval "$(pyenv init -)"' >> ~/.zshrc
-```
-
-Update your shell with the following command.
-
-```bash
-source ~/.zshrc
-```
-
-Verify pyenv is available:
-
-```bash
-pyenv versions
-```
-
-**Expected Output**:
-
-```bash
-* system (set by /home/<your-username>/.pyenv/version)
+echo 'eval "$(uv generate-shell-completion zsh)"' >> ~/.zshrc
+echo 'eval "$(uvx --generate-shell-completion zsh)"' >> ~/.zshrc
 ```
 
 ### Install Python 3.12
 
-This may take 5–15 minutes to compile. Once complete, set it as the global
-version:
+Use this command to install python 3.12.
 
 ```bash
-pyenv install 3.12
+uv python install 3.12
 ```
 
 Replace `3.12.11` with your installed version.
 
 ```bash
-pyenv global 3.12.11
+uv python pin 3.12.11
 ```
 
 Verify that the correct Python version is now available:
@@ -175,38 +117,42 @@ python --version
 Python 3.12.11
 ```
 
-### Debug pyenv Installation
+### Python linter and code formatter
 
-If Mamba/Conda is active it will interfere, deactivate and reload the shell:
+If you want an updated linter and code formatter for your Python code you can
+install and use [ruff](https://docs.astral.sh/ruff/).
+
+```bash
+uv tool install ruff
+```
+
+You can then use the following command to check/fix your code:
+
+```bash
+ruff check
+ruff check --fix
+```
+
+You can use the following command to format your code:
+
+```bash
+ruff format
+```
+
+### Debug uv Installation
+
+If a previous installation of Mamba/Conda is already active it could interfere
+with your `uv` installation, deactivate and reload the shell:
 
 ```bash
 mamba deactivate
 exec zsh
-pyenv install 3.12
-```
-
-If pyenv or the build continues to fail, use verbose output during installion:
-
-```bash
-pyenv install -v 3.12
-```
-
-You can also check the system setup with:
-
-```bash
-pyenv doctor
-```
-
-If you can get the installtion to succeed, re-set the global version:
-
-```bash
-pyenv global 3.12.11
-python --version
+uv python install 3.12
 ```
 
 ### Alternative: Install Python with dnf
 
-If you prefer not to use pyenv, install Python via DNF, but note it may update
+If you prefer not to use `uv`, install Python via DNF, but note it may update
 automatically during `dnf upgrade`, potentially breaking TensorFlow
 compatibility:
 
