@@ -11,6 +11,9 @@ importers:
       '@trivago/prettier-plugin-sort-imports':
         specifier: 5.2.2
         version: 5.2.2(prettier@3.6.2)
+      '@xeonlink/prettier-plugin-organize-attributes':
+        specifier: 1.1.0
+        version: 1.1.0
       prettier:
         specifier: 3.6.2
         version: 3.6.2
@@ -2375,6 +2378,10 @@ packages:
 
   '@vitest/utils@3.2.4':
     resolution: {integrity: sha512-fB2V0JFrQSMsCo9HiSq3Ezpdv4iYaXRG1Sx8edX3MwxfyNn83mKiGzOcH+Fkxt4MHxr3y42fQi1oeAInqgX2QA==}
+
+  '@xeonlink/prettier-plugin-organize-attributes@1.1.0':
+    resolution: {integrity: sha512-1Vmv+7zkQvPSgiBX0HsrZL4Xf6MYFinS3VE+dXeJCbF2i3BOM+nYQk1iRbcnnSTsJ+IB1IP5X5o3O4zp2ccTgg==}
+    engines: {node: '>=14.0.0'}
 
   abstract-logging@2.0.1:
     resolution: {integrity: sha512-2BjRTZxTPvheOvGbBslFSYOUkr+SjPtOnrLP33f+VIWLzezQpZcqVg7ja3L4dBXmzzgwT+a029jRx5PCi3JuiA==}
@@ -6622,6 +6629,10 @@ snapshots:
       '@vitest/pretty-format': 3.2.4
       loupe: 3.2.1
       tinyrainbow: 2.0.0
+
+  '@xeonlink/prettier-plugin-organize-attributes@1.1.0':
+    dependencies:
+      prettier: 3.6.2
 
   abstract-logging@2.0.1: {}
 
