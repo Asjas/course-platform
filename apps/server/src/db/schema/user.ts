@@ -1,14 +1,12 @@
-import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import * as t from "drizzle-orm/pg-core";
-import { monotonicFactory } from "ulid";
+import { v7 as uuidv7 } from "uuid";
 import { timestamps } from "~/db/schema/columns.helpers";
-
-const ulid = monotonicFactory();
 
 export const user = pgTable(
   "user",
   {
-    id: text().primaryKey().unique().default(ulid()),
+    id: uuid().primaryKey().unique().default(uuidv7()),
     name: text(),
     username: text().notNull().unique(),
     displayUsername: text(),
@@ -28,12 +26,12 @@ export const user = pgTable(
 );
 
 export const session = pgTable("session", {
-  id: text().primaryKey(),
+  id: uuid().primaryKey().unique().default(uuidv7()),
   token: text().notNull().unique(),
   ipAddress: text(),
   userAgent: text(),
   impersonatedBy: text(),
-  userId: text()
+  userId: uuid()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   expiresAt: timestamp({ withTimezone: true }).notNull(),
@@ -41,10 +39,10 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: text().primaryKey(),
+  id: uuid().primaryKey().unique().default(uuidv7()),
   accountId: text().notNull(),
   providerId: text().notNull(),
-  userId: text()
+  userId: uuid()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   accessToken: text(),
@@ -58,7 +56,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: text().primaryKey(),
+  id: uuid().primaryKey().unique().default(uuidv7()),
   identifier: text().notNull(),
   value: text().notNull(),
   expiresAt: timestamp({ withTimezone: true }).notNull(),
