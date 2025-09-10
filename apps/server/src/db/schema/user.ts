@@ -1,20 +1,31 @@
 import { boolean, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import * as t from "drizzle-orm/pg-core";
+import { monotonicFactory } from "ulid";
 import { timestamps } from "~/db/schema/columns.helpers";
 
-export const user = pgTable("user", {
-  id: text().primaryKey(),
-  name: text(),
-  username: text().notNull().unique(),
-  displayUsername: text(),
-  email: text().notNull().unique(),
-  emailVerified: boolean().default(false).notNull(),
-  image: text(),
-  role: text().default("user").notNull(),
-  banned: boolean(),
-  banReason: text(),
-  banExpires: timestamp(),
-  ...timestamps,
-});
+const ulid = monotonicFactory();
+
+export const user = pgTable(
+  "user",
+  {
+    id: text().primaryKey().unique().default(ulid()),
+    name: text(),
+    username: text().notNull().unique(),
+    displayUsername: text(),
+    email: text().notNull().unique(),
+    emailVerified: boolean().default(false).notNull(),
+    image: text(),
+    role: text().default("user").notNull(),
+    banned: boolean(),
+    banReason: text(),
+    banExpires: timestamp(),
+    ...timestamps,
+  },
+  (table) => [
+    t.uniqueIndex("email_idx").on(table.email),
+    t.uniqueIndex("username_idx").on(table.username),
+  ],
+);
 
 export const session = pgTable("session", {
   id: text().primaryKey(),
