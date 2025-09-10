@@ -1,10 +1,10 @@
 import { timestamp } from "drizzle-orm/pg-core";
 
 export const timestamps = {
-  createdAt: timestamp()
+  createdAt: timestamp({ withTimezone: true })
     .$defaultFn(() => new Date())
     .notNull(),
-  updatedAt: timestamp()
+  updatedAt: timestamp({ withTimezone: true })
     .$defaultFn(() => new Date())
     .notNull(),
 };

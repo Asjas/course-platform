@@ -18,7 +18,7 @@ export const user = pgTable(
     role: text().default("user").notNull(),
     banned: boolean(),
     banReason: text(),
-    banExpires: timestamp(),
+    banExpires: timestamp({ withTimezone: true }),
     ...timestamps,
   },
   (table) => [
@@ -36,7 +36,7 @@ export const session = pgTable("session", {
   userId: text()
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  expiresAt: timestamp().notNull(),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
   ...timestamps,
 });
 
@@ -50,8 +50,8 @@ export const account = pgTable("account", {
   accessToken: text(),
   refreshToken: text(),
   idToken: text(),
-  accessTokenExpiresAt: timestamp(),
-  refreshTokenExpiresAt: timestamp(),
+  accessTokenExpiresAt: timestamp({ withTimezone: true }),
+  refreshTokenExpiresAt: timestamp({ withTimezone: true }),
   scope: text(),
   password: text(),
   ...timestamps,
@@ -61,6 +61,6 @@ export const verification = pgTable("verification", {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
-  expiresAt: timestamp().notNull(),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
   ...timestamps,
 });
