@@ -34,7 +34,7 @@
     "zod": "4.1.8"
   },
   "devDependencies": {
-    "@types/node": "22.18.1",
+    "@types/node": "22.18.3",
     "@types/react": "19.1.12",
     "typescript": "5.9.2"
   },
