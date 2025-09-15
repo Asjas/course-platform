@@ -3,7 +3,7 @@ import {
   FastifyInstance,
   FastifyPluginOptions,
 } from "fastify";
-import { auth } from "~/lib/auth.server";
+import { auth } from "~/lib/auth.server.js";
 
 export default function AuthRoutes(
   fastify: FastifyInstance,
@@ -36,7 +36,9 @@ export default function AuthRoutes(
         const response = await auth.handler(req);
 
         // Forward response to client
-        response.headers.forEach((value, key) => reply.header(key, value));
+        response.headers.forEach((value: string, key: string) =>
+          reply.header(key, value),
+        );
 
         reply.status(response.status);
         reply.send(response.body ? await response.text() : null);

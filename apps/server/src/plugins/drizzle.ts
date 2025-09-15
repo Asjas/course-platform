@@ -1,10 +1,10 @@
 import {
-  DoneFuncWithErrOrRes,
   FastifyInstance,
   FastifyPluginOptions,
+  HookHandlerDoneFunction,
 } from "fastify";
 import fp from "fastify-plugin";
-import { db } from "~/db";
+import { db } from "~/db/index.js";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -15,7 +15,7 @@ declare module "fastify" {
 function DrizzlePlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
-  done: DoneFuncWithErrOrRes,
+  done: HookHandlerDoneFunction,
 ) {
   fastify.decorate("db", db);
 

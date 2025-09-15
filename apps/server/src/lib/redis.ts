@@ -1,4 +1,4 @@
-import Redis, { type RedisOptions } from "ioredis";
+import { Redis, type RedisOptions } from "ioredis";
 
 const redisOptions: RedisOptions = {
   host: process.env.REDIS_HOST || "localhost",

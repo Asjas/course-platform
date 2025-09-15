@@ -1,12 +1,11 @@
 import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import * as t from "drizzle-orm/pg-core";
-import { v7 as uuidv7 } from "uuid";
-import { timestamps } from "~/db/schema/columns.helpers";
+import { timestamps } from "~/db/schema/columns.helpers.js";
 
 export const user = pgTable(
   "user",
   {
-    id: uuid().primaryKey().unique().default(uuidv7()),
+    id: uuid().primaryKey().unique(),
     name: text(),
     username: text().notNull().unique(),
     displayUsername: text(),
@@ -26,7 +25,7 @@ export const user = pgTable(
 );
 
 export const session = pgTable("session", {
-  id: uuid().primaryKey().unique().default(uuidv7()),
+  id: uuid().primaryKey().unique(),
   token: text().notNull().unique(),
   ipAddress: text(),
   userAgent: text(),
@@ -39,7 +38,7 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: uuid().primaryKey().unique().default(uuidv7()),
+  id: uuid().primaryKey().unique(),
   accountId: text().notNull(),
   providerId: text().notNull(),
   userId: uuid()
@@ -56,7 +55,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: uuid().primaryKey().unique().default(uuidv7()),
+  id: uuid().primaryKey().unique(),
   identifier: text().notNull(),
   value: text().notNull(),
   expiresAt: timestamp({ withTimezone: true }).notNull(),

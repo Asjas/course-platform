@@ -1,12 +1,13 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { Client } from "pg";
+import config from "~/config.js";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const client = new Client({ connectionString: config.DATABASE_URL });
+
+await client.connect();
 
 export const db = drizzle({
-  client: pool,
-  logger: process.env.NODE_ENV === "development",
+  client: client,
+  logger: config.NODE_ENV === "development",
   casing: "camelCase",
 });

@@ -1,11 +1,14 @@
 import envSchema from "env-schema";
-import S from "fluent-json-schema";
+import { S } from "fluent-json-schema";
 
 const schema = S.object()
   .prop("PORT", S.number().required())
   .prop("NODE_ENV", S.string().default("development"))
   .prop("LOG_LEVEL", S.string().default("info"))
+  .prop("DATABASE_URL", S.string())
   .prop("COOKIE_SECRET", S.string())
+  .prop("BETTER_AUTH_SECRET", S.string())
+  .prop("PEPPER_SECRET", S.string())
   .prop("MAIL_HOST", S.string())
   .prop("MAIL_PORT", S.number())
   .prop("MAIL_USER", S.string())
@@ -18,7 +21,10 @@ export type Config = {
   NODE_ENV: string;
   LOG_LEVEL: string;
   PRETTY_PRINT: boolean;
+  DATABASE_URL: string;
   COOKIE_SECRET: string;
+  BETTER_AUTH_SECRET: string;
+  PEPPER_SECRET: string;
   MAIL_HOST: string;
   MAIL_PORT: number;
   MAIL_USER: string;

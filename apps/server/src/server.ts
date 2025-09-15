@@ -1,20 +1,20 @@
-import FastifyNodemailer from "@asjas/fastify-nodemailer";
-import FastifyAutoload from "@fastify/autoload";
-import FastifyCors from "@fastify/cors";
-import FastifyEtag from "@fastify/etag";
-import FastifyFormBody from "@fastify/formbody";
-import FastifyHelmet from "@fastify/helmet";
-import FastifyMultipart from "@fastify/multipart";
-import FastifyRateLimit from "@fastify/rate-limit";
-import FastifySensible from "@fastify/sensible";
+import fastifyNodemailer from "@asjas/fastify-nodemailer";
+import fastifyAutoload from "@fastify/autoload";
+import fastifyCors from "@fastify/cors";
+import fastifyEtag from "@fastify/etag";
+import fastifyFormBody from "@fastify/formbody";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyMultipart from "@fastify/multipart";
+import fastifyRateLimit from "@fastify/rate-limit";
+import fastifySensible from "@fastify/sensible";
 import Fastify, { FastifyServerOptions } from "fastify";
-import FastifyAllow from "fastify-allow";
-import FastifyFavicon from "fastify-favicon";
-import FastifyHealthcheck from "fastify-healthcheck";
-import FastifyIP from "fastify-ip";
+import { FastifyAllowPlugin } from "fastify-allow";
+import fastifyFavicon from "fastify-favicon";
+import fastifyHealthcheck from "fastify-healthcheck";
+import fastifyIP from "fastify-ip";
 import { join } from "path";
-import type { Config } from "~/config";
-import { redis } from "~/lib/redis";
+import type { Config } from "~/config.js";
+import { redis } from "~/lib/redis.js";
 
 async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
@@ -26,9 +26,13 @@ async function createServer(config: Config) {
 
   const server = Fastify(opts);
 
-  await server.register(FastifyIP);
+  await server.register(fastifyIP.default, {
+    order: ["x-forwarded-for", "x-real-ip", "x-client-ip"], // Custom header priority
+    strict: false, // Allow fallbacks
+    isAWS: false, // Not using AWS-specific inference
+  });
 
-  await server.register(FastifyRateLimit, {
+  await server.register(fastifyRateLimit, {
     allowList: config.NODE_ENV === "development" ? ["127.0.0.1"] : [],
     max: 100,
     redis: redis,
@@ -45,7 +49,7 @@ async function createServer(config: Config) {
     },
   });
 
-  await server.register(FastifyCors, {
+  await server.register(fastifyCors, {
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
     maxAge: 86400,
@@ -53,23 +57,23 @@ async function createServer(config: Config) {
     origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
   });
 
-  await server.register(FastifyEtag);
+  await server.register(fastifyEtag);
 
-  await server.register(FastifyHelmet);
+  await server.register(fastifyHelmet);
 
-  await server.register(FastifyAllow);
+  await server.register(FastifyAllowPlugin);
 
-  await server.register(FastifyHealthcheck);
+  await server.register(fastifyHealthcheck);
 
-  await server.register(FastifyFormBody);
+  await server.register(fastifyFormBody);
 
-  await server.register(FastifyMultipart, { attachFieldsToBody: true });
+  await server.register(fastifyMultipart, { attachFieldsToBody: true });
 
-  await server.register(FastifyFavicon);
+  await server.register(fastifyFavicon);
 
-  await server.register(FastifySensible);
+  await server.register(fastifySensible);
 
-  await server.register(FastifyNodemailer, {
+  await server.register(fastifyNodemailer.default, {
     host: config.MAIL_HOST,
     port: config.MAIL_PORT,
     secure: false,
@@ -83,14 +87,14 @@ async function createServer(config: Config) {
     pool: true,
   });
 
-  await server.register(FastifyAutoload, {
+  await server.register(fastifyAutoload, {
     dir: join(import.meta.dirname, "plugins"),
     options: {
       ...opts,
     },
   });
 
-  await server.register(FastifyAutoload, {
+  await server.register(fastifyAutoload, {
     dir: join(import.meta.dirname, "routes"),
     dirNameRoutePrefix: true,
   });

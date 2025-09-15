@@ -1,5 +1,5 @@
-import config from "./config";
-import createServer from "./server";
+import config from "~/config.js";
+import createServer from "~/server.js";
 
 async function startServer() {
   try {

@@ -7,8 +7,10 @@ import {
   haveIBeenPwned,
   username,
 } from "better-auth/plugins";
-import { db } from "~/db";
-import { redis } from "~/lib/redis";
+import { v7 as uuid } from "uuid";
+import config from "~/config.js";
+import { db } from "~/db/index.js";
+import { redis } from "~/lib/redis.js";
 
 const ONE_HOUR = 3600;
 const ONE_YEAR = 31_556_952;
@@ -16,7 +18,7 @@ const ONE_YEAR = 31_556_952;
 export const auth = betterAuth({
   appName: "Codewizard Training",
   trustedOrigins: ["http://localhost:3000", "https://codewizard.training"],
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: config.BETTER_AUTH_SECRET,
   session: {
     expiresIn: ONE_YEAR,
     cookieCache: {
@@ -27,26 +29,21 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendEmailVerificationOnSignUp: true,
-    autoSignInAfterVerification: true,
     password: {
       hash: async function (password) {
         const hashedPassword = await argon2.hash(password, {
-          secret: Buffer.from(process.env.PEPPER_SECRET),
+          secret: Buffer.from(config.PEPPER_SECRET),
         });
 
         return hashedPassword;
       },
       verify: async function ({ hash, password }) {
         const verified = await argon2.verify(hash, password, {
-          secret: Buffer.from(process.env.PEPPER_SECRET),
+          secret: Buffer.from(config.PEPPER_SECRET),
         });
 
         return verified;
       },
-    },
-    async sendVerificationEmail() {
-      console.log("Send email to verify email address");
     },
     async sendResetPassword(url, user) {
       console.log("Send email to reset password");
@@ -61,7 +58,8 @@ export const auth = betterAuth({
       return await redis.get(key);
     },
     set: async (key, value, ttl) => {
-      await redis.set(key, value, "EX", ttl);
+      await redis.set(key, value);
+      if (ttl) await redis.expire(key, ttl);
     },
     delete: async (key) => {
       await redis.del(key);
@@ -70,13 +68,18 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  advanced: {
+    database: {
+      generateId: () => uuid(),
+    },
+  },
   plugins: [
     admin(),
     haveIBeenPwned(),
     anonymous(),
     username({
       usernameValidator: (username) => {
-        const invalidUsernames = ["admin", "support"];
+        const invalidUsernames = ["admin", "support", "codewizard"];
 
         return !invalidUsernames.includes(username);
       },

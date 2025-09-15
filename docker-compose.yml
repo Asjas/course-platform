@@ -1,19 +1,29 @@
-version: "2.38.1"
-
 services:
-  db:
-    container_name: db
-    image: postgres:17.6-alpine
+  cw-postgres:
+    container_name: cw-postgres
+    image: postgres:17.6-alpine3.22
+    environment:
+      - POSTGRES_USER=cw_user
+      - POSTGRES_PASSWORD=cw_pass
+      - POSTGRES_DB=cw_db
     volumes:
-      - db-data:/var/lib/postgresql
+      - cw-postgres-data:/var/lib/postgresql
+    ports:
+      - "5432:5432"
     restart: always
-    network_mode: host
-  redis:
-    container_name: redis
-    image: valkey:14.1-alpine
+  cw-dragonfly:
+    container_name: cw-dragonfly
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.33.1
+    volumes:
+      - cw-dragonfly-data:/data
+    ports:
+      - "6379:6379"
+    ulimits:
+      memlock: -1
     restart: always
-    network_mode: host
 
 volumes:
-  db-data:
+  cw-postgres-data:
+    external: false
+  cw-dragonfly-data:
     external: false

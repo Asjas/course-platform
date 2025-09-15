@@ -5,6 +5,6 @@ export const timestamps = {
     .$defaultFn(() => new Date())
     .notNull(),
   updatedAt: timestamp({ withTimezone: true })
-    .$defaultFn(() => new Date())
+    .$onUpdateFn(() => new Date())
     .notNull(),
 };
