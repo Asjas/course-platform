@@ -1,3 +1,4 @@
+import FastifyNodemailer from "@asjas/fastify-nodemailer";
 import FastifyAutoload from "@fastify/autoload";
 import FastifyCors from "@fastify/cors";
 import FastifyEtag from "@fastify/etag";
@@ -11,7 +12,6 @@ import FastifyAllow from "fastify-allow";
 import FastifyFavicon from "fastify-favicon";
 import FastifyHealthcheck from "fastify-healthcheck";
 import FastifyIP from "fastify-ip";
-import FastifyNodemailer from "fastify-nodemailer";
 import { join } from "path";
 import type { Config } from "~/config";
 import { redis } from "~/lib/redis";
@@ -80,6 +80,7 @@ async function createServer(config: Config) {
     tls: {
       rejectUnauthorized: false,
     },
+    pool: true,
   });
 
   await server.register(FastifyAutoload, {

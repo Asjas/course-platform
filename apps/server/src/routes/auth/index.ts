@@ -20,6 +20,7 @@ export default function AuthRoutes(
 
         // Convert Fastify headers to standard Headers object
         const headers = new Headers();
+
         Object.entries(request.headers).forEach(([key, value]) => {
           if (value) headers.append(key, value.toString());
         });
@@ -35,11 +36,15 @@ export default function AuthRoutes(
         const response = await auth.handler(req);
 
         // Forward response to client
-        reply.status(response.status);
         response.headers.forEach((value, key) => reply.header(key, value));
+
+        reply.status(response.status);
         reply.send(response.body ? await response.text() : null);
-      } catch (error) {
-        fastify.log.error("Authentication Error:", error);
+      } catch (err: unknown) {
+        const error = err instanceof Error ? err : new Error(String(err));
+
+        fastify.log.error(error, "Internal authentication error");
+
         reply.status(500).send({
           error: "Internal authentication error",
           code: "AUTH_FAILURE",
