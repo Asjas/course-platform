@@ -27,7 +27,14 @@ export default function PricingSection() {
         <div className="mx-auto mb-12 grid max-w-4xl gap-8 md:grid-cols-2">
           {/* Free price card */}
           <Card>
-            <CardHeader>Learn Fastify | Free</CardHeader>
+            <CardHeader>
+              Try it out
+              <img
+                className="inline h-10"
+                src="fastify-white.svg"
+                alt="Fastify"
+              />
+            </CardHeader>
             <CardPrice>$0</CardPrice>
             <CardContentList>
               <CardContentListItem customClasses="text-purple-400">
@@ -47,7 +54,14 @@ export default function PricingSection() {
 
           {/* Paid price card */}
           <Card>
-            <CardHeader>Learn Fastify | Full Course</CardHeader>
+            <CardHeader>
+              Full Course
+              <img
+                className="inline h-10"
+                src="fastify-white.svg"
+                alt="Fastify"
+              />
+            </CardHeader>
             <CardPrice>$19</CardPrice>
             <CardContentList>
               <CardContentListItem>All modules</CardContentListItem>
