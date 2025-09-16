@@ -9,11 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root"
+import { Route as TermsRouteImport } from "./routes/terms"
+import { Route as PrivacyRouteImport } from "./routes/privacy"
+import { Route as DownloadsRouteImport } from "./routes/downloads"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
 import { Route as authForgotpasswordRouteImport } from "./routes/(auth)/forgotpassword"
 
+const TermsRoute = TermsRouteImport.update({
+  id: "/terms",
+  path: "/terms",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: "/privacy",
+  path: "/privacy",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DownloadsRoute = DownloadsRouteImport.update({
+  id: "/downloads",
+  path: "/downloads",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
@@ -37,12 +55,18 @@ const authForgotpasswordRoute = authForgotpasswordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
+  "/downloads": typeof DownloadsRoute
+  "/privacy": typeof PrivacyRoute
+  "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
+  "/downloads": typeof DownloadsRoute
+  "/privacy": typeof PrivacyRoute
+  "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
@@ -50,18 +74,38 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
+  "/downloads": typeof DownloadsRoute
+  "/privacy": typeof PrivacyRoute
+  "/terms": typeof TermsRoute
   "/(auth)/forgotpassword": typeof authForgotpasswordRoute
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: "/" | "/forgotpassword" | "/signin" | "/signup"
+  fullPaths:
+    | "/"
+    | "/downloads"
+    | "/privacy"
+    | "/terms"
+    | "/forgotpassword"
+    | "/signin"
+    | "/signup"
   fileRoutesByTo: FileRoutesByTo
-  to: "/" | "/forgotpassword" | "/signin" | "/signup"
+  to:
+    | "/"
+    | "/downloads"
+    | "/privacy"
+    | "/terms"
+    | "/forgotpassword"
+    | "/signin"
+    | "/signup"
   id:
     | "__root__"
     | "/"
+    | "/downloads"
+    | "/privacy"
+    | "/terms"
     | "/(auth)/forgotpassword"
     | "/(auth)/signin"
     | "/(auth)/signup"
@@ -69,6 +113,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DownloadsRoute: typeof DownloadsRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   authForgotpasswordRoute: typeof authForgotpasswordRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
@@ -76,6 +123,27 @@ export interface RootRouteChildren {
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/terms": {
+      id: "/terms"
+      path: "/terms"
+      fullPath: "/terms"
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/privacy": {
+      id: "/privacy"
+      path: "/privacy"
+      fullPath: "/privacy"
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/downloads": {
+      id: "/downloads"
+      path: "/downloads"
+      fullPath: "/downloads"
+      preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/": {
       id: "/"
       path: "/"
@@ -109,6 +177,9 @@ declare module "@tanstack/react-router" {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DownloadsRoute: DownloadsRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   authForgotpasswordRoute: authForgotpasswordRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,

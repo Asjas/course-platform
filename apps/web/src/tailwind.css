@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@source "../node_modules/@daveyplate/better-auth-ui";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -19,6 +18,29 @@ body {
   }
 }
 
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gray-600) var(--color-gray-900);
+  scrollbar-gutter: stable;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Scrollbar width */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-gray-800; /* Track background */
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded bg-gray-500; /* Thumb color and rounded edges */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-600; /* Thumb color on hover */
+}
+
 /* .dark,
 :root[class~="dark"] {
 } */
@@ -28,7 +50,7 @@ body {
 }
 
 /* https://webkit.org/blog/16831/line-height-units/ */
-p {
+.line-height-p {
   margin-block: 1lh;
 }
 

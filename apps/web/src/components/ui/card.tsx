@@ -1,91 +1,76 @@
-import * as React from "react";
+import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { cn } from "~/lib/utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+export function Card({ children }: { children: ReactNode }) {
   return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
-        className,
-      )}
-      {...props}
-    />
+    <div className="relative flex flex-col rounded-lg border border-gray-700 p-8 transition-colors hover:border-green-600">
+      {children}
+    </div>
   );
 }
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
+export function CardHeader({ children }: { children: ReactNode }) {
+  return <h3 className="mb-2 text-2xl font-bold">{children}</h3>;
+}
+
+export function CardPrice({ children }: { children: ReactNode }) {
   return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6",
-        className,
-      )}
-      {...props}
-    />
+    <div className="mb-6">
+      <span className="text-4xl">{children}</span>
+    </div>
   );
 }
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
+export function CardContentList({ children }: { children: ReactNode }) {
+  return <ul className="mb-8 flex-grow space-y-3">{children}</ul>;
+}
+
+export function CardContentListItem({
+  children,
+  customClasses,
+}: {
+  children: ReactNode;
+  customClasses?: string;
+}) {
   return (
-    <div
-      data-slot="card-title"
-      className={cn("font-semibold leading-none", className)}
-      {...props}
-    />
+    <li className="flex items-start">
+      <svg
+        className={cn(
+          "mr-3 mt-0.5 h-5 w-5 flex-shrink-0 text-green-400",
+          customClasses,
+        )}
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+          clip-rule="evenodd"
+        ></path>
+      </svg>
+      <span className="text-gray-300">{children}</span>
+    </li>
   );
 }
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
+export function CardAction({
+  children,
+  to,
+}: {
+  children: ReactNode;
+  to: string;
+}) {
   return (
-    <div
-      data-slot="card-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
+    <Link
+      className="block w-full rounded-lg bg-gradient-to-r from-yellow-500 to-green-600 px-6 py-3 text-center font-semibold text-white shadow-lg transition-all hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"
+      to={to}
+    >
+      {children}
+    </Link>
   );
 }
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className,
-      )}
-      {...props}
-    />
-  );
+export function CardFooter({ children }: { children: ReactNode }) {
+  return <p className="mt-4 text-center text-sm text-gray-400">{children}</p>;
 }
-
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6", className)}
-      {...props}
-    />
-  );
-}
-
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("[.border-t]:pt-6 flex items-center px-6", className)}
-      {...props}
-    />
-  );
-}
-
-export {
-  Card,
-  CardHeader,
-  CardFooter,
-  CardTitle,
-  CardAction,
-  CardDescription,
-  CardContent,
-};

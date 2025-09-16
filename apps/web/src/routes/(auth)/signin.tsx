@@ -14,7 +14,7 @@ export const Route = createFileRoute("/(auth)/signin")({
   component: AuthPage,
 });
 
-export default function AuthPage() {
+function AuthPage() {
   return (
     <div className="flex size-full grow flex-col items-center justify-center gap-3">
       <Card className="w-full max-w-sm">
