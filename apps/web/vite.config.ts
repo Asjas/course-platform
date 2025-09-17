@@ -1,7 +1,10 @@
+import mdx from "@mdx-js/rollup";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
+import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -46,6 +49,12 @@ export default defineConfig({
     }),
     react({ babel: { plugins: ["babel-plugin-react-compiler"] } }),
     tailwindcss(),
+    // MDX plugin configuration
+    mdx({
+      remarkPlugins: [remarkGfm],
+      rehypePlugins: [rehypeHighlight],
+      providerImportSource: "@mdx-js/react",
+    }),
   ],
   css: { transformer: "lightningcss" },
   build: { cssMinify: "lightningcss" },
@@ -54,4 +63,6 @@ export default defineConfig({
       "~": resolve(__dirname, "./src"),
     },
   },
+  // Ensure .md and .mdx files are treated as source code
+  assetsInclude: ["**/*.md", "**/*.mdx"],
 });

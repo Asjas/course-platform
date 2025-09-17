@@ -3,16 +3,16 @@ import NavLink from "~/components/ui/nav-link";
 
 export default function Header() {
   return (
-    <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/[0.02] bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60 lg:h-20">
-      <nav className="xl:outer-xl bg-navy fixed top-0 z-50 flex w-full items-center justify-between p-4">
-        <div className="flex min-h-10 items-center">
+    <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/[0.02] bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60">
+      <nav className="z-50 flex w-full items-center justify-between px-6 py-5">
+        <div className="flex items-center">
           <Link
-            className="lg:min-w-logo mr-8 flex-shrink text-lg font-bold text-gray-900 dark:text-gray-50"
+            className="mr-8 text-lg font-bold text-gray-900 dark:text-gray-50"
             to="/"
-            aria-lable="Codewizard Training"
+            aria-label="Codewizard Training"
           >
             <img
-              className="hidden max-h-9 w-auto rounded-sm dark:block"
+              className="block h-[36px] w-[113px] rounded-sm"
               src="codewizard.png"
               alt="Codewizard Training"
             />

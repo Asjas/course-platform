@@ -8,7 +8,13 @@ export default function CTASection() {
         <h2 className="mb-6 text-4xl font-bold md:text-5xl">
           Ready to level up your skills?
         </h2>
-        <p className="mb-12 text-xl text-slate-300">Let's get after it.</p>
+        <p className="mb-4 mt-8 text-xl text-slate-300">
+          Create a free account.
+        </p>
+        <p className="mb-12 text-xl text-slate-300">
+          Watch a few free modules and then decide on whether you want to buy
+          the course or not.
+        </p>
         <div className="flex justify-center">
           <Link
             className="inline-flex transform items-center justify-center rounded-lg bg-gradient-to-r from-yellow-600 to-green-600 px-16 py-5 text-xl font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"

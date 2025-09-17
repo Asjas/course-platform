@@ -12,7 +12,7 @@ export const Route = createRootRoute({
         storageKey="cw-ui-theme"
       >
         <Header />
-        <main className="flex min-h-screen overflow-y-auto pt-20">
+        <main className="flex min-h-screen overflow-y-auto px-6 pt-20">
           <Outlet />
         </main>
         <Footer />

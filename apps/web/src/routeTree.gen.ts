@@ -8,14 +8,24 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from "@tanstack/react-router"
+
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as TermsRouteImport } from "./routes/terms"
 import { Route as PrivacyRouteImport } from "./routes/privacy"
 import { Route as DownloadsRouteImport } from "./routes/downloads"
+import { Route as BlogRouteImport } from "./routes/blog"
 import { Route as IndexRouteImport } from "./routes/index"
+import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
 import { Route as authForgotpasswordRouteImport } from "./routes/(auth)/forgotpassword"
+import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
+import { Route as EducationCoursesCoursePathlessLayoutRouteImport } from "./routes/education/courses/$course/_pathlessLayout"
+
+const EducationCoursesCourseRouteImport = createFileRoute(
+  "/education/courses/$course",
+)()
 
 const TermsRoute = TermsRouteImport.update({
   id: "/terms",
@@ -32,10 +42,20 @@ const DownloadsRoute = DownloadsRouteImport.update({
   path: "/downloads",
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: "/blog",
+  path: "/blog",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: "/$slug",
+  path: "/$slug",
+  getParentRoute: () => BlogRoute,
 } as any)
 const authSignupRoute = authSignupRouteImport.update({
   id: "/(auth)/signup",
@@ -52,73 +72,115 @@ const authForgotpasswordRoute = authForgotpasswordRouteImport.update({
   path: "/forgotpassword",
   getParentRoute: () => rootRouteImport,
 } as any)
+const EducationCoursesCourseRoute = EducationCoursesCourseRouteImport.update({
+  id: "/education/courses/$course",
+  path: "/education/courses/$course",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EducationCoursesCourseIndexRoute =
+  EducationCoursesCourseIndexRouteImport.update({
+    id: "/",
+    path: "/",
+    getParentRoute: () => EducationCoursesCourseRoute,
+  } as any)
+const EducationCoursesCoursePathlessLayoutRoute =
+  EducationCoursesCoursePathlessLayoutRouteImport.update({
+    id: "/_pathlessLayout",
+    getParentRoute: () => EducationCoursesCourseRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
+  "/blog": typeof BlogRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
+  "/blog/$slug": typeof BlogSlugRoute
+  "/education/courses/$course": typeof EducationCoursesCoursePathlessLayoutRoute
+  "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
+  "/blog": typeof BlogRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
+  "/blog/$slug": typeof BlogSlugRoute
+  "/education/courses/$course": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
+  "/blog": typeof BlogRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
   "/(auth)/forgotpassword": typeof authForgotpasswordRoute
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
+  "/blog/$slug": typeof BlogSlugRoute
+  "/education/courses/$course": typeof EducationCoursesCourseRouteWithChildren
+  "/education/courses/$course/_pathlessLayout": typeof EducationCoursesCoursePathlessLayoutRoute
+  "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | "/"
+    | "/blog"
     | "/downloads"
     | "/privacy"
     | "/terms"
     | "/forgotpassword"
     | "/signin"
     | "/signup"
+    | "/blog/$slug"
+    | "/education/courses/$course"
+    | "/education/courses/$course/"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
+    | "/blog"
     | "/downloads"
     | "/privacy"
     | "/terms"
     | "/forgotpassword"
     | "/signin"
     | "/signup"
+    | "/blog/$slug"
+    | "/education/courses/$course"
   id:
     | "__root__"
     | "/"
+    | "/blog"
     | "/downloads"
     | "/privacy"
     | "/terms"
     | "/(auth)/forgotpassword"
     | "/(auth)/signin"
     | "/(auth)/signup"
+    | "/blog/$slug"
+    | "/education/courses/$course"
+    | "/education/courses/$course/_pathlessLayout"
+    | "/education/courses/$course/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BlogRoute: typeof BlogRouteWithChildren
   DownloadsRoute: typeof DownloadsRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
   authForgotpasswordRoute: typeof authForgotpasswordRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
+  EducationCoursesCourseRoute: typeof EducationCoursesCourseRouteWithChildren
 }
 
 declare module "@tanstack/react-router" {
@@ -144,12 +206,26 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof DownloadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/blog": {
+      id: "/blog"
+      path: "/blog"
+      fullPath: "/blog"
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/": {
       id: "/"
       path: "/"
       fullPath: "/"
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    "/blog/$slug": {
+      id: "/blog/$slug"
+      path: "/$slug"
+      fullPath: "/blog/$slug"
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
     "/(auth)/signup": {
       id: "/(auth)/signup"
@@ -172,17 +248,67 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof authForgotpasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/education/courses/$course": {
+      id: "/education/courses/$course"
+      path: "/education/courses/$course"
+      fullPath: "/education/courses/$course"
+      preLoaderRoute: typeof EducationCoursesCourseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/education/courses/$course/": {
+      id: "/education/courses/$course/"
+      path: "/"
+      fullPath: "/education/courses/$course/"
+      preLoaderRoute: typeof EducationCoursesCourseIndexRouteImport
+      parentRoute: typeof EducationCoursesCourseRoute
+    }
+    "/education/courses/$course/_pathlessLayout": {
+      id: "/education/courses/$course/_pathlessLayout"
+      path: "/education/courses/$course"
+      fullPath: "/education/courses/$course"
+      preLoaderRoute: typeof EducationCoursesCoursePathlessLayoutRouteImport
+      parentRoute: typeof EducationCoursesCourseRoute
+    }
   }
 }
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
+interface EducationCoursesCourseRouteChildren {
+  EducationCoursesCoursePathlessLayoutRoute: typeof EducationCoursesCoursePathlessLayoutRoute
+  EducationCoursesCourseIndexRoute: typeof EducationCoursesCourseIndexRoute
+}
+
+const EducationCoursesCourseRouteChildren: EducationCoursesCourseRouteChildren =
+  {
+    EducationCoursesCoursePathlessLayoutRoute:
+      EducationCoursesCoursePathlessLayoutRoute,
+    EducationCoursesCourseIndexRoute: EducationCoursesCourseIndexRoute,
+  }
+
+const EducationCoursesCourseRouteWithChildren =
+  EducationCoursesCourseRoute._addFileChildren(
+    EducationCoursesCourseRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BlogRoute: BlogRouteWithChildren,
   DownloadsRoute: DownloadsRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
   authForgotpasswordRoute: authForgotpasswordRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
+  EducationCoursesCourseRoute: EducationCoursesCourseRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
