@@ -7,8 +7,19 @@ applyTo: "**/*.tsx"
 ## Component Structure
 
 - Use functional components exclusively. Avoid class-based components.
-- Define components using ES5 function declarations (e.g., function MyComponent() {}) instead of arrow functions (e.g., const MyComponent = () => {}).
-- Use PascalCase for component names (e.g., SignIn, UserProfile).
+- Frontend stack:
+  - Tanstack Router for routing and natigation with TypeScript.
+  - Tanstack Query for data fetching and state management.
+  - Tanstack DB for client-side data management.
+  - Tanstack Form for form building.
+  - Better Auth for authentication-related components (e.g., login/logout flows).
+- CSS Styling:
+  - Use Tailwind CSS (via tailwind.css) classes for styling, applied via className.
+- Accessibility:
+  - Use HTML5 elements when needed over generic div elements.
+  - Ensure ARIA labels for accessibility (e.g., aria-label or aria-labelledby on interactive elements).
+- Testing:
+  - Ensure test coverage with React Testing Library and Vitest for all components.
 
 ## TypeScript Usage
 
@@ -19,17 +30,21 @@ applyTo: "**/*.tsx"
 
 ## Naming Conventions
 
+- Use PascalCase for component names (e.g., SignIn, UserProfile).
 - Use camelCase for variables, functions, and methods
 - Avoid abbreviations unless widely understood (e.g., id is fine, but avoid usr for user).
+- Use descriptive prop names that reflect their purpose (e.g., userName instead of name if it represents a user's name).
 
 ## Hooks and Functions
 
-- Prefer ES5 function declarations for event handlers and utility functions (e.g., function handleClick() {}).
-- Avoid using arrow functions for event handlers or utilities unless required for lexical this binding.
-- Minimize use of React hooks (useState, useEffect, etc.). When necessary, type their inputs and outputs explicitly (e.g., useState<string>("")).
+- Define components using ES5 function declarations (e.g., function MyComponent() {}) instead of arrow functions (e.g., const MyComponent = () => {}).
+- Prefer ES5 function declarations (e.g., function handleClick() {}) over ES6 arrow functions for event handlers and utilities.
+- Minimize use of React hooks (useState, useEffect, etc.). When necessary, use Tanstack Query for state management.
 
 ## Code Style
 
+- Follow ESLint rules as defined in the project configuration.
+- Prefer const over let for variable declarations.
 - Use double quotes (") for string literals.
 - Place each prop on a new line for readability when there are more than two props.
 - Add a single space after the colon in type annotations (e.g., name: string).
@@ -65,6 +80,5 @@ function MyComponent(props: IMyComponentProps): JSX.Element {
 ## Additional Notes
 
 - Ensure all components are exported with export default or named exports.
-- Use descriptive prop names that reflect their purpose (e.g., userName instead of name if it represents a user's name).
-- Avoid inline styles; use Tailwind classes for styling.
+- Use named exports for utility functions and types when appropriate.
 - Write clear JSDoc comments for complex logic or interfaces when necessary.
