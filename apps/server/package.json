@@ -41,7 +41,7 @@
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.4.0",
+    "@types/node": "24.5.1",
     "@types/pg": "8.15.5",
     "drizzle-kit": "0.31.4",
     "rimraf": "6.0.1",
