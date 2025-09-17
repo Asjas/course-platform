@@ -49,6 +49,7 @@ applyTo: "**/*.tsx"
 - Place each prop on a new line for readability when there are more than two props.
 - Add a single space after the colon in type annotations (e.g., name: string).
 - Include a blank line between major sections (e.g., imports, interfaces, component body).
+- Use try/catch blocks for async operations.
 
 ## Example
 

@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.ts"
+applyTo: "**"
 description: "Coding style guide for Node.js backend with TypeScript, Fastify, Drizzle, Better Auth, and Vitest."
 ---
 
@@ -27,6 +27,7 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, D
   - Use double quotes (") for string literals.
   - Add JSDoc comments for complex functions or types.
   - Use .js for relative file import extension even though TypeScript is being used.
+  - Use try/catch blocks for async operations.
 - Fastify Routes
   - Define routes using ES5 function declarations for handlers.
   - Use TypeScript interfaces for request/response payloads (e.g., IUserRequest).
