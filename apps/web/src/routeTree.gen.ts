@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from "@tanstack/react-router"
-
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as TermsRouteImport } from "./routes/terms"
 import { Route as PrivacyRouteImport } from "./routes/privacy"
@@ -20,12 +18,8 @@ import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
 import { Route as authForgotpasswordRouteImport } from "./routes/(auth)/forgotpassword"
+import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
-import { Route as EducationCoursesCoursePathlessLayoutRouteImport } from "./routes/education/courses/$course/_pathlessLayout"
-
-const EducationCoursesCourseRouteImport = createFileRoute(
-  "/education/courses/$course",
-)()
 
 const TermsRoute = TermsRouteImport.update({
   id: "/terms",
@@ -72,21 +66,17 @@ const authForgotpasswordRoute = authForgotpasswordRouteImport.update({
   path: "/forgotpassword",
   getParentRoute: () => rootRouteImport,
 } as any)
-const EducationCoursesCourseRoute = EducationCoursesCourseRouteImport.update({
-  id: "/education/courses/$course",
-  path: "/education/courses/$course",
-  getParentRoute: () => rootRouteImport,
-} as any)
+const EducationCoursesCourseRouteRoute =
+  EducationCoursesCourseRouteRouteImport.update({
+    id: "/education/courses/$course",
+    path: "/education/courses/$course",
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EducationCoursesCourseIndexRoute =
   EducationCoursesCourseIndexRouteImport.update({
     id: "/",
     path: "/",
-    getParentRoute: () => EducationCoursesCourseRoute,
-  } as any)
-const EducationCoursesCoursePathlessLayoutRoute =
-  EducationCoursesCoursePathlessLayoutRouteImport.update({
-    id: "/_pathlessLayout",
-    getParentRoute: () => EducationCoursesCourseRoute,
+    getParentRoute: () => EducationCoursesCourseRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -99,7 +89,7 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/blog/$slug": typeof BlogSlugRoute
-  "/education/courses/$course": typeof EducationCoursesCoursePathlessLayoutRoute
+  "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRoutesByTo {
@@ -125,8 +115,7 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/blog/$slug": typeof BlogSlugRoute
-  "/education/courses/$course": typeof EducationCoursesCourseRouteWithChildren
-  "/education/courses/$course/_pathlessLayout": typeof EducationCoursesCoursePathlessLayoutRoute
+  "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRouteTypes {
@@ -167,7 +156,6 @@ export interface FileRouteTypes {
     | "/(auth)/signup"
     | "/blog/$slug"
     | "/education/courses/$course"
-    | "/education/courses/$course/_pathlessLayout"
     | "/education/courses/$course/"
   fileRoutesById: FileRoutesById
 }
@@ -180,7 +168,7 @@ export interface RootRouteChildren {
   authForgotpasswordRoute: typeof authForgotpasswordRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
-  EducationCoursesCourseRoute: typeof EducationCoursesCourseRouteWithChildren
+  EducationCoursesCourseRouteRoute: typeof EducationCoursesCourseRouteRouteWithChildren
 }
 
 declare module "@tanstack/react-router" {
@@ -252,7 +240,7 @@ declare module "@tanstack/react-router" {
       id: "/education/courses/$course"
       path: "/education/courses/$course"
       fullPath: "/education/courses/$course"
-      preLoaderRoute: typeof EducationCoursesCourseRouteImport
+      preLoaderRoute: typeof EducationCoursesCourseRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/education/courses/$course/": {
@@ -260,14 +248,7 @@ declare module "@tanstack/react-router" {
       path: "/"
       fullPath: "/education/courses/$course/"
       preLoaderRoute: typeof EducationCoursesCourseIndexRouteImport
-      parentRoute: typeof EducationCoursesCourseRoute
-    }
-    "/education/courses/$course/_pathlessLayout": {
-      id: "/education/courses/$course/_pathlessLayout"
-      path: "/education/courses/$course"
-      fullPath: "/education/courses/$course"
-      preLoaderRoute: typeof EducationCoursesCoursePathlessLayoutRouteImport
-      parentRoute: typeof EducationCoursesCourseRoute
+      parentRoute: typeof EducationCoursesCourseRouteRoute
     }
   }
 }
@@ -282,21 +263,18 @@ const BlogRouteChildren: BlogRouteChildren = {
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
-interface EducationCoursesCourseRouteChildren {
-  EducationCoursesCoursePathlessLayoutRoute: typeof EducationCoursesCoursePathlessLayoutRoute
+interface EducationCoursesCourseRouteRouteChildren {
   EducationCoursesCourseIndexRoute: typeof EducationCoursesCourseIndexRoute
 }
 
-const EducationCoursesCourseRouteChildren: EducationCoursesCourseRouteChildren =
+const EducationCoursesCourseRouteRouteChildren: EducationCoursesCourseRouteRouteChildren =
   {
-    EducationCoursesCoursePathlessLayoutRoute:
-      EducationCoursesCoursePathlessLayoutRoute,
     EducationCoursesCourseIndexRoute: EducationCoursesCourseIndexRoute,
   }
 
-const EducationCoursesCourseRouteWithChildren =
-  EducationCoursesCourseRoute._addFileChildren(
-    EducationCoursesCourseRouteChildren,
+const EducationCoursesCourseRouteRouteWithChildren =
+  EducationCoursesCourseRouteRoute._addFileChildren(
+    EducationCoursesCourseRouteRouteChildren,
   )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -308,7 +286,8 @@ const rootRouteChildren: RootRouteChildren = {
   authForgotpasswordRoute: authForgotpasswordRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
-  EducationCoursesCourseRoute: EducationCoursesCourseRouteWithChildren,
+  EducationCoursesCourseRouteRoute:
+    EducationCoursesCourseRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

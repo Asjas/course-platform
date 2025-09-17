@@ -25,8 +25,17 @@ export default function Footer() {
                 </a>
               </div>
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              <span>Built with ❤️ by Codewizard</span>
+            <div className="flex flex-col text-sm text-gray-600 dark:text-gray-400">
+              <span className="pb-2">Built with ❤️ by Codewizard</span>
+              <span>
+                Design inspired by{" "}
+                <a
+                  className="hover:text-green-400"
+                  href="https://typecraft.dev"
+                >
+                  typecraft
+                </a>
+              </span>
             </div>
             <div className="flex space-x-6 text-sm text-gray-600 dark:text-gray-400">
               <Link
