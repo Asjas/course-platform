@@ -1,5 +1,5 @@
 ---
-applyTo: "**"
+applyTo: "apps/server/**"
 description: "Coding style guide for Node.js backend with TypeScript, Fastify, Drizzle, Better Auth, and Vitest."
 ---
 
