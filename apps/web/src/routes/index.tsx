@@ -13,7 +13,7 @@ function App() {
     <div className="flex w-full flex-col">
       {/* Hero Section */}
       <div className="pt-20 text-center">
-        <h1 className="mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text pb-4 text-5xl font-bold text-transparent md:text-7xl">
+        <h1 className="mb-6 bg-gradient-to-r from-white to-slate-300 bg-clip-text pb-12 text-5xl font-bold text-transparent md:text-7xl">
           Master Lasting <span className="text-green-400">Web Dev Skills</span>
         </h1>
         <p className="mx-auto mb-12 max-w-4xl text-xl leading-relaxed text-slate-300 md:text-2xl">

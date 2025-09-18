@@ -24,6 +24,6 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true
   },
-  "include": ["src/**/*", "drizzle.config.ts"],
+  "include": ["src/**/*", "tests/**/*", "drizzle.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -19,7 +19,7 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, D
 ## Coding Guidelines
 
 - General Standards
-  - Prefer ES5 function declarations (e.g., function handleRequest() {}) over arrow functions for route handlers and utilities.
+  - Prefer ES5 function declarations (e.g., function handleRequest() {} or export async function newUser() {}) over arrow functions for route handlers and utilities.
   - Specify parameter types and return types for all functions using TypeScript.
   - Use camelCase for variables, functions, and methods (e.g., userId, fetchUser).
   - Follow ESLint rules defined in the project configuration.

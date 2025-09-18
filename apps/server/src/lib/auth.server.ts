@@ -10,10 +10,8 @@ import {
 import { v7 as uuid } from "uuid";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
+import { ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { redis } from "~/lib/redis.js";
-
-const ONE_HOUR = 3600;
-const ONE_YEAR = 31_556_952;
 
 export const auth = betterAuth({
   appName: "Codewizard Training",
