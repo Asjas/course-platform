@@ -1,17 +1,24 @@
 ---
 applyTo: "**"
-description: "General coding guidelines for the course website project, including project overview and high-level practices."
+description: "General coding guidelines for the course website project, including project overview and high-level practices"
 ---
 
-# Coding Guidelines
+# Project Overview
 
-## Introduction
+This project is a course website that allows users to purchase courses, view the course videos using a video player, ask for help using a support help-desk system and use a chat system for real-time communication
 
-- This project is a course website.
-- Major libraries used in the frontend (web): React.js, Better Auth, TanStack Router, TanStack Query, TanStack DB, TanStack Form, and TypeScript.
-- Major libraries used in the backend (server): Fastify, Better Auth, Drizzle ORM, and TypeScript.
-- The project uses Node.js and pnpm as the package manager.
-- Key files: vite.config.ts, tailwind.css, tsconfig.json, auth.server.ts, auth.client.ts, package.json, .prettierrc.
+## Folder Structure
+
+- /apps/web/: Contains the source code for the frontend
+- /apps/server/: Contains the source code for the backend
+- /apps/web/src/tauri: Contains the source code for the native apps
+
+## Libraries and Frameworks
+
+- Major libraries used in the frontend: React.js, Better Auth, TanStack Router, TanStack Query, TanStack DB, TanStack Form and TypeScript
+- Major libraries used in the backend: Fastify, Better Auth, Drizzle ORM, and TypeScript
+- The project uses Node.js and pnpm as the package manager
+- Key files: vite.config.ts, tailwind.css, tsconfig.json, auth.server.ts, auth.client.ts, package.json, .prettierrc
 
 ## Coding Guidelines
 
@@ -21,10 +28,15 @@ description: "General coding guidelines for the course website project, includin
 - For Node.js and Fastify specifics, see `typescript-node.instructions.md`.
 - Optimize images, use Tailwind CSS and lucide-react icons.
 - Use SEO, PWA, and mdx plugins as configured.
+- Use semicolons at the end of each statement.
 - Use try/catch blocks for async operations.
 - Always log errors with contextual information.
 
-## Research For New Documentation
+## UI Guidelines
+
+- Application should have a modern and clean design.
+
+# Research For New Documentation
 
 THE PROBLEM CAN NOT BE SOLVED WITHOUT EXTENSIVE INTERNET RESEARCH.
 
