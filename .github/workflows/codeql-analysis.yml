@@ -6,12 +6,36 @@ on:
     paths-ignore:
       - '.github/**'
       - '*.md'
+      - '*.hmtl'
+      - '*.css'
+      - '*.json'
+      - '*.yaml'
+      - '.git*'
+      - '.prettier*'
+      - '.editorconfig'
+      - '.npmrc'
+      - '.env.sample'
+      - '.dockerignore'
+      - 'docker-compose.yml'
+      - 'renovate.json'
       - 'LICENSE'
   pull_request:
     branches: [ main ]
     paths-ignore:
       - '.github/**'
       - '*.md'
+      - '*.hmtl'
+      - '*.css'
+      - '*.json'
+      - '*.yaml'
+      - '.git*'
+      - '.prettier*'
+      - '.editorconfig'
+      - '.npmrc'
+      - '.env.sample'
+      - '.dockerignore'
+      - 'docker-compose.yml'
+      - 'renovate.json'
       - 'LICENSE'
   schedule:
     - cron: '0 8 * * 1'
@@ -35,6 +59,8 @@ jobs:
         include:
           - language: javascript-typescript
             build-mode: none
+          - language: rust
+            build-mode: autobuild
 
     steps:
     - name: Checkout repository
