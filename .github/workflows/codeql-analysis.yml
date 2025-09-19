@@ -1,4 +1,4 @@
-name: "CodeQL Auto Language"
+name: "CodeQL Analysis"
 
 on:
   push:
@@ -9,54 +9,24 @@ on:
     - cron: '0 8 * * 1'
 
 jobs:
-  create-matrix:
+  analyze:
+    name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
     permissions:
       # required for all workflows
       security-events: write
-
       # required to fetch internal or private CodeQL packs
       packages: read
-
       # only required for workflows in private repositories
       actions: read
       contents: read
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-      has-languages: ${{ steps.check-matrix.outputs.has-languages }}
-    steps:
-      - name: Get languages from repo
-        id: set-matrix
-        uses: advanced-security/set-codeql-language-matrix@v1
-        with:
-          access-token: ${{ secrets.GITHUB_TOKEN }}
-          endpoint: ${{ github.event.repository.languages_url }}
-
-      - name: Check if matrix is valid
-        id: check-matrix
-        run: |
-          MATRIX="${{ steps.set-matrix.outputs.matrix }}"
-          if [[ -z "$MATRIX" || "$MATRIX" == "[]" || "$MATRIX" == "" ]]; then
-            echo "has-languages=false" >> $GITHUB_OUTPUT
-            echo "No supported languages found for CodeQL analysis"
-          else
-            echo "has-languages=true" >> $GITHUB_OUTPUT
-            echo "Found languages: $MATRIX"
-          fi
-
-  analyze:
-    needs: create-matrix
-    if: ${{ needs.create-matrix.outputs.has-languages == 'true' }}
-    name: Analyze
-    runs-on: 'ubuntu-latest'
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
 
     strategy:
       fail-fast: false
-      matrix: ${{ fromJSON(needs.create-matrix.outputs.matrix) }}
+      matrix:
+        include:
+          - language: javascript-typescript
+            build-mode: none
 
     steps:
     - name: Checkout repository
@@ -73,16 +43,3 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
-
-  # Job to handle the case when no languages are found
-  no-languages:
-    needs: create-matrix
-    if: ${{ needs.create-matrix.outputs.has-languages == 'false' }}
-    name: No Languages Found
-    runs-on: ubuntu-latest
-    steps:
-    - name: No supported languages
-      run: |
-        echo "No CodeQL-supported languages found in this repository."
-        echo "CodeQL supports: C/C++, C#, Go, Java/Kotlin, JavaScript/TypeScript, Python, Ruby, Swift"
-        echo "Skipping CodeQL analysis."
