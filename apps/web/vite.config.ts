@@ -5,18 +5,20 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
-import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
+import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
+    tsconfigPaths(),
     VitePWA({
       injectRegister: "inline",
       registerType: "autoUpdate",
       manifestFilename: "manifest.json",
       // outDir: resolve(__dirname, "dist/assets"),
       workbox: {
-        globPatterns: ["**/*.{html,css,js,json,ico,png,svg}"],
+        globPatterns: ["**/*.{html,css,js,png,svg}"],
         clientsClaim: true,
         skipWaiting: true,
         cleanupOutdatedCaches: true,
@@ -65,4 +67,17 @@ export default defineConfig({
   },
   // Ensure .md and .mdx files are treated as source code
   assetsInclude: ["**/*.md", "**/*.mdx"],
+  // Vitest configuration
+  test: {
+    globals: true,
+    environment: "jsdom",
+    include: [
+      "src/**/*.spec.ts",
+      "src/**/*.test.ts",
+      "src/**/*.spec.tsx",
+      "src/**/*.test.tsx",
+    ],
+    passWithNoTests: false,
+    setupFiles: ["./src/test-setup.ts"],
+  },
 });

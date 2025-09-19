@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from "./routes/__root"
 import { Route as TermsRouteImport } from "./routes/terms"
+import { Route as SettingsRouteImport } from "./routes/settings"
 import { Route as PrivacyRouteImport } from "./routes/privacy"
 import { Route as DownloadsRouteImport } from "./routes/downloads"
+import { Route as DashboardRouteImport } from "./routes/dashboard"
 import { Route as BlogRouteImport } from "./routes/blog"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
@@ -26,6 +28,11 @@ const TermsRoute = TermsRouteImport.update({
   path: "/terms",
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacyRoute = PrivacyRouteImport.update({
   id: "/privacy",
   path: "/privacy",
@@ -34,6 +41,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const DownloadsRoute = DownloadsRouteImport.update({
   id: "/downloads",
   path: "/downloads",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: "/dashboard",
+  path: "/dashboard",
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -82,8 +94,10 @@ const EducationCoursesCourseIndexRoute =
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
   "/blog": typeof BlogRouteWithChildren
+  "/dashboard": typeof DashboardRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
+  "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
@@ -95,8 +109,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/blog": typeof BlogRouteWithChildren
+  "/dashboard": typeof DashboardRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
+  "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
   "/forgotpassword": typeof authForgotpasswordRoute
   "/signin": typeof authSigninRoute
@@ -108,8 +124,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
   "/blog": typeof BlogRouteWithChildren
+  "/dashboard": typeof DashboardRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
+  "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
   "/(auth)/forgotpassword": typeof authForgotpasswordRoute
   "/(auth)/signin": typeof authSigninRoute
@@ -123,8 +141,10 @@ export interface FileRouteTypes {
   fullPaths:
     | "/"
     | "/blog"
+    | "/dashboard"
     | "/downloads"
     | "/privacy"
+    | "/settings"
     | "/terms"
     | "/forgotpassword"
     | "/signin"
@@ -136,8 +156,10 @@ export interface FileRouteTypes {
   to:
     | "/"
     | "/blog"
+    | "/dashboard"
     | "/downloads"
     | "/privacy"
+    | "/settings"
     | "/terms"
     | "/forgotpassword"
     | "/signin"
@@ -148,8 +170,10 @@ export interface FileRouteTypes {
     | "__root__"
     | "/"
     | "/blog"
+    | "/dashboard"
     | "/downloads"
     | "/privacy"
+    | "/settings"
     | "/terms"
     | "/(auth)/forgotpassword"
     | "/(auth)/signin"
@@ -162,8 +186,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BlogRoute: typeof BlogRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   DownloadsRoute: typeof DownloadsRoute
   PrivacyRoute: typeof PrivacyRoute
+  SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   authForgotpasswordRoute: typeof authForgotpasswordRoute
   authSigninRoute: typeof authSigninRoute
@@ -180,6 +206,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/settings": {
+      id: "/settings"
+      path: "/settings"
+      fullPath: "/settings"
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/privacy": {
       id: "/privacy"
       path: "/privacy"
@@ -192,6 +225,13 @@ declare module "@tanstack/react-router" {
       path: "/downloads"
       fullPath: "/downloads"
       preLoaderRoute: typeof DownloadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/dashboard": {
+      id: "/dashboard"
+      path: "/dashboard"
+      fullPath: "/dashboard"
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/blog": {
@@ -280,8 +320,10 @@ const EducationCoursesCourseRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BlogRoute: BlogRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   DownloadsRoute: DownloadsRoute,
   PrivacyRoute: PrivacyRoute,
+  SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   authForgotpasswordRoute: authForgotpasswordRoute,
   authSigninRoute: authSigninRoute,

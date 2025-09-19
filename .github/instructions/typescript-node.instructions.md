@@ -1,6 +1,6 @@
 ---
 applyTo: "apps/server/**"
-description: "Coding style guide for Node.js backend with TypeScript, Fastify, Drizzle, Better Auth, and Vitest."
+description: "Coding style guide for Node.js backend with TypeScript, Fastify, Drizzle, Better Auth, with Vitest testing"
 ---
 
 # Project Context
@@ -17,7 +17,6 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, D
   - Mutations in /src/db/mutation.ts for database inserts, updates, and deletes.
 
 ## Coding Guidelines
-
 - General Standards
   - Prefer ES5 function declarations (e.g., function handleRequest() {} or export async function newUser() {}) over arrow functions for route handlers and utilities.
   - Specify parameter types and return types for all functions using TypeScript.
