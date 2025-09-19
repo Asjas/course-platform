@@ -13,7 +13,7 @@ services:
     restart: always
   cw-dragonfly:
     container_name: cw-dragonfly
-    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.34.0
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.34.1
     volumes:
       - cw-dragonfly-data:/data
     ports:
