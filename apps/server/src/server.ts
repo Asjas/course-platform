@@ -14,6 +14,7 @@ import fastifyHealthcheck from "fastify-healthcheck";
 import fastifyIP from "fastify-ip";
 import { join } from "path";
 import type { Config } from "~/config.js";
+import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
 
 /**
@@ -24,9 +25,7 @@ import { redis } from "~/lib/redis.js";
 async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
     ...config,
-    logger: {
-      level: config.LOG_LEVEL,
-    },
+    loggerInstance: pinoLogger,
   };
 
   const server = Fastify(opts);
@@ -38,22 +37,23 @@ async function createServer(config: Config) {
       isAWS: false, // Not using AWS-specific inference
     });
 
-    await server.register(fastifyRateLimit, {
-      allowList: config.NODE_ENV === "development" ? ["127.0.0.1"] : [],
-      max: 100,
-      redis: redis,
-      timeWindow: "1 minute",
-      nameSpace: "codewizard-rate-limit-",
-      onBanReach: function (req, key) {
-        console.log("callback on ban");
-      },
-      onExceeding: function (req, key) {
-        console.log("callback on exceeding");
-      },
-      onExceeded: function (req, key) {
-        console.log("callback on exceeded");
-      },
-    });
+    // await server.register(fastifyRateLimit, {
+    //   allowList:
+    //     config.NODE_ENV === "development" ? ["127.0.0.1", "localhost"] : [],
+    //   max: 100,
+    //   redis: redis,
+    //   timeWindow: "1 minute",
+    //   nameSpace: "codewizard-rate-limit-",
+    //   onBanReach: function (req, key) {
+    //     console.log("callback on ban");
+    //   },
+    //   onExceeding: function (req, key) {
+    //     console.log("callback on exceeding");
+    //   },
+    //   onExceeded: function (req, key) {
+    //     console.log("callback on exceeded");
+    //   },
+    // });
 
     await server.register(fastifyCors, {
       allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -102,12 +102,12 @@ async function createServer(config: Config) {
 
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "routes"),
-      dirNameRoutePrefix: true,
+      dirNameRoutePrefix: false,
     });
 
     server.setNotFoundHandler(
       {
-        preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
+        // preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
       },
       function (_request, reply) {
         reply.code(404).send({ 404: "Not found!" });

@@ -4,6 +4,7 @@ import {
   FastifyPluginOptions,
 } from "fastify";
 import { auth } from "~/lib/auth.server.js";
+import { withRequestContext } from "~/lib/logging.js";
 
 export default function AuthRoutes(
   fastify: FastifyInstance,
@@ -33,7 +34,9 @@ export default function AuthRoutes(
         });
 
         // Process authentication request
-        const response = await auth.handler(req);
+        const response = await withRequestContext(request.id, () =>
+          auth.handler(req),
+        );
 
         // Forward response to client
         response.headers.forEach((value: string, key: string) =>
@@ -45,7 +48,19 @@ export default function AuthRoutes(
       } catch (err: unknown) {
         const error = err instanceof Error ? err : new Error(String(err));
 
-        fastify.log.error(error, "Internal authentication error");
+        fastify.log.error(
+          {
+            event: "better_auth_error",
+            error: {
+              message: error.message,
+              stack: error.stack,
+              details: { url: request.url },
+            },
+            reqId: request.id,
+            timestamp: new Date().toISOString(),
+          },
+          "Internal authentication error",
+        );
 
         reply.status(500).send({
           error: "Internal authentication error",

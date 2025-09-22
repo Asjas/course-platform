@@ -7,7 +7,7 @@ export const user = pgTable(
   {
     id: uuid().primaryKey().unique(),
     name: text(),
-    username: text().notNull().unique(),
+    username: text(),
     displayUsername: text(),
     email: text().notNull().unique(),
     emailVerified: boolean().default(false).notNull(),

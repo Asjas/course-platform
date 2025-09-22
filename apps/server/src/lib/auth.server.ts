@@ -11,6 +11,7 @@ import { v7 as uuid } from "uuid";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
 import { ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
+import { betterAuthLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
 
 export const auth = betterAuth({
@@ -23,6 +24,7 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: ONE_HOUR,
     },
+    createSessionOnSignIn: true,
   },
   emailAndPassword: {
     enabled: true,
@@ -83,4 +85,5 @@ export const auth = betterAuth({
       },
     }),
   ],
+  logger: betterAuthLogger,
 }) as ReturnType<typeof betterAuth>;
