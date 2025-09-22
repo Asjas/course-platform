@@ -13,9 +13,10 @@ invariant(VITE_BETTER_AUTH_URL);
 
 export const authClient = createAuthClient({
   baseURL: VITE_BETTER_AUTH_URL,
-  basePath: "/auth",
+  basePath: "/api/auth",
   plugins: [adminClient(), anonymousClient(), usernameClient()],
   fetchOptions: {
+    credentials: "include",
     onError: async (context) => {
       const { response } = context;
 

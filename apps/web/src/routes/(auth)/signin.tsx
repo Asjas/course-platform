@@ -1,14 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
 import SignInForm from "~/components/sign-in-form";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
+import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/signin")({
   component: AuthPage,
@@ -16,27 +9,15 @@ export const Route = createFileRoute("/(auth)/signin")({
 
 function AuthPage() {
   return (
-    <div className="flex size-full grow flex-col items-center justify-center gap-3">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>
-            Sign in with your email and password.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <SignInForm />
-        </CardContent>
-
+    <main className="w-100 flex grow flex-col justify-center self-center">
+      <Card>
+        <CardHeader>Account Signin</CardHeader>
+        <SignInForm />
+        <hr className="mt-4 border-gray-600" />
         <CardFooter>
-          <AuthLinks
-            showSignIn={false}
-            showSignUp
-            showForgotPassword
-          />
+          <AuthLinks showSignIn={false} />
         </CardFooter>
       </Card>
-    </div>
+    </main>
   );
 }

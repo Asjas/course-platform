@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "~/components/ui/nav-link";
 
 type Props = {
   showSignIn?: boolean;
@@ -14,13 +14,13 @@ export default function AuthLinks({
   className,
 }: Props) {
   return (
-    <div className={className ?? "flex flex-col gap-2 px-4 pb-4"}>
+    <div className={className ?? "flex flex-col items-start gap-1"}>
       {showSignIn && (
         <div className="text-sm">
           Already have an account?{" "}
           <Link
+            className="text-primary-600 underline hover:text-green-600 hover:no-underline"
             to="/signin"
-            className="text-primary-600 hover:underline"
           >
             Sign in
           </Link>
@@ -31,8 +31,8 @@ export default function AuthLinks({
         <div className="text-sm">
           Don't have an account?{" "}
           <Link
+            className="text-primary-600 underline hover:text-green-600 hover:no-underline"
             to="/signup"
-            className="text-primary-600 hover:underline"
           >
             Sign up
           </Link>
@@ -43,8 +43,8 @@ export default function AuthLinks({
         <div className="text-sm">
           Forgot password?{" "}
           <Link
-            to="/forgotpassword"
-            className="text-primary-600 hover:underline"
+            className="text-primary-600 underline hover:text-green-600 hover:no-underline"
+            to="/resetpassword"
           >
             Reset password
           </Link>

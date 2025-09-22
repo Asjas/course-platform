@@ -12,7 +12,7 @@ function CourseLayout() {
   const courseName = course.split("-").map(capitalizeFirstLetter).join(" ");
 
   return (
-    <main className="flex-1 overflow-hidden">
+    <main className="min-h-screen flex-1 overflow-hidden px-6">
       <div className="overflow-y-auto">
         <div className="relative min-h-screen">
           <div className="mx-auto max-w-7xl px-4 py-12">

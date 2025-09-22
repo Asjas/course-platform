@@ -1,134 +1,97 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@tanstack/react-form";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod/mini";
+import * as z from "zod";
 import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
+import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { authClient } from "~/lib/auth.client";
 
 const formSchema = z.object({
-  email: z.email().check(z.trim()),
+  email: z.email("Invalid email address").trim(),
 });
 
 export default function PasswordResetForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: { email: "" },
-  });
-
-  const { reset, formState } = form;
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setServerError(null);
-    setStatusMessage(null);
+  const form = useForm({
+    defaultValues: {
+      email: "",
+    },
+    validators: {
+      onBlur: formSchema,
+    },
+    onSubmit: async ({ value: { email } }) => {
+      setServerError(null);
 
-    try {
-      const res = await fetch("/api/auth/password-reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        const message =
-          body?.message || body?.error || "Request failed. Please try again.";
-
-        if (body?.errors && typeof body.errors === "object") {
-          for (const [field, msg] of Object.entries(body.errors)) {
-            try {
-              form.setError(field as any, {
-                type: "server",
-                message: String(msg),
-              });
-            } catch (err) {
-              console.error("Unknown field error mapping:", err);
-            }
-          }
-        } else {
-          setServerError(message);
-        }
-        return;
-      }
-
-      setStatusMessage(
-        "If an account exists for that email, we'll send password reset instructions shortly.",
+      const { error } = await authClient.requestPasswordReset(
+        { email },
+        {
+          onSuccess: () => {
+            setStatusMessage(
+              "If an account is associated with the provided email, a password reset link has been sent. (Please check your inbox and spam/junk folder.)",
+            );
+          },
+          onError: ({ error }) => {
+            setServerError(error.message);
+          },
+        },
       );
 
-      reset();
-    } catch (err) {
-      setServerError(
-        "Unable to reach the server. Please check your connection and try again.",
-      );
-      console.error(err);
-    }
-  }
+      if (error) console.error(error);
+    },
+  });
 
-  const isSubmitting = formState.isSubmitting;
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-        noValidate
+    <form
+      className="space-y-4 md:space-y-6"
+      onSubmit={(event) => {
+        event.preventDefault();
+        form.handleSubmit();
+      }}
+      noValidate
+    >
+      {/* Server error */}
+      <FormStatusMessage
+        statusMessage={statusMessage}
+        serverError={serverError}
+      />
+
+      {/* Email Field */}
+      <form.Field
+        name="email"
+        children={({ state, handleChange, handleBlur }) => (
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              autoComplete="email"
+              state={state}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              errorType="reset-password"
+            />
+          </div>
+        )}
+      />
+
+      {/* Submit Button */}
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={form.state.isSubmitting}
+        aria-disabled={form.state.isSubmitting}
       >
-        <div
-          role="status"
-          aria-live="polite"
-          className="min-h-[1.25rem] text-sm"
-        >
-          {statusMessage ? (
-            <div className="text-green-600">{statusMessage}</div>
-          ) : serverError ? (
-            <div className="text-red-600">{serverError}</div>
-          ) : null}
-        </div>
-
-        <FormField
-          name="email"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@company.com"
-                  autoComplete="email"
-                  required
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Enter the email address for the account. We'll email
-                instructions to reset your password.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="flex items-center justify-start">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            aria-disabled={isSubmitting}
-          >
-            {isSubmitting ? "Sending…" : "Send reset link"}
-          </Button>
-        </div>
-      </form>
-    </Form>
+        {form.state.isSubmitting && (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        )}
+        {form.state.isSubmitting ? "Sending reset link…" : "Send reset link"}
+      </Button>
+    </form>
   );
 }

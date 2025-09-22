@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
-import SignUpForm from "~/components/sign-up-form";
+import PasswordResetForm from "~/components/password-reset-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
-export const Route = createFileRoute("/(auth)/signup")({
+export const Route = createFileRoute("/(auth)/resetpassword")({
   component: AuthPage,
 });
 
@@ -11,11 +11,14 @@ function AuthPage() {
   return (
     <main className="w-100 flex grow flex-col justify-center self-center">
       <Card>
-        <CardHeader>Account Signup</CardHeader>
-        <SignUpForm />
-        <hr className="mt-4 border-gray-600" />
+        <CardHeader>Reset Password</CardHeader>
+        <PasswordResetForm />
         <CardFooter>
-          <AuthLinks showSignUp={false} />
+          <AuthLinks
+            showSignIn
+            showSignUp
+            showForgotPassword={false}
+          />
         </CardFooter>
       </Card>
     </main>

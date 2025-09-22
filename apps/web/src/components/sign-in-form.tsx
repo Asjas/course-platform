@@ -1,195 +1,138 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "@tanstack/react-form";
+import { redirect } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod/mini";
+import * as z from "zod";
 import { Button } from "~/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
+import FormStatusMessage from "~/components/ui/form-status-message";
+import { CheckboxInput, Input } from "~/components/ui/input";
+import { Label } from "~/components/ui/label";
+import { authClient } from "~/lib/auth.client";
 
 const formSchema = z.object({
-  email: z.email().check(z.trim()),
-  password: z.string().check(z.minLength(5), z.maxLength(80), z.trim()),
+  email: z.email().trim(),
+  password: z
+    .string()
+    .min(5, "Password must be at least 5 characters")
+    .max(80, "Password must be at most 80 characters")
+    .trim(),
   remember: z.boolean(),
 });
 
 export default function SignInForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
       remember: false,
     },
+    validators: {
+      onBlur: formSchema,
+    },
+    onSubmit: async ({ value: { email, password, remember } }) => {
+      setServerError(null);
+
+      const { error } = await authClient.signIn.email(
+        { email, password, rememberMe: remember },
+        {
+          onSuccess: () => {
+            redirect({ to: "/dashboard" });
+          },
+          onError: ({ error }) => {
+            setServerError(error.message);
+          },
+        },
+      );
+
+      if (error) console.error(error);
+    },
   });
 
-  const { watch, reset, formState } = form;
-  const [showPassword, setShowPassword] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
-
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    setServerError(null);
-    try {
-      const res = await fetch("/api/auth/sign-in", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => null);
-        const message =
-          body?.message || body?.error || "Sign in failed. Please try again.";
-
-        if (body?.errors && typeof body.errors === "object") {
-          for (const [field, msg] of Object.entries(body.errors)) {
-            try {
-              form.setError(field as any, {
-                type: "server",
-                message: String(msg),
-              });
-            } catch (error) {
-              console.error(error);
-            }
-          }
-        } else {
-          setServerError(message);
-        }
-        return;
-      }
-
-      reset();
-      console.log("Signed in successfully");
-    } catch (err) {
-      setServerError(
-        "Unable to reach the server. Please check your connection.",
-      );
-      console.error(err);
-    }
-  }
-
-  const isSubmitting = formState.isSubmitting;
-  const passwordValue = watch("password", "");
-  const rememberValue = watch("remember", false);
-
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6"
-        noValidate
+    <form
+      className="space-y-4 md:space-y-6"
+      onSubmit={(event) => {
+        event.preventDefault();
+        form.handleSubmit();
+      }}
+      noValidate
+    >
+      {/* Server error */}
+      <FormStatusMessage
+        statusMessage={null}
+        serverError={serverError}
+      />
+
+      {/* Email Field */}
+      <form.Field
+        name="email"
+        children={({ state, handleChange, handleBlur }) => (
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@company.com"
+              autoComplete="email"
+              errorType="email-error"
+              state={state}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              required={true}
+            />
+          </div>
+        )}
+      />
+
+      {/* Password Field */}
+      <form.Field
+        name="password"
+        children={({ state, handleChange, handleBlur }) => (
+          <div className="relative grid gap-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              autoComplete="current-password"
+              type="password"
+              errorType="password-error"
+              state={state}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+              required={true}
+            />
+          </div>
+        )}
+      />
+
+      {/* Remember Me Checkbox */}
+      <form.Field
+        name="remember"
+        children={({ state, handleChange }) => (
+          <div className="flex items-center gap-2">
+            <CheckboxInput
+              id="remember"
+              value={state.value}
+              handleChange={handleChange}
+            />
+            <Label htmlFor="remember">Remember Me</Label>
+          </div>
+        )}
+      />
+
+      {/* Submit Button */}
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={form.state.isSubmitting}
+        aria-disabled={form.state.isSubmitting}
       >
-        <div
-          role="status"
-          aria-live="polite"
-          className="min-h-[1.25rem] text-sm text-red-600"
-        >
-          {serverError ? serverError : null}
-        </div>
-
-        <FormField
-          name="email"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@company.com"
-                  autoComplete="email"
-                  required
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Use the email address associated with your account.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="password"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <div className="relative">
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    autoComplete="current-password"
-                    required
-                    {...field}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-pressed={showPassword}
-                    aria-label={
-                      showPassword ? "Hide password" : "Show password"
-                    }
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-600"
-                  >
-                    {showPassword ? "Hide" : "Show"}
-                  </button>
-                </div>
-              </FormControl>
-              <FormDescription>
-                Enter the password for your account.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          name="remember"
-          control={form.control}
-          render={({ field }) => (
-            <FormItem className="flex items-center gap-2">
-              <FormControl>
-                <Input
-                  id="remember"
-                  type="checkbox"
-                  checked={!!field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                  className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300"
-                />
-              </FormControl>
-              <label
-                htmlFor="remember"
-                className="text-sm"
-              >
-                Remember me
-              </label>
-              <FormDescription className="text-muted-foreground ml-auto text-xs">
-                {rememberValue
-                  ? "Will keep you signed in"
-                  : "Signed in only for this session"}
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          aria-disabled={isSubmitting}
-        >
-          {isSubmitting ? "Signing in…" : "Sign In"}
-        </Button>
-      </form>
-    </Form>
+        {form.state.isSubmitting && (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        )}
+        {form.state.isSubmitting ? "Signing in…" : "Sign In"}
+      </Button>
+    </form>
   );
 }

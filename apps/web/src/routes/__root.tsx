@@ -6,18 +6,18 @@ import { ThemeProvider } from "~/components/theme-provider";
 
 export const Route = createRootRoute({
   component: () => (
-    <>
+    <div className="grid min-h-screen grid-rows-[1fr_auto]">
       <ThemeProvider
         defaultTheme="dark"
         storageKey="cw-ui-theme"
       >
         <Header />
-        <main className="flex min-h-screen overflow-y-auto px-6 pt-20">
+        <div className="flex flex-col overflow-y-auto pt-20">
           <Outlet />
-        </main>
+        </div>
         <Footer />
       </ThemeProvider>
       <TanStackRouterDevtools position="bottom-right" />
-    </>
+    </div>
   ),
 });

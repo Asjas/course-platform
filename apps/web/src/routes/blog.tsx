@@ -54,7 +54,7 @@ function BlogListPage() {
   }, []);
 
   return (
-    <div className="container mx-auto p-8">
+    <main className="container mx-auto p-8">
       <h2 className="mb-8 text-3xl font-bold">Blog Posts</h2>
       {posts.length > 0 ? (
         <ul className="space-y-4">
@@ -65,7 +65,8 @@ function BlogListPage() {
             >
               <Link
                 className="text-xl font-medium hover:text-green-500"
-                to={`/blog/${post.slug}`}
+                to="/blog/$slug"
+                params={{ slug: post.slug }}
               >
                 {post.title}
               </Link>
@@ -80,6 +81,6 @@ function BlogListPage() {
       ) : (
         <p>Loading blog posts...</p>
       )}
-    </div>
+    </main>
   );
 }

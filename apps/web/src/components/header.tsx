@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import NavLink from "~/components/ui/nav-link";
+import { NavLink } from "~/components/ui/nav-link";
 
 export default function Header() {
   return (
@@ -22,20 +22,34 @@ export default function Header() {
             role="list"
           >
             <li className="relative inline-flex">
-              <NavLink to="/">Home</NavLink>
+              <NavLink
+                preload="intent"
+                activeProps={{
+                  className: "bg-gray-700 text-white dark:bg-gray-700",
+                }}
+                to="/"
+              >
+                Home
+              </NavLink>
             </li>
             <li className="relative inline-flex">
-              <NavLink to="/blog">Blog</NavLink>
-            </li>
-            <li className="relative inline-flex">
-              <NavLink to="/downloads">Downloads</NavLink>
+              <NavLink
+                preload="intent"
+                activeProps={{
+                  className: "bg-gray-700 text-white dark:bg-gray-700",
+                }}
+                to="/blog"
+              >
+                Blog
+              </NavLink>
             </li>
           </ul>
         </div>
         <div className="flex">
           <NavLink
-            classes="bg-green-600"
-            to="signin"
+            className="bg-green-600"
+            preload="intent"
+            to="/signin"
           >
             Sign In
           </NavLink>

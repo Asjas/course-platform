@@ -1,27 +1,20 @@
-import { Link } from "@tanstack/react-router";
+import { createLink } from "@tanstack/react-router";
+import { type LinkProps, Link as RACLink } from "react-aria-components";
 import { cn } from "~/lib/utils";
 
-export default function NavLink({
-  children,
-  to,
-  classes,
-}: {
-  children: string;
-  to: string;
-  classes?: string;
-}) {
+function CustomLink(props: LinkProps) {
   return (
-    <Link
+    <RACLink
+      {...props}
       className={cn(
-        classes,
+        props.className,
         "inline-flex items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-700",
       )}
-      activeProps={{
-        className: "bg-gray-700 text-white dark:bg-gray-700",
-      }}
-      to={to}
     >
-      {children}
-    </Link>
+      {props.children}
+    </RACLink>
   );
 }
+
+export const NavLink = createLink(CustomLink);
+export const Link = createLink(RACLink);
