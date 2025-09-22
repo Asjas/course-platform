@@ -8,6 +8,13 @@
       "when": 1757936004452,
       "tag": "0000_rare_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758552284035,
+      "tag": "0001_daffy_aaron_stack",
+      "breakpoints": true
     }
   ]
 }
