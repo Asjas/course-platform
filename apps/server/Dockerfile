@@ -20,4 +20,4 @@ RUN pnpm run build
 
 ENV NODE_ENV=production
 
-CMD ["./node_modules/.bin/tsx", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
