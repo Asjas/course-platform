@@ -18,6 +18,6 @@ RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 CMD ["./node_modules/.bin/tsx", "dist/index.js"]
