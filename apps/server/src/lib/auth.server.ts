@@ -53,7 +53,7 @@ export const auth = betterAuth({
         return verified;
       },
     },
-    async sendResetPassword(url, user) {
+    async sendResetPassword() {
       console.log("Send email to reset password");
     },
   },

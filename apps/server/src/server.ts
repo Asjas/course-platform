@@ -37,23 +37,23 @@ async function createServer(config: Config) {
       isAWS: false, // Not using AWS-specific inference
     });
 
-    // await server.register(fastifyRateLimit, {
-    //   allowList:
-    //     config.NODE_ENV === "development" ? ["127.0.0.1", "localhost"] : [],
-    //   max: 100,
-    //   redis: redis,
-    //   timeWindow: "1 minute",
-    //   nameSpace: "codewizard-rate-limit-",
-    //   onBanReach: function (req, key) {
-    //     console.log("callback on ban");
-    //   },
-    //   onExceeding: function (req, key) {
-    //     console.log("callback on exceeding");
-    //   },
-    //   onExceeded: function (req, key) {
-    //     console.log("callback on exceeded");
-    //   },
-    // });
+    await server.register(fastifyRateLimit, {
+      allowList:
+        config.NODE_ENV === "development" ? ["127.0.0.1", "localhost"] : [],
+      max: 100,
+      redis: redis,
+      timeWindow: "1 minute",
+      nameSpace: "codewizard-rate-limit-",
+      onBanReach: function (_, key) {
+        console.log("callback on ban", key);
+      },
+      onExceeding: function (_, key) {
+        console.log("callback on exceeding", key);
+      },
+      onExceeded: function (_, key) {
+        console.log("callback on exceeded", key);
+      },
+    });
 
     await server.register(fastifyCors, {
       allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
@@ -107,7 +107,7 @@ async function createServer(config: Config) {
 
     server.setNotFoundHandler(
       {
-        // preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
+        preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
       },
       function (_request, reply) {
         reply.code(404).send({ 404: "Not found!" });
