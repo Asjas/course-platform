@@ -38,7 +38,7 @@
     "fastify-ip": "2.0.0",
     "fastify-plugin": "5.0.1",
     "fluent-json-schema": "6.0.0",
-    "ioredis": "5.7.0",
+    "ioredis": "5.8.0",
     "isbot": "5.1.30",
     "pg": "8.16.3",
     "pg-native": "3.5.2",
