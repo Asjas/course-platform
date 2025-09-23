@@ -19,7 +19,6 @@ import { redis } from "~/lib/redis.js";
 
 const polarClient = new Polar({
   accessToken: config.POLAR_ACCESS_TOKEN,
-
   server: config.NODE_ENV === "production" ? "production" : "sandbox",
 });
 
