@@ -16,7 +16,6 @@ import {
   StarIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { Link } from "~/components/ui/nav-link";
 
 export const Route = createFileRoute("/terms")({
   component: RouteComponent,
@@ -101,12 +100,12 @@ function RouteComponent() {
                   We reserve the right to suspend or terminate accounts for
                   reasons including, but not limited to, violations of these
                   terms. You may close your account at any point by going to{" "}
-                  <Link
+                  <a
                     className="text-green-600 underline hover:no-underline"
-                    to="/account/edit"
+                    href="/"
                   >
                     close account
-                  </Link>
+                  </a>
                   .
                 </p>
               </div>
@@ -163,12 +162,12 @@ function RouteComponent() {
                 />
                 <p className="">
                   <strong>Refunds:</strong> You can request a refund by going to{" "}
-                  <Link
+                  <a
                     className="inline text-green-600 underline hover:no-underline"
-                    to="/account/purchases"
+                    href="/account/purchases"
                   >
                     account purchases
-                  </Link>{" "}
+                  </a>{" "}
                   within 60 days and requesting an automatic refund.
                 </p>
               </div>

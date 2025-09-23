@@ -11,7 +11,7 @@ import {
 import Section from "~/components/ui/section";
 
 export default function PricingSection() {
-  const [coursePurchases, setCoursePurchases] = useState(0);
+  const [coursePurchases] = useState(0);
 
   return (
     <Section>

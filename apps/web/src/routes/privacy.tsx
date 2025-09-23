@@ -24,7 +24,6 @@ import {
   UserLockIcon,
   YoutubeIcon,
 } from "lucide-react";
-import { Link } from "~/components/ui/nav-link";
 
 export const Route = createFileRoute("/privacy")({
   component: RouteComponent,
@@ -475,12 +474,12 @@ function RouteComponent() {
             <p className="mb-4 text-gray-700 dark:text-gray-300">
               We retain your data while your account is active. To delete your
               account and data, visit{" "}
-              <Link
+              <a
                 className="text-green-600 underline hover:no-underline"
-                to="/account/edit"
+                href="/account/edit"
               >
                 account settings
-              </Link>
+              </a>
               . Data is deleted within 30 days, except for transactional records
               kept for 7 years per tax laws.
             </p>
