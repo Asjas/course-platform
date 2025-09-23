@@ -13,6 +13,8 @@ const schema = S.object()
   .prop("MAIL_PORT", S.number())
   .prop("MAIL_USER", S.string())
   .prop("MAIL_PASS", S.string())
+  .prop("POLAR_ACCESS_TOKEN", S.string())
+  .prop("POLAR_SUCCESS_URL", S.string())
   .valueOf();
 
 export type Config = {
@@ -29,6 +31,8 @@ export type Config = {
   MAIL_PORT: number;
   MAIL_USER: string;
   MAIL_PASS: string;
+  POLAR_ACCESS_TOKEN: string;
+  POLAR_SUCCESS_URL: string;
 };
 
 export default envSchema({
