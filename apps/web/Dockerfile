@@ -3,6 +3,12 @@ FROM node:22.19.0-alpine3.22 AS vite-builder
 ARG VITE_BETTER_AUTH_URL
 ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
 
+# Install Python and build dependencies for libpq
+RUN apk add --no-cache python3 py3-pip make g++ postgresql-dev
+
+# Set Python path for node-gyp
+ENV PYTHON=/usr/bin/python3
+
 WORKDIR /app
 COPY . .
 RUN npm i -g pnpm@9.15.9
