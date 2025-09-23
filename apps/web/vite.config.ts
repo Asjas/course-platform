@@ -5,45 +5,12 @@ import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
-import { VitePWA } from "vite-plugin-pwa";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
     tsconfigPaths(),
-    VitePWA({
-      injectRegister: "inline",
-      registerType: "autoUpdate",
-      manifestFilename: "manifest.json",
-      // outDir: resolve(__dirname, "dist/assets"),
-      workbox: {
-        globPatterns: ["**/*.{html,css,js,png,svg}"],
-        clientsClaim: true,
-        skipWaiting: true,
-        cleanupOutdatedCaches: true,
-      },
-      manifest: {
-        short_name: "Codewizard Training",
-        name: "Codewizard Training",
-        icons: [
-          {
-            src: "favicon.ico",
-            sizes: "64x64",
-            type: "image/x-icon",
-          },
-          {
-            src: "mage.svg",
-            type: "image/svg+xml",
-            sizes: "192x192",
-          },
-        ],
-        start_url: ".",
-        display: "standalone",
-        theme_color: "#000000",
-        background_color: "#ffffff",
-      },
-    }),
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
