@@ -2,17 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   BookOpenIcon,
   CheckCircle2Icon,
-  CheckCircleIcon,
   ChevronRight,
   CircleUserRoundIcon,
   CodeXmlIcon,
   CrossIcon,
   CrownIcon,
-  FileWarningIcon,
   GiftIcon,
   InfoIcon,
   LaptopMinimalIcon,
-  MailIcon,
+  MailQuestionMarkIcon,
   NotepadTextIcon,
   ShieldHalfIcon,
   StarIcon,
@@ -35,7 +33,7 @@ function RouteComponent() {
               <NotepadTextIcon
                 className="mr-2"
                 size={36}
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
               Terms of Service
             </h1>
@@ -50,7 +48,7 @@ function RouteComponent() {
               <CodeXmlIcon
                 className="mr-2"
                 size={38}
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
               Our Mission
             </h2>
@@ -67,7 +65,7 @@ function RouteComponent() {
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <CircleUserRoundIcon
                 className="mr-2"
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                 size={38}
               />
               Your Account
@@ -132,7 +130,7 @@ function RouteComponent() {
                 <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
                   <GiftIcon
                     className="mr-2"
-                    color="green"
+                    color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                   />
                   Preview Courses
                 </h3>
@@ -183,7 +181,7 @@ function RouteComponent() {
               <LaptopMinimalIcon
                 className="mr-2"
                 size={38}
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
               Platform Usage
             </h2>
@@ -198,28 +196,28 @@ function RouteComponent() {
                   <li className="flex items-start">
                     <ChevronRight
                       className="mr-2"
-                      color="green"
+                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <span>Engage with our tutorials and courses</span>
                   </li>
                   <li className="flex items-start">
                     <ChevronRight
                       className="mr-2"
-                      color="green"
+                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <span>Join community discussions respectfully</span>
                   </li>
                   <li className="flex items-start">
                     <ChevronRight
                       className="mr-2"
-                      color="green"
+                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <span>Share your knowledge and configurations</span>
                   </li>
                   <li className="flex items-start">
                     <ChevronRight
                       className="mr-2"
-                      color="green"
+                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <span>Track course completion progress</span>
                   </li>
@@ -276,7 +274,7 @@ function RouteComponent() {
               <BookOpenIcon
                 className="mr-2"
                 size={38}
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
               Content Rights
             </h2>
@@ -472,7 +470,7 @@ function RouteComponent() {
               <InfoIcon
                 className="mr-2"
                 size={38}
-                color="green"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
               Other Terms
             </h2>
@@ -509,12 +507,12 @@ function RouteComponent() {
           {/* Contact Section */}
           <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
-              <MailIcon
+              <MailQuestionMarkIcon
                 className="mr-2"
-                size={38}
-                color="green"
+                size={40}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
-              Get in Touch
+              Contact Us
             </h2>
             <p className="mb-4 text-gray-700 dark:text-gray-300">
               Have questions about these terms? Contact us at{" "}
