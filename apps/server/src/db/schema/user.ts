@@ -6,16 +6,17 @@ export const user = pgTable(
   "user",
   {
     id: uuid().primaryKey().unique(),
-    name: text(),
+    name: text().notNull(),
     username: text(),
     displayUsername: text(),
     email: text().notNull().unique(),
     emailVerified: boolean().default(false).notNull(),
     image: text(),
     role: text().default("user").notNull(),
-    banned: boolean(),
+    banned: boolean().default(false),
     banReason: text(),
     banExpires: timestamp({ withTimezone: true }),
+    isAnonymous: boolean(),
     ...timestamps,
   },
   (table) => [
@@ -23,19 +24,6 @@ export const user = pgTable(
     t.uniqueIndex("username_idx").on(table.username),
   ],
 );
-
-export const session = pgTable("session", {
-  id: uuid().primaryKey().unique(),
-  token: text().notNull().unique(),
-  ipAddress: text(),
-  userAgent: text(),
-  impersonatedBy: text(),
-  userId: uuid()
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  expiresAt: timestamp({ withTimezone: true }).notNull(),
-  ...timestamps,
-});
 
 export const account = pgTable("account", {
   id: uuid().primaryKey().unique(),
@@ -54,10 +42,58 @@ export const account = pgTable("account", {
   ...timestamps,
 });
 
+export const session = pgTable("session", {
+  id: uuid().primaryKey().unique(),
+  token: text().notNull().unique(),
+  ipAddress: text(),
+  userAgent: text(),
+  impersonatedBy: text(),
+  userId: uuid()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  expiresAt: timestamp({ withTimezone: true }).notNull(),
+  ...timestamps,
+});
+
 export const verification = pgTable("verification", {
   id: uuid().primaryKey().unique(),
   identifier: text().notNull(),
   value: text().notNull(),
   expiresAt: timestamp({ withTimezone: true }).notNull(),
+  ...timestamps,
+});
+
+export const organization = pgTable("organization", {
+  id: uuid().primaryKey().unique(),
+  name: text().notNull(),
+  slug: text().unique(),
+  logo: text(),
+  metadata: text(),
+  ...timestamps,
+});
+
+export const member = pgTable("member", {
+  id: uuid().primaryKey().unique(),
+  organizationId: uuid()
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  userId: uuid()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  role: text().default("member").notNull(),
+  ...timestamps,
+});
+
+export const invitation = pgTable("invitation", {
+  id: uuid().primaryKey().unique(),
+  organizationId: uuid()
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  email: text().notNull(),
+  role: text(),
+  status: text().default("pending").notNull(),
+  inviterId: uuid()
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   ...timestamps,
 });

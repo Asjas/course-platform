@@ -1,7 +1,9 @@
+import { polarClient } from "@polar-sh/better-auth";
 import { invariant } from "@tanstack/react-router";
 import {
   adminClient,
   anonymousClient,
+  organizationClient,
   usernameClient,
 } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
@@ -14,7 +16,13 @@ invariant(VITE_BETTER_AUTH_URL);
 export const authClient = createAuthClient({
   baseURL: VITE_BETTER_AUTH_URL,
   basePath: "/api/auth",
-  plugins: [adminClient(), anonymousClient(), usernameClient()],
+  plugins: [
+    adminClient(),
+    anonymousClient(),
+    usernameClient(),
+    organizationClient(),
+    polarClient(),
+  ],
   fetchOptions: {
     credentials: "include",
     onError: async (context) => {

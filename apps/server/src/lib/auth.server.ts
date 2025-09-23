@@ -1,10 +1,4 @@
-import {
-  checkout,
-  polar,
-  portal,
-  usage,
-  webhooks,
-} from "@polar-sh/better-auth";
+import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import argon2 from "argon2";
 import { betterAuth } from "better-auth";
@@ -13,6 +7,7 @@ import {
   admin,
   anonymous,
   haveIBeenPwned,
+  organization,
   username,
 } from "better-auth/plugins";
 import { v7 as uuid } from "uuid";
@@ -23,7 +18,9 @@ import { betterAuthLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
 
 const polarClient = new Polar({
-  accessToken: process.env.POLAR_ACCESS_TOKEN,
+  accessToken: config.POLAR_ACCESS_TOKEN,
+
+  server: config.NODE_ENV === "production" ? "production" : "sandbox",
 });
 
 export const auth = betterAuth({
@@ -89,6 +86,7 @@ export const auth = betterAuth({
     admin(),
     haveIBeenPwned(),
     anonymous(),
+    organization({ allowUserToCreateOrganization: false }),
     username({
       usernameValidator: (username) => {
         const invalidUsernames = ["admin", "support", "codewizard"];
@@ -100,11 +98,12 @@ export const auth = betterAuth({
       client: polarClient,
       createCustomerOnSignUp: true,
       use: [
+        portal(),
         checkout({
           products: [
             {
               productId: "bf729112-d838-49dd-88f0-91eb1cd88ca8",
-              slug: "Learn-Fastify",
+              slug: "learn-fastify",
             },
           ],
           successUrl: process.env.POLAR_SUCCESS_URL,
