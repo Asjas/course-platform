@@ -12,10 +12,12 @@ import {
   GraduationCapIcon,
   HardDriveIcon,
   HistoryIcon,
+  InfoIcon,
   LockIcon,
   MailIcon,
   MailQuestionMarkIcon,
   RefreshCcwIcon,
+  ScrollTextIcon,
   ServerIcon,
   Share2Icon,
   ShieldCheckIcon,
@@ -45,7 +47,12 @@ function RouteComponent() {
               Privacy Policy
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Last Updated: September 1, 2025
+              Last Updated: September 1, 2025 • Version 1.0
+            </p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+              We comply with South Africa's POPIA, the EU's GDPR, the UK-GDPR,
+              California's CCPA/CPRA, Brazil's LGPD, Australia's APPs, and other
+              applicable data protection laws.
             </p>
           </div>
 
@@ -65,6 +72,25 @@ function RouteComponent() {
               to avoiding invasive data practices. This policy outlines what
               data we gather, our purpose for collecting it, and the measures we
               take to secure it.
+            </p>
+          </div>
+
+          {/* Scope & Compliance */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <ScrollTextIcon
+                className="mr-2"
+                size={40}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+              />
+              Scope &amp; Compliance
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              This policy applies to all personal data collected from users
+              worldwide. Under GDPR we rely on contract performance, consent,
+              legitimate interests, and legal obligations. California residents
+              have additional CCPA rights. South African users may lodge
+              complaints with the Information Regulator.
             </p>
           </div>
 
@@ -394,7 +420,7 @@ function RouteComponent() {
             </ul>
           </div>
 
-          {/* Your Rights */}
+          {/* Your Rights Over Your Data */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <UserLockIcon
@@ -405,17 +431,44 @@ function RouteComponent() {
               Your Rights Over Your Data
             </h2>
 
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              You can manage your account details in your settings. For requests
-              to access, correct, or delete your data, contact our Information
-              Officer at{" "}
-              <a
-                className="text-green-500 underline hover:text-green-600"
-                href="mailto:contact@codewizard.training"
-              >
-                contact@codewizard.training
-              </a>
-              . We'll respond within 30 days.
+            <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>Access</strong> – Request a copy of your personal data.
+              </li>
+              <li>
+                <strong>Rectification</strong> – Ask us to correct inaccurate
+                information.
+              </li>
+              <li>
+                <strong>Erasure</strong> (“Right to be forgotten”) – Request
+                deletion of your data.
+              </li>
+              <li>
+                <strong>Restriction</strong> – Limit how we process your data.
+              </li>
+              <li>
+                <strong>Portability</strong> – Receive your data in a
+                transferable format.
+              </li>
+              <li>
+                <strong>Objection</strong> – Opt-out of processing based on
+                legitimate interests.
+              </li>
+              <li>
+                <strong>Withdraw Consent</strong> – Withdraw any consents you've
+                given.
+              </li>
+              <li>
+                <strong>CCPA/CPRA:</strong> Right to know, delete, opt-out of
+                sale, and non-discrimination.
+              </li>
+              <li>
+                <strong>POPIA:</strong> Correct/erase your data and lodge
+                complaints with the Information Regulator.
+              </li>
+            </ul>
+            <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+              To exercise any right, contact our Data Protection Officer below.
             </p>
           </div>
 
@@ -441,22 +494,20 @@ function RouteComponent() {
                   Essential Cookies:
                 </h3>
                 <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
-                  <li>Session cookies for authentication</li>
-                  <li>Preference cookies (e.g., theme settings)</li>
-                  <li>Security cookies for CSRF protection</li>
+                  <li>
+                    <strong>Essential:</strong> Session, CSRF, preferences.
+                  </li>
+                  <li>
+                    <strong>Analytics:</strong> Ackee (anonymized). Opt-out via
+                    settings.
+                  </li>
                 </ul>
               </div>
 
-              <div>
-                <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
-                  Analytics:
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  We use self-hosted Ackee for anonymized analytics to improve
-                  our platform. No personal data is shared externally. You can
-                  opt out via your account settings.
-                </p>
-              </div>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                You can manage or withdraw consent anytime via the cookie banner
+                or in your account settings.
+              </p>
             </div>
           </div>
 
@@ -471,22 +522,25 @@ function RouteComponent() {
               Data Retention Period
             </h2>
 
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              We retain your data while your account is active. To delete your
-              account and data, visit{" "}
-              <a
-                className="text-green-600 underline hover:no-underline"
-                href="/account/edit"
-              >
-                account settings
-              </a>
-              . Data is deleted within 30 days, except for transactional records
-              kept for 7 years per tax laws.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300">
-              Certain data may be retained for legal compliance (e.g., fraud
-              prevention, tax reporting).
-            </p>
+            {/* ...existing intro... */}
+            <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
+              Retention by Category
+            </h3>
+            <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>Account Data:</strong> Until deletion request + 7 years
+                for legal.
+              </li>
+              <li>
+                <strong>Usage &amp; Analytics:</strong> 2 years (anonymized).
+              </li>
+              <li>
+                <strong>Support Requests:</strong> Personal identifiers removed
+                on account deletion; anonymized support transcripts retained
+                indefinitely so other users can publicly access and benefit from
+                common solutions.
+              </li>
+            </ul>
           </div>
 
           {/* Children's Privacy */}
@@ -516,16 +570,50 @@ function RouteComponent() {
               />
               Cross-Border Data Transfers
             </h2>
-            <p className="mb-4 text-gray-700 dark:text-gray-300">
-              Based in South Africa with servers in Germany, we process data in
-              both regions. By using our platform, you consent to data transfers
-              between South Africa and the EU, protected by Standard Contractual
-              Clauses.
-            </p>
             <p className="text-gray-700 dark:text-gray-300">
-              We comply with applicable data protection laws (e.g., POPIA, GDPR)
-              based on your location.
+              We use Standard Contractual Clauses (SCCs) and Binding Corporate
+              Rules to protect transfers between South Africa, the EU/UK, and
+              other regions. Where adequacy decisions exist, we rely on them.
             </p>
+          </div>
+
+          {/* Supervisory Authorities */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+              Complaints &amp; Supervisory Authorities
+            </h2>
+            <ul className="list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>South Africa:</strong> Information Regulator -{" "}
+                <a
+                  className="text-green-500 underline hover:no-underline"
+                  href="https://www.justice.gov.za/inforeg/"
+                >
+                  https://www.justice.gov.za/inforeg/
+                </a>
+              </li>
+              <li>
+                <strong>EU:</strong> Your local Data Protection Authority
+              </li>
+              <li>
+                <strong>UK:</strong> Information Commissioner's Office -{" "}
+                <a
+                  className="text-green-500 underline hover:no-underline"
+                  href="https://ico.org.uk/"
+                >
+                  https://ico.org.uk/
+                </a>
+              </li>
+              <li>
+                <strong>California:</strong> California Attorney General -{" "}
+                <a
+                  className="text-green-500 underline hover:no-underline"
+                  href="https://oag.ca.gov/privacy"
+                >
+                  https://oag.ca.gov/privacy
+                </a>
+              </li>
+            </ul>
           </div>
 
           {/* Changes to Policy */}
@@ -545,6 +633,38 @@ function RouteComponent() {
             </p>
           </div>
 
+          {/* Additional Terms */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <InfoIcon
+                className="mr-2"
+                size={38}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+              />
+              Other Terms
+            </h2>
+
+            <div className="space-y-6">
+              <div>
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+                  Terms of Service
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  Review our{" "}
+                  <a
+                    className="text-green-500 underline hover:text-green-600"
+                    href="/terms"
+                  >
+                    Terms of Service Policy
+                  </a>{" "}
+                  as it explains the rules, responsibilities, and legal
+                  conditions for using this platform. Please review them
+                  carefully to understand your rights and obligations.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {/* Contact Section */}
           <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -556,15 +676,17 @@ function RouteComponent() {
               Contact Us
             </h2>
             <p className="mb-4 text-gray-700 dark:text-gray-300">
-              Questions about this policy or your data? Reach out to our
-              Information Officer at{" "}
+              Questions about this policy or your data? Contact our Data
+              Protection Officer:
+            </p>
+            <p className="text-gray-200 dark:text-gray-200">
+              A-J Roos, DPO —{" "}
               <a
                 className="text-green-500 underline hover:text-green-600"
-                href="mailto:contact@codewizard.training"
+                href="mailto:privacy@codewizard.training"
               >
-                contact@codewizard.training
+                privacy@codewizard.training
               </a>
-              .
             </p>
 
             <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">

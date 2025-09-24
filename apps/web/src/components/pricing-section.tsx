@@ -28,7 +28,7 @@ export default function PricingSection() {
           {/* Free price card */}
           <Card>
             <CardHeader>
-              Try it out
+              Preview Course
               <img
                 className="inline h-10"
                 src="fastify-white.svg"

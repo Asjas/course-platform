@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BookOpenIcon,
+  BookTextIcon,
   CheckCircle2Icon,
   ChevronRight,
   CircleUserRoundIcon,
@@ -8,6 +9,7 @@ import {
   CrossIcon,
   CrownIcon,
   GiftIcon,
+  HandshakeIcon,
   InfoIcon,
   LaptopMinimalIcon,
   MailQuestionMarkIcon,
@@ -37,12 +39,73 @@ function RouteComponent() {
               Terms of Service
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Effective Date: October 1, 2025
+              Effective Date: October 1, 2025 • Version 1.0
+            </p>
+          </div>
+
+          {/* Definitions */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <BookTextIcon
+                className="mr-2"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+                size={38}
+              />
+              Definitions
+            </h2>
+            <ul className="list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>Services:</strong> The Codewizard Training platform and
+                related features.
+              </li>
+              <li>
+                <strong>User Content:</strong> Any text, code, media, or data
+                you submit.
+              </li>
+              <li>
+                <strong>Account:</strong> Your registered user profile on our
+                platform.
+              </li>
+              <li>
+                <strong>Free Course:</strong> Materials available without
+                payment.
+              </li>
+              <li>
+                <strong>Preview Course:</strong> Limited materials available of
+                paid content without needing to make payment.
+              </li>
+              <li>
+                <strong>Paid Course:</strong> Materials accessible only after
+                payment.
+              </li>
+              <li>
+                <strong>Force Majeure:</strong> Circumstances beyond reasonable
+                control that may delay or prevent Services.
+              </li>
+            </ul>
+          </div>
+
+          {/* Acceptance of Terms */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <HandshakeIcon
+                className="mr-2"
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+                size={38}
+              />
+              Acceptance of Terms
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              By accessing or using our Services, you agree to these Terms of
+              Service. We may modify these Terms from time to time; we'll notify
+              you by email or in-app banner and update the Effective Date.
+              Continued use after changes constitutes acceptance. If you do not
+              agree, please do not use the platform.
             </p>
           </div>
 
           {/* Introduction Card */}
-          <div className="mb-8 rounded-lg border-l-4 border-orange-400 bg-white p-8 shadow-lg dark:bg-gray-800">
+          <div className="mb-8 rounded-lg border-l-4 border-green-400 bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <CodeXmlIcon
                 className="mr-2"
@@ -59,7 +122,7 @@ function RouteComponent() {
             </p>
           </div>
 
-          {/* Account Section */}
+          {/* Your Account Section */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <CircleUserRoundIcon
@@ -76,9 +139,11 @@ function RouteComponent() {
                   Account Creation:
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">
-                  You must be at least 13 years old to create an account.
-                  Provide accurate details and keep your login information
-                  secure.
+                  You must be at least 16 years old to create an account in
+                  jurisdictions governed by GDPR or POPIA. In regions covered by
+                  COPPA/CCPA, users aged 13-15 may register only with valid
+                  parental consent. Always provide accurate details and keep
+                  your login credentials secure.
                 </p>
               </div>
 
@@ -97,22 +162,16 @@ function RouteComponent() {
                   Account Suspension:
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">
-                  We reserve the right to suspend or terminate accounts for
-                  reasons including, but not limited to, violations of these
-                  terms. You may close your account at any point by going to{" "}
-                  <a
-                    className="text-green-600 underline hover:no-underline"
-                    href="/"
-                  >
-                    close account
-                  </a>
-                  .
+                  We may suspend or terminate accounts for fraud, abuse, or
+                  repeated violations. Upon termination, you lose access to paid
+                  content; we may retain certain data (e.g., anonymized logs) to
+                  comply with legal obligations.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Subscription Tiers */}
+          {/* Free Courses */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <CrownIcon
@@ -121,8 +180,24 @@ function RouteComponent() {
                 color="gold"
                 size={38}
               />
-              Paid Benefits
+              Course Benefits
             </h2>
+
+            <div className="mb-6 grid gap-6 md:grid-cols-2">
+              <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
+                <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
+                  <StarIcon
+                    className="mr-2"
+                    fill="gray"
+                    color="gray"
+                  />
+                  Free Courses
+                </h3>
+                <p className="text-gray-700 dark:text-gray-300">
+                  Access to full course content
+                </p>
+              </div>
+            </div>
 
             <div className="grid gap-6 md:grid-cols-2">
               <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
@@ -134,8 +209,7 @@ function RouteComponent() {
                   Preview Courses
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">
-                  Access to community chat, help-desk support, and some
-                  introductory content.
+                  Access to limited course content
                 </p>
               </div>
 
@@ -148,8 +222,9 @@ function RouteComponent() {
                   />
                   Paid Courses
                 </h3>
+
                 <p className="text-gray-700 dark:text-gray-300">
-                  Access to all content courses and platform functionality.
+                  Access to full course content
                 </p>
               </div>
             </div>
@@ -160,18 +235,92 @@ function RouteComponent() {
                   className="mr-4"
                   size={40}
                 />
-                <p className="">
-                  <strong>Refunds:</strong> You can request a refund by going to{" "}
+                <p>
+                  All course types (free, preview and paid) provide access to
+                  the community chat and help-desk support platform.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-lg border border-orange-200 bg-orange-50 p-4 dark:border-orange-800 dark:bg-orange-900/20">
+              <div className="dark:text-borangelue-300 grid grid-cols-[auto_1fr] items-center text-orange-600">
+                <InfoIcon
+                  className="mr-4"
+                  size={40}
+                />
+                <p>
+                  <strong>Refunds:</strong> You can request a refund for a paid
+                  course by going to{" "}
                   <a
-                    className="inline text-green-600 underline hover:no-underline"
+                    className="inline text-orange-600 underline hover:no-underline"
                     href="/account/purchases"
                   >
                     account purchases
                   </a>{" "}
-                  within 60 days and requesting an automatic refund.
+                  within 60 days and requesting an automatic refund or by
+                  sending an email to{" "}
+                  <a
+                    className="inline text-orange-600 underline hover:no-underline"
+                    href="mailto:refunds@codewizard.training"
+                  >
+                    refunds@codewizard.training
+                  </a>
+                  .
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Indemnification */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <ShieldHalfIcon
+                className="mr-2"
+                size={38}
+                color="orange"
+              />
+              Indemnification
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              You agree to indemnify and hold us harmless from any claims or
+              losses arising from your breach of these Terms or your use of the
+              Services.
+            </p>
+          </div>
+
+          {/* Governing Law & Dispute Resolution */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <TriangleAlertIcon
+                className="mr-2"
+                size={38}
+                color="red"
+              />
+              Governing Law &amp; Dispute Resolution
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              These Terms are governed by the laws of South Africa. Any dispute
+              shall be resolved in the courts of Gauteng, South Africa.
+            </p>
+          </div>
+
+          {/* Severability & Entire Agreement */}
+          <div
+            className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800"
+            id="severability"
+          >
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <InfoIcon
+                className="mr-2"
+                size={38}
+              />
+              Severability &amp; Entire Agreement
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              If any provision is held invalid, the remaining provisions remain
+              in effect. These Terms, together with linked policies, constitute
+              the entire agreement between you and us.
+            </p>
           </div>
 
           {/* Platform Usage */}
@@ -314,9 +463,10 @@ function RouteComponent() {
                   Our Materials
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">
-                  All tutorials, challenges, and original content are owned by
-                  us. Your purchases allows access for learning purposes but
-                  does not permit copying or sharing.
+                  All course materials and our platform code are owned by us and
+                  licensed to you for personal learning only. You retain
+                  ownership of your contributions but grant us a perpetual
+                  license to display them.
                 </p>
               </div>
             </div>
@@ -487,17 +637,8 @@ function RouteComponent() {
                   >
                     Privacy Policy
                   </a>{" "}
-                  for information on how we handle your data.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-                  Updates to Terms
-                </h3>
-                <p className="text-gray-700 dark:text-gray-300">
-                  We may revise these terms periodically. Significant changes
-                  will be communicated, and continued use implies acceptance.
+                  to learn how we collect, use, and safeguard your personal
+                  information.
                 </p>
               </div>
             </div>
