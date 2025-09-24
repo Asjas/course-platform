@@ -13,7 +13,7 @@ export default function Header() {
           >
             <img
               className="block h-[36px] w-[113px] rounded-sm"
-              src="/codewizard.png"
+              src="/codewizard.svg"
               alt="Codewizard Training"
             />
           </Link>
