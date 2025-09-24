@@ -11,7 +11,7 @@ import { toast } from "~/components/ui/sonner";
 
 const { VITE_BETTER_AUTH_URL } = import.meta.env;
 
-invariant(VITE_BETTER_AUTH_URL);
+invariant(VITE_BETTER_AUTH_URL, "Expected VITE_BETTER_AUTH_URL to exist");
 
 export const authClient = createAuthClient({
   baseURL: VITE_BETTER_AUTH_URL,
