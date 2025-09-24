@@ -1,5 +1,10 @@
 FROM node:22.19.0-alpine3.22 AS vite-builder
 
+RUN apk --no-cache add curl bash python3 py3-pip make g++ postgresql-dev
+
+# Set Python path for node-gyp
+ENV PYTHON=/usr/bin/python3
+
 ARG VITE_BETTER_AUTH_URL
 ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
 
