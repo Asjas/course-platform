@@ -8,8 +8,8 @@ ENV PYTHON=/usr/bin/python3
 WORKDIR /app
 COPY . .
 RUN npm i -g pnpm@9.15.9
-RUN pnpm i
-RUN pnpm run build
+RUN pnpm i --filter "./marketing/learn-fastify"
+RUN pnpm run -filter "./marketing/learn-fastify" build
 
 FROM nginx:1.29.1-alpine3.22
 
