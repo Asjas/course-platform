@@ -1,12 +1,11 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blog/")({
   component: BlogListPage,
 });
 
-// Use .md files instead of .mdx
-const blogPosts = import.meta.glob("./blog/*.md", {
+const blogPosts = import.meta.glob("./*.mdx", {
   eager: true,
 });
 
@@ -18,10 +17,10 @@ function BlogListPage() {
   useEffect(() => {
     // Process the blog posts
     const processedPosts = Object.entries(blogPosts).map(([path, module]) => {
-      // Extract the slug from the path (filename without extension)
-      const slug = path.replace("./blog/", "").replace(/\.(md)$/, "");
+      // Extract the slug from "./filename.md" → "filename"
+      const slug = path.replace("./", "").replace(/\.mdx$/, "");
 
-      // Get metadata if available (depends on your markdown loader configuration)
+      // Get metadata if available
       const frontmatter =
         (module as any).frontmatter ||
         (module as any).metadata ||
@@ -60,7 +59,7 @@ function BlogListPage() {
         <ul className="space-y-4">
           {posts.map((post) => (
             <li
-              className="rounded-lg border border-gray-700 p-4 transition-colors hover:border-green-600"
+              className="rounded-lg border border-gray-700 p-4 transition-colors"
               key={post.slug}
             >
               <Link

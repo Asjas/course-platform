@@ -3,7 +3,9 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "node:path";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
+import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
@@ -21,19 +23,35 @@ export default defineConfig({
     // MDX plugin configuration
     mdx({
       remarkPlugins: [remarkGfm],
-      rehypePlugins: [rehypeHighlight],
+      rehypePlugins: [
+        rehypeHighlight,
+        rehypeSlug,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: "wrap",
+            properties: {
+              className: "no-underline scroll-mt-40",
+            },
+          },
+        ],
+      ],
       providerImportSource: "@mdx-js/react",
+      include: ["**/*.mdx"],
     }),
   ],
-  css: { transformer: "lightningcss" },
-  build: { cssMinify: "lightningcss" },
+  css: {
+    transformer: "lightningcss",
+  },
+  build: {
+    cssMinify: "lightningcss",
+    sourcemap: true,
+  },
   resolve: {
     alias: {
       "~": resolve(__dirname, "./src"),
     },
   },
-  // Ensure .md and .mdx files are treated as source code
-  assetsInclude: ["**/*.md", "**/*.mdx"],
   // Vitest configuration
   test: {
     globals: true,

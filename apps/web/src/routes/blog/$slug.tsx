@@ -1,23 +1,21 @@
 import { createFileRoute, notFound, useParams } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
+import { ArrowLeftIcon } from "lucide-react";
 import { useMemo } from "react";
 
 export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostPage,
 });
 
-// Import all markdown files from the blog directory
-const blogPosts = import.meta.glob("../blog/*.md", {
+const blogPosts = import.meta.glob("./*.mdx", {
   eager: true,
 });
 
 function BlogPostPage() {
   const { slug } = useParams({ from: "/blog/$slug" });
 
-  // Find the matching blog post module
   const blogPost = useMemo(() => {
-    // Need to adjust path for proper lookup
-    const postPath = `../blog/${slug}.md`;
+    const postPath = `./${slug}.mdx`;
 
     if (!(postPath in blogPosts)) {
       console.error(`Blog post not found: ${postPath}`);
@@ -33,33 +31,24 @@ function BlogPostPage() {
     return notFound();
   }
 
-  // Get the HTML content
-  const content = (blogPost as any).default || (blogPost as any).html || "";
-  const frontmatter =
-    (blogPost as any).frontmatter || (blogPost as any).metadata || {};
+  const Content = (blogPost as any).default as React.ComponentType<any>;
 
   return (
     <div className="container mx-auto max-w-3xl px-8 py-12">
-      <div className="mb-8">
-        <h1 className="mb-4 text-4xl font-bold">{frontmatter.title || slug}</h1>
-        {frontmatter.date && (
-          <p className="text-gray-400">
-            {new Date(frontmatter.date).toLocaleDateString()}
-          </p>
-        )}
-      </div>
-
-      <div
-        className="prose prose-invert max-w-none"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
+      <article className="prose lg:prose-xl prose-invert">
+        <Content />
+      </article>
 
       <div className="mt-12 border-t border-gray-700 pt-6">
         <Link
-          className="text-green-500 hover:text-green-400"
+          className="flex items-center text-green-500 hover:text-green-400"
           to="/blog"
         >
-          ← Back to all posts
+          <ArrowLeftIcon
+            className="mr-2"
+            size={20}
+          />
+          Back to all posts
         </Link>
       </div>
     </div>
