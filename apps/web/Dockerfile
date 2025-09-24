@@ -11,6 +11,9 @@ RUN pnpm run -filter "./apps/web" build
 
 FROM nginx:1.29.1-alpine3.22
 
+RUN apk --no-cache add curl bash
+
+
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
 COPY --from=vite-builder /app/apps/web/config/nginx.conf /etc/nginx/nginx.conf
 
