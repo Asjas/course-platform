@@ -208,6 +208,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@epic-web/invariant':
+        specifier: 1.0.0
+        version: 1.0.0
       '@hookform/resolvers':
         specifier: 5.2.2
         version: 5.2.2(react-hook-form@7.63.0(react@19.1.1))
