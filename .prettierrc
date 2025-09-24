@@ -17,9 +17,17 @@
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-tailwindcss",
+    "prettier-plugin-astro",
     "@xeonlink/prettier-plugin-organize-attributes"
   ],
-  "importOrder": ["^@core/(.*)$", "^@server/(.*)$", "^@ui/(.*)$", "^[./]"],
+  "overrides": [
+    {
+      "files": "*.astro",
+      "options": {
+        "parser": "astro"
+      }
+    }
+  ],
   "importOrderSeparation": true,
   "importOrderSortSpecifiers": true,
   "tailwindStylesheet": ""
