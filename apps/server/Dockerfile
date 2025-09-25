@@ -15,6 +15,10 @@ RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
 
+RUN ["npm", "run", "drizzle:migrate"]
+
+RUN psql $DATABASE_URL -f /app/scripts/insertDefaultDatabaseUsers.sql
+
 ENV NODE_ENV=production
 
 CMD ["./node_modules/.bin/tsx", "dist/src/index.js"]
