@@ -10,7 +10,7 @@ import {
   organization,
   username,
 } from "better-auth/plugins";
-import { v7 as uuid } from "uuid";
+import { ulid } from "ulid";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
 import { ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
@@ -78,7 +78,7 @@ export const auth = betterAuth({
   }),
   advanced: {
     database: {
-      generateId: () => uuid(),
+      generateId: () => ulid(),
     },
   },
   plugins: [
