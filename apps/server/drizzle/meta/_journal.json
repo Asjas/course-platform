@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1757936004452,
-      "tag": "0000_rare_shotgun",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1758552284035,
-      "tag": "0001_daffy_aaron_stack",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1758631178598,
-      "tag": "0002_rainy_barracuda",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1758808381500,
-      "tag": "0003_mighty_expediter",
+      "when": 1758809624117,
+      "tag": "0000_clear_landau",
       "breakpoints": true
     }
   ]

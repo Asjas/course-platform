@@ -127,13 +127,5 @@ export const supportTicketAttachment = mySchema.table(
       "support_ticket_attachment_file_type_check",
       sql`${table.fileType} IS NULL OR ${table.fileType} <> ''`,
     ),
-    check(
-      "support_ticket_attachment_comment_check",
-      sql`${table.commentId} IS NULL OR ${table.commentId} IN (SELECT id FROM support_ticket_comment)`,
-    ),
-    check(
-      "support_ticket_attachment_ticket_check",
-      sql`${table.ticketId} IN (SELECT id FROM support_ticket)`,
-    ),
   ],
 );

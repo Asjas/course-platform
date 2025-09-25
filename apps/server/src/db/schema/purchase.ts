@@ -78,24 +78,12 @@ export const invoice = mySchema.table(
       sql`${table.status} = 'refunded' OR (${table.status} = 'paid' AND ${table.refundedAt} IS NULL)`,
     ),
     check(
-      "invoice_coupon_check",
-      sql`${table.couponId} IS NULL OR ${table.couponId} IN (SELECT id FROM coupon)`,
-    ),
-    check(
-      "invoice_user_check",
-      sql`${table.userId} IS NULL OR ${table.userId} IN (SELECT id FROM users)`,
-    ),
-    check(
       "invoice_issued_at_check",
       sql`${table.paidAt} IS NULL OR ${table.issuedAt} <= ${table.paidAt}`,
     ),
     check(
       "invoice_refunded_date_check",
       sql`${table.refundedAt} IS NULL OR ${table.refundedAt} >= ${table.paidAt}`,
-    ),
-    check(
-      "invoice_payment_check",
-      sql`${table.paymentId} IS NULL OR ${table.paymentId} IN (SELECT id FROM payment)`,
     ),
   ],
 );
@@ -189,14 +177,6 @@ export const payment = mySchema.table(
     check(
       "payment_status_check",
       sql`${table.paymentStatus} IN ('pending', 'completed', 'failed', 'refunded')`,
-    ),
-    check(
-      "payment_coupon_check",
-      sql`${table.couponId} IS NULL OR ${table.couponId} IN (SELECT id FROM coupon)`,
-    ),
-    check(
-      "payment_gift_recipient_user_check",
-      sql`${table.giftRecipientUserId} IS NULL OR ${table.giftRecipientUserId} IN (SELECT id FROM users)`,
     ),
   ],
 );

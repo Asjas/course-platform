@@ -14,12 +14,6 @@ import {
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { mySchema, user } from "~/db/schema/user.js";
 
-export const seatStatus = mySchema.enum("seat_status", [
-  "pending",
-  "claimed",
-  "revoked",
-]);
-
 export const courseLevel = mySchema.enum("course_level", [
   "All levels",
   "Beginner",
@@ -106,9 +100,6 @@ export const courseModule = mySchema.table(
     description: text().notNull(),
     order: integer().notNull(),
     isPreview: boolean().default(false).notNull(),
-    courseSlug: text()
-      .notNull()
-      .references(() => course.slug, { onDelete: "cascade" }),
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
@@ -117,7 +108,6 @@ export const courseModule = mySchema.table(
   (table) => [
     index("course_module_slug").on(table.slug),
     index("course_module_course_idx").on(table.courseId),
-    index("course_module_course_slug_idx").on(table.courseSlug),
     check("course_module_order_check", sql`${table.order} >= 0`),
   ],
 );
@@ -225,18 +215,6 @@ export const courseCompletionCertificate = mySchema.table(
     ),
     index("course_certificate_user_idx").on(table.userId),
     check("course_certificate_url_check", sql`${table.certificateUrl} <> ''`),
-    check(
-      "course_certificate_user_check",
-      sql`${table.userId} IS NULL OR ${table.userId} IN (SELECT id FROM users)`,
-    ),
-    check(
-      "course_certificate_course_check",
-      sql`${table.courseId} IS NULL OR ${table.courseId} IN (SELECT id FROM course)`,
-    ),
-    check(
-      "course_certificate_url_format_check",
-      sql`${table.certificateUrl} LIKE 'https://%'`,
-    ),
   ],
 );
 
@@ -285,10 +263,6 @@ export const courseAnnouncement = mySchema.table(
     ),
     check("course_announcement_message_check", sql`${table.message} <> ''`),
     check("course_announcement_title_check", sql`${table.title} <> ''`),
-    check(
-      "course_announcement_course_check",
-      sql`${table.courseId} IS NULL OR ${table.courseId} IN (SELECT id FROM course)`,
-    ),
   ],
 );
 
@@ -312,18 +286,6 @@ export const courseAnnouncementRead = mySchema.table(
     ),
     index("course_announcement_read_announcement_idx").on(table.announcementId),
     index("course_announcement_read_user_idx").on(table.userId),
-    check(
-      "course_announcement_read_at_check",
-      sql`${table.readAt} IS NOT NULL`,
-    ),
-    check(
-      "course_announcement_read_user_check",
-      sql`${table.userId} IS NULL OR ${table.userId} IN (SELECT id FROM users)`,
-    ),
-    check(
-      "course_announcement_read_announcement_check",
-      sql`${table.announcementId} IS NULL OR ${table.announcementId} IN (SELECT id FROM course_announcement)`,
-    ),
   ],
 );
 

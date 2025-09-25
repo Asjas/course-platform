@@ -1,9 +1,15 @@
-import { course, seatStatus } from "./course.js";
+import { course } from "./course.js";
 import { sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { invoice, payment } from "~/db/schema/purchase.js";
 import { mySchema, organization, user } from "~/db/schema/user.js";
+
+export const seatStatus = mySchema.enum("seat_status", [
+  "pending",
+  "claimed",
+  "revoked",
+]);
 
 export const teamLicense = mySchema.table(
   "team_license",
@@ -81,12 +87,12 @@ export const teamLicenseInvite = mySchema.table(
     index("team_license_invite_status_idx").on(table.status),
     check(
       "team_license_invite_status_check",
-      sql`${table.status} IN ('pending', 'accepted', 'revoked', 'expired')`,
+      sql`${table.status} IN ('pending', 'claimed', 'revoked')`,
     ),
     check(
       "team_license_invite_acceptance_check",
-      sql`(${table.status} = 'accepted' AND ${table.acceptedByUserId} IS NOT NULL)
-        OR (${table.status} <> 'accepted' AND ${table.acceptedByUserId} IS NULL)`,
+      sql`(${table.status} = 'claimed' AND ${table.acceptedByUserId} IS NOT NULL)
+        OR (${table.status} <> 'claimed' AND ${table.acceptedByUserId} IS NULL)`,
     ),
     check(
       "team_license_invite_revocation_check",

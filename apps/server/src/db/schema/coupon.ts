@@ -13,7 +13,10 @@ import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { mySchema, user } from "~/db/schema/user.js";
 
-export const couponType = mySchema.enum("coupon", ["percentage", "fixed"]);
+export const discountType = mySchema.enum("discountType", [
+  "percentage",
+  "fixed",
+]);
 
 export const coupon = mySchema.table(
   "coupon",
@@ -21,7 +24,7 @@ export const coupon = mySchema.table(
     id: text().primaryKey(),
     code: text().notNull().unique(),
     description: text(),
-    discountType: couponType().default("percentage").notNull(),
+    discountType: discountType().default("percentage").notNull(),
     discountValue: smallint().notNull(),
     currentRedemptions: integer().default(0).notNull(),
     redemptionLimit: integer().default(1).notNull(),
@@ -61,14 +64,6 @@ export const coupon = mySchema.table(
     check(
       "coupon_percentage_discount_check",
       sql`(${table.discountType} != 'percentage') OR (${table.discountType} = 'percentage' AND ${table.discountValue} <= 100)`,
-    ),
-    check(
-      "coupon_created_by_check",
-      sql`${table.createdBy} IS NULL OR ${table.createdBy} IN (SELECT id FROM users)`,
-    ),
-    check(
-      "coupon_course_check",
-      sql`${table.courseId} IS NULL OR ${table.courseId} IN (SELECT id FROM course)`,
     ),
   ],
 );

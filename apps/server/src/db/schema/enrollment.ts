@@ -92,13 +92,5 @@ export const enrollment = mySchema.table(
       sql`${table.enrollmentType} = 'team' OR (${table.enrollmentType} != 'team' AND ${table.teamLicenseId} IS NULL AND ${table.teamInviteId} IS NULL)`,
     ),
     check("enrollment_enrolled_at_check", sql`${table.enrolledAt} IS NOT NULL`),
-    check(
-      "enrollment_gifted_by_user_check",
-      sql`${table.giftedByUserId} IS NULL OR ${table.giftedByUserId} IN (SELECT id FROM users)`,
-    ),
-    check(
-      "enrollment_team_invite_check",
-      sql`${table.teamInviteId} IS NULL OR ${table.teamInviteId} IN (SELECT id FROM team_license_invite)`,
-    ),
   ],
 );
