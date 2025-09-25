@@ -38,9 +38,11 @@ export const enrollment = mySchema.table(
     enrollmentType: enrollmentType().default("individual").notNull(),
     enrollmentSource: enrollmentSource().default("direct").notNull(),
     status: enrollmentStatus().default("active").notNull(),
-    giftedByUserId: text().references(() => user.id, {
-      onDelete: "set null",
-    }),
+    giftedByUserId: text()
+      .references(() => user.id, {
+        onDelete: "set default",
+      })
+      .default("ghost"),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

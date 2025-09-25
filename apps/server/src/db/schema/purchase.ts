@@ -50,7 +50,9 @@ export const invoice = mySchema.table(
     couponId: text().references(() => coupon.id, {
       onDelete: "set null",
     }),
-    userId: text().references(() => user.id, { onDelete: "set null" }),
+    userId: text()
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
     ...timestamps,
   },
   (table) => [

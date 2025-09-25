@@ -16,7 +16,8 @@ export const teamLicense = mySchema.table(
       .references(() => course.id, { onDelete: "cascade" }),
     purchaserId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
     organizationId: text().references(() => organization.id, {
       onDelete: "set null",
     }),
@@ -58,13 +59,16 @@ export const teamLicenseInvite = mySchema.table(
     inviteCode: text().notNull().unique(),
     invitedByUserId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
     acceptedByUserId: text().references(() => user.id, {
       onDelete: "cascade",
     }),
-    revokedByUserId: text().references(() => user.id, {
-      onDelete: "set null",
-    }),
+    revokedByUserId: text()
+      .references(() => user.id, {
+        onDelete: "set default",
+      })
+      .default("ghost"),
     expiresAt: timestamp({ withTimezone: true }),
     acceptedAt: timestamp({ withTimezone: true }),
     revokedAt: timestamp({ withTimezone: true }),

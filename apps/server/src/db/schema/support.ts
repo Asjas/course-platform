@@ -33,10 +33,13 @@ export const supportTicket = mySchema.table(
     courseId: text().references(() => course.id, { onDelete: "set null" }),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
-    assignedToUserId: text().references(() => user.id, {
-      onDelete: "set null",
-    }),
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
+    assignedToUserId: text()
+      .references(() => user.id, {
+        onDelete: "set default",
+      })
+      .default("ghost"),
     assignedAt: timestamp({ withTimezone: true }),
     resolvedAt: timestamp({ withTimezone: true }),
     closedAt: timestamp({ withTimezone: true }),
@@ -75,7 +78,8 @@ export const supportTicketComment = mySchema.table(
     comment: text().notNull(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
     ticketId: text()
       .notNull()
       .references(() => supportTicket.id, { onDelete: "cascade" }),
@@ -97,7 +101,8 @@ export const supportTicketAttachment = mySchema.table(
     fileSize: smallint(),
     userId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
+      .references(() => user.id, { onDelete: "set default" })
+      .default("ghost"),
     ticketId: text()
       .notNull()
       .references(() => supportTicket.id, { onDelete: "cascade" }),
