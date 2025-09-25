@@ -33,6 +33,8 @@ export const courseAccess = mySchema.enum("course_access", [
   "unlisted",
 ]);
 
+export const videoProvider = mySchema.enum("video_provider", ["youtube"]);
+
 export const course = mySchema.table(
   "course",
   {
@@ -125,17 +127,14 @@ export const courseLesson = mySchema.table(
   {
     id: text().primaryKey(),
     title: text().notNull(),
+    slug: text().notNull(),
+    videoUrl: text().notNull(),
+    videoProvider: videoProvider().default("youtube").notNull(),
     content: jsonb().notNull(),
-    transcription: jsonb(),
+    transcription: jsonb().notNull(),
     duration: integer(),
     order: integer().notNull(),
     isPreview: boolean().default(false).notNull(),
-    moduleSlug: text()
-      .notNull()
-      .references(() => courseModule.slug, { onDelete: "cascade" }),
-    courseSlug: text()
-      .notNull()
-      .references(() => course.slug, { onDelete: "cascade" }),
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
@@ -147,8 +146,6 @@ export const courseLesson = mySchema.table(
   (table) => [
     index("course_lesson_module_idx").on(table.moduleId),
     index("course_lesson_course_idx").on(table.courseId),
-    index("course_lesson_module_slug_idx").on(table.moduleSlug),
-    index("course_lesson_course_slug_idx").on(table.courseSlug),
   ],
 );
 
