@@ -329,3 +329,23 @@ export const courseAnnouncementRead = mySchema.table(
     ),
   ],
 );
+
+export const courseFaq = mySchema.table(
+  "course_faq",
+  {
+    id: text().primaryKey(),
+    question: text().notNull(),
+    answer: text().notNull(),
+    order: integer().notNull(),
+    courseId: text()
+      .notNull()
+      .references(() => course.id, { onDelete: "cascade" }),
+    ...timestamps,
+  },
+  (table) => [
+    index("course_faq_course_idx").on(table.courseId),
+    check("course_faq_question_check", sql`${table.question} <> ''`),
+    check("course_faq_answer_check", sql`${table.answer} <> ''`),
+    check("course_faq_order_check", sql`${table.order} >= 0`),
+  ],
+);
