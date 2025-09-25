@@ -17,7 +17,7 @@ RUN pnpm run build
 
 RUN ["npm", "run", "drizzle:migrate"]
 
-RUN psql $DATABASE_URL -f /app/scripts/insertDefaultDatabaseUsers.sql
+RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 ENV NODE_ENV=production
 
