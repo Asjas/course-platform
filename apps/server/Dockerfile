@@ -1,6 +1,6 @@
 FROM node:22.19.0-alpine3.22
 
-RUN apk --no-cache add curl bash python3 py3-pip make g++ postgresql-dev
+RUN apk --no-cache add curl bash python3 py3-pip make g++ postgresql-dev postgresql-client
 
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
