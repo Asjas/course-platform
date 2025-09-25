@@ -22,6 +22,13 @@
       "when": 1758631178598,
       "tag": "0002_rainy_barracuda",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1758808381500,
+      "tag": "0003_mighty_expediter",
+      "breakpoints": true
     }
   ]
 }
