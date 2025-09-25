@@ -38,14 +38,13 @@ export const invoice = mySchema.table(
     currency: text().default("USD").notNull(),
     isCouponApplied: boolean().default(false).notNull(),
     discountAmount: smallint().default(0).notNull(),
-    taxRate: smallint().default(0).notNull(), // Percentage (e.g., 20 for 20%)
+    taxRate: smallint().default(0).notNull(),
     taxAmount: smallint().default(0).notNull(),
     totalAmount: smallint().notNull(),
     status: paidStatus().default("paid").notNull(),
     issuedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
     paidAt: timestamp({ withTimezone: true }),
     refundedAt: timestamp({ withTimezone: true }),
-    metadata: jsonb(),
     paymentId: text().references(() => payment.id, { onDelete: "cascade" }),
     couponId: text().references(() => coupon.id, {
       onDelete: "set null",
@@ -122,7 +121,6 @@ export const payment = mySchema.table(
     giftRedeemUrl: text(),
     giftRedeemedAt: timestamp({ withTimezone: true }),
     giftExpiresAt: timestamp({ withTimezone: true }),
-    metadata: jsonb(),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),

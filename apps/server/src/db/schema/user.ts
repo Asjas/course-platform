@@ -1,7 +1,6 @@
 import {
   boolean,
   index,
-  jsonb,
   pgSchema,
   text,
   timestamp,
@@ -33,7 +32,7 @@ export const user = mySchema.table(
     banReason: text(),
     banExpires: timestamp({ withTimezone: true }),
     isAnonymous: boolean(),
-    metadata: jsonb(),
+    metadata: text(),
     ...timestamps,
   },
   (table) => [
