@@ -38,8 +38,6 @@ export const coupon = mySchema.table(
   },
   (table) => [
     index("coupon_code_idx").on(table.code),
-    index("coupon_code_idx").on(table.code),
-    index("coupon_created_by_idx").on(table.createdBy),
     index("coupon_course_idx").on(table.courseId),
     check("coupon_discount_value_check", sql`${table.discountValue} > 0`),
     check(
