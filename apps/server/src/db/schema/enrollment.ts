@@ -6,7 +6,7 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/index.js";
+import { mySchema } from "~/db/schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { invoice, payment } from "~/db/schema/purchase.js";

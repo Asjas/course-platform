@@ -9,7 +9,7 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/index.js";
+import { mySchema } from "~/db/schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { coupon } from "~/db/schema/coupon.js";
 import { course } from "~/db/schema/course.js";
@@ -201,7 +201,7 @@ export const invoiceRelations = relations(invoice, ({ one }) => ({
   }),
 }));
 
-export const paymentRelations = relations(payment, ({ one, many }) => ({
+export const paymentRelations = relations(payment, ({ one }) => ({
   course: one(course, {
     fields: [payment.courseId],
     references: [course.id],
