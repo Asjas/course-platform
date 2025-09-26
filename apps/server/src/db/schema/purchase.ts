@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   check,
@@ -9,11 +9,13 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { coupon } from "~/db/schema/coupon.js";
 import { course } from "~/db/schema/course.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { user } from "~/db/schema/user.js";
 
+// Enums
 export const paidStatus = mySchema.enum("paid_status", ["paid", "refunded"]);
 
 export const purchaseType = mySchema.enum("purchase_type", [
@@ -28,6 +30,7 @@ export const paymentStatus = mySchema.enum("payment_status", [
   "refunded",
 ]);
 
+// Tables
 export const invoice = mySchema.table(
   "invoice",
   {
@@ -41,6 +44,7 @@ export const invoice = mySchema.table(
     taxRate: smallint().default(0).notNull(),
     taxAmount: smallint().default(0).notNull(),
     totalAmount: smallint().notNull(),
+    refundedAmount: smallint(),
     status: paidStatus().default("paid").notNull(),
     issuedAt: timestamp({ withTimezone: true }).defaultNow().notNull(),
     paidAt: timestamp({ withTimezone: true }),
@@ -96,7 +100,7 @@ export const payment = mySchema.table(
     currency: text().default("USD").notNull(),
     paymentProvider: text().notNull(),
     transactionId: text().notNull().unique(),
-    paymentStatus: paymentStatus().default("pending").notNull(),
+    status: paymentStatus().default("pending").notNull(),
     paidAt: timestamp({ withTimezone: true }),
     purchaseType: purchaseType().default("individual").notNull(),
     bulkQuantity: smallint(),
@@ -172,11 +176,50 @@ export const payment = mySchema.table(
     check("payment_discount_amount_check", sql`${table.discountAmount} >= 0`),
     check(
       "payment_paid_at_check",
-      sql`${table.paymentStatus} = 'completed' OR ${table.paidAt} IS NULL`,
+      sql`${table.status} = 'completed' OR ${table.paidAt} IS NULL`,
     ),
     check(
       "payment_status_check",
-      sql`${table.paymentStatus} IN ('pending', 'completed', 'failed', 'refunded')`,
+      sql`${table.status} IN ('pending', 'completed', 'failed', 'refunded')`,
     ),
   ],
 );
+
+// Relations
+export const invoiceRelations = relations(invoice, ({ one }) => ({
+  payment: one(payment, {
+    fields: [invoice.paymentId],
+    references: [payment.id],
+  }),
+  user: one(user, {
+    fields: [invoice.userId],
+    references: [user.id],
+  }),
+  coupon: one(coupon, {
+    fields: [invoice.couponId],
+    references: [coupon.id],
+  }),
+}));
+
+export const paymentRelations = relations(payment, ({ one, many }) => ({
+  course: one(course, {
+    fields: [payment.courseId],
+    references: [course.id],
+  }),
+  coupon: one(coupon, {
+    fields: [payment.couponId],
+    references: [coupon.id],
+  }),
+  user: one(user, {
+    fields: [payment.userId],
+    references: [user.id],
+  }),
+  giftRecipientUser: one(user, {
+    fields: [payment.giftRecipientUserId],
+    references: [user.id],
+  }),
+  invoice: one(invoice, {
+    fields: [payment.id],
+    references: [invoice.paymentId],
+  }),
+}));

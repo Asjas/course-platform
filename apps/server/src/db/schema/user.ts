@@ -1,15 +1,22 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   index,
-  pgSchema,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
+import { courseWishlist } from "~/db/schema/course.js";
+import { enrollment } from "~/db/schema/enrollment.js";
+import { platformAnnouncement } from "~/db/schema/platform.js";
+import { courseProgress } from "~/db/schema/progress.js";
+import { payment } from "~/db/schema/purchase.js";
+import { supportTicket } from "~/db/schema/support.js";
+import { teamLicense } from "~/db/schema/teamLicense.js";
 
-export const mySchema = pgSchema("my_schema");
-
+// Enums
 export const members = mySchema.enum("members", [
   "member",
   "admin",
@@ -17,6 +24,7 @@ export const members = mySchema.enum("members", [
   "ghost",
 ]);
 
+// Tables
 export const user = mySchema.table(
   "user",
   {
@@ -191,3 +199,15 @@ export const invitation = mySchema.table(
     ),
   ],
 );
+
+// Relations
+export const userRelations = relations(user, ({ many }) => ({
+  sessions: many(session),
+  enrollments: many(enrollment),
+  progress: many(courseProgress),
+  payments: many(payment),
+  tickets: many(supportTicket),
+  teamLicenses: many(teamLicense),
+  wishlists: many(courseWishlist),
+  announcements: many(platformAnnouncement),
+}));

@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   check,
@@ -11,8 +11,11 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { enrollment } from "~/db/schema/enrollment.js";
+import { courseProgress, lessonProgress } from "~/db/schema/progress.js";
+import { user } from "~/db/schema/user.js";
 
 export const courseLevel = mySchema.enum("course_level", [
   "All levels",
@@ -242,53 +245,6 @@ export const courseInstructorNote = mySchema.table(
   ],
 );
 
-export const courseAnnouncement = mySchema.table(
-  "course_announcement",
-  {
-    id: text().primaryKey(),
-    courseId: text()
-      .notNull()
-      .references(() => course.id, { onDelete: "cascade" }),
-    title: text().notNull(),
-    message: text().notNull(),
-    pinned: boolean().default(false).notNull(),
-    ...timestamps,
-  },
-  (table) => [
-    index("course_announcement_course_idx").on(table.courseId),
-    index("course_announcement_pinned_idx").on(table.pinned),
-    check(
-      "course_announcement_pinned_check",
-      sql`${table.pinned} IN (true, false)`,
-    ),
-    check("course_announcement_message_check", sql`${table.message} <> ''`),
-    check("course_announcement_title_check", sql`${table.title} <> ''`),
-  ],
-);
-
-export const courseAnnouncementRead = mySchema.table(
-  "course_announcement_read",
-  {
-    id: text().primaryKey(),
-    announcementId: text()
-      .notNull()
-      .references(() => courseAnnouncement.id, { onDelete: "cascade" }),
-    userId: text()
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    readAt: timestamp({ withTimezone: true }),
-    ...timestamps,
-  },
-  (table) => [
-    uniqueIndex("course_announcement_read_unique_idx").on(
-      table.announcementId,
-      table.userId,
-    ),
-    index("course_announcement_read_announcement_idx").on(table.announcementId),
-    index("course_announcement_read_user_idx").on(table.userId),
-  ],
-);
-
 export const courseFaq = mySchema.table(
   "course_faq",
   {
@@ -308,3 +264,99 @@ export const courseFaq = mySchema.table(
     check("course_faq_order_check", sql`${table.order} >= 0`),
   ],
 );
+
+// Relations
+export const courseRelations = relations(course, ({ many }) => ({
+  enrollments: many(enrollment),
+  wishlists: many(courseWishlist),
+  modules: many(courseModule),
+  progress: many(courseProgress),
+  lessons: many(courseLesson),
+  reviews: many(courseReview),
+  certificates: many(courseCompletionCertificate),
+  instructorNotes: many(courseInstructorNote),
+  faq: many(courseFaq),
+}));
+
+export const courseModuleRelations = relations(
+  courseModule,
+  ({ one, many }) => ({
+    course: one(course, {
+      fields: [courseModule.courseId],
+      references: [course.id],
+    }),
+    lessons: many(courseLesson),
+  }),
+);
+
+export const courseLessonRelations = relations(courseLesson, ({ one }) => ({
+  module: one(courseModule, {
+    fields: [courseLesson.moduleId],
+    references: [courseModule.id],
+  }),
+  course: one(course, {
+    fields: [courseLesson.courseId],
+    references: [course.id],
+  }),
+  progress: one(lessonProgress, {
+    fields: [courseLesson.id],
+    references: [lessonProgress.lessonId],
+  }),
+}));
+
+export const courseReviewRelations = relations(courseReview, ({ one }) => ({
+  course: one(course, {
+    fields: [courseReview.courseId],
+    references: [course.id],
+  }),
+  user: one(user, {
+    fields: [courseReview.userId],
+    references: [user.id],
+  }),
+}));
+
+export const courseWishlistRelations = relations(courseWishlist, ({ one }) => ({
+  course: one(course, {
+    fields: [courseWishlist.courseId],
+    references: [course.id],
+  }),
+  user: one(user, {
+    fields: [courseWishlist.userId],
+    references: [user.id],
+  }),
+}));
+
+export const courseCompletionCertificateRelations = relations(
+  courseCompletionCertificate,
+  ({ one }) => ({
+    course: one(course, {
+      fields: [courseCompletionCertificate.courseId],
+      references: [course.id],
+    }),
+    user: one(user, {
+      fields: [courseCompletionCertificate.userId],
+      references: [user.id],
+    }),
+  }),
+);
+
+export const courseInstructorNoteRelations = relations(
+  courseInstructorNote,
+  ({ one }) => ({
+    course: one(course, {
+      fields: [courseInstructorNote.courseId],
+      references: [course.id],
+    }),
+    instructor: one(user, {
+      fields: [courseInstructorNote.instructorId],
+      references: [user.id],
+    }),
+  }),
+);
+
+export const courseFaqRelations = relations(courseFaq, ({ one }) => ({
+  course: one(course, {
+    fields: [courseFaq.courseId],
+    references: [course.id],
+  }),
+}));

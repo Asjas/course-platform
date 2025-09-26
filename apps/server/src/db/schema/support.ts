@@ -1,8 +1,9 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
-import { course, courseLesson } from "~/db/schema/course.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { course, courseLesson, courseModule } from "~/db/schema/course.js";
+import { user } from "~/db/schema/user.js";
 
 export const supportTicketStatus = mySchema.enum("support_ticket_status", [
   "open",
@@ -27,10 +28,13 @@ export const supportTicket = mySchema.table(
     repo: text(),
     status: supportTicketStatus().default("open").notNull(),
     priority: supportTicketPriority().default("medium").notNull(),
+    courseId: text().references(() => course.id, { onDelete: "set null" }),
+    moduleId: text().references(() => courseModule.id, {
+      onDelete: "set null",
+    }),
     lessonId: text().references(() => courseLesson.id, {
       onDelete: "set null",
     }),
-    courseId: text().references(() => course.id, { onDelete: "set null" }),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "set default" })
@@ -128,4 +132,68 @@ export const supportTicketAttachment = mySchema.table(
       sql`${table.fileType} IS NULL OR ${table.fileType} <> ''`,
     ),
   ],
+);
+
+// New support ticket relations
+export const supportTicketRelations = relations(
+  supportTicket,
+  ({ one, many }) => ({
+    comments: many(supportTicketComment, {
+      relationName: "supportTicketComments",
+    }),
+    attachments: many(supportTicketAttachment, {
+      relationName: "supportTicketAttachments",
+    }),
+    user: one(user, {
+      fields: [supportTicket.userId],
+      references: [user.id],
+    }),
+    assignedToUser: one(user, {
+      fields: [supportTicket.assignedToUserId],
+      references: [user.id],
+    }),
+    course: one(course, {
+      fields: [supportTicket.courseId],
+      references: [course.id],
+    }),
+    lesson: one(courseLesson, {
+      fields: [supportTicket.lessonId],
+      references: [courseLesson.id],
+    }),
+    module: one(courseModule, {
+      fields: [supportTicket.moduleId],
+      references: [courseModule.id],
+    }),
+  }),
+);
+
+// Support ticket comment relation (back-reference to ticket)
+export const supportTicketCommentRelations = relations(
+  supportTicketComment,
+  ({ one }) => ({
+    ticket: one(supportTicket, {
+      fields: [supportTicketComment.ticketId],
+      references: [supportTicket.id],
+      relationName: "supportTicketComments",
+    }),
+    user: one(user, {
+      fields: [supportTicketComment.userId],
+      references: [user.id],
+    }),
+  }),
+);
+
+// Support ticket attachment relation (back-reference to ticket)
+export const supportTicketAttachmentRelations = relations(
+  supportTicketAttachment,
+  ({ one }) => ({
+    ticket: one(supportTicket, {
+      fields: [supportTicketAttachment.ticketId],
+      references: [supportTicket.id],
+    }),
+    comment: one(supportTicketComment, {
+      fields: [supportTicketAttachment.commentId],
+      references: [supportTicketComment.id],
+    }),
+  }),
 );

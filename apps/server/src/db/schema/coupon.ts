@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   check,
@@ -9,15 +9,18 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { user } from "~/db/schema/user.js";
 
+// Enums
 export const discountType = mySchema.enum("discountType", [
   "percentage",
   "fixed",
 ]);
 
+// Tables
 export const coupon = mySchema.table(
   "coupon",
   {
@@ -36,7 +39,7 @@ export const coupon = mySchema.table(
         onDelete: "set default",
       })
       .default("ghost"),
-    courseId: text().references(() => course.id, { onDelete: "set null" }),
+    courseId: text().references(() => course.id, { onDelete: "cascade" }),
     ...timestamps,
   },
   (table) => [
@@ -95,3 +98,8 @@ export const couponRedemption = mySchema.table(
     ),
   ],
 );
+
+// Relations
+export const couponRelations = relations(coupon, ({ many }) => ({
+  redemptions: many(couponRedemption),
+}));

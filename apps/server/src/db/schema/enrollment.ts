@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   check,
   index,
@@ -6,12 +6,14 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { invoice, payment } from "~/db/schema/purchase.js";
 import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { user } from "~/db/schema/user.js";
 
+// Enums
 export const enrollmentType = mySchema.enum("course_enrollment_type", [
   "individual",
   "gift",
@@ -31,6 +33,7 @@ export const enrollmentStatus = mySchema.enum("course_enrollment_status", [
   "completed",
 ]);
 
+// Tables
 export const enrollment = mySchema.table(
   "enrollment",
   {
@@ -94,3 +97,15 @@ export const enrollment = mySchema.table(
     check("enrollment_enrolled_at_check", sql`${table.enrolledAt} IS NOT NULL`),
   ],
 );
+
+// Relations
+export const enrollmentRelations = relations(enrollment, ({ one }) => ({
+  user: one(user, {
+    fields: [enrollment.userId],
+    references: [user.id],
+  }),
+  course: one(course, {
+    fields: [enrollment.courseId],
+    references: [course.id],
+  }),
+}));

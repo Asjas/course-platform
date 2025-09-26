@@ -1,4 +1,4 @@
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
   check,
@@ -8,15 +8,17 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/index.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson } from "~/db/schema/course.js";
-import { mySchema, user } from "~/db/schema/user.js";
+import { user } from "~/db/schema/user.js";
 
+// Tables
 export const courseProgress = mySchema.table(
   "course_progress",
   {
     id: text().primaryKey(),
-    progress: smallint().default(0).notNull(), // Progress across entire course in percentage
+    progress: smallint().default(0).notNull(),
     completed: boolean().default(false).notNull(),
     startedAt: timestamp({ withTimezone: true }),
     completedAt: timestamp({ withTimezone: true }),
@@ -82,3 +84,26 @@ export const lessonProgress = mySchema.table(
     ),
   ],
 );
+
+// Relations
+export const courseProgressRelations = relations(courseProgress, ({ one }) => ({
+  user: one(user, {
+    fields: [courseProgress.userId],
+    references: [user.id],
+  }),
+  course: one(course, {
+    fields: [courseProgress.courseId],
+    references: [course.id],
+  }),
+}));
+
+export const lessonProgressRelations = relations(lessonProgress, ({ one }) => ({
+  user: one(user, {
+    fields: [lessonProgress.userId],
+    references: [user.id],
+  }),
+  lesson: one(courseLesson, {
+    fields: [lessonProgress.lessonId],
+    references: [courseLesson.id],
+  }),
+}));
