@@ -1,7 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { ONE_WEEK } from "~/lib/constants.js";
-import { redis } from "~/lib/redis.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "db:queries:invoice" });
 
 // All invoices are admin only
 // This query is used in the admin dashboard
@@ -10,24 +11,14 @@ export async function getAllInvoices() {
     .findMany({ with: { payment: true } })
     .prepare("getAllInvoices");
 
-  const invoices = await preparedStatement.execute();
+  try {
+    const invoices = await preparedStatement.execute();
 
-  return { invoices, count: invoices.length };
-}
-
-// All invoices are admin only
-// This query is used in the admin dashboard
-export async function getAllInvoicesCached() {
-  const cacheKey = `invoices:all`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const invoices = await getAllInvoices();
-  if (invoices.count > 0) {
-    await redis.setex(cacheKey, JSON.stringify(invoices), ONE_WEEK);
+    return { invoices, count: invoices.length };
+  } catch (err) {
+    log.error(err, "Failed to get all invoices");
+    throw err;
   }
-
-  return invoices;
 }
 
 // Individual invoices are accessible by admin and the user themselves
@@ -39,23 +30,14 @@ export async function getInvoiceById(id: string) {
     })
     .prepare("getInvoiceById");
 
-  const invoice = await preparedStatement.execute({ id });
+  try {
+    const invoice = await preparedStatement.execute({ id });
 
-  return invoice ?? null;
-}
-
-// Individual invoices are accessible by admin and the user themselves
-export async function getInvoiceByIdCached(id: string) {
-  const cacheKey = `invoice:id:${id}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const invoice = await getInvoiceById(id);
-  if (invoice) {
-    await redis.setex(cacheKey, JSON.stringify(invoice), ONE_WEEK);
+    return invoice ?? null;
+  } catch (err) {
+    log.error(err, `Failed to get invoice with id ${id}`);
+    throw err;
   }
-
-  return invoice;
 }
 
 // Individual invoices are accessible by admin and the user themselves
@@ -67,21 +49,12 @@ export async function getInvoiceByNumber(number: string) {
     })
     .prepare("getInvoiceByNumber");
 
-  const invoice = await preparedStatement.execute({ number });
+  try {
+    const invoice = await preparedStatement.execute({ number });
 
-  return invoice ?? null;
-}
-
-// Individual invoices are accessible by admin and the user themselves
-export async function getInvoiceByNumberCached(number: string) {
-  const cacheKey = `invoice:number:${number}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const invoice = await getInvoiceByNumber(number);
-  if (invoice) {
-    await redis.setex(cacheKey, JSON.stringify(invoice), ONE_WEEK);
+    return invoice ?? null;
+  } catch (err) {
+    log.error(err, `Failed to get invoice with number ${number}`);
+    throw err;
   }
-
-  return invoice;
 }

@@ -1,7 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { ONE_WEEK } from "~/lib/constants.js";
-import { redis } from "~/lib/redis.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "db:queries:support" });
 
 // All support tickets are always publicly viewable
 export async function getAllSupportTickets() {
@@ -19,23 +20,14 @@ export async function getAllSupportTickets() {
     })
     .prepare("getAllSupportTickets");
 
-  const tickets = await preparedStatement.execute();
+  try {
+    const tickets = await preparedStatement.execute();
 
-  return { tickets, count: tickets.length };
-}
-
-// All support tickets are always publicly viewable
-export async function getAllSupportTicketsCached() {
-  const cacheKey = `supportTickets:all`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const tickets = await getAllSupportTickets();
-  if (tickets.count > 0) {
-    await redis.setex(cacheKey, JSON.stringify(tickets), ONE_WEEK);
+    return { tickets, count: tickets.length };
+  } catch (err) {
+    log.error(err, "Failed to get all support tickets");
+    throw err;
   }
-
-  return tickets;
 }
 
 // Individual support tickets are always publicly viewable
@@ -60,21 +52,12 @@ export async function getSupportTicketById(id: string) {
     })
     .prepare("getSupportTicketById");
 
-  const ticket = await preparedStatement.execute({ id });
+  try {
+    const ticket = await preparedStatement.execute({ id });
 
-  return ticket ?? null;
-}
-
-// Individual support tickets are always publicly viewable
-export async function getSupportTicketByIdCached(id: string) {
-  const cacheKey = `supportTicket:id:${id}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const ticket = await getSupportTicketById(id);
-  if (ticket) {
-    await redis.setex(cacheKey, JSON.stringify(ticket), ONE_WEEK);
+    return ticket ?? null;
+  } catch (err) {
+    log.error(err, `Failed to get support ticket with id ${id}`);
+    throw err;
   }
-
-  return ticket;
 }

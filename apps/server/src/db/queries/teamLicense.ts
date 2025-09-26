@@ -1,7 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { ONE_DAY } from "~/lib/constants.js";
-import { redis } from "~/lib/redis.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "db:queries:teamlicense" });
 
 // All licenses are admin only
 // This query is used in the admin dashboard
@@ -10,24 +11,14 @@ export async function getAllTeamLicenses() {
     .findMany({ with: { user: true } })
     .prepare("getAllTeamLicenses");
 
-  const teamLicenses = await preparedStatement.execute();
+  try {
+    const teamLicenses = await preparedStatement.execute();
 
-  return { teamLicenses, count: teamLicenses.length };
-}
-
-// All licenses are admin only
-// This query is used in the admin dashboard
-export async function getAllTeamLicensesCached() {
-  const cacheKey = `teamLicenses:all`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const teamLicenses = await getAllTeamLicenses();
-  if (teamLicenses.count > 0) {
-    await redis.setex(cacheKey, JSON.stringify(teamLicenses), ONE_DAY);
+    return { teamLicenses, count: teamLicenses.length };
+  } catch (err) {
+    log.error(err, "Failed to get all team licenses");
+    throw err;
   }
-
-  return teamLicenses;
 }
 
 // Individual licenses are accessible by admin and the user themselves
@@ -39,21 +30,12 @@ export async function getTeamLicenseById(id: string) {
     })
     .prepare("getTeamLicenseById");
 
-  const teamLicense = await preparedStatement.execute({ id });
+  try {
+    const teamLicense = await preparedStatement.execute({ id });
 
-  return teamLicense ?? null;
-}
-
-// Individual licenses are accessible by admin and the user themselves
-export async function getTeamLicenseByIdCached(id: string) {
-  const cacheKey = `teamLicense:id:${id}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const teamLicense = await getTeamLicenseById(id);
-  if (teamLicense) {
-    await redis.setex(cacheKey, JSON.stringify(teamLicense), ONE_DAY);
+    return teamLicense ?? null;
+  } catch (err) {
+    log.error(err, `Failed to get team license with id ${id}`);
+    throw err;
   }
-
-  return teamLicense;
 }

@@ -1,7 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { ONE_DAY } from "~/lib/constants.js";
-import { redis } from "~/lib/redis.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "db:queries:user" });
 
 // All users are admin only
 // This query is used in the admin dashboard
@@ -28,24 +29,14 @@ export async function getAllUsers() {
     })
     .prepare("getAllUsers");
 
-  const users = await preparedStatement.execute();
+  try {
+    const users = await preparedStatement.execute();
 
-  return { users, count: users.length };
-}
-
-// All users are admin only
-// This query is used in the admin dashboard
-export async function getAllUsersCached() {
-  const cacheKey = `users:all`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const users = await getAllUsers();
-  if (users.count > 0) {
-    await redis.setex(cacheKey, JSON.stringify(users), ONE_DAY);
+    return { users, count: users.length };
+  } catch (err) {
+    log.error(err, "Failed to get all users");
+    throw err;
   }
-
-  return users;
 }
 
 // Individual users are accessible by admin and the user themselves
@@ -91,21 +82,12 @@ export async function getUserById(id: string) {
     })
     .prepare("getUserById");
 
-  const user = await preparedStatement.execute({ id });
+  try {
+    const user = await preparedStatement.execute({ id });
 
-  return user ?? null;
-}
-
-// Individual users are accessible by admin and the user themselves
-export async function getUserByIdCached(id: string) {
-  const cacheKey = `user:${id}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const user = await getUserById(id);
-  if (user) {
-    await redis.set(cacheKey, JSON.stringify(user), "EX", ONE_DAY);
+    return user ?? null;
+  } catch (err) {
+    log.error(err, `Failed to get user with id ${id}`);
+    throw err;
   }
-
-  return user;
 }

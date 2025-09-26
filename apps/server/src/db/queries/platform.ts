@@ -1,7 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { ONE_WEEK } from "~/lib/constants.js";
-import { redis } from "~/lib/redis.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "db:queries:platform" });
 
 // All platform announcements are accessible by admins only
 // This query is used in the admin dashboard
@@ -15,24 +16,14 @@ export async function getAllAnnouncements() {
     })
     .prepare("getAllAnnouncements");
 
-  const announcements = await preparedStatement.execute();
+  try {
+    const announcements = await preparedStatement.execute();
 
-  return { announcements, count: announcements.length };
-}
-
-// All platform announcements are accessible by admins only
-// This query is used in the admin dashboard
-export async function getAllAnnouncementsCached() {
-  const cacheKey = `platformAnnouncements:all`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const announcements = await getAllAnnouncements();
-  if (announcements.count > 0) {
-    await redis.setex(cacheKey, JSON.stringify(announcements), ONE_WEEK);
+    return { announcements, count: announcements.length };
+  } catch (err) {
+    log.error(err, "Failed to get all announcements");
+    throw err;
   }
-
-  return announcements;
 }
 
 // Individual platform announcements are accessible by admins only
@@ -48,22 +39,12 @@ export async function getAnnouncementById(id: string) {
     })
     .prepare("getAnnouncementById");
 
-  const announcement = await preparedStatement.execute({ id });
+  try {
+    const announcement = await preparedStatement.execute({ id });
 
-  return announcement;
-}
-
-// Individual platform announcements are accessible by admins only
-// This query is used in the admin dashboard
-export async function getAnnouncementByIdCached(id: string) {
-  const cacheKey = `platformAnnouncement:id:${id}`;
-  const cached = await redis.get(cacheKey);
-  if (cached) return JSON.parse(cached);
-
-  const announcement = await getAnnouncementById(id);
-  if (announcement) {
-    await redis.setex(cacheKey, JSON.stringify(announcement), ONE_WEEK);
+    return announcement;
+  } catch (err) {
+    log.error(err, `Failed to get announcement with id ${id}`);
+    throw err;
   }
-
-  return announcement;
 }
