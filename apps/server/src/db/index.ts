@@ -15,6 +15,6 @@ export const db = drizzle({
     ...schemas,
   },
   client: client,
-  logger: new DrizzleLogger(),
+  logger: config.NODE_ENV === "development" ? new DrizzleLogger() : undefined,
   casing: "snake_case",
 });
