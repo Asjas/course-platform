@@ -17,7 +17,7 @@ function App() {
           Master Lasting <span className="text-green-400">Web Dev Skills</span>
         </h1>
         <p className="mx-auto mb-12 max-w-4xl text-xl leading-relaxed text-slate-300 md:text-2xl">
-          Interactive lessons in Fastify, Coolify, JavaScript, and TypeScript.
+          Interactive course lessons in Fastify, JavaScript and TypeScript.
           Master the essential web development skills every developer needs,
           regardless of your tech stack or AI tools.
         </p>
