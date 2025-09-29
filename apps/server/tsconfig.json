@@ -15,6 +15,7 @@
     },
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
+    "allowImportingTsExtensions": false,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -22,6 +23,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strictFunctionTypes": true,
+    "verbatimModuleSyntax": true,
     "strictNullChecks": true
   },
   "include": ["src/**/*", "tests/**/*", "drizzle.config.ts"],
