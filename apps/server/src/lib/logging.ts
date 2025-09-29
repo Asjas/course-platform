@@ -1,5 +1,5 @@
 import { AsyncLocalStorage } from "async_hooks";
-import { Logger } from "drizzle-orm/logger";
+import type { Logger } from "drizzle-orm/logger";
 import pino from "pino";
 import config from "~/config.js";
 
