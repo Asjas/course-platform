@@ -53,7 +53,6 @@ export function CACHE_PRIVATE_REVALIDATE({
 }
 
 // Cache tags for fine-grained cache invalidation (CDNs)
-
 export function CACHE_TAGS({ type, tag }: { type: string; tag: string }) {
   const cacheTag = type + ":" + tag;
 
