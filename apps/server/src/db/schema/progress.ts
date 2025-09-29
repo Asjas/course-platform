@@ -90,10 +90,12 @@ export const courseProgressRelations = relations(courseProgress, ({ one }) => ({
   user: one(user, {
     fields: [courseProgress.userId],
     references: [user.id],
+    relationName: "course_progress_user",
   }),
   course: one(course, {
     fields: [courseProgress.courseId],
     references: [course.id],
+    relationName: "course_progress_course",
   }),
 }));
 
@@ -101,9 +103,11 @@ export const lessonProgressRelations = relations(lessonProgress, ({ one }) => ({
   user: one(user, {
     fields: [lessonProgress.userId],
     references: [user.id],
+    relationName: "lesson_progress_user",
   }),
   lesson: one(courseLesson, {
     fields: [lessonProgress.lessonId],
     references: [courseLesson.id],
+    relationName: "lesson_progress_lesson",
   }),
 }));

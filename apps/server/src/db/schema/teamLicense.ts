@@ -1,5 +1,5 @@
 import { course } from "./course.js";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
@@ -113,4 +113,60 @@ export const teamLicenseInvite = mySchema.table(
       sql`${table.inviteCode} <> ''`,
     ),
   ],
+);
+
+// Relations
+export const teamLicenseRelations = relations(teamLicense, ({ many, one }) => ({
+  course: one(course, {
+    fields: [teamLicense.courseId],
+    references: [course.id],
+    relationName: "team_license_course",
+  }),
+  purchaser: one(user, {
+    fields: [teamLicense.purchaserId],
+    references: [user.id],
+    relationName: "team_license_purchaser",
+  }),
+  organization: one(organization, {
+    fields: [teamLicense.organizationId],
+    references: [organization.id],
+    relationName: "team_license_organization",
+  }),
+  invoice: one(invoice, {
+    fields: [teamLicense.invoiceId],
+    references: [invoice.id],
+    relationName: "team_license_invoice",
+  }),
+  payment: one(payment, {
+    fields: [teamLicense.paymentId],
+    references: [payment.id],
+    relationName: "team_license_payment",
+  }),
+  invites: many(teamLicenseInvite),
+}));
+
+export const teamLicenseInviteRelations = relations(
+  teamLicenseInvite,
+  ({ one }) => ({
+    license: one(teamLicense, {
+      fields: [teamLicenseInvite.licenseId],
+      references: [teamLicense.id],
+      relationName: "team_license_invite_license",
+    }),
+    invitedBy: one(user, {
+      fields: [teamLicenseInvite.invitedByUserId],
+      references: [user.id],
+      relationName: "team_license_invite_invited_by",
+    }),
+    acceptedBy: one(user, {
+      fields: [teamLicenseInvite.acceptedByUserId],
+      references: [user.id],
+      relationName: "team_license_invite_accepted_by",
+    }),
+    revokedBy: one(user, {
+      fields: [teamLicenseInvite.revokedByUserId],
+      references: [user.id],
+      relationName: "team_license_invite_revoked_by",
+    }),
+  }),
 );

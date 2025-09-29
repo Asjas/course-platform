@@ -138,31 +138,32 @@ export const supportTicketAttachment = mySchema.table(
 export const supportTicketRelations = relations(
   supportTicket,
   ({ one, many }) => ({
-    comments: many(supportTicketComment, {
-      relationName: "supportTicketComments",
-    }),
-    attachments: many(supportTicketAttachment, {
-      relationName: "supportTicketAttachments",
-    }),
+    comments: many(supportTicketComment),
+    attachments: many(supportTicketAttachment),
     user: one(user, {
       fields: [supportTicket.userId],
       references: [user.id],
+      relationName: "support_ticket_user",
     }),
     assignedToUser: one(user, {
       fields: [supportTicket.assignedToUserId],
       references: [user.id],
+      relationName: "support_ticket_assigned_to",
     }),
     course: one(course, {
       fields: [supportTicket.courseId],
       references: [course.id],
+      relationName: "support_ticket_course",
     }),
     lesson: one(courseLesson, {
       fields: [supportTicket.lessonId],
       references: [courseLesson.id],
+      relationName: "support_ticket_lesson",
     }),
     module: one(courseModule, {
       fields: [supportTicket.moduleId],
       references: [courseModule.id],
+      relationName: "support_ticket_module",
     }),
   }),
 );
@@ -174,11 +175,12 @@ export const supportTicketCommentRelations = relations(
     ticket: one(supportTicket, {
       fields: [supportTicketComment.ticketId],
       references: [supportTicket.id],
-      relationName: "supportTicketComments",
+      relationName: "support_ticket_comments",
     }),
     user: one(user, {
       fields: [supportTicketComment.userId],
       references: [user.id],
+      relationName: "support_ticket_comment_user",
     }),
   }),
 );
@@ -190,10 +192,12 @@ export const supportTicketAttachmentRelations = relations(
     ticket: one(supportTicket, {
       fields: [supportTicketAttachment.ticketId],
       references: [supportTicket.id],
+      relationName: "support_ticket_attachments",
     }),
     comment: one(supportTicketComment, {
       fields: [supportTicketAttachment.commentId],
       references: [supportTicketComment.id],
+      relationName: "support_ticket_attachment_comment",
     }),
   }),
 );

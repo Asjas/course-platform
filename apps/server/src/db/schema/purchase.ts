@@ -194,6 +194,7 @@ export const invoiceRelations = relations(invoice, ({ one }) => ({
   user: one(user, {
     fields: [invoice.userId],
     references: [user.id],
+    relationName: "invoice_user",
   }),
   coupon: one(coupon, {
     fields: [invoice.couponId],
@@ -213,10 +214,12 @@ export const paymentRelations = relations(payment, ({ one }) => ({
   user: one(user, {
     fields: [payment.userId],
     references: [user.id],
+    relationName: "payment_user",
   }),
   giftRecipientUser: one(user, {
     fields: [payment.giftRecipientUserId],
     references: [user.id],
+    relationName: "payment_gift_recipient",
   }),
   invoice: one(invoice, {
     fields: [payment.id],

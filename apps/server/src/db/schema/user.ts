@@ -10,7 +10,7 @@ import { mySchema } from "~/db/schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { courseWishlist } from "~/db/schema/course.js";
 import { enrollment } from "~/db/schema/enrollment.js";
-import { platformAnnouncement } from "~/db/schema/platform.js";
+import { platformAnnouncement } from "~/db/schema/platformAnnouncements.js";
 import { courseProgress } from "~/db/schema/progress.js";
 import { payment } from "~/db/schema/purchase.js";
 import { supportTicket } from "~/db/schema/support.js";
@@ -202,11 +202,11 @@ export const invitation = mySchema.table(
 
 // Relations
 export const userRelations = relations(user, ({ many }) => ({
-  sessions: many(session),
-  enrollments: many(enrollment),
-  progress: many(courseProgress),
-  payments: many(payment),
-  tickets: many(supportTicket),
+  sessions: many(session, { relationName: "session_user" }),
+  enrollments: many(enrollment, { relationName: "enrollment_user" }),
+  progress: many(courseProgress, { relationName: "course_progress_user" }),
+  payments: many(payment, { relationName: "payment_user" }),
+  tickets: many(supportTicket, { relationName: "support_ticket_user" }),
   teamLicenses: many(teamLicense),
   wishlists: many(courseWishlist),
   announcements: many(platformAnnouncement),

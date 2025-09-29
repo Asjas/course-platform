@@ -267,15 +267,19 @@ export const courseFaq = mySchema.table(
 
 // Relations
 export const courseRelations = relations(course, ({ many }) => ({
-  enrollments: many(enrollment),
-  wishlists: many(courseWishlist),
-  modules: many(courseModule),
-  progress: many(courseProgress),
-  lessons: many(courseLesson),
-  reviews: many(courseReview),
-  certificates: many(courseCompletionCertificate),
-  instructorNotes: many(courseInstructorNote),
-  faq: many(courseFaq),
+  enrollments: many(enrollment, { relationName: "enrollment_course" }),
+  wishlists: many(courseWishlist, { relationName: "course_wishlist_course" }),
+  modules: many(courseModule, { relationName: "course_module_course" }),
+  progress: many(courseProgress, { relationName: "course_progress_course" }),
+  lessons: many(courseLesson, { relationName: "course_lesson_course" }),
+  reviews: many(courseReview, { relationName: "course_review_course" }),
+  certificates: many(courseCompletionCertificate, {
+    relationName: "course_completion_certificate_course",
+  }),
+  instructorNotes: many(courseInstructorNote, {
+    relationName: "course_instructor_note_course",
+  }),
+  faq: many(courseFaq, { relationName: "course_faq_course" }),
 }));
 
 export const courseModuleRelations = relations(
@@ -284,6 +288,7 @@ export const courseModuleRelations = relations(
     course: one(course, {
       fields: [courseModule.courseId],
       references: [course.id],
+      relationName: "course_module_course",
     }),
     lessons: many(courseLesson),
   }),
@@ -293,14 +298,17 @@ export const courseLessonRelations = relations(courseLesson, ({ one }) => ({
   module: one(courseModule, {
     fields: [courseLesson.moduleId],
     references: [courseModule.id],
+    relationName: "course_lesson_module",
   }),
   course: one(course, {
     fields: [courseLesson.courseId],
     references: [course.id],
+    relationName: "course_lesson_course",
   }),
   progress: one(lessonProgress, {
     fields: [courseLesson.id],
     references: [lessonProgress.lessonId],
+    relationName: "lesson_progress_lesson",
   }),
 }));
 
@@ -308,10 +316,12 @@ export const courseReviewRelations = relations(courseReview, ({ one }) => ({
   course: one(course, {
     fields: [courseReview.courseId],
     references: [course.id],
+    relationName: "course_review_course",
   }),
   user: one(user, {
     fields: [courseReview.userId],
     references: [user.id],
+    relationName: "course_review_user",
   }),
 }));
 
@@ -319,10 +329,12 @@ export const courseWishlistRelations = relations(courseWishlist, ({ one }) => ({
   course: one(course, {
     fields: [courseWishlist.courseId],
     references: [course.id],
+    relationName: "course_wishlist_course",
   }),
   user: one(user, {
     fields: [courseWishlist.userId],
     references: [user.id],
+    relationName: "course_wishlist_user",
   }),
 }));
 
@@ -332,10 +344,12 @@ export const courseCompletionCertificateRelations = relations(
     course: one(course, {
       fields: [courseCompletionCertificate.courseId],
       references: [course.id],
+      relationName: "course_completion_certificate_course",
     }),
     user: one(user, {
       fields: [courseCompletionCertificate.userId],
       references: [user.id],
+      relationName: "course_completion_certificate_user",
     }),
   }),
 );
@@ -346,10 +360,12 @@ export const courseInstructorNoteRelations = relations(
     course: one(course, {
       fields: [courseInstructorNote.courseId],
       references: [course.id],
+      relationName: "course_instructor_note_course",
     }),
     instructor: one(user, {
       fields: [courseInstructorNote.instructorId],
       references: [user.id],
+      relationName: "course_instructor_note_instructor",
     }),
   }),
 );
@@ -358,5 +374,6 @@ export const courseFaqRelations = relations(courseFaq, ({ one }) => ({
   course: one(course, {
     fields: [courseFaq.courseId],
     references: [course.id],
+    relationName: "course_faq_course",
   }),
 }));

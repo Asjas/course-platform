@@ -103,3 +103,24 @@ export const couponRedemption = mySchema.table(
 export const couponRelations = relations(coupon, ({ many }) => ({
   redemptions: many(couponRedemption),
 }));
+
+export const couponRedemptionRelations = relations(
+  couponRedemption,
+  ({ one }) => ({
+    coupon: one(coupon, {
+      fields: [couponRedemption.couponId],
+      references: [coupon.id],
+      relationName: "coupon_redemption_coupon",
+    }),
+    user: one(user, {
+      fields: [couponRedemption.userId],
+      references: [user.id],
+      relationName: "coupon_redemption_user",
+    }),
+    course: one(course, {
+      fields: [couponRedemption.courseId],
+      references: [course.id],
+      relationName: "coupon_redemption_course",
+    }),
+  }),
+);

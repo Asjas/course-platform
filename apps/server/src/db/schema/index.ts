@@ -6,4 +6,4 @@ export * from "~/db/schema/purchase.js";
 export * from "~/db/schema/support.js";
 export * from "~/db/schema/teamLicense.js";
 export * from "~/db/schema/progress.js";
-export * from "~/db/schema/platform.js";
+export * from "~/db/schema/platformAnnouncements.js";

@@ -103,9 +103,11 @@ export const enrollmentRelations = relations(enrollment, ({ one }) => ({
   user: one(user, {
     fields: [enrollment.userId],
     references: [user.id],
+    relationName: "enrollment_user",
   }),
   course: one(course, {
     fields: [enrollment.courseId],
     references: [course.id],
+    relationName: "enrollment_course",
   }),
 }));

@@ -77,6 +77,7 @@ export const platformAnnouncementRelations = relations(
     author: one(user, {
       fields: [platformAnnouncement.authorId],
       references: [user.id],
+      relationName: "platform_announcement_author",
     }),
     reads: many(platformAnnouncementRead),
   }),
@@ -88,10 +89,12 @@ export const platformAnnouncementReadRelations = relations(
     announcement: one(platformAnnouncement, {
       fields: [platformAnnouncementRead.announcementId],
       references: [platformAnnouncement.id],
+      relationName: "platform_announcement_read_announcement",
     }),
     user: one(user, {
       fields: [platformAnnouncementRead.userId],
       references: [user.id],
+      relationName: "platform_announcement_read_user",
     }),
   }),
 );
