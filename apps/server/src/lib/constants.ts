@@ -5,6 +5,8 @@ export const TEN_MINUTES = 600;
 export const THIRTY_MINUTES = 1800;
 export const ONE_HOUR = 3600;
 export const ONE_DAY = 86_400;
+export const ONE_WEEK = 604_800;
+export const ONE_YEAR = 31_536_000;
 
 // No caching - useful for sensitive data that must not be stored
 export const CACHE_NO_CACHE = {
