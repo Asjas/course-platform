@@ -3,21 +3,23 @@ import { db } from "~/db/index.js";
 import {
   platformAnnouncement,
   platformAnnouncementRead,
-} from "~/db/schema/platform.js";
+} from "~/db/schema/platformAnnouncements.js";
 import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:mutations:platform" });
 
-export type platformAnnouncement = typeof platformAnnouncement.$inferSelect;
-export type newPlatformAnnouncement = typeof platformAnnouncement.$inferInsert;
-export type platformAnnouncementRead =
+export type PlatformAnnouncement = typeof platformAnnouncement.$inferSelect;
+export type NewPlatformAnnouncement = typeof platformAnnouncement.$inferInsert;
+export type PlatformAnnouncementRead =
   typeof platformAnnouncementRead.$inferSelect;
-export type newPlatformAnnouncementRead =
+export type NewPlatformAnnouncementRead =
   typeof platformAnnouncementRead.$inferInsert;
 
-export async function insertPlatformAnnouncement(
-  newPlatformAnnouncement: newPlatformAnnouncement,
-) {
+export async function insertPlatformAnnouncement({
+  newPlatformAnnouncement,
+}: {
+  newPlatformAnnouncement: NewPlatformAnnouncement;
+}) {
   try {
     const result = await db
       .insert(platformAnnouncement)
@@ -32,10 +34,13 @@ export async function insertPlatformAnnouncement(
   }
 }
 
-export async function updatePlatformAnnouncementById(
-  id: string,
-  updates: Partial<platformAnnouncement>,
-) {
+export async function updatePlatformAnnouncementById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<PlatformAnnouncement>;
+}) {
   try {
     const result = await db
       .update(platformAnnouncement)
@@ -50,9 +55,7 @@ export async function updatePlatformAnnouncementById(
   }
 }
 
-export async function deletePlatformAnnouncementById({
-  id,
-}: platformAnnouncement) {
+export async function deletePlatformAnnouncementById(id: string) {
   try {
     const result = db
       .delete(platformAnnouncement)
@@ -67,12 +70,23 @@ export async function deletePlatformAnnouncementById({
 }
 
 export async function insertPlatformAnnouncementRead(
-  newPlatformAnnouncementRead: newPlatformAnnouncementRead,
+  id: string,
+  {
+    announcementId,
+    userId,
+  }: {
+    announcementId: string;
+    userId: string;
+  },
 ) {
   try {
     const result = await db
       .insert(platformAnnouncementRead)
-      .values(newPlatformAnnouncementRead)
+      .values({
+        id,
+        announcementId,
+        userId,
+      })
       .returning();
 
     return result;
@@ -83,10 +97,13 @@ export async function insertPlatformAnnouncementRead(
   }
 }
 
-export async function updatePlatformAnnouncementReadById(
-  id: string,
-  updates: Partial<platformAnnouncementRead>,
-) {
+export async function updatePlatformAnnouncementReadById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<PlatformAnnouncementRead>;
+}) {
   try {
     const result = await db
       .update(platformAnnouncementRead)

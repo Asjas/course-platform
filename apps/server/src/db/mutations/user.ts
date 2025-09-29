@@ -20,7 +20,13 @@ export async function insertUser(newUser: NewUser) {
   }
 }
 
-export async function updateUserById(id: string, updates: Partial<User>) {
+export async function updateUserById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<User>;
+}) {
   try {
     const result = await db
       .update(user)
@@ -35,7 +41,7 @@ export async function updateUserById(id: string, updates: Partial<User>) {
   }
 }
 
-export async function deleteUserById({ id }: User) {
+export async function deleteUserById(id: string) {
   try {
     const result = db
       .delete(user)

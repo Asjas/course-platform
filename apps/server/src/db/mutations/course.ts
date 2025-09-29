@@ -8,7 +8,7 @@ const log = pinoLogger.child({ module: "db:mutations:coupon" });
 export type Course = typeof course.$inferSelect;
 export type NewCourse = typeof course.$inferInsert;
 
-export async function insertCourse(newCourse: NewCourse) {
+export async function insertCourse({ newCourse }: { newCourse: NewCourse }) {
   try {
     const result = await db.insert(course).values(newCourse).returning();
 
@@ -20,7 +20,13 @@ export async function insertCourse(newCourse: NewCourse) {
   }
 }
 
-export async function updateCourseById(id: string, updates: Partial<Course>) {
+export async function updateCourseById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<Course>;
+}) {
   try {
     const result = await db
       .update(course)

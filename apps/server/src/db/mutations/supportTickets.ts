@@ -9,16 +9,20 @@ import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:mutations:support" });
 
-export type supportTicket = typeof supportTicket.$inferSelect;
-export type newSupportTicket = typeof supportTicket.$inferInsert;
-export type supportTicketComment = typeof supportTicketComment.$inferSelect;
-export type newSupportTicketComment = typeof supportTicketComment.$inferInsert;
-export type supportTicketAttachment =
+export type SupportTicket = typeof supportTicket.$inferSelect;
+export type NewSupportTicket = typeof supportTicket.$inferInsert;
+export type SupportTicketComment = typeof supportTicketComment.$inferSelect;
+export type NewSupportTicketComment = typeof supportTicketComment.$inferInsert;
+export type SupportTicketAttachment =
   typeof supportTicketAttachment.$inferSelect;
-export type newSupportTicketAttachment =
+export type NewSupportTicketAttachment =
   typeof supportTicketAttachment.$inferInsert;
 
-export async function insertSupportTicket(newSupportTicket: newSupportTicket) {
+export async function insertSupportTicket({
+  newSupportTicket,
+}: {
+  newSupportTicket: NewSupportTicket;
+}) {
   try {
     const result = await db
       .insert(supportTicket)
@@ -33,10 +37,13 @@ export async function insertSupportTicket(newSupportTicket: newSupportTicket) {
   }
 }
 
-export async function updateSupportTicketById(
-  id: string,
-  updates: Partial<supportTicket>,
-) {
+export async function updateSupportTicketById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<SupportTicket>;
+}) {
   try {
     const result = await db
       .update(supportTicket)
@@ -51,7 +58,7 @@ export async function updateSupportTicketById(
   }
 }
 
-export async function deleteSupportTicketById({ id }: supportTicket) {
+export async function deleteSupportTicketById(id: string) {
   try {
     const result = db
       .delete(supportTicket)
@@ -66,7 +73,7 @@ export async function deleteSupportTicketById({ id }: supportTicket) {
 }
 
 export async function insertSupportTicketComment(
-  newSupportTicketComment: newSupportTicketComment,
+  newSupportTicketComment: NewSupportTicketComment,
 ) {
   try {
     const result = await db
@@ -82,10 +89,13 @@ export async function insertSupportTicketComment(
   }
 }
 
-export async function updateSupportTicketCommentById(
-  id: string,
-  updates: Partial<supportTicketComment>,
-) {
+export async function updateSupportTicketCommentById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<SupportTicketComment>;
+}) {
   try {
     const result = await db
       .update(supportTicketComment)
@@ -100,9 +110,7 @@ export async function updateSupportTicketCommentById(
   }
 }
 
-export async function deleteSupportTicketCommentById({
-  id,
-}: supportTicketComment) {
+export async function deleteSupportTicketCommentById(id: string) {
   try {
     const result = db
       .delete(supportTicketComment)
@@ -116,9 +124,11 @@ export async function deleteSupportTicketCommentById({
   }
 }
 
-export async function insertSupportTicketAttachment(
-  newSupportTicketAttachment: newSupportTicketAttachment,
-) {
+export async function insertSupportTicketAttachment({
+  newSupportTicketAttachment,
+}: {
+  newSupportTicketAttachment: NewSupportTicketAttachment;
+}) {
   try {
     const result = await db
       .insert(supportTicketAttachment)
@@ -133,10 +143,13 @@ export async function insertSupportTicketAttachment(
   }
 }
 
-export async function updateSupportTicketAttachmentById(
-  id: string,
-  updates: Partial<supportTicketAttachment>,
-) {
+export async function updateSupportTicketAttachmentById({
+  id,
+  updates,
+}: {
+  id: string;
+  updates: Partial<SupportTicketAttachment>;
+}) {
   try {
     const result = await db
       .update(supportTicketAttachment)
@@ -151,9 +164,7 @@ export async function updateSupportTicketAttachmentById(
   }
 }
 
-export async function deleteSupportTicketAttachmentById({
-  id,
-}: supportTicketAttachment) {
+export async function deleteSupportTicketAttachmentById(id: string) {
   try {
     const result = db
       .delete(supportTicketAttachment)

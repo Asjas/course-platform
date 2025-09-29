@@ -8,7 +8,7 @@ const log = pinoLogger.child({ module: "db:queries:teamlicense" });
 // This query is used in the admin dashboard
 export async function getAllTeamLicenses() {
   const preparedStatement = db.query.teamLicense
-    .findMany({ with: { user: true } })
+    .findMany({ with: { purchaser: true } })
     .prepare("getAllTeamLicenses");
 
   try {
@@ -26,7 +26,7 @@ export async function getTeamLicenseById(id: string) {
   const preparedStatement = db.query.teamLicense
     .findFirst({
       where: (teamLicense) => eq(teamLicense.id, sql.placeholder("id")),
-      with: { user: true },
+      with: { purchaser: true },
     })
     .prepare("getTeamLicenseById");
 

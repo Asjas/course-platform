@@ -8,7 +8,7 @@ const log = pinoLogger.child({ module: "db:mutations:coupon" });
 export type Coupon = typeof coupon.$inferSelect;
 export type NewCoupon = typeof coupon.$inferInsert;
 
-export async function insertCoupon(newCoupon: NewCoupon) {
+export async function insertCoupon({ newCoupon }: { newCoupon: NewCoupon }) {
   try {
     const result = await db.insert(coupon).values(newCoupon).returning();
 

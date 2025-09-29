@@ -5,12 +5,16 @@ import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:mutations:teamLicense" });
 
-export type teamLicense = typeof teamLicense.$inferSelect;
-export type newTeamLicense = typeof teamLicense.$inferInsert;
-export type teamLicenseInvite = typeof teamLicenseInvite.$inferSelect;
-export type newTeamLicenseInvite = typeof teamLicenseInvite.$inferInsert;
+export type TeamLicense = typeof teamLicense.$inferSelect;
+export type NewTeamLicense = typeof teamLicense.$inferInsert;
+export type TeamLicenseInvite = typeof teamLicenseInvite.$inferSelect;
+export type NewTeamLicenseInvite = typeof teamLicenseInvite.$inferInsert;
 
-export async function insertTeamLicense(newTeamLicense: newTeamLicense) {
+export async function insertTeamLicense({
+  newTeamLicense,
+}: {
+  newTeamLicense: NewTeamLicense;
+}) {
   try {
     const result = await db
       .insert(teamLicense)
@@ -27,7 +31,7 @@ export async function insertTeamLicense(newTeamLicense: newTeamLicense) {
 
 export async function updateTeamLicenseById(
   id: string,
-  updates: Partial<teamLicense>,
+  updates: Partial<TeamLicense>,
 ) {
   try {
     const result = await db
@@ -43,7 +47,7 @@ export async function updateTeamLicenseById(
   }
 }
 
-export async function deleteTeamLicenseById({ id }: teamLicense) {
+export async function deleteTeamLicenseById({ id }: TeamLicense) {
   try {
     const result = db
       .delete(teamLicense)
@@ -57,9 +61,11 @@ export async function deleteTeamLicenseById({ id }: teamLicense) {
   }
 }
 
-export async function insertTeamLicenseInvite(
-  newTeamLicenseInvite: newTeamLicenseInvite,
-) {
+export async function insertTeamLicenseInvite({
+  newTeamLicenseInvite,
+}: {
+  newTeamLicenseInvite: NewTeamLicenseInvite;
+}) {
   try {
     const result = await db
       .insert(teamLicenseInvite)
@@ -76,7 +82,7 @@ export async function insertTeamLicenseInvite(
 
 export async function updateTeamLicenseInviteById(
   id: string,
-  updates: Partial<teamLicenseInvite>,
+  updates: Partial<TeamLicenseInvite>,
 ) {
   try {
     const result = await db
@@ -92,7 +98,7 @@ export async function updateTeamLicenseInviteById(
   }
 }
 
-export async function deleteTeamLicenseInviteById({ id }: teamLicenseInvite) {
+export async function deleteTeamLicenseInviteById({ id }: TeamLicenseInvite) {
   try {
     const result = await db
       .delete(teamLicenseInvite)
