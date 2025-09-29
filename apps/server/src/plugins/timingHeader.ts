@@ -1,19 +1,23 @@
-import {
+import type {
   FastifyInstance,
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
+import fastifyPlugin from "fastify-plugin";
+import type { Config } from "~/config.js";
 
-export default function timingHeader(
+function timingHeader(
   fastify: FastifyInstance,
-  _opts: FastifyPluginOptions,
+  opts: FastifyPluginOptions & Config,
   done: HookHandlerDoneFunction,
 ) {
   fastify.addHook("onSend", (_request, reply, _payload, done) => {
-    reply.header("Timing-Allow-Origin", "https://codewizard.training");
+    reply.header("Timing-Allow-Origin", opts.ORIGIN);
 
     done();
   });
 
   done();
 }
+
+export default fastifyPlugin(timingHeader);
