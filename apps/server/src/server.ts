@@ -7,13 +7,16 @@ import fastifyHelmet from "@fastify/helmet";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifySensible from "@fastify/sensible";
-import Fastify, { FastifyServerOptions } from "fastify";
+import Fastify, { type FastifyServerOptions } from "fastify";
 import { FastifyAllowPlugin } from "fastify-allow";
+import fastifyBetterAuth from "fastify-better-auth";
 import fastifyFavicon from "fastify-favicon";
 import fastifyHealthcheck from "fastify-healthcheck";
 import fastifyIP from "fastify-ip";
+import fastifyPrintRoutes from "fastify-print-routes";
 import { join } from "path";
 import type { Config } from "~/config.js";
+import { auth } from "~/lib/auth.server.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
 
@@ -32,9 +35,9 @@ async function createServer(config: Config) {
 
   try {
     await server.register(fastifyIP.default, {
-      order: ["x-forwarded-for", "x-real-ip", "x-client-ip"], // Custom header priority
-      strict: false, // Allow fallbacks
-      isAWS: false, // Not using AWS-specific inference
+      order: ["x-forwarded-for", "x-real-ip", "x-client-ip"],
+      strict: false,
+      isAWS: false,
     });
 
     await server.register(fastifyRateLimit, {
@@ -79,6 +82,8 @@ async function createServer(config: Config) {
 
     await server.register(fastifySensible);
 
+    await server.register(fastifyPrintRoutes);
+
     await server.register(fastifyNodemailer.default, {
       host: config.MAIL_HOST,
       port: config.MAIL_PORT,
@@ -93,15 +98,16 @@ async function createServer(config: Config) {
       pool: true,
     });
 
+    await server.register(fastifyBetterAuth, { auth });
+
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "plugins"),
-      options: {
-        ...opts,
-      },
+      options: { ...config },
     });
 
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "routes"),
+      options: { prefix: "/api" },
       dirNameRoutePrefix: false,
     });
 

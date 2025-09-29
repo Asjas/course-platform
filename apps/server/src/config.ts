@@ -6,7 +6,9 @@ const schema = S.object()
   .prop("NODE_ENV", S.string().default("development"))
   .prop("LOG_LEVEL", S.string().default("info"))
   .prop("DATABASE_URL", S.string())
+  .prop("ORIGIN", S.string())
   .prop("COOKIE_SECRET", S.string())
+  .prop("COOKIE_DOMAIN", S.string())
   .prop("BETTER_AUTH_SECRET", S.string())
   .prop("PEPPER_SECRET", S.string())
   .prop("MAIL_HOST", S.string())
@@ -24,7 +26,9 @@ export type Config = {
   LOG_LEVEL: string;
   PRETTY_PRINT: boolean;
   DATABASE_URL: string;
+  ORIGIN: string;
   COOKIE_SECRET: string;
+  COOKIE_DOMAIN: string;
   BETTER_AUTH_SECRET: string;
   PEPPER_SECRET: string;
   MAIL_HOST: string;
