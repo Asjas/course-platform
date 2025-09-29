@@ -3,7 +3,8 @@ import { Client } from "pg";
 import config from "~/config.js";
 import { mySchema } from "~/db/schema.js";
 import * as schemas from "~/db/schema/index.js";
-import { DrizzleLogger } from "~/lib/logging.js";
+
+// import { DrizzleLogger } from "~/lib/logging.js";
 
 const client = new Client({ connectionString: config.DATABASE_URL });
 
@@ -15,6 +16,6 @@ export const db = drizzle({
     ...schemas,
   },
   client: client,
-  logger: config.NODE_ENV === "development" ? new DrizzleLogger() : undefined,
+  // logger: config.NODE_ENV === "development" ? new DrizzleLogger() : undefined,
   casing: "snake_case",
 });
