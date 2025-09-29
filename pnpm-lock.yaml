@@ -58,7 +58,7 @@ importers:
         version: 6.0.3
       '@polar-sh/better-auth':
         specifier: 1.1.4
-        version: 1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))
+        version: 1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))
       '@polar-sh/sdk':
         specifier: 0.35.2
         version: 0.35.2
@@ -66,8 +66,8 @@ importers:
         specifier: 0.44.0
         version: 0.44.0
       better-auth:
-        specifier: 1.3.18
-        version: 1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
+        specifier: 1.3.23
+        version: 1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
       dotenv:
         specifier: 17.2.2
         version: 17.2.2
@@ -172,8 +172,8 @@ importers:
         specifier: 2.5.0
         version: 2.5.0
       better-auth:
-        specifier: 1.3.18
-        version: 1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
+        specifier: 1.3.23
+        version: 1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -239,8 +239,8 @@ importers:
         specifier: 1.132.17
         version: 1.132.17(@tanstack/react-router@1.132.17(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(vite@7.1.6(@types/node@24.5.2)(jiti@2.5.1)(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       better-auth:
-        specifier: 1.3.18
-        version: 1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
+        specifier: 1.3.23
+        version: 1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -280,7 +280,7 @@ importers:
         version: 3.1.1(rollup@4.52.0)
       '@polar-sh/better-auth':
         specifier: 1.1.4
-        version: 1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))
+        version: 1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.1.13)
@@ -1158,8 +1158,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@better-auth/core@1.3.18':
-    resolution: {integrity: sha512-eVTpiyFOA70SecGuiXs2qxQq1oWbEiLJMpyOYF8HAHFXHH+iK0Ab8F0stdyJTTYOc9ydjFQgYXmbENG6JqQ3UA==}
+  '@better-auth/core@1.3.23':
+    resolution: {integrity: sha512-l0ICSSu8N4tOcdbDX6DRetFaX/wBHLwB4mSp9LD9DfjgDywKWWbzTFr3GP+T5HfvNq+vmH4NKjr2MJtI+sTqIw==}
 
   '@better-auth/utils@0.3.0':
     resolution: {integrity: sha512-W+Adw6ZA6mgvnSnhOki270rwJ42t4XzSK6YWGF//BbVXL6SwCLWfyzBc1lN2m/4RM28KubdBKQ4X5VMoLRNPQw==}
@@ -3914,17 +3914,17 @@ packages:
     resolution: {integrity: sha512-wrH5NNqren/QMtKUEEJf7z86YjfqW/2uw3IL3/xpqZUC95SSVIFXYQeeGjL6FT/X68IROu6RMehZQS5foy2BXw==}
     hasBin: true
 
-  better-auth@1.3.18:
-    resolution: {integrity: sha512-d4/Wlvvg8irDSblQP1KiLEWYppTlDiNXV9U4oP6D463MlMbMn7kbBcJvM6Us7M//rgi/mAzg5xKzuE3Y5B2NrQ==}
+  better-auth@1.3.23:
+    resolution: {integrity: sha512-wskWRCUu9pCmGzVMht2+ZkO33CzztJUdtuBttq7YDxBSR5/gaa3WaTx9TLLgUz/wBNCqyAW71uCqeArI5M6Fpg==}
     peerDependencies:
       '@lynx-js/react': '*'
-      '@sveltejs/kit': ^2.0.0
-      next: ^14.0.0 || ^15.0.0
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-      solid-js: ^1.0.0
-      svelte: ^4.0.0 || ^5.0.0
-      vue: ^3.0.0
+      '@sveltejs/kit': '*'
+      next: '*'
+      react: '*'
+      react-dom: '*'
+      solid-js: '*'
+      svelte: '*'
+      vue: '*'
     peerDependenciesMeta:
       '@lynx-js/react':
         optional: true
@@ -8338,7 +8338,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@better-auth/core@1.3.18': {}
+  '@better-auth/core@1.3.23': {}
 
   '@better-auth/utils@0.3.0': {}
 
@@ -8984,10 +8984,10 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@polar-sh/better-auth@1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))':
+  '@polar-sh/better-auth@1.1.4(@polar-sh/sdk@0.35.2)(better-auth@1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9))':
     dependencies:
       '@polar-sh/sdk': 0.35.2
-      better-auth: 1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
+      better-auth: 1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
       zod: 3.25.76
 
   '@polar-sh/sdk@0.35.2':
@@ -11755,9 +11755,9 @@ snapshots:
 
   baseline-browser-mapping@2.8.6: {}
 
-  better-auth@1.3.18(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9):
+  better-auth@1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9):
     dependencies:
-      '@better-auth/core': 1.3.18
+      '@better-auth/core': 1.3.23
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.18
       '@noble/ciphers': 2.0.0
