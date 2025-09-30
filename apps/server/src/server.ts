@@ -29,10 +29,12 @@ import { appRouter } from "~/router/index.js";
 async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
     ...config,
-    maxParamLength: 5000,
     trustProxy: true,
     disableRequestLogging: config.NODE_ENV === "test",
     loggerInstance: pinoLogger,
+    routerOptions: {
+      maxParamLength: 5000,
+    },
   };
 
   const server = Fastify(opts);
