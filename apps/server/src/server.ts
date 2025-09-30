@@ -37,6 +37,13 @@ async function createServer(config: Config) {
 
   const server = Fastify(opts);
 
+  server.addHook("onRequest", (request, _reply, done) => {
+    console.log("Headers:", request.headers);
+    console.log("Raw Remote Address:", request.raw.socket.remoteAddress);
+    console.log("Fastify Remote Address:", request.ip);
+    done();
+  });
+
   try {
     await server.register(fastifyRateLimit, {
       allowList:
