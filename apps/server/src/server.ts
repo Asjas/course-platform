@@ -37,21 +37,16 @@ async function createServer(config: Config) {
 
   const server = Fastify(opts);
 
-  server.addHook("onRequest", (request, _reply, done) => {
-    console.log("Headers:", request.headers);
-    console.log("Raw Remote Address:", request.raw.socket.remoteAddress);
-    console.log("Fastify Remote Address:", request.ip);
-    done();
-  });
-
   try {
     await server.register(fastifyRateLimit, {
-      allowList:
-        config.NODE_ENV === "development" ? ["127.0.0.1", "localhost"] : [],
+      allowList: ["127.0.0.1", "localhost"],
       max: 100,
       redis: redis,
       timeWindow: "1 minute",
       nameSpace: "codewizard-rate-limit-",
+      keyGenerator: (request) => {
+        return request.headers["cf-connecting-ip"] as string;
+      },
     });
 
     await server.register(fastifyCors, {
