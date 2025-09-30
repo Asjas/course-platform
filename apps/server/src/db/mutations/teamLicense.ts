@@ -10,11 +10,7 @@ export type NewTeamLicense = typeof teamLicense.$inferInsert;
 export type TeamLicenseInvite = typeof teamLicenseInvite.$inferSelect;
 export type NewTeamLicenseInvite = typeof teamLicenseInvite.$inferInsert;
 
-export async function insertTeamLicense({
-  newTeamLicense,
-}: {
-  newTeamLicense: NewTeamLicense;
-}) {
+export async function insertTeamLicense(newTeamLicense: NewTeamLicense) {
   try {
     const result = await db
       .insert(teamLicense)
