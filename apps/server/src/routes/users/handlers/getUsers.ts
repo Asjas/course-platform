@@ -34,7 +34,7 @@ export async function getUsersHandler(
 
     return users;
   } catch (error) {
-    log.error(error, "Failed to fetch users");
+    log.error(error, "Failed to fetch all users");
     return reply.status(500).send({ error: "Internal server error" });
   }
 }

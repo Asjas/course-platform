@@ -15,13 +15,13 @@ export async function getUserHandler(
     handler: "routes:users:single",
   });
 
-  const { id } = request.params;
+  const { id: userId } = request.params;
 
   try {
-    const user = await getUserById(id);
+    const user = await getUserById(userId);
 
     if (!user) {
-      log.warn({ userId: id }, "User not found");
+      log.warn({ userId }, "User not found");
       return reply.status(404).send({ error: "User not found" });
     }
 
@@ -32,11 +32,11 @@ export async function getUserHandler(
       }),
     );
 
-    log.info({ userId: id }, "Fetched user");
+    log.info({ userId }, "Fetched user successfully");
 
     return user;
   } catch (err) {
-    log.error(err, `Failed to fetch user with ${id}`);
+    log.error({ err, userId }, "Failed to fetch user");
     return reply.status(500).send({ error: "Internal server error" });
   }
 }
