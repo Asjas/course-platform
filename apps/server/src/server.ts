@@ -45,7 +45,20 @@ async function createServer(config: Config) {
       timeWindow: "1 minute",
       nameSpace: "codewizard-rate-limit-",
       keyGenerator: (request) => {
-        return request.headers["cf-connecting-ip"] as string;
+        const clientIp = request.headers["cf-connecting-ip"];
+
+        if (!clientIp || typeof clientIp !== "string") {
+          return request.ip || "unknown";
+        }
+
+        return clientIp;
+      },
+      errorResponseBuilder: (_request, context) => {
+        return {
+          statusCode: 429,
+          error: "Too Many Requests",
+          message: `Rate limit exceeded. Try again in ${context.after}.`,
+        };
       },
     });
 
