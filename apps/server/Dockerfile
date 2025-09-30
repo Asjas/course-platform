@@ -21,4 +21,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 ENV NODE_ENV=production
 
-CMD ["./node_modules/.bin/tsx", "dist/src/index.js"]
+CMD ["./node_modules/.bin/tsx", "dist/index.js"]
