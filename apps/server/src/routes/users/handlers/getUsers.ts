@@ -15,6 +15,8 @@ export async function getUsersHandler(
     handler: "routes:users:all",
   });
 
+  // TODO: Check if the user has permission
+
   try {
     const users = await getAllUsers();
 
@@ -30,7 +32,7 @@ export async function getUsersHandler(
       }),
     );
 
-    log.info({ count: users.count }, "Fetched all users");
+    log.info(`Fetched all ${users.count} users`);
 
     return users;
   } catch (error) {

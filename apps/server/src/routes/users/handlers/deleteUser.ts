@@ -3,7 +3,7 @@ import { deleteUserById } from "~/db/mutations/user.js";
 import { getUserById } from "~/db/queries/user.js";
 
 export async function deleteUserHandler(
-  request: FastifyRequest<{ Params: { id: string } }>,
+  request: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply,
 ) {
   const log = reply.server.log.child({
@@ -11,36 +11,30 @@ export async function deleteUserHandler(
     handler: "routes:users:delete",
   });
 
-  const { id } = request.params;
+  // TODO: Check if the user has permission
+
+  const { userId } = request.params;
 
   try {
-    const user = await getUserById(id);
+    const user = await getUserById(userId);
 
     if (!user) {
-      log.warn({ userId: id }, "User not found for deletion");
+      log.warn(`User with id ${userId} not found`);
       return reply.status(404).send({ error: "User not found" });
     }
 
-    // Check if the user has permission
-    // if (request.user.id !== id && !request.user.isAdmin) {
-    //   log.warn(
-    //     { id, userId: request.user.id },
-    //     "Unauthorized delete attempt",
-    //   );
-    //   return reply.status(403).send({ error: "Forbidden" });
-    // }
-    const deletedUser = await deleteUserById(id);
+    const deletedUser = await deleteUserById(userId);
 
     if (!deletedUser) {
-      log.error({ userId: id }, "Failed to delete user");
+      log.error(`Failed to delete user with id ${userId}`);
       return reply.status(500).send({ error: "Failed to delete user" });
     }
 
-    log.info({ userId: id }, "User deleted successfully");
+    log.info(`User with id ${userId} deleted successfully`);
 
     return reply.status(204).send();
-  } catch (error) {
-    log.error({ err: error, userId: id }, "Error deleting user");
+  } catch (err) {
+    log.error(err, `Error deleting user with id ${userId}`);
     return reply.status(500).send({ error: "Internal Server Error" });
   }
 }

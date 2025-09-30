@@ -14,43 +14,37 @@ export async function insertUser(newUser: NewUser) {
 
     return result;
   } catch (err) {
-    log.error(err, "Failed to insert user");
+    log.error(err, `Failed to insert user with id ${newUser.id}`);
 
     throw err;
   }
 }
 
-export async function updateUserById({
-  id,
-  updates,
-}: {
-  id: string;
-  updates: Partial<User>;
-}) {
+export async function updateUserById(userId: string, updates: Partial<User>) {
   try {
     const result = await db
       .update(user)
       .set({ ...updates })
-      .where(eq(user.id, id))
+      .where(eq(user.id, userId))
       .returning();
 
     return result;
   } catch (err) {
-    log.error(err, `Failed to update user with id ${id}`);
+    log.error(err, `Failed to update user with id ${userId}`);
     throw err;
   }
 }
 
-export async function deleteUserById(id: string) {
+export async function deleteUserById(userId: string) {
   try {
     const result = db
       .delete(user)
-      .where(eq(user.id, id))
+      .where(eq(user.id, userId))
       .returning({ id: user.id });
 
     return result;
   } catch (err) {
-    log.error(err, `Failed to delete user with id ${id}`);
+    log.error(err, `Failed to delete user with id ${userId}`);
     throw err;
   }
 }

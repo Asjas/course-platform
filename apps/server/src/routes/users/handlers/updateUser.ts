@@ -9,7 +9,7 @@ import {
 
 export async function updateUserHandler(
   request: FastifyRequest<{
-    Params: { id: string };
+    Params: { userId: string };
     Body: Partial<{ name: string; email: string }>;
   }>,
   reply: FastifyReply,
@@ -19,14 +19,22 @@ export async function updateUserHandler(
     handler: "routes:users:update",
   });
 
-  const { id } = request.params;
+  // TODO: Check if the user has permission
+
+  const { userId } = request.params;
+  const updates = request.body;
+
+  if (Object.keys(updates).length === 0) {
+    log.warn("No updates provided");
+    return reply.status(400).send({ error: "No user updates provided" });
+  }
 
   try {
-    const user = await getUserById(id);
+    const user = await getUserById(userId);
 
     if (!user) {
-      log.warn({ userId: id }, "User not found for update");
-      return reply.status(404).send({ error: "User not found" });
+      log.warn(`User with id ${userId} not found for update`);
+      return reply.status(404).send({ error: `User not found` });
     }
 
     // Check if the user has permission
@@ -37,14 +45,14 @@ export async function updateUserHandler(
     //   );
     //   return reply.status(403).send({ error: "Forbidden" });
     // }
-    const updatedUser = await updateUserById({ id, updates: request.body });
+    const updatedUser = await updateUserById(userId, updates);
 
     if (!updatedUser) {
-      log.error({ userId: id }, "Failed to update user");
+      log.error(`Failed to update user with id ${userId}`);
       return reply.status(500).send({ error: "Failed to update user" });
     }
 
-    log.info({ userId: id }, "User updated successfully");
+    log.info(`User with id ${userId} updated successfully`);
 
     reply.headers(
       CACHE_PRIVATE_REVALIDATE({
@@ -56,8 +64,8 @@ export async function updateUserHandler(
     reply.statusCode = 201;
 
     return updatedUser;
-  } catch (error) {
-    log.error({ err: error, userId: id }, "Error updating user");
+  } catch (err) {
+    log.error(err, `Error updating user with id ${userId}`);
     return reply.status(500).send({ error: "Internal Server Error" });
   }
 }

@@ -23,8 +23,8 @@ export async function getAllUsers() {
             reads: true,
           },
         },
+        teamLicenses: { with: { invites: true } },
         tickets: true,
-        teamLicenses: true,
       },
     })
     .prepare("getAllUsers");
@@ -40,10 +40,10 @@ export async function getAllUsers() {
 }
 
 // Individual users are accessible by admin and the user themselves
-export async function getUserById(id: string) {
+export async function getUserById(userId: string) {
   const preparedStatement = db.query.user
     .findFirst({
-      where: (user) => eq(user.id, sql.placeholder("id")),
+      where: (user) => eq(user.id, sql.placeholder("userId")),
       with: {
         enrollments: {
           with: {
@@ -77,17 +77,17 @@ export async function getUserById(id: string) {
           },
         },
         sessions: true,
-        teamLicenses: true,
+        teamLicenses: { with: { invites: true } },
       },
     })
     .prepare("getUserById");
 
   try {
-    const user = await preparedStatement.execute({ id });
+    const user = await preparedStatement.execute({ userId });
 
     return user ?? null;
   } catch (err) {
-    log.error(err, `Failed to get user with id ${id}`);
+    log.error(err, `Failed to get user with id ${userId}`);
     throw err;
   }
 }
