@@ -47,15 +47,6 @@ async function createServer(config: Config) {
       redis: redis,
       timeWindow: "1 minute",
       nameSpace: "codewizard-rate-limit-",
-      onBanReach: function (_, key) {
-        console.log("callback on ban", key);
-      },
-      onExceeding: function (_, key) {
-        console.log("callback on exceeding", key);
-      },
-      onExceeded: function (_, key) {
-        console.log("callback on exceeded", key);
-      },
     });
 
     await server.register(fastifyCors, {
