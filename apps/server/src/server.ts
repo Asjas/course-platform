@@ -13,7 +13,6 @@ import { FastifyAllowPlugin } from "fastify-allow";
 import fastifyBetterAuth from "fastify-better-auth";
 import fastifyFavicon from "fastify-favicon";
 import fastifyHealthcheck from "fastify-healthcheck";
-import fastifyIP from "fastify-ip";
 import fastifyPrintRoutes from "fastify-print-routes";
 import { join } from "path";
 import type { Config } from "~/config.js";
