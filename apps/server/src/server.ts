@@ -7,6 +7,7 @@ import fastifyHelmet from "@fastify/helmet";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifySensible from "@fastify/sensible";
+import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import { FastifyAllowPlugin } from "fastify-allow";
 import fastifyBetterAuth from "fastify-better-auth";
@@ -19,6 +20,7 @@ import type { Config } from "~/config.js";
 import { auth } from "~/lib/auth.server.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
+import { appRouter } from "~/router/index.js";
 
 /**
  * Creates and configures the Fastify server instance.
@@ -28,18 +30,15 @@ import { redis } from "~/lib/redis.js";
 async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
     ...config,
+    maxParamLength: 5000,
+    trustProxy: true,
+    disableRequestLogging: config.NODE_ENV === "test",
     loggerInstance: pinoLogger,
   };
 
   const server = Fastify(opts);
 
   try {
-    await server.register(fastifyIP.default, {
-      order: ["x-forwarded-for", "x-real-ip", "x-client-ip"],
-      strict: false,
-      isAWS: false,
-    });
-
     await server.register(fastifyRateLimit, {
       allowList:
         config.NODE_ENV === "development" ? ["127.0.0.1", "localhost"] : [],
@@ -94,6 +93,11 @@ async function createServer(config: Config) {
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "plugins"),
       options: { ...config },
+    });
+
+    await server.register(fastifyTRPCPlugin, {
+      prefix: "/trpc",
+      trpcOptions: { router: appRouter },
     });
 
     await server.register(fastifyAutoload, {

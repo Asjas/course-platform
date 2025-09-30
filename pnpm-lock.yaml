@@ -95,9 +95,6 @@ importers:
       fastify-healthcheck:
         specifier: 5.1.0
         version: 5.1.0
-      fastify-ip:
-        specifier: 2.0.0
-        version: 2.0.0
       fastify-plugin:
         specifier: 5.1.0
         version: 5.1.0
@@ -4583,10 +4580,6 @@ packages:
   fastify-healthcheck@5.1.0:
     resolution: {integrity: sha512-GlCPdDJlJwDftS7K5RAH4EV9oYH7JOJ4aG9w2wD4fdReSO8KYASIIJu4to1RGlpzVoXJIPqByIYrfmaEPVautQ==}
     engines: {node: '>=20.9.0'}
-
-  fastify-ip@2.0.0:
-    resolution: {integrity: sha512-7mQyAc7sapawpiriEFoJyQIs41nNIO42UCzgMKrjNGsIegnevj2VhOlXLLTa+q7cxXfJ5fDGmOAdQpaIgA9ObA==}
-    engines: {node: '>=20.x'}
 
   fastify-plugin@4.5.1:
     resolution: {integrity: sha512-stRHYGeuqpEZTL1Ef0Ovr2ltazUT9g844X5z/zEBFLG8RYlpDiOCIG+ATvYEp+/zmc7sN29mcIMp8gvYplYPIQ==}
@@ -12507,10 +12500,6 @@ snapshots:
   fastify-healthcheck@5.1.0:
     dependencies:
       '@fastify/under-pressure': 9.0.3
-
-  fastify-ip@2.0.0:
-    dependencies:
-      fastify-plugin: 5.1.0
 
   fastify-plugin@4.5.1: {}
 
