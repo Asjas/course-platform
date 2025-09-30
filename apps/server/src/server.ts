@@ -55,13 +55,6 @@ async function createServer(config: Config) {
 
         return clientIp;
       },
-      errorResponseBuilder: (_request, context) => {
-        return {
-          statusCode: 429,
-          error: "Too Many Requests",
-          message: `Rate limit exceeded. Try again in ${context.after}.`,
-        };
-      },
     });
 
     await server.register(fastifyCors, {
