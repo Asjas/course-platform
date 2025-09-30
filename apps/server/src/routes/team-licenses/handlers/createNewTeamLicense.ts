@@ -27,6 +27,8 @@ export async function createNewTeamLicenseHandler(
     handler: "routes:team-licenses:create",
   });
 
+  // TODO: Check if the user has permission
+
   const {
     id: purchaserId,
     totalSeats,
@@ -36,7 +38,7 @@ export async function createNewTeamLicenseHandler(
   } = request.body;
 
   const newTeamLicense: NewTeamLicense = {
-    id: ulid(),
+    id: `tlic:${ulid()}`,
     purchaserId,
     totalSeats,
     courseId,
@@ -48,7 +50,9 @@ export async function createNewTeamLicenseHandler(
     const result = await insertTeamLicense(newTeamLicense);
 
     if (!result) {
-      log.error({ newTeamLicense }, "Failed to create team license");
+      log.error(
+        `Failed to create team license for purchaserId ${purchaserId} with paymentId ${paymentId}`,
+      );
       return reply.status(500).send({ error: "Failed to create team license" });
     }
 
