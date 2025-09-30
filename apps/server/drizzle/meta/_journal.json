@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1758809624117,
-      "tag": "0000_clear_landau",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1758811457118,
-      "tag": "0001_motionless_mindworm",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1758899069321,
-      "tag": "0002_thin_selene",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1758899363843,
-      "tag": "0003_dear_cerise",
+      "when": 1759238597825,
+      "tag": "0000_damp_maddog",
       "breakpoints": true
     }
   ]

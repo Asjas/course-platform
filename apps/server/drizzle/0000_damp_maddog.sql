@@ -7,13 +7,14 @@ CREATE TYPE "my_schema"."video_provider" AS ENUM('youtube');--> statement-breakp
 CREATE TYPE "my_schema"."course_enrollment_source" AS ENUM('direct', 'gift', 'team_invite');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_enrollment_status" AS ENUM('active', 'cancelled', 'refunded', 'completed');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_enrollment_type" AS ENUM('individual', 'gift', 'team');--> statement-breakpoint
+CREATE TYPE "my_schema"."members" AS ENUM('member', 'admin', 'owner', 'ghost');--> statement-breakpoint
 CREATE TYPE "my_schema"."paid_status" AS ENUM('paid', 'refunded');--> statement-breakpoint
 CREATE TYPE "my_schema"."payment_status" AS ENUM('pending', 'completed', 'failed', 'refunded');--> statement-breakpoint
 CREATE TYPE "my_schema"."purchase_type" AS ENUM('individual', 'team');--> statement-breakpoint
 CREATE TYPE "my_schema"."support_ticket_priority" AS ENUM('low', 'medium', 'high', 'urgent');--> statement-breakpoint
 CREATE TYPE "my_schema"."support_ticket_status" AS ENUM('open', 'in_progress', 'resolved', 'closed');--> statement-breakpoint
 CREATE TYPE "my_schema"."seat_status" AS ENUM('pending', 'claimed', 'revoked');--> statement-breakpoint
-CREATE TYPE "my_schema"."members" AS ENUM('member', 'admin', 'owner', 'ghost');--> statement-breakpoint
+CREATE TYPE "my_schema"."announcement_id_type" AS ENUM('platform_update', 'platform_warning', 'course_update', 'new_course', 'general', 'warning');--> statement-breakpoint
 CREATE TABLE "my_schema"."coupon" (
 	"id" text PRIMARY KEY NOT NULL,
 	"code" text NOT NULL,
@@ -27,8 +28,8 @@ CREATE TABLE "my_schema"."coupon" (
 	"active" boolean DEFAULT true NOT NULL,
 	"created_by" text DEFAULT 'ghost',
 	"course_id" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "coupon_code_unique" UNIQUE("code"),
 	CONSTRAINT "coupon_discount_value_check" CHECK ("my_schema"."coupon"."discount_value" > 0),
 	CONSTRAINT "coupon_validity_check" CHECK ("my_schema"."coupon"."valid_until" IS NULL OR "my_schema"."coupon"."valid_until" > "my_schema"."coupon"."valid_from"),
@@ -46,8 +47,8 @@ CREATE TABLE "my_schema"."coupon_redemption" (
 	"user_id" text NOT NULL,
 	"course_id" text NOT NULL,
 	"redeemed_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "my_schema"."course" (
@@ -73,8 +74,8 @@ CREATE TABLE "my_schema"."course" (
 	"total_duration" integer DEFAULT 0 NOT NULL,
 	"trial_module_limit" smallint DEFAULT 0 NOT NULL,
 	"author_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_price_non_negative" CHECK ("my_schema"."course"."price" >= 0),
 	CONSTRAINT "course_sale_price_non_negative" CHECK ("my_schema"."course"."sale_price" >= 0),
 	CONSTRAINT "course_sale_price_not_greater" CHECK ("my_schema"."course"."sale_price" <= "my_schema"."course"."price"),
@@ -90,36 +91,14 @@ CREATE TABLE "my_schema"."course" (
 	CONSTRAINT "course_trial_module_limit_max_check" CHECK ("my_schema"."course"."trial_module_limit" <= "my_schema"."course"."total_modules")
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."course_announcement" (
-	"id" text PRIMARY KEY NOT NULL,
-	"course_id" text NOT NULL,
-	"title" text NOT NULL,
-	"message" text NOT NULL,
-	"pinned" boolean DEFAULT false NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "course_announcement_pinned_check" CHECK ("my_schema"."course_announcement"."pinned" IN (true, false)),
-	CONSTRAINT "course_announcement_message_check" CHECK ("my_schema"."course_announcement"."message" <> ''),
-	CONSTRAINT "course_announcement_title_check" CHECK ("my_schema"."course_announcement"."title" <> '')
-);
---> statement-breakpoint
-CREATE TABLE "my_schema"."course_announcement_read" (
-	"id" text PRIMARY KEY NOT NULL,
-	"announcement_id" text NOT NULL,
-	"user_id" text NOT NULL,
-	"read_at" timestamp with time zone,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
-);
---> statement-breakpoint
 CREATE TABLE "my_schema"."course_completion_certificate" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text NOT NULL,
 	"course_id" text NOT NULL,
 	"issued_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"certificate_url" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_certificate_url_check" CHECK ("my_schema"."course_completion_certificate"."certificate_url" <> '')
 );
 --> statement-breakpoint
@@ -129,8 +108,8 @@ CREATE TABLE "my_schema"."course_faq" (
 	"answer" text NOT NULL,
 	"order" integer NOT NULL,
 	"course_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_faq_question_check" CHECK ("my_schema"."course_faq"."question" <> ''),
 	CONSTRAINT "course_faq_answer_check" CHECK ("my_schema"."course_faq"."answer" <> ''),
 	CONSTRAINT "course_faq_order_check" CHECK ("my_schema"."course_faq"."order" >= 0)
@@ -141,8 +120,8 @@ CREATE TABLE "my_schema"."course_instructor_note" (
 	"note" text NOT NULL,
 	"instructor_id" text NOT NULL,
 	"course_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_instructor_note_check" CHECK ("my_schema"."course_instructor_note"."note" <> '')
 );
 --> statement-breakpoint
@@ -159,8 +138,8 @@ CREATE TABLE "my_schema"."course_lesson" (
 	"is_preview" boolean DEFAULT false NOT NULL,
 	"course_id" text NOT NULL,
 	"module_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "my_schema"."course_module" (
@@ -171,8 +150,8 @@ CREATE TABLE "my_schema"."course_module" (
 	"order" integer NOT NULL,
 	"is_preview" boolean DEFAULT false NOT NULL,
 	"course_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_module_order_check" CHECK ("my_schema"."course_module"."order" >= 0)
 );
 --> statement-breakpoint
@@ -185,8 +164,8 @@ CREATE TABLE "my_schema"."course_review" (
 	"comment" text NOT NULL,
 	"approved" boolean DEFAULT false NOT NULL,
 	"reviewed_at" timestamp with time zone,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "course_review_rating_check" CHECK ("my_schema"."course_review"."rating" >= 1 AND "my_schema"."course_review"."rating" <= 5),
 	CONSTRAINT "course_review_approval_check" CHECK ("my_schema"."course_review"."approved" IN (true, false)),
 	CONSTRAINT "course_review_reviewed_at_check" CHECK ("my_schema"."course_review"."approved" = true OR ("my_schema"."course_review"."approved" = false AND "my_schema"."course_review"."reviewed_at" IS NULL))
@@ -197,8 +176,8 @@ CREATE TABLE "my_schema"."course_wishlist" (
 	"user_id" text,
 	"email" text,
 	"course_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "my_schema"."enrollment" (
@@ -215,8 +194,8 @@ CREATE TABLE "my_schema"."enrollment" (
 	"team_invite_id" text,
 	"gifted_at" timestamp with time zone,
 	"enrolled_at" timestamp with time zone DEFAULT now() NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "enrollment_status_check" CHECK ("my_schema"."enrollment"."status" IN ('active', 'cancelled', 'refunded', 'completed')),
 	CONSTRAINT "enrollment_gifted_at_check" CHECK ("my_schema"."enrollment"."enrollment_type" = 'gift' OR ("my_schema"."enrollment"."enrollment_type" != 'gift' AND "my_schema"."enrollment"."gifted_at" IS NULL)),
 	CONSTRAINT "enrollment_payment_invoice_check" CHECK ("my_schema"."enrollment"."enrollment_type" = 'individual' OR ("my_schema"."enrollment"."enrollment_type" != 'individual' AND "my_schema"."enrollment"."payment_id" IS NULL AND "my_schema"."enrollment"."invoice_id" IS NULL)),
@@ -224,35 +203,92 @@ CREATE TABLE "my_schema"."enrollment" (
 	CONSTRAINT "enrollment_enrolled_at_check" CHECK ("my_schema"."enrollment"."enrolled_at" IS NOT NULL)
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."course_progress" (
+CREATE TABLE "my_schema"."account" (
 	"id" text PRIMARY KEY NOT NULL,
-	"progress" smallint DEFAULT 0 NOT NULL,
-	"completed" boolean DEFAULT false NOT NULL,
-	"started_at" timestamp with time zone,
-	"completed_at" timestamp with time zone,
-	"last_accessed_at" timestamp with time zone,
+	"account_id" text NOT NULL,
+	"provider_id" text NOT NULL,
 	"user_id" text NOT NULL,
-	"course_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "course_progress_check" CHECK ("my_schema"."course_progress"."progress" >= 0 AND "my_schema"."course_progress"."progress" <= 100),
-	CONSTRAINT "course_progress_completed_check" CHECK ("my_schema"."course_progress"."completed" IN (true, false)),
-	CONSTRAINT "course_progress_consistency_check" CHECK (("my_schema"."course_progress"."completed" = true AND "my_schema"."course_progress"."progress" = 100) OR ("my_schema"."course_progress"."completed" = false AND "my_schema"."course_progress"."progress" < 100))
+	"access_token" text,
+	"refresh_token" text,
+	"id_token" text,
+	"access_token_expires_at" timestamp with time zone,
+	"refresh_token_expires_at" timestamp with time zone,
+	"scope" text,
+	"password" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."lesson_progress" (
+CREATE TABLE "my_schema"."invitation" (
 	"id" text PRIMARY KEY NOT NULL,
-	"completed" boolean DEFAULT false NOT NULL,
-	"percent_complete" smallint DEFAULT 0 NOT NULL,
-	"last_accessed_at" timestamp with time zone,
-	"completed_at" timestamp with time zone,
+	"email" text NOT NULL,
+	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
+	"status" text DEFAULT 'pending' NOT NULL,
+	"inviter_id" text NOT NULL,
+	"organization_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "my_schema"."member" (
+	"id" text PRIMARY KEY NOT NULL,
+	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
+	"organization_id" text NOT NULL,
 	"user_id" text NOT NULL,
-	"lesson_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "lesson_progress_percent_complete_check" CHECK ("my_schema"."lesson_progress"."percent_complete" >= 0 AND "my_schema"."lesson_progress"."percent_complete" <= 100),
-	CONSTRAINT "lesson_progress_completed_check" CHECK ("my_schema"."lesson_progress"."completed" IN (true, false)),
-	CONSTRAINT "lesson_progress_consistency_check" CHECK (("my_schema"."lesson_progress"."completed" = true AND "my_schema"."lesson_progress"."percent_complete" = 100) OR ("my_schema"."lesson_progress"."completed" = false AND "my_schema"."lesson_progress"."percent_complete" < 100))
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "my_schema"."organization" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"slug" text,
+	"logo" text,
+	"metadata" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "organization_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+CREATE TABLE "my_schema"."session" (
+	"id" text PRIMARY KEY NOT NULL,
+	"token" text NOT NULL,
+	"ip_address" text,
+	"user_agent" text,
+	"impersonated_by" text,
+	"user_id" text NOT NULL,
+	"expires_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "session_token_unique" UNIQUE("token")
+);
+--> statement-breakpoint
+CREATE TABLE "my_schema"."user" (
+	"id" text PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
+	"username" text,
+	"display_username" text,
+	"email" text NOT NULL,
+	"email_verified" boolean DEFAULT false NOT NULL,
+	"image" text,
+	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
+	"banned" boolean DEFAULT false,
+	"ban_reason" text,
+	"ban_expires" timestamp with time zone,
+	"is_anonymous" boolean,
+	"metadata" text,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "user_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE "my_schema"."verification" (
+	"id" text PRIMARY KEY NOT NULL,
+	"identifier" text NOT NULL,
+	"value" text NOT NULL,
+	"expires_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "my_schema"."invoice" (
@@ -266,6 +302,7 @@ CREATE TABLE "my_schema"."invoice" (
 	"tax_rate" smallint DEFAULT 0 NOT NULL,
 	"tax_amount" smallint DEFAULT 0 NOT NULL,
 	"total_amount" smallint NOT NULL,
+	"refunded_amount" smallint,
 	"status" "my_schema"."paid_status" DEFAULT 'paid' NOT NULL,
 	"issued_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"paid_at" timestamp with time zone,
@@ -273,8 +310,8 @@ CREATE TABLE "my_schema"."invoice" (
 	"payment_id" text,
 	"coupon_id" text,
 	"user_id" text DEFAULT 'ghost',
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "invoice_invoiceNumber_unique" UNIQUE("invoice_number"),
 	CONSTRAINT "invoice_amount_check" CHECK ("my_schema"."invoice"."amount" > 0),
 	CONSTRAINT "invoice_discount_amount_check" CHECK ("my_schema"."invoice"."discount_amount" >= 0),
@@ -295,7 +332,7 @@ CREATE TABLE "my_schema"."payment" (
 	"currency" text DEFAULT 'USD' NOT NULL,
 	"payment_provider" text NOT NULL,
 	"transaction_id" text NOT NULL,
-	"payment_status" "my_schema"."payment_status" DEFAULT 'pending' NOT NULL,
+	"status" "my_schema"."payment_status" DEFAULT 'pending' NOT NULL,
 	"paid_at" timestamp with time zone,
 	"purchase_type" "my_schema"."purchase_type" DEFAULT 'individual' NOT NULL,
 	"bulk_quantity" smallint,
@@ -312,8 +349,8 @@ CREATE TABLE "my_schema"."payment" (
 	"course_id" text NOT NULL,
 	"coupon_id" text,
 	"gift_recipient_user_id" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "payment_transactionId_unique" UNIQUE("transaction_id"),
 	CONSTRAINT "payment_amount_check" CHECK ("my_schema"."payment"."amount" > 0),
 	CONSTRAINT "payment_purchase_type_check" CHECK ("my_schema"."payment"."purchase_type" IN ('individual', 'team')),
@@ -333,8 +370,8 @@ CREATE TABLE "my_schema"."payment" (
         OR ("my_schema"."payment"."is_gift" = true AND "my_schema"."payment"."gift_redeem_url" IS NOT NULL)),
 	CONSTRAINT "payment_gift_redeem_date_check" CHECK ("my_schema"."payment"."gift_redeemed_at" IS NULL OR "my_schema"."payment"."gift_redeemed_at" <= "my_schema"."payment"."gift_expires_at"),
 	CONSTRAINT "payment_discount_amount_check" CHECK ("my_schema"."payment"."discount_amount" >= 0),
-	CONSTRAINT "payment_paid_at_check" CHECK ("my_schema"."payment"."payment_status" = 'completed' OR "my_schema"."payment"."paid_at" IS NULL),
-	CONSTRAINT "payment_status_check" CHECK ("my_schema"."payment"."payment_status" IN ('pending', 'completed', 'failed', 'refunded'))
+	CONSTRAINT "payment_paid_at_check" CHECK ("my_schema"."payment"."status" = 'completed' OR "my_schema"."payment"."paid_at" IS NULL),
+	CONSTRAINT "payment_status_check" CHECK ("my_schema"."payment"."status" IN ('pending', 'completed', 'failed', 'refunded'))
 );
 --> statement-breakpoint
 CREATE TABLE "my_schema"."support_ticket" (
@@ -344,15 +381,16 @@ CREATE TABLE "my_schema"."support_ticket" (
 	"repo" text,
 	"status" "my_schema"."support_ticket_status" DEFAULT 'open' NOT NULL,
 	"priority" "my_schema"."support_ticket_priority" DEFAULT 'medium' NOT NULL,
-	"lesson_id" text,
 	"course_id" text,
+	"module_id" text,
+	"lesson_id" text,
 	"user_id" text DEFAULT 'ghost' NOT NULL,
 	"assigned_to_user_id" text DEFAULT 'ghost',
 	"assigned_at" timestamp with time zone,
 	"resolved_at" timestamp with time zone,
 	"closed_at" timestamp with time zone,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "support_ticket_status_check" CHECK ("my_schema"."support_ticket"."status" IN ('open', 'in_progress', 'resolved', 'closed')),
 	CONSTRAINT "support_ticket_priority_check" CHECK ("my_schema"."support_ticket"."priority" IN ('low', 'medium', 'high', 'urgent')),
 	CONSTRAINT "support_ticket_resolution_check" CHECK (("my_schema"."support_ticket"."status" = 'resolved' AND "my_schema"."support_ticket"."resolved_at" IS NOT NULL) OR ("my_schema"."support_ticket"."status" != 'resolved' AND "my_schema"."support_ticket"."resolved_at" IS NULL)),
@@ -367,8 +405,8 @@ CREATE TABLE "my_schema"."support_ticket_attachment" (
 	"user_id" text DEFAULT 'ghost' NOT NULL,
 	"ticket_id" text NOT NULL,
 	"comment_id" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "support_ticket_attachment_file_url_check" CHECK ("my_schema"."support_ticket_attachment"."file_url" <> ''),
 	CONSTRAINT "support_ticket_attachment_file_size_check" CHECK ("my_schema"."support_ticket_attachment"."file_size" IS NULL OR "my_schema"."support_ticket_attachment"."file_size" > 0),
 	CONSTRAINT "support_ticket_attachment_file_type_check" CHECK ("my_schema"."support_ticket_attachment"."file_type" IS NULL OR "my_schema"."support_ticket_attachment"."file_type" <> '')
@@ -379,8 +417,8 @@ CREATE TABLE "my_schema"."support_ticket_comment" (
 	"comment" text NOT NULL,
 	"user_id" text DEFAULT 'ghost' NOT NULL,
 	"ticket_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "support_ticket_comment_check" CHECK ("my_schema"."support_ticket_comment"."comment" <> '')
 );
 --> statement-breakpoint
@@ -393,8 +431,8 @@ CREATE TABLE "my_schema"."team_license" (
 	"organization_id" text,
 	"invoice_id" text NOT NULL,
 	"payment_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "team_license_total_seats_check" CHECK ("my_schema"."team_license"."total_seats" IN (10, 15, 20, 25, 30)),
 	CONSTRAINT "team_license_claimed_seats_check" CHECK ("my_schema"."team_license"."claimed_seats" >= 0 AND "my_schema"."team_license"."claimed_seats" <= "my_schema"."team_license"."total_seats")
 );
@@ -412,8 +450,8 @@ CREATE TABLE "my_schema"."team_license_invite" (
 	"accepted_at" timestamp with time zone,
 	"revoked_at" timestamp with time zone,
 	"last_sent_at" timestamp with time zone,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "team_license_invite_inviteCode_unique" UNIQUE("invite_code"),
 	CONSTRAINT "team_license_invite_status_check" CHECK ("my_schema"."team_license_invite"."status" IN ('pending', 'claimed', 'revoked')),
 	CONSTRAINT "team_license_invite_acceptance_check" CHECK (("my_schema"."team_license_invite"."status" = 'claimed' AND "my_schema"."team_license_invite"."accepted_by_user_id" IS NOT NULL)
@@ -425,103 +463,66 @@ CREATE TABLE "my_schema"."team_license_invite" (
 	CONSTRAINT "team_license_invite_invite_code_check" CHECK ("my_schema"."team_license_invite"."invite_code" <> '')
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."account" (
+CREATE TABLE "my_schema"."course_progress" (
 	"id" text PRIMARY KEY NOT NULL,
-	"account_id" text NOT NULL,
-	"provider_id" text NOT NULL,
+	"progress" smallint DEFAULT 0 NOT NULL,
+	"completed" boolean DEFAULT false NOT NULL,
+	"started_at" timestamp with time zone,
+	"completed_at" timestamp with time zone,
+	"last_accessed_at" timestamp with time zone,
 	"user_id" text NOT NULL,
-	"access_token" text,
-	"refresh_token" text,
-	"id_token" text,
-	"access_token_expires_at" timestamp with time zone,
-	"refresh_token_expires_at" timestamp with time zone,
-	"scope" text,
-	"password" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"course_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "course_progress_check" CHECK ("my_schema"."course_progress"."progress" >= 0 AND "my_schema"."course_progress"."progress" <= 100),
+	CONSTRAINT "course_progress_completed_check" CHECK ("my_schema"."course_progress"."completed" IN (true, false)),
+	CONSTRAINT "course_progress_consistency_check" CHECK (("my_schema"."course_progress"."completed" = true AND "my_schema"."course_progress"."progress" = 100) OR ("my_schema"."course_progress"."completed" = false AND "my_schema"."course_progress"."progress" < 100))
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."invitation" (
+CREATE TABLE "my_schema"."lesson_progress" (
 	"id" text PRIMARY KEY NOT NULL,
-	"email" text NOT NULL,
-	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
-	"status" text DEFAULT 'pending' NOT NULL,
-	"inviter_id" text NOT NULL,
-	"organization_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "my_schema"."member" (
-	"id" text PRIMARY KEY NOT NULL,
-	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
-	"organization_id" text NOT NULL,
+	"completed" boolean DEFAULT false NOT NULL,
+	"percent_complete" smallint DEFAULT 0 NOT NULL,
+	"last_accessed_at" timestamp with time zone,
+	"completed_at" timestamp with time zone,
 	"user_id" text NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"lesson_id" text NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "lesson_progress_percent_complete_check" CHECK ("my_schema"."lesson_progress"."percent_complete" >= 0 AND "my_schema"."lesson_progress"."percent_complete" <= 100),
+	CONSTRAINT "lesson_progress_completed_check" CHECK ("my_schema"."lesson_progress"."completed" IN (true, false)),
+	CONSTRAINT "lesson_progress_consistency_check" CHECK (("my_schema"."lesson_progress"."completed" = true AND "my_schema"."lesson_progress"."percent_complete" = 100) OR ("my_schema"."lesson_progress"."completed" = false AND "my_schema"."lesson_progress"."percent_complete" < 100))
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."organization" (
+CREATE TABLE "my_schema"."platform_announcement" (
 	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"slug" text,
-	"logo" text,
-	"metadata" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "organization_slug_unique" UNIQUE("slug")
+	"title" text NOT NULL,
+	"message" text NOT NULL,
+	"type" "my_schema"."announcement_id_type" DEFAULT 'general' NOT NULL,
+	"published_at" timestamp with time zone,
+	"author_id" text DEFAULT 'ghost',
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "platform_announcement_message_check" CHECK ("my_schema"."platform_announcement"."message" <> ''),
+	CONSTRAINT "platform_announcement_title_check" CHECK ("my_schema"."platform_announcement"."title" <> ''),
+	CONSTRAINT "platform_announcement_type_check" CHECK ("my_schema"."platform_announcement"."type" IN ('platform_update', 'platform_warning', 'course_update', 'new_course', 'general', 'warning'))
 );
 --> statement-breakpoint
-CREATE TABLE "my_schema"."session" (
+CREATE TABLE "my_schema"."platform_announcement_read" (
 	"id" text PRIMARY KEY NOT NULL,
-	"token" text NOT NULL,
-	"ip_address" text,
-	"user_agent" text,
-	"impersonated_by" text,
+	"announcement_id" text NOT NULL,
 	"user_id" text NOT NULL,
-	"expires_at" timestamp with time zone NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "session_token_unique" UNIQUE("token")
-);
---> statement-breakpoint
-CREATE TABLE "my_schema"."user" (
-	"id" text PRIMARY KEY NOT NULL,
-	"name" text NOT NULL,
-	"username" text,
-	"display_username" text,
-	"email" text NOT NULL,
-	"email_verified" boolean DEFAULT false NOT NULL,
-	"image" text,
-	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
-	"banned" boolean DEFAULT false,
-	"ban_reason" text,
-	"ban_expires" timestamp with time zone,
-	"is_anonymous" boolean,
-	"metadata" text,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL,
-	CONSTRAINT "user_email_unique" UNIQUE("email")
-);
---> statement-breakpoint
-CREATE TABLE "my_schema"."verification" (
-	"id" text PRIMARY KEY NOT NULL,
-	"identifier" text NOT NULL,
-	"value" text NOT NULL,
-	"expires_at" timestamp with time zone NOT NULL,
-	"created_at" timestamp with time zone NOT NULL,
-	"updated_at" timestamp with time zone NOT NULL
+	"read_at" timestamp with time zone,
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	"updated_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "my_schema"."coupon" ADD CONSTRAINT "coupon_created_by_user_id_fk" FOREIGN KEY ("created_by") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."coupon" ADD CONSTRAINT "coupon_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."coupon" ADD CONSTRAINT "coupon_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."coupon_redemption" ADD CONSTRAINT "coupon_redemption_coupon_id_coupon_id_fk" FOREIGN KEY ("coupon_id") REFERENCES "my_schema"."coupon"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."coupon_redemption" ADD CONSTRAINT "coupon_redemption_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."coupon_redemption" ADD CONSTRAINT "coupon_redemption_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."course" ADD CONSTRAINT "course_author_id_user_id_fk" FOREIGN KEY ("author_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."course_announcement" ADD CONSTRAINT "course_announcement_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."course_announcement_read" ADD CONSTRAINT "course_announcement_read_announcement_id_course_announcement_id_fk" FOREIGN KEY ("announcement_id") REFERENCES "my_schema"."course_announcement"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."course_announcement_read" ADD CONSTRAINT "course_announcement_read_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."course_completion_certificate" ADD CONSTRAINT "course_completion_certificate_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."course_completion_certificate" ADD CONSTRAINT "course_completion_certificate_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."course_faq" ADD CONSTRAINT "course_faq_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -541,10 +542,12 @@ ALTER TABLE "my_schema"."enrollment" ADD CONSTRAINT "enrollment_payment_id_payme
 ALTER TABLE "my_schema"."enrollment" ADD CONSTRAINT "enrollment_invoice_id_invoice_id_fk" FOREIGN KEY ("invoice_id") REFERENCES "my_schema"."invoice"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."enrollment" ADD CONSTRAINT "enrollment_team_license_id_team_license_id_fk" FOREIGN KEY ("team_license_id") REFERENCES "my_schema"."team_license"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."enrollment" ADD CONSTRAINT "enrollment_team_invite_id_team_license_invite_id_fk" FOREIGN KEY ("team_invite_id") REFERENCES "my_schema"."team_license_invite"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."course_progress" ADD CONSTRAINT "course_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."course_progress" ADD CONSTRAINT "course_progress_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."lesson_progress" ADD CONSTRAINT "lesson_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."lesson_progress" ADD CONSTRAINT "lesson_progress_lesson_id_course_lesson_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "my_schema"."course_lesson"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."invitation" ADD CONSTRAINT "invitation_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "my_schema"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."member" ADD CONSTRAINT "member_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "my_schema"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."member" ADD CONSTRAINT "member_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."invoice" ADD CONSTRAINT "invoice_payment_id_payment_id_fk" FOREIGN KEY ("payment_id") REFERENCES "my_schema"."payment"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."invoice" ADD CONSTRAINT "invoice_coupon_id_coupon_id_fk" FOREIGN KEY ("coupon_id") REFERENCES "my_schema"."coupon"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."invoice" ADD CONSTRAINT "invoice_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
@@ -552,8 +555,9 @@ ALTER TABLE "my_schema"."payment" ADD CONSTRAINT "payment_user_id_user_id_fk" FO
 ALTER TABLE "my_schema"."payment" ADD CONSTRAINT "payment_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."payment" ADD CONSTRAINT "payment_coupon_id_coupon_id_fk" FOREIGN KEY ("coupon_id") REFERENCES "my_schema"."coupon"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."payment" ADD CONSTRAINT "payment_gift_recipient_user_id_user_id_fk" FOREIGN KEY ("gift_recipient_user_id") REFERENCES "my_schema"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_lesson_id_course_lesson_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "my_schema"."course_lesson"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_module_id_course_module_id_fk" FOREIGN KEY ("module_id") REFERENCES "my_schema"."course_module"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_lesson_id_course_lesson_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "my_schema"."course_lesson"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."support_ticket" ADD CONSTRAINT "support_ticket_assigned_to_user_id_user_id_fk" FOREIGN KEY ("assigned_to_user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."support_ticket_attachment" ADD CONSTRAINT "support_ticket_attachment_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
@@ -570,12 +574,13 @@ ALTER TABLE "my_schema"."team_license_invite" ADD CONSTRAINT "team_license_invit
 ALTER TABLE "my_schema"."team_license_invite" ADD CONSTRAINT "team_license_invite_invited_by_user_id_user_id_fk" FOREIGN KEY ("invited_by_user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."team_license_invite" ADD CONSTRAINT "team_license_invite_accepted_by_user_id_user_id_fk" FOREIGN KEY ("accepted_by_user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."team_license_invite" ADD CONSTRAINT "team_license_invite_revoked_by_user_id_user_id_fk" FOREIGN KEY ("revoked_by_user_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."invitation" ADD CONSTRAINT "invitation_inviter_id_user_id_fk" FOREIGN KEY ("inviter_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."invitation" ADD CONSTRAINT "invitation_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "my_schema"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."member" ADD CONSTRAINT "member_organization_id_organization_id_fk" FOREIGN KEY ("organization_id") REFERENCES "my_schema"."organization"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."member" ADD CONSTRAINT "member_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "my_schema"."session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."course_progress" ADD CONSTRAINT "course_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."course_progress" ADD CONSTRAINT "course_progress_course_id_course_id_fk" FOREIGN KEY ("course_id") REFERENCES "my_schema"."course"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."lesson_progress" ADD CONSTRAINT "lesson_progress_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."lesson_progress" ADD CONSTRAINT "lesson_progress_lesson_id_course_lesson_id_fk" FOREIGN KEY ("lesson_id") REFERENCES "my_schema"."course_lesson"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."platform_announcement" ADD CONSTRAINT "platform_announcement_author_id_user_id_fk" FOREIGN KEY ("author_id") REFERENCES "my_schema"."user"("id") ON DELETE set default ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."platform_announcement_read" ADD CONSTRAINT "platform_announcement_read_announcement_id_platform_announcement_id_fk" FOREIGN KEY ("announcement_id") REFERENCES "my_schema"."platform_announcement"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "my_schema"."platform_announcement_read" ADD CONSTRAINT "platform_announcement_read_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "coupon_code_idx" ON "my_schema"."coupon" USING btree ("code");--> statement-breakpoint
 CREATE INDEX "coupon_course_idx" ON "my_schema"."coupon" USING btree ("course_id");--> statement-breakpoint
 CREATE INDEX "coupon_redemption_course_idx" ON "my_schema"."coupon_redemption" USING btree ("course_id");--> statement-breakpoint
@@ -583,11 +588,6 @@ CREATE INDEX "coupon_redemption_user_idx" ON "my_schema"."coupon_redemption" USI
 CREATE INDEX "coupon_redemption_coupon_idx" ON "my_schema"."coupon_redemption" USING btree ("coupon_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "coupon_redemption_unique_idx" ON "my_schema"."coupon_redemption" USING btree ("coupon_id","user_id","course_id");--> statement-breakpoint
 CREATE INDEX "course_slug_idx" ON "my_schema"."course" USING btree ("slug");--> statement-breakpoint
-CREATE INDEX "course_announcement_course_idx" ON "my_schema"."course_announcement" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "course_announcement_pinned_idx" ON "my_schema"."course_announcement" USING btree ("pinned");--> statement-breakpoint
-CREATE UNIQUE INDEX "course_announcement_read_unique_idx" ON "my_schema"."course_announcement_read" USING btree ("announcement_id","user_id");--> statement-breakpoint
-CREATE INDEX "course_announcement_read_announcement_idx" ON "my_schema"."course_announcement_read" USING btree ("announcement_id");--> statement-breakpoint
-CREATE INDEX "course_announcement_read_user_idx" ON "my_schema"."course_announcement_read" USING btree ("user_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "course_certificate_unique_idx" ON "my_schema"."course_completion_certificate" USING btree ("user_id","course_id");--> statement-breakpoint
 CREATE INDEX "course_certificate_user_idx" ON "my_schema"."course_completion_certificate" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "course_faq_course_idx" ON "my_schema"."course_faq" USING btree ("course_id");--> statement-breakpoint
@@ -614,41 +614,6 @@ CREATE INDEX "enrollment_gifter_idx" ON "my_schema"."enrollment" USING btree ("g
 CREATE INDEX "enrollment_team_license_idx" ON "my_schema"."enrollment" USING btree ("team_license_id");--> statement-breakpoint
 CREATE INDEX "enrollment_team_invite_idx" ON "my_schema"."enrollment" USING btree ("team_invite_id");--> statement-breakpoint
 CREATE INDEX "enrollment_status_idx" ON "my_schema"."enrollment" USING btree ("status");--> statement-breakpoint
-CREATE UNIQUE INDEX "course_progress_unique_idx" ON "my_schema"."course_progress" USING btree ("user_id","course_id");--> statement-breakpoint
-CREATE INDEX "course_progress_user_idx" ON "my_schema"."course_progress" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "course_progress_course_idx" ON "my_schema"."course_progress" USING btree ("course_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "lesson_progress_unique_idx" ON "my_schema"."lesson_progress" USING btree ("user_id","lesson_id");--> statement-breakpoint
-CREATE INDEX "lesson_progress_user_idx" ON "my_schema"."lesson_progress" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "lesson_progress_lesson_idx" ON "my_schema"."lesson_progress" USING btree ("lesson_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "invoice_payment_unique_idx" ON "my_schema"."invoice" USING btree ("payment_id");--> statement-breakpoint
-CREATE INDEX "invoice_coupon_idx" ON "my_schema"."invoice" USING btree ("coupon_id");--> statement-breakpoint
-CREATE INDEX "invoice_user_idx" ON "my_schema"."invoice" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "invoice_invoice_number_idx" ON "my_schema"."invoice" USING btree ("invoice_number");--> statement-breakpoint
-CREATE INDEX "payment_user_idx" ON "my_schema"."payment" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "payment_course_idx" ON "my_schema"."payment" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "payment_coupon_idx" ON "my_schema"."payment" USING btree ("coupon_id");--> statement-breakpoint
-CREATE INDEX "payment_gift_recipient_user_idx" ON "my_schema"."payment" USING btree ("gift_recipient_user_id");--> statement-breakpoint
-CREATE INDEX "payment_purchase_type_idx" ON "my_schema"."payment" USING btree ("purchase_type");--> statement-breakpoint
-CREATE UNIQUE INDEX "payment_redeem_token_idx" ON "my_schema"."payment" USING btree ("gift_redeem_token");--> statement-breakpoint
-CREATE UNIQUE INDEX "payment_redeem_url_idx" ON "my_schema"."payment" USING btree ("gift_redeem_url");--> statement-breakpoint
-CREATE INDEX "support_ticket_user_idx" ON "my_schema"."support_ticket" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_assigned_to_user_idx" ON "my_schema"."support_ticket" USING btree ("assigned_to_user_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_status_idx" ON "my_schema"."support_ticket" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "support_ticket_priority_idx" ON "my_schema"."support_ticket" USING btree ("priority");--> statement-breakpoint
-CREATE INDEX "support_ticket_course_idx" ON "my_schema"."support_ticket" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_lesson_idx" ON "my_schema"."support_ticket" USING btree ("lesson_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_attachment_user_idx" ON "my_schema"."support_ticket_attachment" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_attachment_ticket_idx" ON "my_schema"."support_ticket_attachment" USING btree ("ticket_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_attachment_comment_idx" ON "my_schema"."support_ticket_attachment" USING btree ("comment_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_comment_user_idx" ON "my_schema"."support_ticket_comment" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "support_ticket_comment_ticket_idx" ON "my_schema"."support_ticket_comment" USING btree ("ticket_id");--> statement-breakpoint
-CREATE INDEX "team_license_course_idx" ON "my_schema"."team_license" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "team_license_purchaser_idx" ON "my_schema"."team_license" USING btree ("purchaser_id");--> statement-breakpoint
-CREATE INDEX "team_license_organization_idx" ON "my_schema"."team_license" USING btree ("organization_id");--> statement-breakpoint
-CREATE INDEX "team_license_payment_idx" ON "my_schema"."team_license" USING btree ("payment_id");--> statement-breakpoint
-CREATE INDEX "team_license_invite_license_idx" ON "my_schema"."team_license_invite" USING btree ("license_id");--> statement-breakpoint
-CREATE INDEX "team_license_invite_email_idx" ON "my_schema"."team_license_invite" USING btree ("invite_email");--> statement-breakpoint
-CREATE INDEX "team_license_invite_status_idx" ON "my_schema"."team_license_invite" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "account_account_id_idx" ON "my_schema"."account" USING btree ("account_id");--> statement-breakpoint
 CREATE INDEX "account_provider_id_idx" ON "my_schema"."account" USING btree ("provider_id");--> statement-breakpoint
 CREATE INDEX "account_access_token_idx" ON "my_schema"."account" USING btree ("access_token");--> statement-breakpoint
@@ -687,4 +652,43 @@ CREATE INDEX "user_created_at_idx" ON "my_schema"."user" USING btree ("created_a
 CREATE INDEX "user_updated_at_idx" ON "my_schema"."user" USING btree ("updated_at");--> statement-breakpoint
 CREATE INDEX "verification_identifier_idx" ON "my_schema"."verification" USING btree ("identifier");--> statement-breakpoint
 CREATE INDEX "verification_value_idx" ON "my_schema"."verification" USING btree ("value");--> statement-breakpoint
-CREATE INDEX "verification_expires_at_idx" ON "my_schema"."verification" USING btree ("expires_at");
+CREATE INDEX "verification_expires_at_idx" ON "my_schema"."verification" USING btree ("expires_at");--> statement-breakpoint
+CREATE UNIQUE INDEX "invoice_payment_unique_idx" ON "my_schema"."invoice" USING btree ("payment_id");--> statement-breakpoint
+CREATE INDEX "invoice_coupon_idx" ON "my_schema"."invoice" USING btree ("coupon_id");--> statement-breakpoint
+CREATE INDEX "invoice_user_idx" ON "my_schema"."invoice" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "invoice_invoice_number_idx" ON "my_schema"."invoice" USING btree ("invoice_number");--> statement-breakpoint
+CREATE INDEX "payment_user_idx" ON "my_schema"."payment" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "payment_course_idx" ON "my_schema"."payment" USING btree ("course_id");--> statement-breakpoint
+CREATE INDEX "payment_coupon_idx" ON "my_schema"."payment" USING btree ("coupon_id");--> statement-breakpoint
+CREATE INDEX "payment_gift_recipient_user_idx" ON "my_schema"."payment" USING btree ("gift_recipient_user_id");--> statement-breakpoint
+CREATE INDEX "payment_purchase_type_idx" ON "my_schema"."payment" USING btree ("purchase_type");--> statement-breakpoint
+CREATE UNIQUE INDEX "payment_redeem_token_idx" ON "my_schema"."payment" USING btree ("gift_redeem_token");--> statement-breakpoint
+CREATE UNIQUE INDEX "payment_redeem_url_idx" ON "my_schema"."payment" USING btree ("gift_redeem_url");--> statement-breakpoint
+CREATE INDEX "support_ticket_user_idx" ON "my_schema"."support_ticket" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_assigned_to_user_idx" ON "my_schema"."support_ticket" USING btree ("assigned_to_user_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_status_idx" ON "my_schema"."support_ticket" USING btree ("status");--> statement-breakpoint
+CREATE INDEX "support_ticket_priority_idx" ON "my_schema"."support_ticket" USING btree ("priority");--> statement-breakpoint
+CREATE INDEX "support_ticket_course_idx" ON "my_schema"."support_ticket" USING btree ("course_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_lesson_idx" ON "my_schema"."support_ticket" USING btree ("lesson_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_attachment_user_idx" ON "my_schema"."support_ticket_attachment" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_attachment_ticket_idx" ON "my_schema"."support_ticket_attachment" USING btree ("ticket_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_attachment_comment_idx" ON "my_schema"."support_ticket_attachment" USING btree ("comment_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_comment_user_idx" ON "my_schema"."support_ticket_comment" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "support_ticket_comment_ticket_idx" ON "my_schema"."support_ticket_comment" USING btree ("ticket_id");--> statement-breakpoint
+CREATE INDEX "team_license_course_idx" ON "my_schema"."team_license" USING btree ("course_id");--> statement-breakpoint
+CREATE INDEX "team_license_purchaser_idx" ON "my_schema"."team_license" USING btree ("purchaser_id");--> statement-breakpoint
+CREATE INDEX "team_license_organization_idx" ON "my_schema"."team_license" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX "team_license_payment_idx" ON "my_schema"."team_license" USING btree ("payment_id");--> statement-breakpoint
+CREATE INDEX "team_license_invite_license_idx" ON "my_schema"."team_license_invite" USING btree ("license_id");--> statement-breakpoint
+CREATE INDEX "team_license_invite_email_idx" ON "my_schema"."team_license_invite" USING btree ("invite_email");--> statement-breakpoint
+CREATE INDEX "team_license_invite_status_idx" ON "my_schema"."team_license_invite" USING btree ("status");--> statement-breakpoint
+CREATE UNIQUE INDEX "course_progress_unique_idx" ON "my_schema"."course_progress" USING btree ("user_id","course_id");--> statement-breakpoint
+CREATE INDEX "course_progress_user_idx" ON "my_schema"."course_progress" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "course_progress_course_idx" ON "my_schema"."course_progress" USING btree ("course_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "lesson_progress_unique_idx" ON "my_schema"."lesson_progress" USING btree ("user_id","lesson_id");--> statement-breakpoint
+CREATE INDEX "lesson_progress_user_idx" ON "my_schema"."lesson_progress" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "lesson_progress_lesson_idx" ON "my_schema"."lesson_progress" USING btree ("lesson_id");--> statement-breakpoint
+CREATE INDEX "platform_announcement_author_idx" ON "my_schema"."platform_announcement" USING btree ("author_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "platform_announcement_read_unique_idx" ON "my_schema"."platform_announcement_read" USING btree ("announcement_id","user_id");--> statement-breakpoint
+CREATE INDEX "platform_announcement_read_announcement_idx" ON "my_schema"."platform_announcement_read" USING btree ("announcement_id");--> statement-breakpoint
+CREATE INDEX "platform_announcement_read_user_idx" ON "my_schema"."platform_announcement_read" USING btree ("user_id");
