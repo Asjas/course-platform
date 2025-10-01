@@ -71,6 +71,9 @@ importers:
       better-auth:
         specifier: 1.3.23
         version: 1.3.23(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(solid-js@1.9.9)
+      close-with-grace:
+        specifier: 2.3.0
+        version: 2.3.0
       dotenv:
         specifier: 17.2.2
         version: 17.2.2
@@ -4229,6 +4232,9 @@ packages:
   clone@2.1.2:
     resolution: {integrity: sha512-3Pe/CF1Nn94hyhIYpjtiLhdCoEoz0DqQ+988E9gmeEdQZlojxnOb74wctFyuwWQHzqyf9X7C7MG8juUpqBJT8w==}
     engines: {node: '>=0.8'}
+
+  close-with-grace@2.3.0:
+    resolution: {integrity: sha512-38BS9BuqAml6XFIlSWQcj3eivE05yFV6cJDuYoNGiHrE+h9ud1JtMJIVKXdLWa2Uo2Xt7q/GYczOesEchvBEsw==}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -12448,6 +12454,8 @@ snapshots:
   client-only@0.0.1: {}
 
   clone@2.1.2: {}
+
+  close-with-grace@2.3.0: {}
 
   clsx@2.1.1: {}
 

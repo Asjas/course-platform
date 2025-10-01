@@ -1,15 +1,18 @@
+import closeWithGrace from "close-with-grace";
 import config from "~/config.js";
 import createServer from "~/server.js";
 
-async function startServer() {
-  try {
-    const PORT = Number(config.PORT) || 3000;
-    const app = await createServer(config);
+const PORT = Number(config.PORT) || 3000;
+const app = await createServer(config);
 
-    await app.listen({ port: PORT, host: "0.0.0.0" });
-  } catch (err) {
-    console.error(err);
+closeWithGrace(async function ({ signal, err }) {
+  if (err) {
+    app.log.error({ err }, "Server closing with error");
+  } else {
+    app.log.info(`${signal} received, server closing`);
   }
-}
 
-startServer();
+  await app.close();
+});
+
+await app.listen({ port: PORT, host: "0.0.0.0" });
