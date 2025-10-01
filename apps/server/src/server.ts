@@ -29,7 +29,7 @@ import { appRouter } from "~/router/index.js";
 async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
     ...config,
-    trustProxy: 1,
+    trustProxy: true,
     disableRequestLogging: config.NODE_ENV === "test",
     loggerInstance: pinoLogger,
     routerOptions: {
@@ -52,6 +52,8 @@ async function createServer(config: Config) {
         if (!clientIp || typeof clientIp !== "string") {
           return request.ip || "unknown";
         }
+
+        console.log("clientip", clientIp);
 
         return clientIp;
       },
