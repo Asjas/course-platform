@@ -30,7 +30,7 @@ async function createServer(config: Config) {
   const opts: FastifyServerOptions = {
     ...config,
     trustProxy: true,
-    disableRequestLogging: config.NODE_ENV === "test",
+    disableRequestLogging: true,
     loggerInstance: pinoLogger,
     routerOptions: {
       maxParamLength: 5000,
@@ -38,6 +38,22 @@ async function createServer(config: Config) {
   };
 
   const server = Fastify(opts);
+
+  // Custom logging to use request.ip
+  server.addHook("onRequest", (request, _reply, done) => {
+    server.log.info(
+      {
+        method: request.method,
+        url: request.url,
+        host: request.hostname,
+        remoteAddress: request.headers["cf-connecting-ip"] || request.ip,
+        remotePort: request.raw.socket.remotePort,
+      },
+      "incoming request",
+    );
+
+    done();
+  });
 
   try {
     await server.register(fastifyRateLimit, {
@@ -47,15 +63,11 @@ async function createServer(config: Config) {
       timeWindow: "1 minute",
       nameSpace: "codewizard-rate-limit-",
       keyGenerator: (request) => {
-        const clientIp = request.headers["cf-connecting-ip"];
-
-        if (!clientIp || typeof clientIp !== "string") {
-          return request.ip || "unknown";
-        }
-
-        console.log("clientip", clientIp);
-
-        return clientIp;
+        return (
+          (request.headers["cf-connecting-ip"] as string) ||
+          request.ip ||
+          "unknown"
+        );
       },
     });
 
