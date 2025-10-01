@@ -4,6 +4,16 @@ import type {
   HookHandlerDoneFunction,
 } from "fastify";
 import fastifyPlugin from "fastify-plugin";
+import type { User } from "~/db/mutations/user.js";
+
+declare module "fastify" {
+  interface FastifyRequest {
+    user: Pick<
+      User,
+      "id" | "email" | "emailVerified" | "role" | "banned"
+    > | null;
+  }
+}
 
 function authPlugin(
   fastify: FastifyInstance,
