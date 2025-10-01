@@ -39,10 +39,10 @@ async function createServer(config: Config) {
 
   const server = Fastify(opts);
 
-  // Custom logging to use request.ip
   server.addHook("onRequest", (request, _reply, done) => {
     server.log.info(
       {
+        reqId: request.id,
         method: request.method,
         url: request.url,
         host: request.hostname,
@@ -50,6 +50,23 @@ async function createServer(config: Config) {
         remotePort: request.raw.socket.remotePort,
       },
       "incoming request",
+    );
+
+    done();
+  });
+
+  server.addHook("onResponse", (request, reply, done) => {
+    server.log.info(
+      {
+        reqId: request.id,
+        method: request.method,
+        url: request.url,
+        host: request.hostname,
+        remoteAddress: request.headers["cf-connecting-ip"] || request.ip,
+        remotePort: request.raw.socket.remotePort,
+        statusCode: reply.statusCode,
+      },
+      "request completed",
     );
 
     done();
@@ -134,7 +151,7 @@ async function createServer(config: Config) {
         preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
       },
       function (_request, reply) {
-        reply.code(404).send({ 404: "Not found!" });
+        throw reply.server.httpErrors.notFound();
       },
     );
   } catch (err) {
