@@ -15,6 +15,13 @@
       "when": 1759341838743,
       "tag": "0001_pale_lockheed",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759342876517,
+      "tag": "0002_cultured_darkhawk",
+      "breakpoints": true
     }
   ]
 }

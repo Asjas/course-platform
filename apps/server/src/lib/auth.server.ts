@@ -5,7 +5,6 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
   admin,
-  anonymous,
   haveIBeenPwned,
   organization,
   username,
@@ -84,7 +83,6 @@ export const auth = betterAuth({
   plugins: [
     admin(),
     haveIBeenPwned(),
-    anonymous(),
     organization({ allowUserToCreateOrganization: false }),
     username({
       usernameValidator: (username) => {

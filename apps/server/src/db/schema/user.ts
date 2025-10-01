@@ -17,12 +17,7 @@ import { supportTicket } from "~/db/schema/support.js";
 import { teamLicense } from "~/db/schema/teamLicense.js";
 
 // Enums
-export const members = mySchema.enum("members", [
-  "member",
-  "admin",
-  "owner",
-  "ghost",
-]);
+export const members = mySchema.enum("members", ["member", "admin"]);
 
 // Tables
 export const user = mySchema.table(
@@ -39,7 +34,6 @@ export const user = mySchema.table(
     banned: boolean().default(false),
     banReason: text(),
     banExpires: timestamp({ withTimezone: true }),
-    isAnonymous: boolean(),
     metadata: text(),
     ...timestamps,
   },

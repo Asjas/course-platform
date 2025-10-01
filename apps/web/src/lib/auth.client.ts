@@ -2,7 +2,6 @@ import { invariant } from "@epic-web/invariant";
 import { polarClient } from "@polar-sh/better-auth";
 import {
   adminClient,
-  anonymousClient,
   organizationClient,
   usernameClient,
 } from "better-auth/client/plugins";
@@ -18,7 +17,6 @@ export const authClient = createAuthClient({
   basePath: "/api/auth",
   plugins: [
     adminClient(),
-    anonymousClient(),
     usernameClient(),
     organizationClient(),
     polarClient(),
