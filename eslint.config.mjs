@@ -1,8 +1,11 @@
-// @ts-check
 import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
+import esxPlugin from "eslint-plugin-es-x";
 import html from "eslint-plugin-html";
+import pluginPromise from "eslint-plugin-promise";
+import react from "eslint-plugin-react";
+import security from "eslint-plugin-security";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
 import { dirname } from "node:path";
@@ -20,6 +23,8 @@ export default defineConfig(
   eslint.configs.recommended,
   tseslint.configs.strict,
   tseslint.configs.stylistic,
+  pluginPromise.configs["flat/recommended"],
+  esxPlugin.configs["flat/restrict-to-es2022"],
   [
     {
       files: ["**/*.html"],
@@ -30,6 +35,7 @@ export default defineConfig(
     },
     {
       files: ["marketing/**/*.{js,jsx,ts,tsx}"],
+      plugins: { react },
       languageOptions: {
         globals: globals.browser,
         parserOptions: {
@@ -54,8 +60,6 @@ export default defineConfig(
           "plugin:import/recommended",
           "plugin:import/typescript",
           "plugin:astro/recommended",
-          "plugin:react/recommended",
-          "plugin:react/jsx-runtime",
           "plugin:react-hooks/recommended",
           "plugin:jsx-a11y/recommended",
         ),
@@ -63,6 +67,7 @@ export default defineConfig(
     },
     {
       files: ["apps/web/**/*.{js,jsx,ts,tsx}"],
+      plugins: { react },
       languageOptions: {
         globals: globals.browser,
         parserOptions: {
@@ -86,8 +91,6 @@ export default defineConfig(
         compat.extends(
           "plugin:import/recommended",
           "plugin:import/typescript",
-          "plugin:react/recommended",
-          "plugin:react/jsx-runtime",
           "plugin:react-hooks/recommended",
           "plugin:jsx-a11y/recommended",
           "plugin:@tanstack/eslint-plugin-router/recommended",
@@ -111,6 +114,7 @@ export default defineConfig(
     },
     {
       files: ["apps/server/**/*.{js,ts}"],
+      plugins: { security },
       languageOptions: {
         globals: globals.node,
         parserOptions: {
