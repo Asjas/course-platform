@@ -13,7 +13,7 @@
   "lint-staged": {
     "*.{html,js,jsx,ts,tsx,astro,md,json}": [
       "prettier --write",
-      "eslint --fix"
+      "eslint --concurrency auto --fix"
     ]
   },
   "devDependencies": {
