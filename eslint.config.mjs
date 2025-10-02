@@ -6,6 +6,7 @@ import html from "eslint-plugin-html";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
 import security from "eslint-plugin-security";
+import eslintPluginYml from "eslint-plugin-yml";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
 import { dirname } from "node:path";
@@ -25,6 +26,7 @@ export default defineConfig(
   tseslint.configs.stylistic,
   pluginPromise.configs["flat/recommended"],
   esxPlugin.configs["flat/restrict-to-es2022"],
+  ...eslintPluginYml.configs["flat/recommended"],
   [
     {
       files: ["**/*.html"],
