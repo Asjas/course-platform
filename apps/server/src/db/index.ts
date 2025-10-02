@@ -1,21 +1,22 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { Client } from "pg";
+import { Client, Pool } from "pg";
 import config from "~/config.js";
 import { mySchema } from "~/db/schema.js";
 import * as schemas from "~/db/schema/index.js";
 
-// import { DrizzleLogger } from "~/lib/logging.js";
+const pool = new Pool({
+  connectionString: config.DATABASE_URL,
+  max: 100,
+  Client,
+});
 
-const client = new Client({ connectionString: config.DATABASE_URL });
-
-await client.connect();
+await pool.connect();
 
 export const db = drizzle({
   schema: {
     mySchema,
     ...schemas,
   },
-  client: client,
-  // logger: config.NODE_ENV === "development" ? new DrizzleLogger() : undefined,
+  client: pool,
   casing: "snake_case",
 });
