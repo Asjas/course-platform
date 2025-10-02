@@ -8,7 +8,7 @@ function CustomLink(props: LinkProps) {
       {...props}
       className={cn(
         props.className,
-        "inline-flex items-center whitespace-nowrap rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 hover:bg-gray-100 dark:hover:bg-gray-700",
+        "inline-flex items-center rounded-lg px-3 py-1.5 text-sm leading-6 font-semibold whitespace-nowrap hover:bg-gray-100 dark:hover:bg-gray-700",
       )}
     >
       {props.children}

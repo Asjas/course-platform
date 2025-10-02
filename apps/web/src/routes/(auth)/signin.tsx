@@ -9,7 +9,7 @@ export const Route = createFileRoute("/(auth)/signin")({
 
 function AuthPage() {
   return (
-    <main className="w-100 flex grow flex-col justify-center self-center">
+    <main className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Account Signin</CardHeader>
         <SignInForm />

@@ -12,7 +12,7 @@ function CoursePage() {
         websites.
       </p>
       {/* Course content */}
-      <div className="mb-16 mt-12">
+      <div className="mt-12 mb-16">
         <h2 className="mb-8 text-2xl font-bold text-white">Course Content</h2>
         <div className="overflow-hidden rounded-lg border border-gray-800">
           {/* Chapter Header */}

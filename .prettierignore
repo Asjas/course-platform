@@ -1,1 +1,4 @@
 .github/
+.astro/
+reportWebVitals.ts
+routeTree.gen.ts

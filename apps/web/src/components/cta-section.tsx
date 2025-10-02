@@ -8,7 +8,7 @@ export default function CTASection() {
         <h2 className="mb-6 text-4xl font-bold md:text-5xl">
           Ready to level up your skills?
         </h2>
-        <p className="mb-4 mt-8 text-xl text-slate-300">
+        <p className="mt-8 mb-4 text-xl text-slate-300">
           Create a free account.
         </p>
         <p className="mb-12 text-xl text-slate-300">
