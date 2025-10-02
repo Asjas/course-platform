@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
-
-import { capitalizeFirstLetter, cn } from "./utils";
+import { capitalizeFirstLetter, cn } from "~/lib/utils";
 
 describe("utils", () => {
   describe("cn", () => {
@@ -10,11 +9,7 @@ describe("utils", () => {
     });
 
     it("should handle conditional classes", () => {
-      const result = cn(
-        "base-class",
-        true && "conditional-class",
-        false && "hidden-class",
-      );
+      const result = cn("base-class", "conditional-class", "");
       expect(result).toBe("base-class conditional-class");
     });
 
