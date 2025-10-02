@@ -31,7 +31,9 @@ export default defineConfig(
   jsonPlugin.configs["recommended"],
   ...eslintPluginYml.configs["flat/recommended"],
   [
-    { plugins: { "unused-imports": unusedImports } },
+    {
+      plugins: { "unused-imports": unusedImports },
+    },
     {
       files: ["**/*.html"],
       languageOptions: {
