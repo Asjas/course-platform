@@ -7,14 +7,17 @@ export const Route = createFileRoute("/blog/$slug")({
   component: BlogPostPage,
 });
 
-const blogPosts = import.meta.glob("./*.mdx", {
-  eager: true,
-});
+const blogPosts = import.meta.glob<{ default: React.ComponentType }>(
+  "./*.mdx",
+  {
+    eager: true,
+  },
+);
 
 function BlogPostPage() {
   const { slug } = useParams({ from: "/blog/$slug" });
 
-  const blogPost = useMemo(() => {
+  const blogPost = useMemo<{ default: React.ComponentType } | null>(() => {
     const postPath = `./${slug}.mdx`;
 
     if (!(postPath in blogPosts)) {
@@ -31,7 +34,7 @@ function BlogPostPage() {
     return notFound();
   }
 
-  const Content = (blogPost as any).default as React.ComponentType<any>;
+  const Content = blogPost.default;
 
   return (
     <div className="container mx-auto max-w-3xl px-8 py-12">

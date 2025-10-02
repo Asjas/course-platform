@@ -1,11 +1,11 @@
 import { Link } from "~/components/ui/nav-link";
 
-type Props = {
+interface Props {
   showSignIn?: boolean;
   showSignUp?: boolean;
   showForgotPassword?: boolean;
   className?: string;
-};
+}
 
 export default function AuthLinks({
   showSignIn = true,

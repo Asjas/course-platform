@@ -38,7 +38,7 @@ export class DrizzleLogger implements Logger {
 export const betterAuthLogger = {
   level: "error" as const,
   disabled: false,
-  log: (level: string, message: string, ...args: any[]) => {
+  log: (level: string, message: string, ...args: unknown[]) => {
     const store = asyncLocalStorage.getStore();
 
     // Map Better Auth log levels to Pino levels

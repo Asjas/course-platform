@@ -5,6 +5,12 @@ import type {
   FastifyRequest,
 } from "fastify";
 import {
+  type NewSupportTicket,
+  type NewSupportTicketAttachment,
+  type NewSupportTicketComment,
+  type SupportTicket,
+  type SupportTicketAttachment,
+  type SupportTicketComment,
   deleteSupportTicketAttachmentById,
   deleteSupportTicketById,
   deleteSupportTicketCommentById,
@@ -91,14 +97,15 @@ export default function supportRoutes(
   fastify.post(
     "/support-tickets",
     async (
-      request: FastifyRequest<{ Body: { newSupportTicket: any } }>,
+      request: FastifyRequest<{ Body: { newSupportTicket: NewSupportTicket } }>,
       reply,
     ) => {
       const { newSupportTicket } = request.body;
 
       try {
-        const insertedSupportTicket =
-          await insertSupportTicket(newSupportTicket);
+        const insertedSupportTicket = await insertSupportTicket({
+          newSupportTicket,
+        });
 
         log.info(
           { id: insertedSupportTicket[0].id },
@@ -120,7 +127,7 @@ export default function supportRoutes(
     async (
       request: FastifyRequest<{
         Params: { id: string };
-        Body: { updates: Partial<any> };
+        Body: { updates: Partial<SupportTicket> };
       }>,
       reply,
     ) => {
@@ -180,7 +187,7 @@ export default function supportRoutes(
     async (
       request: FastifyRequest<{
         Params: { ticketId: string };
-        Body: { newSupportTicketComment: any };
+        Body: { newSupportTicketComment: NewSupportTicketComment };
       }>,
       reply,
     ) => {
@@ -213,7 +220,7 @@ export default function supportRoutes(
     async (
       request: FastifyRequest<{
         Params: { id: string };
-        Body: { updates: Partial<any> };
+        Body: { updates: Partial<SupportTicketComment> };
       }>,
       reply,
     ) => {
@@ -278,7 +285,7 @@ export default function supportRoutes(
     async (
       request: FastifyRequest<{
         Params: { ticketId: string };
-        Body: { newSupportTicketAttachment: any };
+        Body: { newSupportTicketAttachment: NewSupportTicketAttachment };
       }>,
       reply,
     ) => {
@@ -313,7 +320,7 @@ export default function supportRoutes(
     async (
       request: FastifyRequest<{
         Params: { id: string };
-        Body: { updates: Partial<any> };
+        Body: { updates: Partial<SupportTicketAttachment> };
       }>,
       reply,
     ) => {

@@ -20,7 +20,7 @@ const schema = S.object()
   .prop("POLAR_SUCCESS_URL", S.string())
   .valueOf();
 
-export type Config = {
+export interface Config {
   logger: boolean;
   PORT: number;
   NODE_ENV: string;
@@ -38,7 +38,7 @@ export type Config = {
   MAIL_PASS: string;
   POLAR_ACCESS_TOKEN: string;
   POLAR_SUCCESS_URL: string;
-};
+}
 
 export default envSchema({
   schema,

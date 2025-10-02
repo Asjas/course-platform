@@ -11,40 +11,29 @@ const blogPosts = import.meta.glob("./*.mdx", {
 
 function BlogListPage() {
   const [posts, setPosts] = useState<
-    Array<{ slug: string; title: string; date?: string }>
+    { slug: string; title: string; date?: string }[]
   >([]);
 
   useEffect(() => {
     // Process the blog posts
-    const processedPosts = Object.entries(blogPosts).map(([path, module]) => {
+    const processedPosts = Object.entries(blogPosts).map(([path]) => {
       // Extract the slug from "./filename.md" → "filename"
       const slug = path.replace("./", "").replace(/\.mdx$/, "");
 
-      // Get metadata if available
-      const frontmatter =
-        (module as any).frontmatter ||
-        (module as any).metadata ||
-        (module as any).attributes ||
-        {};
-
-      // Use frontmatter title or generate from slug
-      const title =
-        frontmatter.title ||
-        slug
-          .replace(/-/g, " ")
-          .replace(/\b\w/g, (match) => match.toUpperCase());
+      const title = slug
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (match) => match.toUpperCase());
 
       return {
         slug,
         title,
-        date: frontmatter.date,
       };
     });
 
     // Sort posts by date if available (newest first)
     const sortedPosts = processedPosts.sort((a, b) => {
-      if (a.date && b.date) {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      if (a.slug && b.slug) {
+        return b.slug.localeCompare(a.slug);
       }
       return 0;
     });
