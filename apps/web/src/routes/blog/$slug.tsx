@@ -1,5 +1,9 @@
-import { createFileRoute, notFound, useParams } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import {
+  Link,
+  createFileRoute,
+  notFound,
+  useParams,
+} from "@tanstack/react-router";
 import { ArrowLeftIcon } from "lucide-react";
 import { useMemo } from "react";
 

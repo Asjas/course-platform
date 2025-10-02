@@ -13,10 +13,7 @@ function RouteComponent() {
             className="flex h-14"
             aria-label="Breadcrumb"
           >
-            <ol
-              className="flex w-full items-center px-4 sm:px-6 lg:px-8"
-              role="list"
-            >
+            <ol className="flex w-full items-center px-4 sm:px-6 lg:px-8">
               <li className="flex">
                 <div className="flex items-center">
                   <Link

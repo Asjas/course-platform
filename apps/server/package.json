@@ -1,6 +1,9 @@
 {
   "name": "@apps/server",
   "type": "module",
+  "engines": {
+    "node": ">=22.16.0"
+  },
   "scripts": {
     "build": "tsc && resolve-tspaths",
     "start": "node -r tsconfig-paths/register dist/index.js",

@@ -50,9 +50,9 @@ function RouteComponent() {
               Last Updated: September 1, 2025 • Version 1.0
             </p>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              We comply with South Africa's POPIA, the EU's GDPR, the UK-GDPR,
-              California's CCPA/CPRA, Brazil's LGPD, Australia's APPs, and other
-              applicable data protection laws.
+              We comply with South Africa&apos;s POPIA, the EU&apos;s GDPR, the
+              UK-GDPR, California&apos;s CCPA/CPRA, Brazil&apos;s LGPD,
+              Australia&apos;s APPs, and other applicable data protection laws.
             </p>
           </div>
 
@@ -68,10 +68,10 @@ function RouteComponent() {
             </h2>
             <p className="leading-relaxed text-gray-700 dark:text-gray-300">
               At Codewizard Training, we prioritize transparency in how we
-              handle your information. As developers ourselves, we're committed
-              to avoiding invasive data practices. This policy outlines what
-              data we gather, our purpose for collecting it, and the measures we
-              take to secure it.
+              handle your information. As developers ourselves, we&apos;re
+              committed to avoiding invasive data practices. This policy
+              outlines what data we gather, our purpose for collecting it, and
+              the measures we take to secure it.
             </p>
           </div>
 
@@ -245,7 +245,7 @@ function RouteComponent() {
                     size={24}
                     color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                   />
-                  We Don't Sell Your Data
+                  We Don&apos;t Sell Your Data
                 </p>
                 <p className="text-gray-700 dark:text-gray-300">
                   Your personal information is never sold, leased, or shared for
@@ -367,7 +367,7 @@ function RouteComponent() {
                 </h3>
                 <p className="text-gray-700 dark:text-gray-300">
                   We may disclose data if compelled by law, such as a court
-                  order. We'll notify you unless legally restricted.
+                  order. We&apos;ll notify you unless legally restricted.
                 </p>
               </div>
             </div>
@@ -433,30 +433,30 @@ function RouteComponent() {
 
             <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
               <li>
-                <strong>Access</strong> – Request a copy of your personal data.
+                <strong>Access</strong> - Request a copy of your personal data.
               </li>
               <li>
-                <strong>Rectification</strong> – Ask us to correct inaccurate
+                <strong>Rectification</strong> - Ask us to correct inaccurate
                 information.
               </li>
               <li>
-                <strong>Erasure</strong> (“Right to be forgotten”) – Request
+                <strong>Erasure</strong> (“Right to be forgotten”) - Request
                 deletion of your data.
               </li>
               <li>
-                <strong>Restriction</strong> – Limit how we process your data.
+                <strong>Restriction</strong> - Limit how we process your data.
               </li>
               <li>
-                <strong>Portability</strong> – Receive your data in a
+                <strong>Portability</strong> - Receive your data in a
                 transferable format.
               </li>
               <li>
-                <strong>Objection</strong> – Opt-out of processing based on
+                <strong>Objection</strong> - Opt-out of processing based on
                 legitimate interests.
               </li>
               <li>
-                <strong>Withdraw Consent</strong> – Withdraw any consents you've
-                given.
+                <strong>Withdraw Consent</strong> - Withdraw any consents
+                you&apos;ve given.
               </li>
               <li>
                 <strong>CCPA/CPRA:</strong> Right to know, delete, opt-out of
@@ -551,7 +551,7 @@ function RouteComponent() {
                 size={40}
                 color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
               />
-              Protecting Children's Privacy
+              Protecting Children&apos;s Privacy
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               Our platform is not intended for users under 16. If we discover
@@ -596,7 +596,7 @@ function RouteComponent() {
                 <strong>EU:</strong> Your local Data Protection Authority
               </li>
               <li>
-                <strong>UK:</strong> Information Commissioner's Office -{" "}
+                <strong>UK:</strong> Information Commissioner&apos;s Office -{" "}
                 <a
                   className="text-green-500 underline hover:no-underline"
                   href="https://ico.org.uk/"
@@ -690,9 +690,9 @@ function RouteComponent() {
             </p>
 
             <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
-              <p className="italic text-gray-300 dark:text-gray-200">
+              <p className="text-gray-300 italic dark:text-gray-200">
                 As developers, we value your privacy. Let us know if you have
-                concerns, and we'll address them promptly.
+                concerns, and we&apos;ll address them promptly.
               </p>
             </div>
           </div>

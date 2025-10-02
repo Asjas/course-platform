@@ -29,7 +29,7 @@ export default function AuthLinks({
 
       {showSignUp && (
         <div className="text-sm">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link
             className="text-primary-600 underline hover:text-green-600 hover:no-underline"
             to="/signup"

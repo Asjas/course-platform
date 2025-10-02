@@ -1,5 +1,5 @@
 import fastifyNodemailer from "@asjas/fastify-nodemailer";
-import fastifyAutoload from "@fastify/autoload";
+import { fastifyAutoload } from "@fastify/autoload";
 import fastifyCors from "@fastify/cors";
 import fastifyEtag from "@fastify/etag";
 import fastifyFormBody from "@fastify/formbody";

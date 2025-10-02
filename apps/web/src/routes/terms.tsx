@@ -97,10 +97,10 @@ function RouteComponent() {
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
               By accessing or using our Services, you agree to these Terms of
-              Service. We may modify these Terms from time to time; we'll notify
-              you by email or in-app banner and update the Effective Date.
-              Continued use after changes constitutes acceptance. If you do not
-              agree, please do not use the platform.
+              Service. We may modify these Terms from time to time; we&apos;ll
+              notify you by email or in-app banner and update the Effective
+              Date. Continued use after changes constitutes acceptance. If you
+              do not agree, please do not use the platform.
             </p>
           </div>
 
@@ -175,7 +175,7 @@ function RouteComponent() {
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <CrownIcon
-                className="-rotate-18 mr-2"
+                className="mr-2 -rotate-18"
                 fill="gold"
                 color="gold"
                 size={38}
@@ -489,9 +489,9 @@ function RouteComponent() {
                   No Guarantees:
                 </h3>
                 <p>
-                  Our platform and materials are provided "as is" without
-                  guarantees. We strive for quality, but compatibility varies
-                  across development environments.
+                  Our platform and materials are provided &quot;as is&quot;
+                  without guarantees. We strive for quality, but compatibility
+                  varies across development environments.
                 </p>
               </div>
 
@@ -501,8 +501,8 @@ function RouteComponent() {
                 </h3>
                 <p>
                   Our tutorials may involve system changes. While we test
-                  thoroughly, there's a risk of disrupting your setup. Always
-                  back up your system before proceeding.
+                  thoroughly, there&apos;s a risk of disrupting your setup.
+                  Always back up your system before proceeding.
                 </p>
               </div>
 
@@ -665,7 +665,7 @@ function RouteComponent() {
             </p>
 
             <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
-              <p className="italic text-gray-300 dark:text-gray-200">
+              <p className="text-gray-300 italic dark:text-gray-200">
                 Our terms aim to be clear and fair. Feel free to reach out if
                 anything needs clarification.
               </p>

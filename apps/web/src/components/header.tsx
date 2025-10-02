@@ -17,10 +17,7 @@ export default function Header() {
               alt="Codewizard Training"
             />
           </Link>
-          <ul
-            className="space-x-2 text-gray-700 lg:flex dark:text-gray-200"
-            role="list"
-          >
+          <ul className="space-x-2 text-gray-700 lg:flex dark:text-gray-200">
             <li className="relative inline-flex">
               <NavLink
                 preload="intent"
