@@ -9,8 +9,11 @@ const pool = new Pool({
   max: 100,
   Client,
 });
+console.log("pool", pool.options.Client?.name);
 
 await pool.connect();
+
+console.log("pool", pool);
 
 export const db = drizzle({
   schema: {
