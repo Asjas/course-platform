@@ -5,10 +5,10 @@
   "scripts": {
     "dev": "pnpm run -parallel -filter \"./apps/**\" dev",
     "build": "pnpm run -recursive -filter \"./apps/**\" build",
-    "lint": "eslint --concurrency auto .",
+    "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
-    "format": "npm run prettier -- --write --cache",
-    "check-format": "npm run prettier -- --list-different --cache",
+    "format": "npm run prettier -- --write --cache --cache --cache-location .cache/prettier",
+    "check-format": "npm run prettier -- --list-different --cache --cache --cache-location .cache/prettier",
     "prepare": "husky"
   },
   "lint-staged": {
