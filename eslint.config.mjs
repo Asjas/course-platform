@@ -2,6 +2,7 @@
 import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
+import html from "eslint-plugin-html";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
 import { dirname } from "node:path";
@@ -20,6 +21,13 @@ export default defineConfig(
   tseslint.configs.strict,
   tseslint.configs.stylistic,
   [
+    {
+      files: ["**/*.html"],
+      languageOptions: {
+        globals: globals.browser,
+      },
+      plugins: { html },
+    },
     {
       files: ["marketing/**/*.{js,jsx,ts,tsx}"],
       languageOptions: {

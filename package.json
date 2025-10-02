@@ -10,6 +10,12 @@
     "format": "npm run prettier -- --write",
     "check-format": "npm run prettier -- --list-different"
   },
+  "lint-staged": {
+    "*.{html,js,jsx,ts,tsx,astro,md,json}": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  },
   "devDependencies": {
     "@eslint/compat": "1.4.0",
     "@eslint/js": "9.36.0",
@@ -19,6 +25,7 @@
     "eslint": "9.36.0",
     "eslint-import-resolver-typescript": "4.4.4",
     "eslint-plugin-astro": "1.3.1",
+    "eslint-plugin-html": "8.1.3",
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-n": "17.23.1",
@@ -26,6 +33,8 @@
     "eslint-plugin-react-hooks": "4.6.0",
     "eslint-plugin-unused-imports": "3.1.0",
     "globals": "16.4.0",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.3",
     "prettier": "3.6.2",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.6.14",
