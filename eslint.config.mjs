@@ -3,9 +3,11 @@ import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
 import esxPlugin from "eslint-plugin-es-x";
 import html from "eslint-plugin-html";
+import jsonPlugin from "eslint-plugin-json";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
 import security from "eslint-plugin-security";
+import unusedImports from "eslint-plugin-unused-imports";
 import eslintPluginYml from "eslint-plugin-yml";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
@@ -26,8 +28,10 @@ export default defineConfig(
   tseslint.configs.stylistic,
   pluginPromise.configs["flat/recommended"],
   esxPlugin.configs["flat/restrict-to-es2022"],
+  jsonPlugin.configs["recommended"],
   ...eslintPluginYml.configs["flat/recommended"],
   [
+    { plugins: { "unused-imports": unusedImports } },
     {
       files: ["**/*.html"],
       languageOptions: {
