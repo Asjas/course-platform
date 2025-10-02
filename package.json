@@ -7,8 +7,8 @@
     "build": "pnpm run -recursive -filter \"./apps/**\" build",
     "lint": "eslint --concurrency auto .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
-    "format": "npm run prettier -- --write",
-    "check-format": "npm run prettier -- --list-different",
+    "format": "npm run prettier -- --write --cache",
+    "check-format": "npm run prettier -- --list-different --cache",
     "prepare": "husky"
   },
   "lint-staged": {
