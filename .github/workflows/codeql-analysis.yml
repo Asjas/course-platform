@@ -2,43 +2,43 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - '.github/**'
-      - '*.md'
-      - '*.hmtl'
-      - '*.css'
-      - '*.json'
-      - '*.yaml'
-      - '.git*'
-      - '.prettier*'
-      - '.editorconfig'
-      - '.npmrc'
-      - '.env.sample'
-      - '.dockerignore'
-      - 'docker-compose.yml'
-      - 'renovate.json'
-      - 'LICENSE'
+      - ".github/**"
+      - "*.md"
+      - "*.html"
+      - "*.css"
+      - "*.json"
+      - "*.yaml"
+      - ".git*"
+      - ".prettier*"
+      - ".editorconfig"
+      - ".npmrc"
+      - ".env.sample"
+      - ".dockerignore"
+      - "docker-compose.yml"
+      - "renovate.json"
+      - "LICENSE"
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
-      - '.github/**'
-      - '*.md'
-      - '*.hmtl'
-      - '*.css'
-      - '*.json'
-      - '*.yaml'
-      - '.git*'
-      - '.prettier*'
-      - '.editorconfig'
-      - '.npmrc'
-      - '.env.sample'
-      - '.dockerignore'
-      - 'docker-compose.yml'
-      - 'renovate.json'
-      - 'LICENSE'
+      - ".github/**"
+      - "*.md"
+      - "*.html"
+      - "*.css"
+      - "*.json"
+      - "*.yaml"
+      - ".git*"
+      - ".prettier*"
+      - ".editorconfig"
+      - ".npmrc"
+      - ".env.sample"
+      - ".dockerignore"
+      - "docker-compose.yml"
+      - "renovate.json"
+      - "LICENSE"
   schedule:
-    - cron: '0 8 * * 1'
+    - cron: "0 8 * * 1"
 
 jobs:
   analyze:
@@ -63,17 +63,17 @@ jobs:
             build-mode: none
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: ${{ matrix.language }}
-        build-mode: ${{ matrix.build-mode }}
+      # Initializes the CodeQL tools for scanning.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
