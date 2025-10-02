@@ -194,6 +194,10 @@ importers:
       zod:
         specifier: 4.1.11
         version: 4.1.11
+    optionalDependencies:
+      pg-native:
+        specifier: 3.5.2
+        version: 3.5.2
     devDependencies:
       '@types/node':
         specifier: 24.6.2
