@@ -121,7 +121,7 @@ importers:
         version: 6.0.3
       '@polar-sh/better-auth':
         specifier: 1.1.7
-        version: 1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)
+        version: 1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)
       '@polar-sh/sdk':
         specifier: 0.35.4
         version: 0.35.4
@@ -132,8 +132,8 @@ importers:
         specifier: 0.44.0
         version: 0.44.0
       better-auth:
-        specifier: 1.3.24
-        version: 1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
+        specifier: 1.3.25
+        version: 1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
       close-with-grace:
         specifier: 2.3.0
         version: 2.3.0
@@ -154,7 +154,7 @@ importers:
         version: 2.1.1
       fastify-better-auth:
         specifier: 1.2.0
-        version: 1.2.0(better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1)
+        version: 1.2.0(better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1)
       fastify-favicon:
         specifier: 5.0.0
         version: 5.0.0
@@ -266,8 +266,8 @@ importers:
         specifier: 1.132.31
         version: 1.132.31(@tanstack/react-router@1.132.31(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(vite@7.1.8(@types/node@24.6.2)(jiti@2.6.0)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       better-auth:
-        specifier: 1.3.24
-        version: 1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
+        specifier: 1.3.25
+        version: 1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -307,7 +307,7 @@ importers:
         version: 3.1.1(rollup@4.52.3)
       '@polar-sh/better-auth':
         specifier: 1.1.7
-        version: 1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)
+        version: 1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.1.14)
@@ -1185,8 +1185,8 @@ packages:
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
 
-  '@better-auth/core@1.3.24':
-    resolution: {integrity: sha512-nU4aj5SA0COXAls0p3htIWmGPOG+76HULd9tG8CEUfwcK95rRrUIUN74FKvsAu3b18AVj3E7cL4bYrQS3KYKRw==}
+  '@better-auth/core@1.3.25':
+    resolution: {integrity: sha512-+Z09RkrpufX8+skD05pAoMSNo95Cl6nwfqrcEHfXJPaiSGJNXoo4/0GNtxZAgsW89xfRdsmbVAwwEd1AlCrHZA==}
 
   '@better-auth/utils@0.3.0':
     resolution: {integrity: sha512-W+Adw6ZA6mgvnSnhOki270rwJ42t4XzSK6YWGF//BbVXL6SwCLWfyzBc1lN2m/4RM28KubdBKQ4X5VMoLRNPQw==}
@@ -4383,8 +4383,8 @@ packages:
     resolution: {integrity: sha512-hY/u2lxLrbecMEWSB0IpGzGyDyeoMFQhCvZd2jGFSE5I17Fh01sYUBPCJtkWERw7zrac9+cIghxm/ytJa2X8iA==}
     hasBin: true
 
-  better-auth@1.3.24:
-    resolution: {integrity: sha512-LyxIbnB2FExhjqQ/J1G8S8EAbmTBDFOz6CjqHNNu15Gux+c4fF0Si1YNLprROEb4EGNuGUfslurW0Q6nZ+Dobg==}
+  better-auth@1.3.25:
+    resolution: {integrity: sha512-prTPitTvhIbYPeO/M1QrkveT5afbkyV1OAfnSxYe3WfgTdKgRiEO3tMIPzwmKA54zSWw6XBYKtSD9uIuAAfvuQ==}
     peerDependencies:
       '@lynx-js/react': '*'
       '@sveltejs/kit': '*'
@@ -9535,7 +9535,7 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@better-auth/core@1.3.24':
+  '@better-auth/core@1.3.25':
     dependencies:
       better-call: 1.0.19
       zod: 4.1.11
@@ -10283,11 +10283,11 @@ snapshots:
 
   '@pkgr/core@0.2.9': {}
 
-  '@polar-sh/better-auth@1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)':
+  '@polar-sh/better-auth@1.1.7(@polar-sh/sdk@0.35.4)(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(zod@4.1.11)':
     dependencies:
       '@polar-sh/checkout': 0.1.12(@stripe/react-stripe-js@3.10.0(@stripe/stripe-js@7.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@stripe/stripe-js@7.9.0)(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@polar-sh/sdk': 0.35.4
-      better-auth: 1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
+      better-auth: 1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
       zod: 4.1.11
     transitivePeerDependencies:
       - '@modelcontextprotocol/sdk'
@@ -13516,9 +13516,9 @@ snapshots:
 
   baseline-browser-mapping@2.8.9: {}
 
-  better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9):
+  better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9):
     dependencies:
-      '@better-auth/core': 1.3.24
+      '@better-auth/core': 1.3.25
       '@better-auth/utils': 0.3.0
       '@better-fetch/fetch': 1.1.18
       '@noble/ciphers': 2.0.1
@@ -14509,9 +14509,9 @@ snapshots:
     dependencies:
       fastify-plugin: 4.5.1
 
-  fastify-better-auth@1.2.0(better-auth@1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1):
+  fastify-better-auth@1.2.0(better-auth@1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1):
     dependencies:
-      better-auth: 1.3.24(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
+      better-auth: 1.3.25(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.9)
       fastify: 5.6.1
       fastify-plugin: 5.1.0
 
