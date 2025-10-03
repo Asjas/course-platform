@@ -189,8 +189,8 @@ importers:
         specifier: 8.16.3
         version: 8.16.3(pg-native@3.5.2)
       pino:
-        specifier: 9.13.0
-        version: 9.13.0
+        specifier: 9.13.1
+        version: 9.13.1
       resolve-tspaths:
         specifier: 0.8.23
         version: 0.8.23(typescript@5.9.3)
@@ -203,10 +203,6 @@ importers:
       zod:
         specifier: 4.1.11
         version: 4.1.11
-    optionalDependencies:
-      pg-native:
-        specifier: 3.5.2
-        version: 3.5.2
     devDependencies:
       '@types/node':
         specifier: 24.6.2
@@ -235,6 +231,10 @@ importers:
       vitest:
         specifier: 3.2.4
         version: 3.2.4(@types/debug@4.1.12)(@types/node@24.6.2)(jiti@2.6.0)(jsdom@26.1.0)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
+    optionalDependencies:
+      pg-native:
+        specifier: 3.5.2
+        version: 3.5.2
 
   apps/web:
     dependencies:
@@ -6694,8 +6694,8 @@ packages:
   pino-std-serializers@7.0.0:
     resolution: {integrity: sha512-e906FRY0+tV27iq4juKzSYPbUj2do2X2JX4EzSca1631EB2QJQUqGbDuERal7LCtOpxl6x3+nvo9NPZcmjkiFA==}
 
-  pino@9.13.0:
-    resolution: {integrity: sha512-SpTXQhkQXekIKEe7c887S3lk3v90Q+/HVRZVyNAhe98PQc++6I5ec/R0pciH8/CciXjCoVZIZfRNicbC6KZgnw==}
+  pino@9.13.1:
+    resolution: {integrity: sha512-Szuj+ViDTjKPQYiKumGmEn3frdl+ZPSdosHyt9SnUevFosOkMY2b7ipxlEctNKPmMD/VibeBI+ZcZCJK+4DPuw==}
     hasBin: true
 
   possible-typed-array-names@1.1.0:
@@ -14482,7 +14482,7 @@ snapshots:
       fast-json-stringify: 6.1.0
       find-my-way: 9.3.0
       light-my-request: 6.6.0
-      pino: 9.13.0
+      pino: 9.13.1
       process-warning: 5.0.0
       rfdc: 1.4.1
       secure-json-parse: 4.0.0
@@ -16234,7 +16234,7 @@ snapshots:
 
   pino-std-serializers@7.0.0: {}
 
-  pino@9.13.0:
+  pino@9.13.1:
     dependencies:
       atomic-sleep: 1.0.0
       on-exit-leak-free: 2.1.2
