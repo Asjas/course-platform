@@ -54,6 +54,15 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: pnpm
 
+      - name: Cache ESLint and Prettier
+        uses: actions/cache@v4
+        with:
+          path: .cache
+          key: ${{ runner.os }}-lint-cache-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml', 'eslint.config.mjs', '.prettierrc') }}
+          restore-keys: |
+            ${{ runner.os }}-lint-cache-${{ matrix.node-version }}-
+            ${{ runner.os }}-lint-cache-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
