@@ -7,12 +7,10 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths(),
     tanstackRouter({
       target: "react",
       autoCodeSplitting: true,
@@ -51,7 +49,6 @@ export default defineConfig({
       "~": resolve(__dirname, "./src"),
     },
   },
-  // Vitest configuration
   test: {
     globals: true,
     environment: "jsdom",
