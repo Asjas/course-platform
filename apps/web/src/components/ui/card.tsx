@@ -12,9 +12,9 @@ export function Card({ children }: { children: ReactNode }) {
 
 export function CardHeader({ children }: { children: ReactNode }) {
   return (
-    <h3 className="mb-2 flex items-center justify-between text-2xl font-bold">
+    <h2 className="mb-2 flex items-center justify-between text-2xl font-bold">
       {children}
-    </h3>
+    </h2>
   );
 }
 

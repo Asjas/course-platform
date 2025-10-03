@@ -34,7 +34,7 @@ export default function AuthLinks({
             className="text-primary-600 underline hover:text-green-600 hover:no-underline"
             to="/signup"
           >
-            Sign up
+            Sign Up
           </Link>
         </div>
       )}
@@ -44,9 +44,9 @@ export default function AuthLinks({
           Forgot password?{" "}
           <Link
             className="text-primary-600 underline hover:text-green-600 hover:no-underline"
-            to="/resetpassword"
+            to="/reset-password"
           >
-            Reset password
+            Reset Password
           </Link>
         </div>
       )}

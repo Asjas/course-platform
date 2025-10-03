@@ -11,7 +11,7 @@ function AuthPage() {
   return (
     <main className="flex w-100 grow flex-col justify-center self-center">
       <Card>
-        <CardHeader>Account Signin</CardHeader>
+        <CardHeader>Sign In to Your Account</CardHeader>
         <SignInForm />
         <hr className="mt-4 border-gray-600" />
         <CardFooter>

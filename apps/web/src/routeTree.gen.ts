@@ -19,7 +19,7 @@ import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
-import { Route as authResetpasswordRouteImport } from "./routes/(auth)/resetpassword"
+import { Route as authResetPasswordRouteImport } from "./routes/(auth)/reset-password"
 import { Route as EducationCoursesRouteRouteImport } from "./routes/education/courses/route"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
@@ -75,9 +75,9 @@ const authSigninRoute = authSigninRouteImport.update({
   path: "/signin",
   getParentRoute: () => rootRouteImport,
 } as any)
-const authResetpasswordRoute = authResetpasswordRouteImport.update({
-  id: "/(auth)/resetpassword",
-  path: "/resetpassword",
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: "/(auth)/reset-password",
+  path: "/reset-password",
   getParentRoute: () => rootRouteImport,
 } as any)
 const EducationCoursesRouteRoute = EducationCoursesRouteRouteImport.update({
@@ -111,7 +111,7 @@ export interface FileRoutesByFullPath {
   "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
-  "/resetpassword": typeof authResetpasswordRoute
+  "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -127,7 +127,7 @@ export interface FileRoutesByTo {
   "/privacy": typeof PrivacyRoute
   "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
-  "/resetpassword": typeof authResetpasswordRoute
+  "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -144,7 +144,7 @@ export interface FileRoutesById {
   "/settings": typeof SettingsRoute
   "/terms": typeof TermsRoute
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
-  "/(auth)/resetpassword": typeof authResetpasswordRoute
+  "/(auth)/reset-password": typeof authResetPasswordRoute
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -163,7 +163,7 @@ export interface FileRouteTypes {
     | "/settings"
     | "/terms"
     | "/education/courses"
-    | "/resetpassword"
+    | "/reset-password"
     | "/signin"
     | "/signup"
     | "/blog/$slug"
@@ -179,7 +179,7 @@ export interface FileRouteTypes {
     | "/privacy"
     | "/settings"
     | "/terms"
-    | "/resetpassword"
+    | "/reset-password"
     | "/signin"
     | "/signup"
     | "/blog/$slug"
@@ -195,7 +195,7 @@ export interface FileRouteTypes {
     | "/settings"
     | "/terms"
     | "/education/courses"
-    | "/(auth)/resetpassword"
+    | "/(auth)/reset-password"
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/blog/$slug"
@@ -213,7 +213,7 @@ export interface RootRouteChildren {
   SettingsRoute: typeof SettingsRoute
   TermsRoute: typeof TermsRoute
   EducationCoursesRouteRoute: typeof EducationCoursesRouteRouteWithChildren
-  authResetpasswordRoute: typeof authResetpasswordRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -292,11 +292,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof authSigninRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/(auth)/resetpassword": {
-      id: "/(auth)/resetpassword"
-      path: "/resetpassword"
-      fullPath: "/resetpassword"
-      preLoaderRoute: typeof authResetpasswordRouteImport
+    "/(auth)/reset-password": {
+      id: "/(auth)/reset-password"
+      path: "/reset-password"
+      fullPath: "/reset-password"
+      preLoaderRoute: typeof authResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/education/courses": {
@@ -368,7 +368,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsRoute: SettingsRoute,
   TermsRoute: TermsRoute,
   EducationCoursesRouteRoute: EducationCoursesRouteRouteWithChildren,
-  authResetpasswordRoute: authResetpasswordRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
   BlogSlugRoute: BlogSlugRoute,

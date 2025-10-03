@@ -3,7 +3,7 @@ import AuthLinks from "~/components/auth-links";
 import PasswordResetForm from "~/components/password-reset-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
-export const Route = createFileRoute("/(auth)/resetpassword")({
+export const Route = createFileRoute("/(auth)/reset-password")({
   component: AuthPage,
 });
 
