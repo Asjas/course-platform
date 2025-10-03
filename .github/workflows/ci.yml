@@ -35,6 +35,10 @@ jobs:
   lint-and-format:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [19.x, 20.x, 21.x]
+
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -44,10 +48,10 @@ jobs:
         with:
           run_install: false
 
-      - name: Set up Node.js
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v5
         with:
-          node-version: 22.x
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: Install dependencies
