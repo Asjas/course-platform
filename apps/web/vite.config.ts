@@ -20,7 +20,6 @@ export default defineConfig({
     }),
     react({ babel: { plugins: ["babel-plugin-react-compiler"] } }),
     tailwindcss(),
-    // MDX plugin configuration
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [
