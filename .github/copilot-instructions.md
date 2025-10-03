@@ -38,6 +38,6 @@ This project is a course website that allows users to purchase courses, view the
 
 ## TypeScript Types
 Always reuse existing types. Before creating a new type:
-- Serach for existing types that match your needs
+- Search for existing types that match your needs
 - Only create a new type if no suitable type exists
 - Never duplicate or recreate types that already exists
