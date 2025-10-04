@@ -1,3 +1,4 @@
+import { instrumentDrizzle } from "@kubiks/otel-drizzle";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client, Pool } from "pg";
 import config from "~/config.js";
@@ -12,11 +13,15 @@ const pool = new Pool({
 
 await pool.connect();
 
+const instrumentedPool = instrumentDrizzle(pool, {
+  dbName: "course-platform-db",
+});
+
 export const db = drizzle({
   schema: {
     mySchema,
     ...schemas,
   },
-  client: pool,
+  client: instrumentedPool,
   casing: "snake_case",
 });
