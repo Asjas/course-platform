@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/blog/")({
   component: BlogListPage,
@@ -10,14 +10,10 @@ const blogPosts = import.meta.glob("./*.mdx", {
 });
 
 function BlogListPage() {
-  const [posts, setPosts] = useState<
-    { slug: string; title: string; date?: string }[]
-  >([]);
-
-  useEffect(() => {
-    // Process the blog posts
+  // Process blog posts using useMemo to avoid recomputing unnecessarily
+  const posts = useMemo(() => {
     const processedPosts = Object.entries(blogPosts).map(([path]) => {
-      // Extract the slug from "./filename.md" → "filename"
+      // Extract the slug from "./filename.mdx" → "filename"
       const slug = path.replace("./", "").replace(/\.mdx$/, "");
 
       const title = slug
@@ -30,15 +26,13 @@ function BlogListPage() {
       };
     });
 
-    // Sort posts by date if available (newest first)
-    const sortedPosts = processedPosts.sort((a, b) => {
+    // Sort posts by slug (newest first)
+    return processedPosts.sort((a, b) => {
       if (a.slug && b.slug) {
         return b.slug.localeCompare(a.slug);
       }
       return 0;
     });
-
-    setPosts(sortedPosts);
   }, []);
 
   return (
@@ -58,11 +52,6 @@ function BlogListPage() {
               >
                 {post.title}
               </Link>
-              {post.date && (
-                <p className="mt-2 text-sm text-gray-400">
-                  {new Date(post.date).toLocaleDateString()}
-                </p>
-              )}
             </li>
           ))}
         </ul>

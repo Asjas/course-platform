@@ -7,6 +7,7 @@ import html from "eslint-plugin-html";
 import jsonPlugin from "eslint-plugin-json";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
+import reactHooks from "eslint-plugin-react-hooks";
 import security from "eslint-plugin-security";
 import unusedImports from "eslint-plugin-unused-imports";
 import eslintPluginYml from "eslint-plugin-yml";
@@ -44,7 +45,7 @@ export default defineConfig(
     },
     {
       files: ["marketing/**/*.{js,jsx,ts,tsx}"],
-      plugins: { react, cypress: pluginCypress },
+      plugins: { react, "react-hooks": reactHooks, "cypress": pluginCypress },
       languageOptions: {
         globals: globals.browser,
         parserOptions: {
@@ -67,12 +68,12 @@ export default defineConfig(
       extends: [
         pluginCypress.configs.recommended,
         pluginCypress.configs.globals,
+        "react-hooks/recommended-latest",
         fixupConfigRules(
           compat.extends(
             "plugin:import/recommended",
             "plugin:import/typescript",
             "plugin:astro/recommended",
-            "plugin:react-hooks/recommended",
             "plugin:jsx-a11y/recommended",
           ),
         ),
@@ -80,7 +81,7 @@ export default defineConfig(
     },
     {
       files: ["apps/web/**/*.{js,jsx,ts,tsx}"],
-      plugins: { react, cypress: pluginCypress },
+      plugins: { react, "react-hooks": reactHooks, "cypress": pluginCypress },
       languageOptions: {
         globals: globals.browser,
         parserOptions: {
@@ -103,11 +104,11 @@ export default defineConfig(
       extends: [
         pluginCypress.configs.recommended,
         pluginCypress.configs.globals,
+        "react-hooks/recommended-latest",
         fixupConfigRules(
           compat.extends(
             "plugin:import/recommended",
             "plugin:import/typescript",
-            "plugin:react-hooks/recommended",
             "plugin:jsx-a11y/recommended",
             "plugin:@tanstack/eslint-plugin-router/recommended",
           ),
