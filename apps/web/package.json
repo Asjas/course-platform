@@ -23,7 +23,7 @@
     "@tanstack/react-form": "1.23.5",
     "@tanstack/react-router": "1.132.17",
     "@tanstack/react-router-devtools": "1.132.17",
-    "better-auth": "1.3.25",
+    "better-auth": "1.3.26",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "lucide-react": "0.544.0",
