@@ -2,3 +2,6 @@ packages:
   - apps/**
   - marketing/**
   - packages/**
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
