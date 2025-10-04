@@ -24,6 +24,14 @@ export default function Footer() {
                   contact@codewizard.training
                 </a>
               </div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                <a
+                  className="transition-colors hover:text-green-500"
+                  href="https://uptimekuma.codewizard.training/status/codewizard-training"
+                >
+                  Uptime Status
+                </a>
+              </div>
             </div>
             <div className="flex flex-col text-sm text-gray-600 dark:text-gray-400">
               <span className="pb-2">Built with ❤️ by Codewizard</span>
