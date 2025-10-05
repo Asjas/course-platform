@@ -29,7 +29,7 @@ export default defineConfig({
           {
             behavior: "wrap",
             properties: {
-              className: "no-underline scroll-mt-40",
+              className: ["no-underline", "scroll-mt-40"],
             },
           },
         ],
