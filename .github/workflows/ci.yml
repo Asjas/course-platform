@@ -103,6 +103,14 @@ jobs:
       - name: Build web app
         run: pnpm --filter @apps/web build
 
+      - name: Cache Cypress
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-${{ matrix.node-version }}-
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
