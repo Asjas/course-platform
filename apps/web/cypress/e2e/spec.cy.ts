@@ -1,9 +1,4 @@
 describe("The Home Page", () => {
-  // Clear cookies and storage to ensure unauthenticated state
-  cy.clearCookies();
-  cy.clearLocalStorage();
-  cy.clearAllSessionStorage();
-
   it("successfully loads and contains critical information", () => {
     cy.visit("/");
 
@@ -22,6 +17,11 @@ describe("The Home Page", () => {
   });
 
   it('navigates to Sign In page when "Sign In" button is clicked', () => {
+    // Clear cookies and storage to ensure unauthenticated state
+    cy.clearCookies();
+    cy.clearLocalStorage();
+    cy.clearAllSessionStorage();
+
     cy.visit("/");
 
     // Click the "Sign In" button
