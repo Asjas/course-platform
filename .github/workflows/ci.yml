@@ -103,6 +103,10 @@ jobs:
       - name: Build web app
         run: pnpm --filter @apps/web build
 
+      - name: Install Cypress
+        run: npx cypress install
+        working-directory: apps/web
+
       - name: Cache Cypress
         uses: actions/cache@v4
         with:
@@ -114,7 +118,8 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-          working-directory: .
+          working-directory: apps/web
+          install: false
           start: pnpm --filter @apps/web preview
           wait-on: "http://localhost:4173"
           wait-on-timeout: 10
