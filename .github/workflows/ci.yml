@@ -117,7 +117,7 @@ jobs:
           working-directory: apps/web
           install: false
           start: pnpm --filter @apps/web preview
-          wait-on: "http://localhost:3000"
+          wait-on: "http://localhost:4173"
           wait-on-timeout: 10
 
       - name: Upload Cypress screenshots on failure
