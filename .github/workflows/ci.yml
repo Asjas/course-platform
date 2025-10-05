@@ -118,7 +118,7 @@ jobs:
           install: false
           start: pnpm --filter @apps/web preview
           wait-on: "http://localhost:3000"
-          wait-on-timeout: 120
+          wait-on-timeout: 10
 
       - name: Upload Cypress screenshots on failure
         uses: actions/upload-artifact@v4
