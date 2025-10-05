@@ -3,9 +3,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**"]
+      "outputs": ["dist/**", "build/**", ".astro/**"]
     },
-    "lint": {},
     "test": {
       "dependsOn": ["^test"]
     },

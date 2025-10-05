@@ -9,7 +9,7 @@
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
     "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
     "check-format": "npm run prettier -- --list-different --cache --cache-location .cache/prettier",
-    "typecheck": "pnpm run -recursive -filter \"./apps/**\" typecheck",
+    "typecheck": "turbo --filter \"./apps/**\" typecheck",
     "prepare": "husky"
   },
   "lint-staged": {
