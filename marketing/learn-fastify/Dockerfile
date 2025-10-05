@@ -1,5 +1,7 @@
 FROM node:22.20.0-alpine3.22 AS vite-builder
 
+LABEL name="learn-fastify"
+
 RUN apk --no-cache add curl bash
 
 WORKDIR /app
