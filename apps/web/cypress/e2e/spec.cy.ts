@@ -1,4 +1,9 @@
 describe("The Home Page", () => {
+  // Clear cookies and storage to ensure unauthenticated state
+  cy.clearCookies();
+  cy.clearLocalStorage();
+  cy.clearAllSessionStorage();
+
   it("successfully loads and contains critical information", () => {
     cy.visit("/");
 
