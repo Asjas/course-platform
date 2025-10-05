@@ -2,8 +2,8 @@
   "name": "@apps/web",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
-    "start": "vite --port 3000",
+    "dev": "vite --port 4173",
+    "start": "vite --port 4173",
     "build": "vite build && tsc",
     "preview": "vite preview",
     "test": "vitest run",
