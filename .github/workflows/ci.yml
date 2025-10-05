@@ -79,7 +79,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Build
-        run: pnpm build --remote-only
+        run: pnpm build --cache=remote:rw
 
   e2e-tests:
     runs-on: ubuntu-latest
@@ -109,8 +109,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build web app
-        run: pnpm --filter @apps/web build --remote-only
+      - name: Build
+        run: pnpm build --cache=remote:rw
 
       - name: Install Cypress
         run: pnpx cypress install
