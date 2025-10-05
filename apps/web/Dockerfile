@@ -1,5 +1,7 @@
 FROM node:22.20.0-alpine3.22 AS vite-builder
 
+LABEL name="codewizard-wep"
+
 RUN apk --no-cache add curl bash
 
 ARG VITE_BETTER_AUTH_URL
