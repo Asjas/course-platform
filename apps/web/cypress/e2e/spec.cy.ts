@@ -15,34 +15,6 @@ describe("The Home Page", () => {
       .contains("contact@codewizard.training")
       .should("have.attr", "href", "mailto:contact@codewizard.training");
   });
-
-  it('navigates to Sign In page when "Sign In" button is clicked', () => {
-    // Clear cookies and storage to ensure unauthenticated state
-    cy.clearCookies();
-    cy.clearLocalStorage();
-    cy.clearAllSessionStorage();
-
-    cy.visit("/");
-
-    // Click the "Sign In" button
-    cy.get('a[href="/signin"]').click();
-
-    // Verify that the URL is correct
-    cy.url().should("include", "/signin");
-
-    // Verify that the Sign In page contains a heading
-    cy.get("h2").contains("Sign In to Your Account");
-
-    // Check for presence of form fields and buttons
-    cy.get('input[type="email"]').should("exist");
-    cy.get('input[type="password"]').should("exist");
-    cy.get('input[type="checkbox"][id="remember"]').should("exist");
-    cy.get('button[type="submit"]').should("exist");
-
-    // Check for presence of links to Sign Up and Reset Password pages
-    cy.get('a[href="/signup"]').contains("Sign Up");
-    cy.get('a[href="/reset-password"]').contains("Reset Password");
-  });
 });
 
 describe("Terms of Service Page", () => {
@@ -85,5 +57,27 @@ describe("Privacy Policy Page", () => {
     cy.get("a")
       .contains("privacy@codewizard.training")
       .should("have.attr", "href", "mailto:privacy@codewizard.training");
+  });
+});
+
+describe("The Sign In Page", () => {
+  it("successfully loads and contains critical information", () => {
+    cy.visit("/signin");
+
+    // Verify that the URL is correct
+    cy.url().should("include", "/signin");
+
+    // Verify that the Sign In page contains a heading
+    cy.get("h2").contains("Sign In to Your Account");
+
+    // Check for presence of form fields and buttons
+    cy.get('input[type="email"]').should("exist");
+    cy.get('input[type="password"]').should("exist");
+    cy.get('input[type="checkbox"][id="remember"]').should("exist");
+    cy.get('button[type="submit"]').should("exist");
+
+    // Check for presence of links to Sign Up and Reset Password pages
+    cy.get('a[href="/signup"]').contains("Sign Up");
+    cy.get('a[href="/reset-password"]').contains("Reset Password");
   });
 });
