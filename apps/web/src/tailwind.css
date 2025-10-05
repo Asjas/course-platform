@@ -43,10 +43,6 @@ body {
   @apply bg-gray-600; /* Thumb color on hover */
 }
 
-/* .dark,
-:root[class~="dark"] {
-} */
-
 [id] {
   scroll-margin-top: 120px;
 }
