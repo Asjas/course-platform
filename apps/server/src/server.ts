@@ -5,6 +5,7 @@ import fastifyEtag from "@fastify/etag";
 import fastifyFormBody from "@fastify/formbody";
 import fastifyHelmet from "@fastify/helmet";
 import fastifyMultipart from "@fastify/multipart";
+// import FastifyOtelInstrumentation from "@fastify/otel";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifySensible from "@fastify/sensible";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
@@ -20,6 +21,11 @@ import { auth } from "~/lib/auth.server.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
 import { appRouter } from "~/router/index.js";
+
+// const fastifyOtelInstrumentation = new FastifyOtelInstrumentation({
+//   servername: "course-platform",
+// });
+// fastifyOtelInstrumentation.setTracerProvider(provider);
 
 /**
  * Creates and configures the Fastify server instance.
@@ -73,6 +79,8 @@ async function createServer(config: Config) {
   });
 
   try {
+    // await server.register(fastifyOtelInstrumentation.plugin());
+
     await server.register(fastifyRateLimit, {
       allowList: ["127.0.0.1", "localhost"],
       max: 100,
@@ -102,7 +110,9 @@ async function createServer(config: Config) {
 
     await server.register(FastifyAllowPlugin);
 
-    await server.register(fastifyHealthcheck);
+    await server.register(fastifyHealthcheck, {
+      configOptions: { otel: false },
+    });
 
     await server.register(fastifyFormBody);
 

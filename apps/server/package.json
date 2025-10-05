@@ -25,6 +25,7 @@
     "@fastify/formbody": "8.0.2",
     "@fastify/helmet": "13.0.2",
     "@fastify/multipart": "9.2.1",
+    "@fastify/otel": "0.10.0",
     "@fastify/rate-limit": "10.3.0",
     "@fastify/sensible": "6.0.3",
     "@kubiks/otel-better-auth": "2.0.2",

@@ -4,7 +4,7 @@
   "packageManager": "pnpm@10.18.0",
   "scripts": {
     "dev": "pnpm run -parallel -filter \"./apps/**\" dev",
-    "build": "pnpm run -recursive -filter \"./apps/**\" build",
+    "build": "turbo build --filter \"./apps/**\" build",
     "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
     "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
