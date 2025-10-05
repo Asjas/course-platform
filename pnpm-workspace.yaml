@@ -5,3 +5,9 @@ packages:
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'
+  - argon2
+  - cypress
+  - esbuild
+  - libpq
+  - sharp
+  - unrs-resolver
