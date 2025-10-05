@@ -104,7 +104,7 @@ jobs:
         run: pnpm --filter @apps/web build
 
       - name: Install Cypress
-        run: npx cypress install
+        run: pnpx cypress install
         working-directory: apps/web
 
       - name: Cache Cypress
