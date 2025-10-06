@@ -136,6 +136,7 @@ async function createServer(config: Config) {
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "plugins"),
       options: { ...config },
+      encapsulate: false,
     });
 
     await server.register(fastifyTRPCPlugin, {

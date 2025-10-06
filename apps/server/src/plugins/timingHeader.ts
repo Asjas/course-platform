@@ -3,7 +3,6 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import fastifyPlugin from "fastify-plugin";
 import type { Config } from "~/config.js";
 
 function timingHeader(
@@ -20,4 +19,4 @@ function timingHeader(
   done();
 }
 
-export default fastifyPlugin(timingHeader);
+export default timingHeader;

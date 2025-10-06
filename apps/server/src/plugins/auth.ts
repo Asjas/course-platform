@@ -3,7 +3,6 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import fastifyPlugin from "fastify-plugin";
 import type { User } from "~/db/mutations/user.js";
 
 declare module "fastify" {
@@ -25,4 +24,4 @@ function authPlugin(
   done();
 }
 
-export default fastifyPlugin(authPlugin);
+export default authPlugin;
