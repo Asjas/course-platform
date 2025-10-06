@@ -17,6 +17,8 @@ const schema = S.object()
   .prop("MAIL_PASS", S.string())
   .prop("POLAR_ACCESS_TOKEN", S.string())
   .prop("POLAR_SUCCESS_URL", S.string())
+  .prop("PROMETHEUS_HOST", S.string())
+  .prop("PROMETHEUS_PORT", S.number().default(9090))
   .valueOf();
 
 export interface Config {
@@ -37,6 +39,8 @@ export interface Config {
   MAIL_PASS: string;
   POLAR_ACCESS_TOKEN: string;
   POLAR_SUCCESS_URL: string;
+  PROMETHEUS_HOST: string;
+  PROMETHEUS_PORT: number;
 }
 
 export default envSchema({
