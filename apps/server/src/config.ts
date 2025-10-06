@@ -18,7 +18,7 @@ const schema = S.object()
   .prop("POLAR_ACCESS_TOKEN", S.string())
   .prop("POLAR_SUCCESS_URL", S.string())
   .prop("PROMETHEUS_HOST", S.string())
-  .prop("PROMETHEUS_PORT", S.number().default(9090))
+  .prop("PROMETHEUS_PORT", S.number().default(9092))
   .valueOf();
 
 export interface Config {
