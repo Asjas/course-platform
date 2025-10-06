@@ -22,3 +22,5 @@ closeWithGrace(async function ({ signal, err }) {
 });
 
 await app.listen({ port: PORT, host: "0.0.0.0" });
+
+console.log("Node.js flags:", process.execArgv);
