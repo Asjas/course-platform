@@ -10,8 +10,6 @@ import config from "~/config.js";
 const prometheusExporter = new PrometheusExporter({
   host: config.PROMETHEUS_HOST,
   port: config.PROMETHEUS_PORT,
-  endpoint: "/metrics",
-  preventServerStart: false,
 });
 
 const sdk = new NodeSDK({
@@ -29,5 +27,10 @@ const sdk = new NodeSDK({
 });
 
 sdk.start();
+
+console.log(
+  "SDK started",
+  `http://${config.PROMETHEUS_HOST}:${config.PROMETHEUS_PORT}/metrics`,
+);
 
 export { sdk };
