@@ -1,4 +1,4 @@
-FROM node:22.20.0-alpine3.22
+FROM node:24.9.0-alpine3.22
 
 RUN apk --no-cache add bash curl python3 py3-pip make g++ postgresql-dev postgresql-client
 
@@ -20,4 +20,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 ENV NODE_ENV=production
 
-CMD ["node", "--print_all_v8_options"]
+CMD ["node", "--v8-options"]
