@@ -4,6 +4,7 @@ import fastifyCors from "@fastify/cors";
 import fastifyEtag from "@fastify/etag";
 import fastifyFormBody from "@fastify/formbody";
 import fastifyHelmet from "@fastify/helmet";
+import fastifyProxy from "@fastify/http-proxy";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifySensible from "@fastify/sensible";
@@ -146,6 +147,13 @@ async function createServer(config: Config) {
       dir: join(import.meta.dirname, "routes"),
       options: { prefix: "/api" },
       dirNameRoutePrefix: false,
+    });
+
+    await server.register(fastifyProxy, {
+      upstream: "http://localhost:9092/metrics",
+      prefix: "/metrics",
+      httpMethods: ["get"],
+      config: { otel: false },
     });
 
     server.setNotFoundHandler(

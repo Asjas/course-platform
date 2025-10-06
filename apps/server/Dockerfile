@@ -5,7 +5,7 @@ RUN apk --no-cache add bash curl python3 py3-pip make g++ postgresql-dev postgre
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
 
-EXPOSE 3000 9092
+EXPOSE 3000
 
 RUN mkdir /app
 WORKDIR /app
