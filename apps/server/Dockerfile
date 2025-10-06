@@ -20,4 +20,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 ENV NODE_ENV=production
 
-CMD ["node", "--experimental-loader=@opentelemetry/instrumentation/hook.mjs", "--import", "./dist/lib/otel.js", "dist/index.js"]
+CMD ["node", "--print_all_v8_options"]
