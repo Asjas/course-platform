@@ -20,4 +20,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 ENV NODE_ENV=production
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "--import", "./dist/lib/otel.js", "dist/index.js"]
