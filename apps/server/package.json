@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@asjas/fastify-nodemailer": "1.0.6",
+    "@asjas/fastify-nodemailer": "1.0.8",
     "@fastify/autoload": "6.3.1",
     "@fastify/cors": "11.1.0",
     "@fastify/etag": "6.0.3",
