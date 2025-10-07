@@ -9,5 +9,6 @@ onlyBuiltDependencies:
   - cypress
   - esbuild
   - libpq
+  - protobufjs
   - sharp
   - unrs-resolver
