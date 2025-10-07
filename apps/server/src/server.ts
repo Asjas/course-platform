@@ -95,7 +95,7 @@ async function createServer(config: Config) {
       credentials: true,
       maxAge: 86400,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+      origin: config.ORIGIN || "http://localhost:3000",
     });
 
     await server.register(fastifyEtag);

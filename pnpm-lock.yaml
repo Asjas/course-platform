@@ -107,9 +107,6 @@ importers:
       '@asjas/fastify-nodemailer':
         specifier: 1.0.5
         version: 1.0.5
-      '@epic-web/invariant':
-        specifier: 1.0.0
-        version: 1.0.0
       '@fastify/autoload':
         specifier: 6.3.1
         version: 6.3.1

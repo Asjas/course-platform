@@ -105,7 +105,7 @@ export const auth = instrumentBetterAuth(
                 slug: "learn-fastify",
               },
             ],
-            successUrl: process.env.POLAR_SUCCESS_URL,
+            successUrl: config.POLAR_SUCCESS_URL,
             authenticatedUsersOnly: true,
           }),
         ],
