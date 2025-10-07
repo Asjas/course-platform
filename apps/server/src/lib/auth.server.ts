@@ -88,7 +88,7 @@ export const auth = instrumentBetterAuth(
       organization({ allowUserToCreateOrganization: false }),
       username({
         usernameValidator: (username) => {
-          const invalidUsernames = ["admin", "support", "codewizard"];
+          const invalidUsernames = ["admin", "support", "codewizard", "asjas"];
 
           return !invalidUsernames.includes(username);
         },
