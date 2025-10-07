@@ -135,9 +135,7 @@ async function createServer(config: Config) {
     await server.register(fastifyBetterAuth, { auth });
 
     await server.register(fastifyRedis, {
-      host: config.REDIS_HOST,
-      port: config.REDIS_PORT,
-      password: config.REDIS_PASSWORD,
+      client: redis,
     });
 
     await server.register(fastifyAutoload, {
