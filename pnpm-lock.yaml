@@ -311,8 +311,8 @@ importers:
         specifier: 0.2.25
         version: 0.2.25(@tanstack/query-core@5.90.2)(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: 0.1.26
-        version: 0.1.26(react@19.2.0)(typescript@5.9.3)
+        specifier: 0.1.27
+        version: 0.1.27(react@19.2.0)(typescript@5.9.3)
       '@tanstack/react-form':
         specifier: 1.23.5
         version: 1.23.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -4215,6 +4215,11 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
+  '@tanstack/db@0.4.5':
+    resolution: {integrity: sha512-O/WlfZaIcHQNPXhTIwfJimNM4md4pNwBG0D9ieWy3wBBR76iZgeIh76zjZf79oSyOcKQIwDlLUQuAZBZjYN6EQ==}
+    peerDependencies:
+      typescript: '>=4.7'
+
   '@tanstack/devtools-event-client@0.3.2':
     resolution: {integrity: sha512-gkvph/YMCFUfAca75EsJBJnhbKitDGix7vdEcT/3lAV+eyGSv+uECYG43apVQN4yLJKnV6mzcNvGzOhDhb72gg==}
     engines: {node: '>=18'}
@@ -4240,8 +4245,8 @@ packages:
       '@tanstack/query-core': ^5.0.0
       typescript: '>=4.7'
 
-  '@tanstack/react-db@0.1.26':
-    resolution: {integrity: sha512-8itSp4bd+PU7/yImMn3eAcMq2AEzDVuPhJ2K5Pyqh7f9qhXlMDdxcm1K9BpZpaQJOJEcLYls6FDnaNNkyc5/hQ==}
+  '@tanstack/react-db@0.1.27':
+    resolution: {integrity: sha512-JMiDbWn3kGNjal6e3UN6+C+eiSXkbQsezKjuaGKfxoLcbggKVCJlaywz2fmg1OPi7aR0bNltAjRVBtoF9QF4tQ==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -8963,6 +8968,11 @@ packages:
 
   use-sync-external-store@1.5.0:
     resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  use-sync-external-store@1.6.0:
+    resolution: {integrity: sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -14317,6 +14327,12 @@ snapshots:
       '@tanstack/db-ivm': 0.1.9(typescript@5.9.3)
       typescript: 5.9.3
 
+  '@tanstack/db@0.4.5(typescript@5.9.3)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@tanstack/db-ivm': 0.1.9(typescript@5.9.3)
+      typescript: 5.9.3
+
   '@tanstack/devtools-event-client@0.3.2': {}
 
   '@tanstack/eslint-plugin-router@1.132.31(eslint@9.37.0(jiti@2.6.0))(typescript@5.9.3)':
@@ -14343,11 +14359,11 @@ snapshots:
       '@tanstack/query-core': 5.90.2
       typescript: 5.9.3
 
-  '@tanstack/react-db@0.1.26(react@19.2.0)(typescript@5.9.3)':
+  '@tanstack/react-db@0.1.27(react@19.2.0)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.4.4(typescript@5.9.3)
+      '@tanstack/db': 0.4.5(typescript@5.9.3)
       react: 19.2.0
-      use-sync-external-store: 1.5.0(react@19.2.0)
+      use-sync-external-store: 1.6.0(react@19.2.0)
     transitivePeerDependencies:
       - typescript
 
@@ -20000,6 +20016,10 @@ snapshots:
       '@types/react': 19.2.0
 
   use-sync-external-store@1.5.0(react@19.2.0):
+    dependencies:
+      react: 19.2.0
+
+  use-sync-external-store@1.6.0(react@19.2.0):
     dependencies:
       react: 19.2.0
 
