@@ -7,6 +7,7 @@ import fastifyHelmet from "@fastify/helmet";
 import fastifyProxy from "@fastify/http-proxy";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
+import fastifyRedis from "@fastify/redis";
 import fastifySensible from "@fastify/sensible";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify, { type FastifyServerOptions } from "fastify";
@@ -132,6 +133,12 @@ async function createServer(config: Config) {
     });
 
     await server.register(fastifyBetterAuth, { auth });
+
+    await server.register(fastifyRedis, {
+      host: config.REDIS_HOST,
+      port: config.REDIS_PORT,
+      password: config.REDIS_PASSWORD,
+    });
 
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "plugins"),
