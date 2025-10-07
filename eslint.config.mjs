@@ -4,6 +4,7 @@ import eslint from "@eslint/js";
 import pluginCypress from "eslint-plugin-cypress";
 import esxPlugin from "eslint-plugin-es-x";
 import html from "eslint-plugin-html";
+import importZod from "eslint-plugin-import-zod";
 import jsonPlugin from "eslint-plugin-json";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
@@ -31,6 +32,7 @@ export default defineConfig(
   pluginPromise.configs["flat/recommended"],
   esxPlugin.configs["flat/restrict-to-es2022"],
   jsonPlugin.configs["recommended"],
+  importZod.configs.recommended,
   ...eslintPluginYml.configs["flat/recommended"],
   [
     {
