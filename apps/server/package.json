@@ -17,7 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@asjas/fastify-nodemailer": "1.0.5",
+    "@asjas/fastify-nodemailer": "1.0.6",
     "@fastify/autoload": "6.3.1",
     "@fastify/cors": "11.1.0",
     "@fastify/etag": "6.0.3",
@@ -55,7 +55,6 @@
     "fastify-better-auth": "1.2.0",
     "fastify-favicon": "5.0.0",
     "fastify-healthcheck": "5.1.0",
-    "fastify-plugin": "5.1.0",
     "fastify-print-routes": "4.1.0",
     "fluent-json-schema": "6.0.0",
     "ioredis": "5.8.0",

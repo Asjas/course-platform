@@ -105,8 +105,8 @@ importers:
   apps/server:
     dependencies:
       '@asjas/fastify-nodemailer':
-        specifier: 1.0.5
-        version: 1.0.5
+        specifier: 1.0.6
+        version: 1.0.6
       '@fastify/autoload':
         specifier: 6.3.1
         version: 6.3.1
@@ -216,9 +216,6 @@ importers:
         specifier: 5.0.0
         version: 5.0.0
       fastify-healthcheck:
-        specifier: 5.1.0
-        version: 5.1.0
-      fastify-plugin:
         specifier: 5.1.0
         version: 5.1.0
       fastify-print-routes:
@@ -568,8 +565,8 @@ packages:
   '@asamuzakjp/nwsapi@2.3.9':
     resolution: {integrity: sha512-n8GuYSrI9bF7FFZ/SjhwevlHc8xaVlb/7HmHelnc/PZXBD2ZR49NnN9sMMuDdEGPeeRQ5d0hqlSlEpgCX3Wl0Q==}
 
-  '@asjas/fastify-nodemailer@1.0.5':
-    resolution: {integrity: sha512-rZOQxJ93qg2utXdoI8efwvNQIQ2dsapUKti8zhHdNgLDQUd61rlCWBooLb+9MB1dFIDGHHkTwKtsyEAksJLjxw==}
+  '@asjas/fastify-nodemailer@1.0.6':
+    resolution: {integrity: sha512-7MYk7yAXXHlL7ITg0KMC11pAIef950G+02du6040DrBYbSYGVmeCAPBokgwqdDR/wUKOaLMgQZ7nx5JcjEom0g==}
 
   '@astrojs/compiler@2.13.0':
     resolution: {integrity: sha512-mqVORhUJViA28fwHYaWmsXSzLO9osbdZ5ImUfxBarqsYdMlPbqAqGJCxsNzvppp1BEzc1mJNjOVvQqeDN8Vspw==}
@@ -7427,8 +7424,8 @@ packages:
   node-releases@2.0.21:
     resolution: {integrity: sha512-5b0pgg78U3hwXkCM8Z9b2FJdPZlr9Psr9V2gQPESdGHqbntyFJKFW4r5TeWGFzafGY3hzs1JC62VEQMbl1JFkw==}
 
-  nodemailer@7.0.7:
-    resolution: {integrity: sha512-jGOaRznodf62TVzdyhKt/f1Q/c3kYynk8629sgJHpRzGZj01ezbgMMWJSAjHADcwTKxco3B68/R+KHJY2T5BaA==}
+  nodemailer@7.0.9:
+    resolution: {integrity: sha512-9/Qm0qXIByEP8lEV2qOqcAW7bRpL8CR9jcTwk3NBnHJNmP9fIJ86g2fgmIXqHY+nj55ZEMwWqYAT2QTDpRUYiQ==}
     engines: {node: '>=6.0.0'}
 
   normalize-path@3.0.0:
@@ -9443,11 +9440,11 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@asjas/fastify-nodemailer@1.0.5':
+  '@asjas/fastify-nodemailer@1.0.6':
     dependencies:
       '@types/nodemailer': 7.0.2
       fastify-plugin: 5.1.0
-      nodemailer: 7.0.7
+      nodemailer: 7.0.9
     transitivePeerDependencies:
       - aws-crt
 
@@ -18286,7 +18283,7 @@ snapshots:
 
   node-releases@2.0.21: {}
 
-  nodemailer@7.0.7: {}
+  nodemailer@7.0.9: {}
 
   normalize-path@3.0.0: {}
 
