@@ -21,4 +21,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 ENV NODE_ENV=production
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=256", "--max-old-space-size=256", "--experimental-loader=@opentelemetry/instrumentation/hook.mjs", "--import", "./dist/lib/otel.js", "dist/index.js"]
+CMD ["node", "--max-semi-space-size=256", "--max-old-space-size=2048", "dist/index.js"]
