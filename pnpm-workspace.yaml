@@ -4,7 +4,7 @@ packages:
   - packages/**
 
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
+  - "@tailwindcss/oxide"
   - argon2
   - cypress
   - esbuild
