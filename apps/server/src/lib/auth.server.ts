@@ -31,7 +31,6 @@ export const auth = betterAuth({
       enabled: true,
       maxAge: ONE_HOUR,
     },
-    createSessionOnSignIn: true,
   },
   emailAndPassword: {
     enabled: true,
