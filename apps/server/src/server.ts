@@ -1,4 +1,3 @@
-// import fastifyNodemailer from "@asjas/fastify-nodemailer";
 import { fastifyAutoload } from "@fastify/autoload";
 import fastifyCors from "@fastify/cors";
 import fastifyEtag from "@fastify/etag";
@@ -90,11 +89,9 @@ async function createServer(config: Config) {
     });
 
     await server.register(fastifyCors, {
-      allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
       credentials: true,
       maxAge: 86400,
-      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      origin: config.ORIGIN || "http://localhost:3000",
+      origin: config.ORIGIN,
     });
 
     await server.register(fastifyEtag);
@@ -103,7 +100,7 @@ async function createServer(config: Config) {
 
     await server.register(FastifyAllowPlugin);
 
-    await server.register(fastifyHealthcheck, {});
+    await server.register(fastifyHealthcheck);
 
     await server.register(fastifyFormBody);
 
@@ -114,20 +111,6 @@ async function createServer(config: Config) {
     await server.register(fastifySensible);
 
     await server.register(fastifyPrintRoutes);
-
-    // await server.register(fastifyNodemailer, {
-    //   host: config.MAIL_HOST,
-    //   port: config.MAIL_PORT,
-    //   secure: false,
-    //   auth: {
-    //     user: config.MAIL_USER,
-    //     pass: config.MAIL_PASS,
-    //   },
-    //   tls: {
-    //     rejectUnauthorized: false,
-    //   },
-    //   pool: true,
-    // });
 
     await server.register(fastifyBetterAuth, { auth });
 

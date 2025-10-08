@@ -14,6 +14,7 @@ import config from "~/config.js";
 import { db } from "~/db/index.js";
 import { ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
+import mailer from "~/lib/mailer.js";
 import { redis } from "~/lib/redis.js";
 
 const polarClient = new Polar({
@@ -23,7 +24,7 @@ const polarClient = new Polar({
 
 export const auth = betterAuth({
   appName: "Codewizard Training",
-  trustedOrigins: ["http://localhost:3000", "https://codewizard.training"],
+  trustedOrigins: [config.ORIGIN],
   secret: config.BETTER_AUTH_SECRET,
   session: {
     expiresIn: ONE_YEAR,
@@ -32,9 +33,32 @@ export const auth = betterAuth({
       maxAge: ONE_HOUR,
     },
   },
+  emailVerification: {
+    autoSignInAfterVerification: true,
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    async sendVerificationEmail(data) {
+      let text = "";
+
+      text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email?=${data.token}`;
+      text += `\n\nIf you did not create an account, please ignore this email.`;
+      text += `\n\nThis link will expire in 1 hour.`;
+      text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
+
+      await mailer.sendMail({
+        sender: "Codewizard Training <support@codewizard.training>",
+        replyTo: "support@codewizard.training",
+        to: data.user.email,
+        subject: "Verify your email address",
+        text,
+      });
+    },
+  },
   emailAndPassword: {
     enabled: true,
-    requireEmailVerification: true,
+    autoSignIn: true,
+    minPasswordLength: 5,
+    maxPasswordLength: 80,
     password: {
       hash: async function (password) {
         const hashedPassword = await argon2.hash(password, {
@@ -51,8 +75,21 @@ export const auth = betterAuth({
         return verified;
       },
     },
-    async sendResetPassword() {
-      console.log("Send email to reset password");
+    async sendResetPassword({ user, token }) {
+      let text = "";
+
+      text += `You can reset your password by clicking the link below:\n\n${config.ORIGIN}/reset-password?token=${token}`;
+      text += `\n\nIf you did not request a password reset, please ignore this email.`;
+      text += `\n\nThis link will expire in 1 hour.`;
+      text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
+
+      await mailer.sendMail({
+        sender: "Codewizard Training <support@codewizard.training>",
+        replyTo: "support@codewizard.training",
+        to: user.email,
+        subject: "Reset your password",
+        text,
+      });
     },
   },
   rateLimit: {
@@ -76,7 +113,7 @@ export const auth = betterAuth({
   }),
   advanced: {
     database: {
-      generateId: () => ulid(),
+      generateId: () => `user:${ulid()}`,
     },
   },
   plugins: [
