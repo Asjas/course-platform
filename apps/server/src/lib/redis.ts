@@ -1,10 +1,11 @@
 import { Redis, type RedisOptions } from "ioredis";
+import config from "~/config.js";
 
 const redisOptions: RedisOptions = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: Number(process.env.REDIS_PORT) || 6379,
-  password: process.env.REDIS_PASSWORD,
-  db: 0,
+  host: config.REDIS_HOST,
+  port: config.REDIS_PORT,
+  password: config.REDIS_PASSWORD,
+  enableAutoPipelining: true,
 };
 
 export const redis = new Redis(redisOptions);

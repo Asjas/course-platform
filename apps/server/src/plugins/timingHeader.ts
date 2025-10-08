@@ -3,16 +3,15 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import fastifyPlugin from "fastify-plugin";
 import type { Config } from "~/config.js";
 
 function timingHeader(
   fastify: FastifyInstance,
-  opts: FastifyPluginOptions & Config,
+  opts: FastifyPluginOptions & { config: Config },
   done: HookHandlerDoneFunction,
 ) {
   fastify.addHook("onSend", (_request, reply, _payload, done) => {
-    reply.header("Timing-Allow-Origin", opts.ORIGIN);
+    reply.header("Timing-Allow-Origin", opts.config.ORIGIN);
 
     done();
   });
@@ -20,4 +19,4 @@ function timingHeader(
   done();
 }
 
-export default fastifyPlugin(timingHeader);
+export default timingHeader;

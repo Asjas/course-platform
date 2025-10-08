@@ -4,10 +4,11 @@ packages:
   - packages/**
 
 onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
+  - "@tailwindcss/oxide"
   - argon2
   - cypress
   - esbuild
   - libpq
+  - protobufjs
   - sharp
   - unrs-resolver
