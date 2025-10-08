@@ -10,6 +10,7 @@ import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
 import reactCompiler from "eslint-plugin-react-compiler";
 import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
 import security from "eslint-plugin-security";
 import unusedImports from "eslint-plugin-unused-imports";
 import eslintPluginYml from "eslint-plugin-yml";
@@ -35,6 +36,8 @@ export default defineConfig(
   jsonPlugin.configs["recommended"],
   importZod.configs.recommended,
   reactCompiler.configs.recommended,
+  reactRefresh.configs.recommended,
+  reactRefresh.configs.vite,
   ...eslintPluginYml.configs["flat/recommended"],
   [
     {
