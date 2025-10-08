@@ -8,16 +8,18 @@ export const Route = createFileRoute("/(auth)/signin")({
 });
 
 function AuthPage() {
+  const search = Route.useSearch();
+
   return (
-    <main className="flex w-100 grow flex-col justify-center self-center">
+    <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Sign In to Your Account</CardHeader>
-        <SignInForm />
+        <SignInForm search={search} />
         <hr className="mt-4 border-gray-600" />
         <CardFooter>
           <AuthLinks showSignIn={false} />
         </CardFooter>
       </Card>
-    </main>
+    </div>
   );
 }

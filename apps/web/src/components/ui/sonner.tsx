@@ -1,23 +1,22 @@
-import { Toaster as Sonner, type ToasterProps, toast } from "sonner";
-import { useTheme } from "~/components/theme-provider";
+import { AlertTriangleIcon, InfoIcon, TriangleAlertIcon } from "lucide-react";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
-
   return (
     <Sonner
-      className="toaster group"
-      theme={theme as ToasterProps["theme"]}
-      style={
-        {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-        } as React.CSSProperties
-      }
+      closeButton={true}
+      offset={{ top: "100px" }}
+      richColors={true}
+      position="top-right"
+      mobileOffset={{ top: "20px" }}
+      icons={{
+        info: <InfoIcon />,
+        warning: <AlertTriangleIcon />,
+        error: <TriangleAlertIcon />,
+      }}
       {...props}
     />
   );
 };
 
-export { Toaster, toast };
+export { Toaster };

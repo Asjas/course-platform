@@ -1,7 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import { redirect } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
@@ -19,8 +20,13 @@ const formSchema = z.object({
   remember: z.boolean(),
 });
 
-export default function SignInForm() {
+export default function SignInForm({
+  search,
+}: {
+  search: { redirect?: string };
+}) {
   const [serverError, setServerError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
@@ -37,14 +43,14 @@ export default function SignInForm() {
       const { error } = await authClient.signIn.email(
         { email, password, rememberMe: remember },
         {
-          onSuccess: () => {
-            redirect({ to: "/dashboard" });
-          },
           onError: ({ error }) => {
             setServerError(error.message);
           },
         },
       );
+
+      navigate({ to: search.redirect ?? "/dashboard" });
+      toast.success("Signed in successfully");
 
       if (error) console.error(error);
     },

@@ -1,11 +1,23 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
-import { ThemeProvider } from "~/components/theme-provider";
+import { Toaster } from "~/components/ui/sonner.tsx";
+import { type AuthSession, type AuthUserData } from "~/lib/auth.client.ts";
 
-export const Route = createRootRoute({
-  component: () => (
+interface MyRouterContext {
+  user: AuthUserData;
+  session: AuthSession;
+  isUnauthorized?: boolean;
+  setIsUnauthorized?: (value: boolean) => void;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
+  component: RootRoute,
+});
+
+function RootRoute() {
+  return (
     <>
       <a
         className="sr-only mt-20 focus:not-sr-only focus:inline-flex"
@@ -13,22 +25,19 @@ export const Route = createRootRoute({
       >
         Skip to main
       </a>
+      <Toaster />
       <div className="grid min-h-screen grid-rows-[1fr_auto]">
-        <ThemeProvider
-          defaultTheme="dark"
-          storageKey="cw-ui-theme"
+        <Header />
+        <main
+          className="flex flex-col overflow-y-auto pt-20"
+          id="maincontent"
         >
-          <Header />
-          <div
-            className="flex flex-col overflow-y-auto pt-20"
-            id="maincontent"
-          >
-            <Outlet />
-          </div>
-          <Footer />
-        </ThemeProvider>
+          <Outlet />
+        </main>
+        <Footer />
+
         <TanStackRouterDevtools position="bottom-right" />
       </div>
     </>
-  ),
-});
+  );
+}
