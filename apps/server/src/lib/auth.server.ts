@@ -117,7 +117,7 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    admin(),
+    admin({ defaultRole: "member" }),
     haveIBeenPwned(),
     organization({ allowUserToCreateOrganization: false }),
     username({
