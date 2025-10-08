@@ -20,6 +20,7 @@ const schema = S.object()
   .prop("REDIS_PASSWORD", S.string())
   .prop("POLAR_ACCESS_TOKEN", S.string())
   .prop("POLAR_SUCCESS_URL", S.string())
+  .prop("LEARN_FASTIFY_POLAR_PRODUCT_ID", S.string())
   .prop("PROMETHEUS_HOST", S.string())
   .prop("PROMETHEUS_PORT", S.number().default(9092))
   .valueOf();
@@ -45,6 +46,7 @@ export interface Config {
   REDIS_PASSWORD: string;
   POLAR_ACCESS_TOKEN: string;
   POLAR_SUCCESS_URL: string;
+  LEARN_FASTIFY_POLAR_PRODUCT_ID: string;
   PROMETHEUS_HOST: string;
   PROMETHEUS_PORT: number;
 }

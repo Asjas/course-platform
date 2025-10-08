@@ -135,7 +135,7 @@ export const auth = betterAuth({
         checkout({
           products: [
             {
-              productId: "bf729112-d838-49dd-88f0-91eb1cd88ca8",
+              productId: config.LEARN_FASTIFY_POLAR_PRODUCT_ID,
               slug: "learn-fastify",
             },
           ],
