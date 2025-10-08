@@ -140,7 +140,6 @@ export const auth = betterAuth({
             },
           ],
           successUrl: config.POLAR_SUCCESS_URL,
-          authenticatedUsersOnly: true,
         }),
       ],
     }),
