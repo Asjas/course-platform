@@ -17,7 +17,9 @@ export default defineConfig({
       autoCodeSplitting: true,
       quoteStyle: "double",
     }),
-    react({ babel: { plugins: ["babel-plugin-react-compiler"] } }),
+    react({
+      babel: { plugins: ["babel-plugin-react-compiler"] },
+    }),
     tailwindcss(),
     mdx({
       remarkPlugins: [remarkGfm],
