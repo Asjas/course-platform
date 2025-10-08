@@ -21,6 +21,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedParameters": true,
     "strictFunctionTypes": true,
     "verbatimModuleSyntax": true,
