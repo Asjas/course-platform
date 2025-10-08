@@ -76,5 +76,7 @@ export function CardAction({
 }
 
 export function CardFooter({ children }: { children: ReactNode }) {
-  return <p className="mt-4 text-center text-sm text-gray-400">{children}</p>;
+  return (
+    <div className="mt-4 text-center text-sm text-gray-400">{children}</div>
+  );
 }
