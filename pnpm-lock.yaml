@@ -448,13 +448,13 @@ importers:
     dependencies:
       '@astrojs/tailwind':
         specifier: 6.0.2
-        version: 6.0.2(astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.0)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)
+        version: 6.0.2(astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.1)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)
       '@tailwindcss/vite':
         specifier: 4.1.14
         version: 4.1.14(vite@7.1.9(@types/node@24.7.0)(jiti@2.6.0)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       astro:
         specifier: 5.14.1
-        version: 5.14.1(@types/node@24.7.0)(ioredis@5.8.0)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+        version: 5.14.1(@types/node@24.7.0)(ioredis@5.8.1)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       tailwindcss:
         specifier: 4.1.14
         version: 4.1.14
@@ -9528,9 +9528,9 @@ snapshots:
     dependencies:
       prismjs: 1.30.0
 
-  '@astrojs/tailwind@6.0.2(astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.0)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)':
+  '@astrojs/tailwind@6.0.2(astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.1)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1))(tailwindcss@4.1.14)':
     dependencies:
-      astro: 5.14.1(@types/node@24.7.0)(ioredis@5.8.0)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
+      astro: 5.14.1(@types/node@24.7.0)(ioredis@5.8.1)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1)
       autoprefixer: 10.4.21(postcss@8.5.6)
       postcss: 8.5.6
       postcss-load-config: 4.0.2(postcss@8.5.6)
@@ -11026,7 +11026,7 @@ snapshots:
   '@fastify/redis@7.1.0':
     dependencies:
       fastify-plugin: 5.1.0
-      ioredis: 5.8.0
+      ioredis: 5.8.1
     transitivePeerDependencies:
       - supports-color
 
@@ -15271,7 +15271,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.0)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1):
+  astro@5.14.1(@types/node@24.7.0)(ioredis@5.8.1)(jiti@2.6.0)(lightningcss@1.30.2)(rollup@4.52.3)(terser@5.44.0)(tsx@4.20.6)(typescript@5.9.3)(yaml@2.8.1):
     dependencies:
       '@astrojs/compiler': 2.13.0
       '@astrojs/internal-helpers': 0.7.3
