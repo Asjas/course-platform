@@ -9,7 +9,7 @@ export const Route = createFileRoute("/(auth)/reset-password")({
 
 function AuthPage() {
   return (
-    <main className="flex w-100 grow flex-col justify-center self-center">
+    <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Reset Password</CardHeader>
         <PasswordResetForm />
@@ -21,6 +21,6 @@ function AuthPage() {
           />
         </CardFooter>
       </Card>
-    </main>
+    </div>
   );
 }

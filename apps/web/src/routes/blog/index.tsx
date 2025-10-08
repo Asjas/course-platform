@@ -36,7 +36,7 @@ function BlogListPage() {
   }, []);
 
   return (
-    <main className="container mx-auto p-8">
+    <div className="container mx-auto p-8">
       <h2 className="mb-8 text-3xl font-bold">Blog Posts</h2>
       {posts.length > 0 ? (
         <ul className="space-y-4">
@@ -58,6 +58,6 @@ function BlogListPage() {
       ) : (
         <p>Loading blog posts...</p>
       )}
-    </main>
+    </div>
   );
 }

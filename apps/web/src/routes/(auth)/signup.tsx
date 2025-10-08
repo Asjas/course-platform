@@ -9,7 +9,7 @@ export const Route = createFileRoute("/(auth)/signup")({
 
 function AuthPage() {
   return (
-    <main className="flex w-100 grow flex-col justify-center self-center">
+    <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Account Signup</CardHeader>
         <SignUpForm />
@@ -18,6 +18,6 @@ function AuthPage() {
           <AuthLinks showSignUp={false} />
         </CardFooter>
       </Card>
-    </main>
+    </div>
   );
 }
