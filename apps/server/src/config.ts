@@ -15,6 +15,9 @@ const schema = S.object()
   .prop("MAIL_PORT", S.number())
   .prop("MAIL_USER", S.string())
   .prop("MAIL_PASS", S.string())
+  .prop("REDIS_HOST", S.string().default("localhost"))
+  .prop("REDIS_PORT", S.number().default(6379))
+  .prop("REDIS_PASSWORD", S.string())
   .prop("POLAR_ACCESS_TOKEN", S.string())
   .prop("POLAR_SUCCESS_URL", S.string())
   .prop("PROMETHEUS_HOST", S.string())
@@ -37,6 +40,9 @@ export interface Config {
   MAIL_PORT: number;
   MAIL_USER: string;
   MAIL_PASS: string;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+  REDIS_PASSWORD: string;
   POLAR_ACCESS_TOKEN: string;
   POLAR_SUCCESS_URL: string;
   PROMETHEUS_HOST: string;

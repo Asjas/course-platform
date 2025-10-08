@@ -11,7 +11,7 @@ RUN npm i -g pnpm@9.15.9
 RUN pnpm i --filter "./apps/web"
 RUN pnpm run -filter "./apps/web" build
 
-FROM nginx:1.29.1-alpine3.22
+FROM nginx:1.29.2-alpine3.22
 
 RUN apk --no-cache add curl bash
 

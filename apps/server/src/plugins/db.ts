@@ -3,7 +3,6 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import fp from "fastify-plugin";
 import { db } from "~/db/index.js";
 
 declare module "fastify" {
@@ -22,4 +21,4 @@ function DrizzlePlugin(
   done();
 }
 
-export default fp(DrizzlePlugin);
+export default DrizzlePlugin;

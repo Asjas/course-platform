@@ -1,12 +1,12 @@
-import fastifyNodemailer from "@asjas/fastify-nodemailer";
+// import fastifyNodemailer from "@asjas/fastify-nodemailer";
 import { fastifyAutoload } from "@fastify/autoload";
 import fastifyCors from "@fastify/cors";
 import fastifyEtag from "@fastify/etag";
 import fastifyFormBody from "@fastify/formbody";
 import fastifyHelmet from "@fastify/helmet";
-import fastifyProxy from "@fastify/http-proxy";
 import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
+import fastifyRedis from "@fastify/redis";
 import fastifySensible from "@fastify/sensible";
 import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify, { type FastifyServerOptions } from "fastify";
@@ -94,7 +94,7 @@ async function createServer(config: Config) {
       credentials: true,
       maxAge: 86400,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      origin: process.env.CLIENT_ORIGIN || "http://localhost:3000",
+      origin: config.ORIGIN || "http://localhost:3000",
     });
 
     await server.register(fastifyEtag);
@@ -103,9 +103,7 @@ async function createServer(config: Config) {
 
     await server.register(FastifyAllowPlugin);
 
-    await server.register(fastifyHealthcheck, {
-      configOptions: { otel: false },
-    });
+    await server.register(fastifyHealthcheck, {});
 
     await server.register(fastifyFormBody);
 
@@ -117,25 +115,30 @@ async function createServer(config: Config) {
 
     await server.register(fastifyPrintRoutes);
 
-    await server.register(fastifyNodemailer.default, {
-      host: config.MAIL_HOST,
-      port: config.MAIL_PORT,
-      secure: false,
-      auth: {
-        user: config.MAIL_USER,
-        pass: config.MAIL_PASS,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-      pool: true,
-    });
+    // await server.register(fastifyNodemailer, {
+    //   host: config.MAIL_HOST,
+    //   port: config.MAIL_PORT,
+    //   secure: false,
+    //   auth: {
+    //     user: config.MAIL_USER,
+    //     pass: config.MAIL_PASS,
+    //   },
+    //   tls: {
+    //     rejectUnauthorized: false,
+    //   },
+    //   pool: true,
+    // });
 
     await server.register(fastifyBetterAuth, { auth });
 
+    await server.register(fastifyRedis, {
+      client: redis,
+    });
+
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "plugins"),
-      options: { ...config },
+      options: { config },
+      encapsulate: false,
     });
 
     await server.register(fastifyTRPCPlugin, {
@@ -149,16 +152,9 @@ async function createServer(config: Config) {
       dirNameRoutePrefix: false,
     });
 
-    await server.register(fastifyProxy, {
-      upstream: "http://localhost:9092/metrics",
-      prefix: "/metrics",
-      httpMethods: ["get"],
-      config: { otel: false },
-    });
-
     server.setNotFoundHandler(
       {
-        preHandler: server.rateLimit({ max: 50, timeWindow: "1 hour" }),
+        preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
       },
       function (_request, reply) {
         throw reply.server.httpErrors.notFound();
