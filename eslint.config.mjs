@@ -8,6 +8,7 @@ import importZod from "eslint-plugin-import-zod";
 import jsonPlugin from "eslint-plugin-json";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
+import reactCompiler from "eslint-plugin-react-compiler";
 import reactHooks from "eslint-plugin-react-hooks";
 import security from "eslint-plugin-security";
 import unusedImports from "eslint-plugin-unused-imports";
@@ -33,6 +34,7 @@ export default defineConfig(
   esxPlugin.configs["flat/restrict-to-es2022"],
   jsonPlugin.configs["recommended"],
   importZod.configs.recommended,
+  reactCompiler.configs.recommended,
   ...eslintPluginYml.configs["flat/recommended"],
   [
     {
@@ -171,7 +173,6 @@ export default defineConfig(
   ],
   {
     ignores: [
-      "eslint.config.mjs",
       "node_modules/**",
       "packages/**",
       "apps/server/dist/**",
