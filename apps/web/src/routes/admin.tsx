@@ -1,10 +1,11 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
+import { authClient } from "~/lib/auth.client.ts";
 
 export const Route = createFileRoute("/admin")({
-  beforeLoad: async ({ context }) => {
-    const { user, session } = context;
+  beforeLoad: async () => {
+    const { data } = await authClient.getSession();
 
-    if (!session) {
+    if (!data?.session) {
       throw redirect({
         to: "/signin",
         search: {
@@ -13,15 +14,15 @@ export const Route = createFileRoute("/admin")({
       });
     }
 
-    if (user?.role !== "admin") {
+    if (data?.user?.role !== "admin") {
       throw redirect({
         to: "/dashboard",
       });
     }
   },
-  component: AuthLayout,
+  component: AdminLayout,
 });
 
-function AuthLayout() {
+function AdminLayout() {
   return <Outlet />;
 }

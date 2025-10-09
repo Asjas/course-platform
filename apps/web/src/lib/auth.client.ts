@@ -35,11 +35,3 @@ export const authClient = createAuthClient({
     },
   },
 });
-
-const session = await authClient.getSession();
-
-export const userData = session.data?.user ?? null;
-export const sessionData = session.data?.session ?? null;
-
-export type AuthUserData = typeof userData;
-export type AuthSession = typeof sessionData;

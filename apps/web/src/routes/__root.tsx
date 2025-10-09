@@ -1,18 +1,10 @@
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { Outlet, createRootRoute } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner.tsx";
-import { type AuthSession, type AuthUserData } from "~/lib/auth.client.ts";
 
-interface MyRouterContext {
-  user: AuthUserData;
-  session: AuthSession;
-  isUnauthorized?: boolean;
-  setIsUnauthorized?: (value: boolean) => void;
-}
-
-export const Route = createRootRouteWithContext<MyRouterContext>()({
+export const Route = createRootRoute({
   component: RootRoute,
 });
 

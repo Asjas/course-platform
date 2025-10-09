@@ -19,6 +19,7 @@ import { Route as authRouteRouteImport } from "./routes/(auth)/route"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
+import { Route as AdminUsersRouteImport } from "./routes/admin.users"
 import { Route as AuthDashboardRouteImport } from "./routes/_auth.dashboard"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
@@ -76,6 +77,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: "/blog/$slug",
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUsersRoute = AdminUsersRouteImport.update({
+  id: "/users",
+  path: "/users",
+  getParentRoute: () => AdminRoute,
+} as any)
 const AuthDashboardRoute = AuthDashboardRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
@@ -121,7 +127,7 @@ const EducationCoursesCourseIndexRoute =
 
 export interface FileRoutesByFullPath {
   "/": typeof authRouteRouteWithChildren
-  "/admin": typeof AdminRoute
+  "/admin": typeof AdminRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/settings": typeof SettingsRoute
@@ -131,6 +137,7 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthDashboardRoute
+  "/admin/users": typeof AdminUsersRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
@@ -139,7 +146,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   "/": typeof authRouteRouteWithChildren
-  "/admin": typeof AdminRoute
+  "/admin": typeof AdminRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/settings": typeof SettingsRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthDashboardRoute
+  "/admin/users": typeof AdminUsersRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/education/courses": typeof EducationCoursesIndexRoute
@@ -158,7 +166,7 @@ export interface FileRoutesById {
   "/": typeof IndexRoute
   "/(auth)": typeof authRouteRouteWithChildren
   "/_auth": typeof AuthRouteWithChildren
-  "/admin": typeof AdminRoute
+  "/admin": typeof AdminRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/settings": typeof SettingsRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_auth/dashboard": typeof AuthDashboardRoute
+  "/admin/users": typeof AdminUsersRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/admin/users"
     | "/blog/$slug"
     | "/blog"
     | "/education/courses/$course"
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/admin/users"
     | "/blog/$slug"
     | "/blog"
     | "/education/courses"
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/_auth/dashboard"
+    | "/admin/users"
     | "/blog/$slug"
     | "/blog/"
     | "/education/courses/$course"
@@ -235,7 +247,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   DownloadsRoute: typeof DownloadsRoute
   PrivacyRoute: typeof PrivacyRoute
   SettingsRoute: typeof SettingsRoute
@@ -316,6 +328,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/blog/$slug"
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    "/admin/users": {
+      id: "/admin/users"
+      path: "/users"
+      fullPath: "/admin/users"
+      preLoaderRoute: typeof AdminUsersRouteImport
+      parentRoute: typeof AdminRoute
     }
     "/_auth/dashboard": {
       id: "/_auth/dashboard"
@@ -402,6 +421,16 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface AdminRouteChildren {
+  AdminUsersRoute: typeof AdminUsersRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminUsersRoute: AdminUsersRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 interface EducationCoursesCourseRouteRouteChildren {
   EducationCoursesCourseIndexRoute: typeof EducationCoursesCourseIndexRoute
 }
@@ -436,7 +465,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   DownloadsRoute: DownloadsRoute,
   PrivacyRoute: PrivacyRoute,
   SettingsRoute: SettingsRoute,

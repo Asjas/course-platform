@@ -75,7 +75,7 @@ export default function Header() {
                 </NavLink>
               </li>
             ) : null}
-            {user ? (
+            {user?.role === "admin" ? (
               <li className="relative inline-flex border-l border-gray-600 pl-2">
                 <NavLink
                   preload="intent"

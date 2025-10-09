@@ -43,14 +43,18 @@ export default function SignInForm({
       const { error } = await authClient.signIn.email(
         { email, password, rememberMe: remember },
         {
+          onSuccess: () => {
+            toast.success("Successfully signed in!");
+
+            navigate({
+              to: search.redirect ?? "/dashboard",
+            });
+          },
           onError: ({ error }) => {
             setServerError(error.message);
           },
         },
       );
-
-      navigate({ to: search.redirect ?? "/dashboard" });
-      toast.success("Signed in successfully");
 
       if (error) console.error(error);
     },
