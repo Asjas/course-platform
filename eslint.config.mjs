@@ -35,9 +35,6 @@ export default defineConfig(
   esxPlugin.configs["flat/restrict-to-es2022"],
   jsonPlugin.configs["recommended"],
   importZod.configs.recommended,
-  reactCompiler.configs.recommended,
-  reactRefresh.configs.recommended,
-  reactRefresh.configs.vite,
   ...eslintPluginYml.configs["flat/recommended"],
   [
     {
@@ -75,7 +72,10 @@ export default defineConfig(
       extends: [
         pluginCypress.configs.recommended,
         pluginCypress.configs.globals,
-        "react-hooks/recommended-latest",
+        reactCompiler.configs.recommended,
+        reactRefresh.configs.recommended,
+        reactRefresh.configs.vite,
+        reactHooks.configs.flat["recommended-latest"],
         fixupConfigRules(
           compat.extends(
             "plugin:import/recommended",
@@ -111,7 +111,10 @@ export default defineConfig(
       extends: [
         pluginCypress.configs.recommended,
         pluginCypress.configs.globals,
-        "react-hooks/recommended-latest",
+        reactCompiler.configs.recommended,
+        reactRefresh.configs.recommended,
+        reactRefresh.configs.vite,
+        reactHooks.configs.flat["recommended-latest"],
         fixupConfigRules(
           compat.extends(
             "plugin:import/recommended",
