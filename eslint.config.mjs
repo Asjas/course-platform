@@ -1,6 +1,7 @@
 import { fixupConfigRules } from "@eslint/compat";
 import { FlatCompat } from "@eslint/eslintrc";
 import eslint from "@eslint/js";
+import tanstackQueryPlugin from "@tanstack/eslint-plugin-query";
 import pluginCypress from "eslint-plugin-cypress";
 import esxPlugin from "eslint-plugin-es-x";
 import html from "eslint-plugin-html";
@@ -75,6 +76,7 @@ export default defineConfig(
         reactCompiler.configs.recommended,
         reactRefresh.configs.recommended,
         reactRefresh.configs.vite,
+        tanstackQueryPlugin.configs.recommended,
         reactHooks.configs.flat["recommended-latest"],
         fixupConfigRules(
           compat.extends(
