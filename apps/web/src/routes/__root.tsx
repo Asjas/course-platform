@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Footer from "~/components/footer";
@@ -34,7 +35,10 @@ function RootRoute() {
           <Outlet />
         </main>
         <Footer />
-
+        <ReactQueryDevtools
+          initialIsOpen={false}
+          buttonPosition="bottom-left"
+        />
         <TanStackRouterDevtools position="bottom-right" />
       </div>
     </>
