@@ -26,6 +26,7 @@ import { Route as EducationCoursesRouteRouteImport } from "./routes/education/co
 import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/_admin/route"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/_admin/users"
+import { Route as AuthenticatedAdminAdminRouteImport } from "./routes/_authenticated/_admin/admin"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
 
@@ -111,6 +112,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: "/users",
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminAdminRoute = AuthenticatedAdminAdminRouteImport.update({
+  id: "/admin",
+  path: "/admin",
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const EducationCoursesCourseRouteRoute =
   EducationCoursesCourseRouteRouteImport.update({
     id: "/$course",
@@ -138,6 +144,7 @@ export interface FileRoutesByFullPath {
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
+  "/admin": typeof AuthenticatedAdminAdminRoute
   "/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
+  "/admin": typeof AuthenticatedAdminAdminRoute
   "/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses": typeof EducationCoursesIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseIndexRoute
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
+  "/_authenticated/_admin/admin": typeof AuthenticatedAdminAdminRoute
   "/_authenticated/_admin/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | "/blog/$slug"
     | "/blog"
     | "/education/courses/$course"
+    | "/admin"
     | "/users"
     | "/education/courses/"
     | "/education/courses/$course/"
@@ -212,6 +222,7 @@ export interface FileRouteTypes {
     | "/settings"
     | "/blog/$slug"
     | "/blog"
+    | "/admin"
     | "/users"
     | "/education/courses"
     | "/education/courses/$course"
@@ -233,6 +244,7 @@ export interface FileRouteTypes {
     | "/blog/$slug"
     | "/blog/"
     | "/education/courses/$course"
+    | "/_authenticated/_admin/admin"
     | "/_authenticated/_admin/users"
     | "/education/courses/"
     | "/education/courses/$course/"
@@ -371,6 +383,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/_authenticated/_admin/admin": {
+      id: "/_authenticated/_admin/admin"
+      path: "/admin"
+      fullPath: "/admin"
+      preLoaderRoute: typeof AuthenticatedAdminAdminRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     "/education/courses/$course": {
       id: "/education/courses/$course"
       path: "/$course"
@@ -405,11 +424,13 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 )
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAdminRoute: typeof AuthenticatedAdminAdminRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAdminRoute: AuthenticatedAdminAdminRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
 
