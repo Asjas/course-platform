@@ -8,17 +8,17 @@ export const Route = createFileRoute("/(auth)")({
     redirect: z.string().optional().catch(""),
   }),
   beforeLoad: async ({ context, search }) => {
-    const { session } = context;
+    const { auth } = context;
 
-    if (session) {
+    if (auth.isAuthenticated) {
       throw redirect({
         to: search.redirect || fallback,
       });
     }
   },
-  component: RouteComponent,
+  component: AuthLayout,
 });
 
-function RouteComponent() {
+function AuthLayout() {
   return <Outlet />;
 }

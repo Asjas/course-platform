@@ -28,10 +28,10 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/privacy")({
-  component: RouteComponent,
+  component: PrivacyComponent,
 });
 
-function RouteComponent() {
+function PrivacyComponent() {
   return (
     <div className="flex-none overflow-y-auto outline-none">
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

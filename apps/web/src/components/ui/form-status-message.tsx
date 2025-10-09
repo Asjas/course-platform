@@ -1,6 +1,6 @@
 interface IFormStatusMessage {
   statusMessage: string | null;
-  serverError: string | null;
+  serverError: string | undefined | null;
 }
 
 export default function FormStatusMessage({

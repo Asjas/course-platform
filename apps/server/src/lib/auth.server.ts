@@ -12,7 +12,7 @@ import {
 import { ulid } from "ulid";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
-import { ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
+import { ONE_HOUR, ONE_WEEK, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
 import mailer from "~/lib/mailer.js";
 import { redis } from "~/lib/redis.js";
@@ -28,6 +28,7 @@ export const auth = betterAuth({
   secret: config.BETTER_AUTH_SECRET,
   session: {
     expiresIn: ONE_YEAR,
+    updateAge: ONE_WEEK * 4,
     cookieCache: {
       enabled: true,
       maxAge: ONE_HOUR,
@@ -112,6 +113,7 @@ export const auth = betterAuth({
     provider: "pg",
   }),
   advanced: {
+    cookiePrefix: "cw",
     database: {
       generateId: () => `user:${ulid()}`,
     },

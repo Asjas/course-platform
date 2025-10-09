@@ -1,14 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { authClient } from "~/lib/auth.client";
+import type { AuthState } from "~/lib/auth.context.ts";
 
 const formSchema = z.object({
   email: z.email().trim(),
@@ -20,12 +18,7 @@ const formSchema = z.object({
   remember: z.boolean(),
 });
 
-export default function SignInForm({
-  search,
-}: {
-  search: { redirect?: string };
-}) {
-  const [serverError, setServerError] = useState<string | null>(null);
+export default function SignInForm({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -38,25 +31,11 @@ export default function SignInForm({
       onBlur: formSchema,
     },
     onSubmit: async ({ value: { email, password, remember } }) => {
-      setServerError(null);
+      const error = await auth.signIn(email, password, remember);
 
-      const { error } = await authClient.signIn.email(
-        { email, password, rememberMe: remember },
-        {
-          onSuccess: () => {
-            toast.success("Successfully signed in!");
-
-            navigate({
-              to: search.redirect ?? "/dashboard",
-            });
-          },
-          onError: ({ error }) => {
-            setServerError(error.message);
-          },
-        },
-      );
-
-      if (error) console.error(error);
+      if (!error && auth.isAuthenticated) {
+        navigate({ to: "/dashboard" });
+      }
     },
   });
 
@@ -72,7 +51,7 @@ export default function SignInForm({
       {/* Server error */}
       <FormStatusMessage
         statusMessage={null}
-        serverError={serverError}
+        serverError={auth.serverError}
       />
 
       {/* Email Field */}

@@ -20,10 +20,10 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/terms")({
-  component: RouteComponent,
+  component: TermsComponent,
 });
 
-function RouteComponent() {
+function TermsComponent() {
   return (
     <div className="flex-none overflow-y-auto outline-none">
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

@@ -1,14 +1,21 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router";
+import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner.tsx";
+import { type AuthState } from "~/lib/auth.context";
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  auth: AuthState;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: RootRoute,
 });
 
 function RootRoute() {
+  const { auth } = Route.useRouteContext();
+
   return (
     <>
       <a
@@ -19,7 +26,7 @@ function RootRoute() {
       </a>
       <Toaster />
       <div className="grid min-h-screen grid-rows-[1fr_auto]">
-        <Header />
+        <Header auth={auth} />
         <main
           className="flex flex-col overflow-y-auto pt-20"
           id="maincontent"

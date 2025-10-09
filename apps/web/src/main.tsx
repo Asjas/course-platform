@@ -1,13 +1,19 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { AuthProvider } from "~/auth.tsx";
+import { defaultAuthState, useAuth } from "~/lib/auth.context";
+import { queryClient } from "~/lib/query.client.ts";
 import reportWebVitals from "~/reportWebVitals";
 import { routeTree } from "~/routeTree.gen";
 import "~/tailwind.css";
 
 const router = createRouter({
   routeTree,
-  context: {},
+  context: {
+    auth: defaultAuthState,
+  },
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultStructuralSharing: true,
@@ -21,10 +27,12 @@ declare module "@tanstack/react-router" {
 }
 
 export function App() {
+  const auth = useAuth();
+
   return (
     <RouterProvider
       router={router}
-      context={{}}
+      context={{ auth }}
     />
   );
 }
@@ -36,7 +44,11 @@ if (rootElement && !rootElement.innerHTML) {
 
   root.render(
     <StrictMode>
-      <App />
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <App />
+        </QueryClientProvider>
+      </AuthProvider>
     </StrictMode>,
   );
 }

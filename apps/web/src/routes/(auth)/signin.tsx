@@ -4,17 +4,17 @@ import SignInForm from "~/components/sign-in-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/signin")({
-  component: AuthPage,
+  component: SignInPage,
 });
 
-function AuthPage() {
-  const search = Route.useSearch();
+function SignInPage() {
+  const { auth } = Route.useRouteContext();
 
   return (
     <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Sign In to Your Account</CardHeader>
-        <SignInForm search={search} />
+        <SignInForm auth={auth} />
         <hr className="mt-4 border-gray-600" />
         <CardFooter>
           <AuthLinks showSignIn={false} />
