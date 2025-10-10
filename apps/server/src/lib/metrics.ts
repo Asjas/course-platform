@@ -112,7 +112,7 @@ export const nodejsProcessMemoryGauge = new prometheus.Gauge({
 });
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({
-  name: "nodejs_event_loop_utilization_percent",
+  name: "nodejs_eventloop_utilization_percent",
   help: "Node.js event loop utilization in percent",
   registers: [registry],
   collect: function eluCollect() {
@@ -123,7 +123,7 @@ export const eventLoopUtilizationGauge = new prometheus.Gauge({
 });
 
 export const eventLoopActiveGauge = new prometheus.Gauge({
-  name: "nodejs_event_loop_active_seconds",
+  name: "nodejs_eventloop_active_seconds",
   help: "Node.js event loop active time in seconds",
   registers: [registry],
   collect: function eluCollect() {
@@ -134,7 +134,7 @@ export const eventLoopActiveGauge = new prometheus.Gauge({
 });
 
 export const eventLoopIdleGauge = new prometheus.Gauge({
-  name: "nodejs_event_loop_idle_seconds",
+  name: "nodejs_eventloop_idle_seconds",
   help: "Node.js event loop idle time in seconds",
   registers: [registry],
   collect: function eluCollect() {
