@@ -51,6 +51,7 @@ export default function metricsPlugin(
     name: "nodejs_event_loop_utilization",
     help: "Node.js event loop utilization",
     maxAgeSeconds: 60,
+    percentiles: [0.5, 0.9, 0.95, 0.99],
     ageBuckets: 5,
   });
 
