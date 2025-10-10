@@ -20,6 +20,7 @@ declare module "fastify" {
     prometheus: typeof prometheus;
     prometheusRegistry: typeof registry;
   }
+
   interface FastifyRequest {
     startTime: bigint;
     normalizedRoute: string;
