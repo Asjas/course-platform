@@ -7,6 +7,7 @@ import os from "node:os";
 import perfHooks from "node:perf_hooks";
 import prometheus from "prom-client";
 import { pool } from "~/db/index.js";
+import { normalizeRoute } from "~/lib/normalizedRoute.js";
 
 declare module "fastify" {
   interface FastifyInstance {
@@ -181,44 +182,4 @@ export default function metricsPlugin(
   );
 
   done();
-}
-
-const routeBuckets = new Map<string, string>([
-  ["/api/metrics", "metrics"],
-  ["/api/auth", "auth_api"],
-  ["/api/coupons", "coupons_api"],
-  ["/api/courses", "courses_api"],
-  ["/api/orders", "orders_api"],
-  ["/api/users", "users_api"],
-  ["/api/sessions", "sessions_api"],
-  ["/api/support-tickets", "support_tickets_api"],
-  ["/api/team-licenses", "team_licenses_api"],
-  ["/api/platform-announcements", "platform_announcements_api"],
-]);
-
-// Normalize routes to avoid high cardinality
-function normalizeRoute(routeUrl: string | undefined): string {
-  if (!routeUrl) return "unknown";
-
-  // Replace route parameters
-  const normalizedRoute = routeUrl
-    .replace(/:\w+/g, "*") // Handle :param
-    .replace(/\/\d+/g, "/*"); // Handle /123
-
-  // Check for direct match (e.g., /api/users/* or /api/metrics)
-  if (routeBuckets.has(normalizedRoute)) {
-    return routeBuckets.get(normalizedRoute) || "unknown";
-  }
-
-  // Try the base route by removing trailing /* if present
-  const baseRoute = normalizedRoute.endsWith("/*")
-    ? normalizedRoute.slice(0, -2)
-    : normalizedRoute;
-
-  if (routeBuckets.has(baseRoute)) {
-    return routeBuckets.get(baseRoute) || "unknown";
-  }
-
-  // Fallback to normalized route
-  return normalizedRoute;
 }
