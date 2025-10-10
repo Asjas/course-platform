@@ -121,3 +121,25 @@ export const eventLoopUtilizationGauge = new prometheus.Gauge({
     this.set(elu.utilization * 100);
   },
 });
+
+export const eventLoopActiveGauge = new prometheus.Gauge({
+  name: "nodejs_event_loop_active_seconds",
+  help: "Node.js event loop active time in seconds",
+  registers: [registry],
+  collect: function eluCollect() {
+    const elu = eventLoopUtilization();
+
+    this.set(elu.active);
+  },
+});
+
+export const eventLoopIdleGauge = new prometheus.Gauge({
+  name: "nodejs_event_loop_idle_seconds",
+  help: "Node.js event loop idle time in seconds",
+  registers: [registry],
+  collect: function eluCollect() {
+    const elu = eventLoopUtilization();
+
+    this.set(elu.idle);
+  },
+});
