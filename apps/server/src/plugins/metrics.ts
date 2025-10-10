@@ -51,9 +51,11 @@ export default function elu(
     elu1 = elu2;
   }, 100);
 
-  fastify.addHook("onClose", () => {
+  fastify.addHook("onClose", function metricsOnClose(_instance, done) {
     clearInterval(interval1);
     clearInterval(interval2);
+
+    done();
   });
 
   done();
