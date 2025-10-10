@@ -81,6 +81,40 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
+  server-tests:
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: codewizard
+
+    strategy:
+      matrix:
+        node-version: [22.x, 24.x]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build --cache=remote:rw
+
+      - name: Run server tests
+        run: pnpm --filter @apps/server test
+
   e2e-tests:
     runs-on: ubuntu-latest
     env:
