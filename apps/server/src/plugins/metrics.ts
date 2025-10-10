@@ -22,13 +22,13 @@ export default function elu(
   });
 
   const httpRequestCount = new prometheus.Counter({
-    name: "http_request_total",
+    name: "nodejs_http_request_total",
     help: "Total number of HTTP requests",
     labelNames: ["method", "route", "status"],
   });
 
   const httpRequestDuration = new prometheus.Histogram({
-    name: "http_request_duration_seconds",
+    name: "nodejs_http_request_duration_seconds",
     help: "HTTP request duration in seconds",
     labelNames: ["method", "route", "status"],
     buckets: [0.1, 0.5, 1, 2, 5],
