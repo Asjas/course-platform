@@ -15,6 +15,7 @@ import fastifyFavicon from "fastify-favicon";
 import fastifyHealthcheck from "fastify-healthcheck";
 import fastifyPrintRoutes from "fastify-print-routes";
 import { join } from "path";
+import prometheus from "prom-client";
 import type { Config } from "~/config.js";
 import { auth } from "~/lib/auth.server.js";
 import { pinoLogger } from "~/lib/logging.js";
@@ -133,6 +134,18 @@ async function createServer(config: Config) {
       dir: join(import.meta.dirname, "routes"),
       options: { prefix: "/api" },
       dirNameRoutePrefix: false,
+    });
+
+    server.get("/metrics", async (request, reply) => {
+      try {
+        const metrics = await prometheus.register.metrics();
+
+        return metrics;
+      } catch (err) {
+        request.log.error(err, "Failed to collect metrics.");
+
+        throw reply.server.httpErrors.internalServerError();
+      }
     });
 
     server.setNotFoundHandler(
