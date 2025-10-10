@@ -1,9 +1,6 @@
 import os from "node:os";
-import perfHooks from "node:perf_hooks";
 import prometheus from "prom-client";
 import { pool } from "~/db/index.js";
-
-const { eventLoopUtilization } = perfHooks.performance;
 
 export const registry = new prometheus.Registry();
 
@@ -113,33 +110,18 @@ export const nodejsProcessMemoryGauge = new prometheus.Gauge({
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({
   name: "nodejs_eventloop_utilization_percent",
-  help: "Node.js event loop utilization in percent",
+  help: "Node.js event loop utilization in percent over last 100ms",
   registers: [registry],
-  collect: function eluCollect() {
-    const elu = eventLoopUtilization();
-
-    this.set(elu.utilization * 100);
-  },
-});
-
-export const eventLoopActiveGauge = new prometheus.Gauge({
-  name: "nodejs_eventloop_active_seconds",
-  help: "Node.js event loop active time in seconds",
-  registers: [registry],
-  collect: function eluCollect() {
-    const elu = eventLoopUtilization();
-
-    this.set(elu.active);
-  },
 });
 
 export const eventLoopIdleGauge = new prometheus.Gauge({
-  name: "nodejs_eventloop_idle_seconds",
-  help: "Node.js event loop idle time in seconds",
+  name: "nodejs_eventloop_idle_ms",
+  help: "Node.js event loop idle time in ms over last 100ms",
   registers: [registry],
-  collect: function eluCollect() {
-    const elu = eventLoopUtilization();
+});
 
-    this.set(elu.idle);
-  },
+export const eventLoopActiveGauge = new prometheus.Gauge({
+  name: "nodejs_eventloop_active_ms",
+  help: "Node.js event loop active time in ms over last 100ms",
+  registers: [registry],
 });

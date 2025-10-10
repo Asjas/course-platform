@@ -3,8 +3,12 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
+import { performance } from "node:perf_hooks";
 import prometheus from "prom-client";
 import {
+  eventLoopActiveGauge,
+  eventLoopIdleGauge,
+  eventLoopUtilizationGauge,
   httpRequestCount,
   httpRequestDuration,
   registry,
@@ -62,6 +66,26 @@ export default function metricsPlugin(
       done();
     },
   );
+
+  // Measure event loop utilization, idle and active time
+  let prevElu = performance.eventLoopUtilization();
+
+  const timer = setInterval(() => {
+    const elu = performance.eventLoopUtilization(prevElu);
+
+    eventLoopUtilizationGauge.set(elu.utilization * 100);
+    eventLoopIdleGauge.set(elu.idle);
+    eventLoopActiveGauge.set(elu.active);
+
+    // Update snapshot for next interval
+    prevElu = performance.eventLoopUtilization();
+  }, 100);
+
+  timer.unref();
+
+  fastify.addHook("onClose", () => {
+    clearInterval(timer);
+  });
 
   done();
 }
