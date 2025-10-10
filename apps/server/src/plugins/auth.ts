@@ -14,7 +14,7 @@ declare module "fastify" {
   }
 }
 
-function authPlugin(
+export default function authPlugin(
   fastify: FastifyInstance,
   _options: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
@@ -23,5 +23,3 @@ function authPlugin(
 
   done();
 }
-
-export default authPlugin;

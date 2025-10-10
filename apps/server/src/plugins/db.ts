@@ -11,7 +11,7 @@ declare module "fastify" {
   }
 }
 
-function DrizzlePlugin(
+export default function dbPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
@@ -20,5 +20,3 @@ function DrizzlePlugin(
 
   done();
 }
-
-export default DrizzlePlugin;

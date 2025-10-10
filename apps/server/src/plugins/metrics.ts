@@ -13,7 +13,7 @@ declare module "fastify" {
   }
 }
 
-export default function elu(
+export default function metricsPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
@@ -69,13 +69,6 @@ export default function elu(
     elu1 = elu2;
   }, 100);
 
-  fastify.addHook("onClose", function metricsOnClose(_instance, done) {
-    clearInterval(interval1);
-    clearInterval(interval2);
-
-    done();
-  });
-
   fastify.addHook(
     "onRequest",
     function metricsOnRequest(request, _reply, done) {
@@ -101,6 +94,13 @@ export default function elu(
       done(null, payload);
     },
   );
+
+  fastify.addHook("onClose", function metricsOnClose(_instance, done) {
+    clearInterval(interval1);
+    clearInterval(interval2);
+
+    done();
+  });
 
   done();
 }

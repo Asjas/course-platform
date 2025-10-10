@@ -5,7 +5,7 @@ import type {
 } from "fastify";
 import type { Config } from "~/config.js";
 
-function timingHeader(
+export default function timingHeaderPlugin(
   fastify: FastifyInstance,
   opts: FastifyPluginOptions & { config: Config },
   done: HookHandlerDoneFunction,
@@ -21,5 +21,3 @@ function timingHeader(
 
   done();
 }
-
-export default timingHeader;

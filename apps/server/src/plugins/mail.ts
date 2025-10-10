@@ -11,7 +11,7 @@ declare module "fastify" {
   }
 }
 
-function MailPlugin(
+export default function mailPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
@@ -20,5 +20,3 @@ function MailPlugin(
 
   done();
 }
-
-export default MailPlugin;
