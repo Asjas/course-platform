@@ -11,7 +11,7 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY . .
-RUN npm i -g pnpm@10.18.1
+RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
 RUN npm run drizzle:migrate:prod
