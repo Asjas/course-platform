@@ -11,14 +11,18 @@ const routeBuckets = new Map<string, string>([
   ["/api/platform-announcements", "platform_announcements_api"],
 ]);
 
-// Normalize routes to avoid high cardinality
+/**
+ * Normalize routes to avoid high cardinality in metrics
+ * @param routeUrl - The route URL to normalize
+ * @returns A normalized route bucket name or the normalized route path
+ */
 export function normalizeRoute(routeUrl: string | undefined): string {
   if (!routeUrl) return "unknown_api";
 
-  // Replace route parameters
+  // Replace route parameters with wildcards
   const normalizedRoute = routeUrl
-    .replace(/:\w+/g, "*") // Handle :param
-    .replace(/\/\d+/g, "/*"); // Handle /123
+    .replace(/[a-zA-Z]+:[^/]+/g, "*") // type:random_string
+    .replace(/:\w+/g, "*"); // :param (e.g., :id)
 
   // Check for direct match (e.g., /api/users/* or /api/metrics)
   if (routeBuckets.has(normalizedRoute)) {
@@ -32,6 +36,16 @@ export function normalizeRoute(routeUrl: string | undefined): string {
 
   if (routeBuckets.has(baseRoute)) {
     return routeBuckets.get(baseRoute) || "unknown_api";
+  }
+
+  // Check if the normalized route starts with any known base route
+  for (const [key, value] of routeBuckets.entries()) {
+    if (
+      normalizedRoute.startsWith(key + "/") ||
+      normalizedRoute.startsWith(key + "/*")
+    ) {
+      return value;
+    }
   }
 
   // Fallback to normalized route
