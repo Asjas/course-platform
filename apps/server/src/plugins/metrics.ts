@@ -22,6 +22,7 @@ declare module "fastify" {
   }
   interface FastifyRequest {
     startTime: bigint;
+    normalizedRoute: string;
   }
 }
 
@@ -33,10 +34,14 @@ export default function metricsPlugin(
   fastify.decorate("prometheus", prometheus);
   fastify.decorate("prometheusRegistry", registry);
 
+  fastify.decorateRequest("startTime", 0n);
+  fastify.decorateRequest("normalizedRoute", "");
+
   fastify.addHook(
     "onRequest",
     function metricsOnRequest(request, _reply, done) {
       request.startTime = process.hrtime.bigint();
+      request.normalizedRoute = normalizeRoute(request.routeOptions.url);
 
       done();
     },
@@ -51,14 +56,33 @@ export default function metricsPlugin(
       httpRequestCount.inc({
         method: request.method,
         status: reply.statusCode,
-        route: normalizeRoute(request.routeOptions.url),
+        route: request.normalizedRoute,
       });
 
       httpRequestDuration.observe(
         {
           method: request.method,
           status: reply.statusCode,
-          route: normalizeRoute(request.routeOptions.url),
+          route: request.normalizedRoute,
+        },
+        duration,
+      );
+
+      done();
+    },
+  );
+
+  fastify.addHook(
+    "onError",
+    function metricsOnError(request, reply, _error, done) {
+      const duration =
+        Number(process.hrtime.bigint() - request.startTime) / 1e9;
+
+      httpRequestDuration.observe(
+        {
+          method: request.method,
+          status: reply.statusCode,
+          route: request.normalizedRoute,
         },
         duration,
       );
