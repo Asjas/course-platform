@@ -45,7 +45,9 @@ export default function elu(
 
   const interval2 = setInterval(() => {
     const elu2 = eventLoopUtilization();
+
     eluUsageMetric.observe(eventLoopUtilization(elu2, elu1).utilization);
+
     elu1 = elu2;
   }, 100);
 
