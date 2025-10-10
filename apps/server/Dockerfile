@@ -11,7 +11,7 @@ RUN mkdir /app
 WORKDIR /app
 
 COPY . .
-RUN npm i -g pnpm@9.15.9
+RUN npm i -g pnpm@10.18.1
 RUN pnpm i
 RUN pnpm run build
 RUN npm run drizzle:migrate:prod
@@ -21,4 +21,4 @@ RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 ENV NODE_ENV=production
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=256", "--max-old-space-size=2048", "dist/index.js"]
+CMD ["node", "--max-semi-space-size=256", "--max-old-space-size=15400", "dist/index.js"]
