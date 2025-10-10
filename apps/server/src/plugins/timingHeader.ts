@@ -10,11 +10,14 @@ function timingHeader(
   opts: FastifyPluginOptions & { config: Config },
   done: HookHandlerDoneFunction,
 ) {
-  fastify.addHook("onSend", (_request, reply, _payload, done) => {
-    reply.header("Timing-Allow-Origin", opts.config.ORIGIN);
+  fastify.addHook(
+    "onSend",
+    function timingHeaderOnSend(_request, reply, _payload, done) {
+      reply.header("Timing-Allow-Origin", opts.config.ORIGIN);
 
-    done();
-  });
+      done();
+    },
+  );
 
   done();
 }
