@@ -7,7 +7,6 @@ import fastifyMultipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyRedis from "@fastify/redis";
 import fastifySensible from "@fastify/sensible";
-import { fastifyTRPCPlugin } from "@trpc/server/adapters/fastify";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import { FastifyAllowPlugin } from "fastify-allow";
 import fastifyBetterAuth from "fastify-better-auth";
@@ -20,7 +19,6 @@ import type { Config } from "~/config.js";
 import { auth } from "~/lib/auth.server.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
-import { appRouter } from "~/router/index.js";
 
 /**
  * Creates and configures the Fastify server instance.
@@ -125,42 +123,61 @@ async function createServer(config: Config) {
       encapsulate: false,
     });
 
-    await server.register(fastifyTRPCPlugin, {
-      prefix: "/trpc",
-      trpcOptions: { router: appRouter },
-    });
-
     await server.register(fastifyAutoload, {
       dir: join(import.meta.dirname, "routes"),
       options: { prefix: "/api" },
       dirNameRoutePrefix: false,
     });
 
-    server.get("/metrics", async (request, reply) => {
-      try {
-        const metrics = await prometheus.register.metrics();
+    server.get("/metrics", async () => {
+      const metrics = await prometheus.register.metrics();
 
-        return metrics;
-      } catch (err) {
-        request.log.error(err, "Failed to collect metrics.");
-
-        throw reply.server.httpErrors.internalServerError();
-      }
+      return metrics;
     });
-
-    server.setNotFoundHandler(
-      {
-        preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
-      },
-      function (_request, reply) {
-        throw reply.server.httpErrors.notFound();
-      },
-    );
   } catch (err) {
     server.log.error(err, "Failed to register plugins.");
 
     throw err;
   }
+
+  server.setNotFoundHandler(
+    {
+      preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
+    },
+    function (_request, reply) {
+      throw reply.server.httpErrors.notFound("Resource not found.");
+    },
+  );
+
+  server.setErrorHandler(function (error, request, reply) {
+    request.log.error({ err: error, reqId: request.id }, "request errored out");
+
+    if (reply.statusCode >= 500) {
+      reply.send(
+        request.server.httpErrors.internalServerError(
+          "Something went wrong on the server.",
+        ),
+      );
+    } else if (reply.statusCode === 429) {
+      reply.send(
+        request.server.httpErrors.tooManyRequests(
+          "Too many requests, please try again later.",
+        ),
+      );
+    } else if (reply.statusCode === 401) {
+      reply.send(
+        request.server.httpErrors.unauthorized("Unauthorized access."),
+      );
+    } else if (reply.statusCode === 403) {
+      reply.send(request.server.httpErrors.forbidden("Access forbidden."));
+    } else if (reply.statusCode === 404) {
+      reply.send(request.server.httpErrors.notFound("Resource not found."));
+    } else {
+      reply.send(
+        request.server.httpErrors.badRequest(error.message || "Bad request."),
+      );
+    }
+  });
 
   return server;
 }
