@@ -149,36 +149,6 @@ async function createServer(config: Config) {
     },
   );
 
-  server.setErrorHandler(function (error, request, reply) {
-    request.log.error({ err: error, reqId: request.id }, "request errored out");
-
-    if (reply.statusCode >= 500) {
-      reply.send(
-        request.server.httpErrors.internalServerError(
-          "Something went wrong on the server.",
-        ),
-      );
-    } else if (reply.statusCode === 429) {
-      reply.send(
-        request.server.httpErrors.tooManyRequests(
-          "Too many requests, please try again later.",
-        ),
-      );
-    } else if (reply.statusCode === 401) {
-      reply.send(
-        request.server.httpErrors.unauthorized("Unauthorized access."),
-      );
-    } else if (reply.statusCode === 403) {
-      reply.send(request.server.httpErrors.forbidden("Access forbidden."));
-    } else if (reply.statusCode === 404) {
-      reply.send(request.server.httpErrors.notFound("Resource not found."));
-    } else {
-      reply.send(
-        request.server.httpErrors.badRequest(error.message || "Bad request."),
-      );
-    }
-  });
-
   return server;
 }
 
