@@ -53,7 +53,7 @@ export const httpRequestDuration = new prometheus.Histogram({
 });
 
 export const databaseConnectionsTotalGauge = new prometheus.Gauge({
-  name: "database_connections_total",
+  name: "nodejs_database_connections_total",
   help: "Total number of database connections in the pool",
   registers: [registry],
   collect: function () {
@@ -62,7 +62,7 @@ export const databaseConnectionsTotalGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsIdleGauge = new prometheus.Gauge({
-  name: "database_connections_idle",
+  name: "nodejs_database_connections_idle",
   help: "Number of idle database connections in the pool",
   registers: [registry],
   collect: function () {
@@ -71,7 +71,7 @@ export const databaseConnectionsIdleGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsWaitingGauge = new prometheus.Gauge({
-  name: "database_connections_waiting",
+  name: "nodejs_database_connections_waiting",
   help: "Number of queries waiting for a database connection",
   registers: [registry],
   collect: function () {
@@ -80,7 +80,7 @@ export const databaseConnectionsWaitingGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsMaxGauge = new prometheus.Gauge({
-  name: "database_connections_max",
+  name: "nodejs_database_connections_max",
   help: "Maximum number of database connections allowed in the pool",
   registers: [registry],
   collect: function () {
@@ -89,7 +89,7 @@ export const databaseConnectionsMaxGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsActiveGauge = new prometheus.Gauge({
-  name: "database_connections_active",
+  name: "nodejs_database_connections_active",
   help: "Number of active database connections in the pool",
   registers: [registry],
   collect: function () {
