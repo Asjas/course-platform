@@ -12,6 +12,8 @@ const pool = new Pool({
 
 await pool.connect();
 
+export { pool };
+
 export const db = drizzle({
   schema: {
     mySchema,
