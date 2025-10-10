@@ -13,12 +13,13 @@ declare module "fastify" {
   }
 }
 
+const { eventLoopUtilization } = perfHooks.performance;
+
 export default function metricsPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
   done: HookHandlerDoneFunction,
 ) {
-  const { eventLoopUtilization } = perfHooks.performance;
   const collectDefaultMetrics = prometheus.collectDefaultMetrics;
   let elu1 = eventLoopUtilization();
 
