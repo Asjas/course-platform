@@ -80,6 +80,7 @@ export default function elu(
     "onRequest",
     function metricsOnRequest(request, _reply, done) {
       request.startTime = process.hrtime(); // Store start time on request
+
       done();
     },
   );
