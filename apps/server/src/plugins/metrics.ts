@@ -7,6 +7,12 @@ import perfHooks from "perf_hooks";
 import prometheus from "prom-client";
 import { setInterval } from "timers";
 
+declare module "fastify" {
+  interface FastifyRequest {
+    startTime?: [number, number];
+  }
+}
+
 export default function elu(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -45,7 +51,6 @@ export default function elu(
     help: "Node.js event loop utilization",
     maxAgeSeconds: 60,
     ageBuckets: 5,
-    labelNames: ["idle", "active", "utilization"],
   });
 
   const interval1 = setInterval(() => {
@@ -72,6 +77,14 @@ export default function elu(
   });
 
   fastify.addHook(
+    "onRequest",
+    function metricsOnRequest(request, _reply, done) {
+      request.startTime = process.hrtime(); // Store start time on request
+      done();
+    },
+  );
+
+  fastify.addHook(
     "onSend",
     function metricsOnSend(request, reply, payload, done) {
       const route = request.routeOptions.url || request.raw.url || "unknown";
@@ -79,17 +92,12 @@ export default function elu(
       const status = reply.statusCode.toString();
 
       httpRequestCount.inc({ method, route, status });
-      const start = process.hrtime();
 
-      reply.hijack(); // Prevent automatic sending
-
-      const diff = process.hrtime(start);
+      const diff = process.hrtime(request.startTime);
       const durationInSeconds = diff[0] + diff[1] / 1e9;
       httpRequestDuration.observe({ method, route, status }, durationInSeconds);
 
-      reply.send(payload); // Manually send the response
-
-      done();
+      done(null, payload);
     },
   );
 
