@@ -18,7 +18,7 @@ export default function elu(
 
   collectDefaultMetrics({
     gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
-    prefix: "nodejs_",
+    eventLoopMonitoringPrecision: 10,
   });
 
   const memoryUsageMetric = new prometheus.Gauge({
