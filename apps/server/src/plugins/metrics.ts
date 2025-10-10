@@ -108,7 +108,7 @@ export default function metricsPlugin(
 
   timer.unref();
 
-  fastify.addHook("onClose", () => {
+  fastify.addHook("onClose", function metricsOnClose() {
     clearInterval(timer);
   });
 
