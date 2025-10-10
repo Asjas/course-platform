@@ -21,6 +21,19 @@ export default function elu(
     eventLoopMonitoringPrecision: 10,
   });
 
+  const httpRequestCount = new prometheus.Counter({
+    name: "http_request_total",
+    help: "Total number of HTTP requests",
+    labelNames: ["method", "route", "status"],
+  });
+
+  const httpRequestDuration = new prometheus.Histogram({
+    name: "http_request_duration_seconds",
+    help: "HTTP request duration in seconds",
+    labelNames: ["method", "route", "status"],
+    buckets: [0.1, 0.5, 1, 2, 5],
+  });
+
   const memoryUsageMetric = new prometheus.Gauge({
     name: "nodejs_process_memory_bytes",
     help: "Node.js process memory usage in bytes",
@@ -57,6 +70,28 @@ export default function elu(
 
     done();
   });
+
+  fastify.addHook(
+    "onSend",
+    function metricsOnSend(request, reply, payload, done) {
+      const route = request.routeOptions.url || request.raw.url || "unknown";
+      const method = request.method;
+      const status = reply.statusCode.toString();
+
+      httpRequestCount.inc({ method, route, status });
+      const start = process.hrtime();
+
+      reply.hijack(); // Prevent automatic sending
+
+      const diff = process.hrtime(start);
+      const durationInSeconds = diff[0] + diff[1] / 1e9;
+      httpRequestDuration.observe({ method, route, status }, durationInSeconds);
+
+      reply.send(payload); // Manually send the response
+
+      done();
+    },
+  );
 
   done();
 }
