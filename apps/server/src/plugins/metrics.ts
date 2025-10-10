@@ -104,9 +104,7 @@ export default function metricsPlugin(
 
     // Update snapshot for next interval
     prevElu = performance.eventLoopUtilization();
-  }, 100);
-
-  timer.unref();
+  }, 100).unref();
 
   fastify.addHook("onClose", function metricsOnClose() {
     clearInterval(timer);
