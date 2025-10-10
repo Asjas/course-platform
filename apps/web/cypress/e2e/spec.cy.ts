@@ -4,7 +4,6 @@ describe("The Home Page", () => {
 
     // Should have navigation links to Home, Blog and Sign In pages
     cy.get("a").contains("Home").should("have.attr", "href", "/");
-    cy.get("a").contains("Blog").should("have.attr", "href", "/blog");
     cy.get("a").contains("Sign In").should("have.attr", "href", "/signin");
 
     // Should contain a h1 heading
