@@ -120,6 +120,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: codewizard
+      VITE_BETTER_AUTH_URL: ${{ secrets.VITE_BETTER_AUTH_URL }}
 
     strategy:
       matrix:
