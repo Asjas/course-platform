@@ -3,9 +3,9 @@ import type {
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import perfHooks from "perf_hooks";
+import perfHooks from "node:perf_hooks";
+import { setInterval } from "node:timers";
 import prometheus from "prom-client";
-import { setInterval } from "timers";
 
 declare module "fastify" {
   interface FastifyRequest {
