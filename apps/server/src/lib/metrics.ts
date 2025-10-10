@@ -1,6 +1,7 @@
 import os from "node:os";
 import prometheus from "prom-client";
 import { pool } from "~/db/index.js";
+import { pinoLogger } from "~/lib/logging.js";
 
 export const registry = new prometheus.Registry();
 
@@ -12,7 +13,6 @@ registry.setDefaultLabels({
 prometheus.collectDefaultMetrics({
   register: registry,
   gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
-  eventLoopMonitoringPrecision: 10,
 });
 
 export const httpRequestCount = new prometheus.Counter({
@@ -54,7 +54,13 @@ export const databaseConnectionsTotalGauge = new prometheus.Gauge({
   help: "Total number of database connections in the pool",
   registers: [registry],
   collect: function () {
-    this.set(pool.totalCount);
+    try {
+      this.set(pool.totalCount);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
   },
 });
 
@@ -63,7 +69,13 @@ export const databaseConnectionsIdleGauge = new prometheus.Gauge({
   help: "Number of idle database connections in the pool",
   registers: [registry],
   collect: function () {
-    this.set(pool.idleCount);
+    try {
+      this.set(pool.idleCount);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
   },
 });
 
@@ -72,7 +84,13 @@ export const databaseConnectionsWaitingGauge = new prometheus.Gauge({
   help: "Number of queries waiting for a database connection",
   registers: [registry],
   collect: function () {
-    this.set(pool.waitingCount);
+    try {
+      this.set(pool.waitingCount);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
   },
 });
 
@@ -81,7 +99,13 @@ export const databaseConnectionsMaxGauge = new prometheus.Gauge({
   help: "Maximum number of database connections allowed in the pool",
   registers: [registry],
   collect: function () {
-    this.set(pool.options.max);
+    try {
+      this.set(pool.options.max);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
   },
 });
 
@@ -90,22 +114,21 @@ export const databaseConnectionsActiveGauge = new prometheus.Gauge({
   help: "Number of active database connections in the pool",
   registers: [registry],
   collect: function () {
-    this.set(pool.totalCount - pool.idleCount);
+    try {
+      this.set(pool.totalCount - pool.idleCount);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
   },
 });
 
-export const nodejsProcessMemoryGauge = new prometheus.Gauge({
+export const memoryUsageGauge = new prometheus.Gauge({
   name: "nodejs_process_memory_bytes",
   help: "Node.js process memory usage in bytes",
   labelNames: ["type"],
   registers: [registry],
-  collect: function memoryCollect() {
-    const memoryUsage = process.memoryUsage();
-
-    for (const [key, value] of Object.entries(memoryUsage)) {
-      this.set({ type: key }, value);
-    }
-  },
 });
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({

@@ -11,6 +11,7 @@ import {
   eventLoopUtilizationGauge,
   httpRequestCount,
   httpRequestDuration,
+  memoryUsageGauge,
   registry,
 } from "~/lib/metrics.js";
 import { normalizeRoute } from "~/lib/normalized-route.js";
@@ -49,25 +50,31 @@ export default function metricsPlugin(
   );
 
   fastify.addHook(
-    "onSend",
-    function metricsOnSend(request, reply, _payload, done) {
-      const duration =
-        Number(process.hrtime.bigint() - request.startTime) / 1e9;
+    "onResponse",
+    function metricsOnResponse(request, reply, done) {
+      try {
+        const duration =
+          Number(process.hrtime.bigint() - request.startTime) / 1e9;
 
-      httpRequestCount.inc({
-        method: request.method,
-        status: reply.statusCode,
-        route: request.normalizedRoute,
-      });
-
-      httpRequestDuration.observe(
-        {
+        httpRequestCount.inc({
           method: request.method,
           status: reply.statusCode,
           route: request.normalizedRoute,
-        },
-        duration,
-      );
+        });
+
+        httpRequestDuration.observe(
+          {
+            method: request.method,
+            status: reply.statusCode,
+            route: request.normalizedRoute,
+          },
+          duration,
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          fastify.log.error(error.message);
+        }
+      }
 
       done();
     },
@@ -75,18 +82,26 @@ export default function metricsPlugin(
 
   fastify.addHook(
     "onError",
-    function metricsOnError(request, reply, _error, done) {
-      const duration =
-        Number(process.hrtime.bigint() - request.startTime) / 1e9;
+    function metricsOnError(request, _reply, error, done) {
+      try {
+        const duration =
+          Number(process.hrtime.bigint() - request.startTime) / 1e9;
 
-      httpRequestDuration.observe(
-        {
-          method: request.method,
-          status: reply.statusCode,
-          route: request.normalizedRoute,
-        },
-        duration,
-      );
+        httpRequestDuration.observe(
+          {
+            method: request.method,
+            status: error.statusCode || 500,
+            route:
+              request.normalizedRoute ||
+              normalizeRoute(request.routeOptions.url),
+          },
+          duration,
+        );
+      } catch (error) {
+        if (error instanceof Error) {
+          fastify.log.error(error.message);
+        }
+      }
 
       done();
     },
@@ -105,6 +120,16 @@ export default function metricsPlugin(
     // Update snapshot for next interval
     prevElu = performance.eventLoopUtilization();
   }, 100).unref();
+
+  setInterval(() => {
+    const mem = process.memoryUsage();
+
+    memoryUsageGauge.set({ type: "rss" }, mem.rss);
+    memoryUsageGauge.set({ type: "heap_total" }, mem.heapTotal);
+    memoryUsageGauge.set({ type: "heap_used" }, mem.heapUsed);
+    memoryUsageGauge.set({ type: "array_buffers" }, mem.arrayBuffers);
+    memoryUsageGauge.set({ type: "external" }, mem.external);
+  }, 1000).unref();
 
   fastify.addHook("onClose", function metricsOnClose() {
     clearInterval(timer);
