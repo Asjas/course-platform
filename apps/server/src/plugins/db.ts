@@ -18,5 +18,9 @@ export default function dbPlugin(
 ) {
   fastify.decorate("db", db);
 
+  fastify.addHook("onClose", async function dbOnClose() {
+    await db.$client.end();
+  });
+
   done();
 }
