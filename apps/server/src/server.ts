@@ -3,6 +3,7 @@ import Fastify, { type FastifyServerOptions } from "fastify";
 import fastifyPrintRoutes from "fastify-print-routes";
 import {
   type ZodTypeProvider,
+  hasZodFastifySchemaValidationErrors,
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
@@ -49,6 +50,25 @@ async function createServer(config: Config) {
     dir: join(import.meta.dirname, "routes"),
     options: { prefix: "/api" },
     dirNameRoutePrefix: false,
+  });
+
+  server.setErrorHandler((error, request, reply) => {
+    if (hasZodFastifySchemaValidationErrors(error)) {
+      reply.code(400).send({
+        error: "Validation Error",
+        message: "Response doesn't match the schema",
+        statusCode: 400,
+        details: {
+          issues: error.validation,
+          method: request.method,
+          url: request.url,
+        },
+      });
+
+      return;
+    }
+
+    reply.code(500).send({ error: "Internal Server Error" });
   });
 
   server.setNotFoundHandler(
