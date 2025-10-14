@@ -1,16 +1,5 @@
-import fastifyEtag from "@fastify/etag";
-import type {
-  FastifyInstance,
-  FastifyPluginOptions,
-  HookHandlerDoneFunction,
-} from "fastify";
+import fastifyEtag, { type FastifyEtagOptions } from "@fastify/etag";
 
-export default function etagPlugin(
-  fastify: FastifyInstance,
-  _opts: FastifyPluginOptions,
-  done: HookHandlerDoneFunction,
-) {
-  fastify.register(fastifyEtag);
+export const autoConfig: FastifyEtagOptions = {};
 
-  done();
-}
+export default fastifyEtag;
