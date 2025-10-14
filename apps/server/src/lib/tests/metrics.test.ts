@@ -204,17 +204,19 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP database_connections_total Total number of database connections in the pool",
+          "# HELP nodejs_database_connections_total Total number of database connections in the pool",
         );
         expect(metricsString).toContain(
-          "# TYPE database_connections_total gauge",
+          "# TYPE nodejs_database_connections_total gauge",
         );
       });
 
       test("should collect pool.totalCount value", async () => {
         const metricsString = await metrics.registry.metrics();
 
-        expect(metricsString).toMatch(/database_connections_total\{[^}]+\} 10/);
+        expect(metricsString).toMatch(
+          /nodejs_database_connections_total\{[^}]+\} 10/,
+        );
       });
     });
 
@@ -229,17 +231,19 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP database_connections_idle Number of idle database connections in the pool",
+          "# HELP nodejs_database_connections_idle Number of idle database connections in the pool",
         );
         expect(metricsString).toContain(
-          "# TYPE database_connections_idle gauge",
+          "# TYPE nodejs_database_connections_idle gauge",
         );
       });
 
       test("should collect pool.idleCount value", async () => {
         const metricsString = await metrics.registry.metrics();
 
-        expect(metricsString).toMatch(/database_connections_idle\{[^}]+\} 5/);
+        expect(metricsString).toMatch(
+          /nodejs_database_connections_idle\{[^}]+\} 5/,
+        );
       });
     });
 
@@ -254,10 +258,10 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP database_connections_waiting Number of queries waiting for a database connection",
+          "# HELP nodejs_database_connections_waiting Number of queries waiting for a database connection",
         );
         expect(metricsString).toContain(
-          "# TYPE database_connections_waiting gauge",
+          "# TYPE nodejs_database_connections_waiting gauge",
         );
       });
 
@@ -265,7 +269,7 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toMatch(
-          /database_connections_waiting\{[^}]+\} 2/,
+          /nodejs_database_connections_waiting\{[^}]+\} 2/,
         );
       });
     });
@@ -281,17 +285,19 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP database_connections_max Maximum number of database connections allowed in the pool",
+          "# HELP nodejs_database_connections_max Maximum number of database connections allowed in the pool",
         );
         expect(metricsString).toContain(
-          "# TYPE database_connections_max gauge",
+          "# TYPE nodejs_database_connections_max gauge",
         );
       });
 
       test("should collect pool.options.max value", async () => {
         const metricsString = await metrics.registry.metrics();
 
-        expect(metricsString).toMatch(/database_connections_max\{[^}]+\} 20/);
+        expect(metricsString).toMatch(
+          /nodejs_database_connections_max\{[^}]+\} 20/,
+        );
       });
     });
 
@@ -306,10 +312,10 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP database_connections_active Number of active database connections in the pool",
+          "# HELP nodejs_database_connections_active Number of active database connections in the pool",
         );
         expect(metricsString).toContain(
-          "# TYPE database_connections_active gauge",
+          "# TYPE nodejs_database_connections_active gauge",
         );
       });
 
@@ -318,17 +324,17 @@ describe("Metrics Module", () => {
 
         // Active = totalCount (10) - idleCount (5) = 5
         // The metric includes labels, so we need to match with a regex
-        expect(metricsString).toMatch(/database_connections_active\{[^}]+\} 5/);
+        expect(metricsString).toMatch(
+          /nodejs_database_connections_active\{[^}]+\} 5/,
+        );
       });
     });
   });
 
   describe("Node.js Process Metrics", () => {
-    describe("nodejsProcessMemoryGauge", () => {
+    describe("memoryUsageGauge", () => {
       test("should be a Gauge instance", () => {
-        expect(metrics.nodejsProcessMemoryGauge).toBeInstanceOf(
-          prometheus.Gauge,
-        );
+        expect(metrics.memoryUsageGauge).toBeInstanceOf(prometheus.Gauge);
       });
 
       test("should have correct name and help text in output", async () => {
@@ -377,23 +383,21 @@ describe("Metrics Module", () => {
         const metricsString = await metrics.registry.metrics();
 
         expect(metricsString).toContain(
-          "# HELP nodejs_event_loop_utilization_percent Node.js event loop utilization in percent",
+          "# HELP nodejs_eventloop_utilization_percent Node.js event loop utilization in percent over last 100ms",
         );
         expect(metricsString).toContain(
-          "# TYPE nodejs_event_loop_utilization_percent gauge",
+          "# TYPE nodejs_eventloop_utilization_percent gauge",
         );
       });
 
       test("should collect event loop utilization", async () => {
         const metricsString = await metrics.registry.metrics();
 
-        expect(metricsString).toContain(
-          "nodejs_event_loop_utilization_percent",
-        );
+        expect(metricsString).toContain("nodejs_eventloop_utilization_percent");
         // Value should be a number (percentage between 0-100)
         // The metric includes labels, so we need to account for them
         expect(metricsString).toMatch(
-          /nodejs_event_loop_utilization_percent\{[^}]+\} \d+\.?\d*/,
+          /nodejs_eventloop_utilization_percent\{[^}]+\} \d+\.?\d*/,
         );
       });
     });
@@ -419,9 +423,9 @@ describe("Metrics Module", () => {
       expect(metricsString).toContain("# TYPE");
       expect(metricsString).toContain("nodejs_http_request_total");
       expect(metricsString).toContain("nodejs_http_request_duration_seconds");
-      expect(metricsString).toContain("database_connections_total");
+      expect(metricsString).toContain("nodejs_database_connections_total");
       expect(metricsString).toContain("nodejs_process_memory_bytes");
-      expect(metricsString).toContain("nodejs_event_loop_utilization_percent");
+      expect(metricsString).toContain("nodejs_eventloop_utilization_percent");
     });
 
     test("should include default labels in exported metrics", async () => {
@@ -453,15 +457,19 @@ describe("Metrics Module", () => {
       const metricsString = await metrics.registry.metrics();
 
       expect(metricsString).toContain(
-        "# TYPE database_connections_total gauge",
+        "# TYPE nodejs_database_connections_total gauge",
       );
-      expect(metricsString).toContain("# TYPE database_connections_idle gauge");
       expect(metricsString).toContain(
-        "# TYPE database_connections_waiting gauge",
+        "# TYPE nodejs_database_connections_idle gauge",
       );
-      expect(metricsString).toContain("# TYPE database_connections_max gauge");
       expect(metricsString).toContain(
-        "# TYPE database_connections_active gauge",
+        "# TYPE nodejs_database_connections_waiting gauge",
+      );
+      expect(metricsString).toContain(
+        "# TYPE nodejs_database_connections_max gauge",
+      );
+      expect(metricsString).toContain(
+        "# TYPE nodejs_database_connections_active gauge",
       );
     });
   });
@@ -474,13 +482,13 @@ describe("Metrics Module", () => {
 
       expect(metricNames).toContain("nodejs_http_request_total");
       expect(metricNames).toContain("nodejs_http_request_duration_seconds");
-      expect(metricNames).toContain("database_connections_total");
-      expect(metricNames).toContain("database_connections_idle");
-      expect(metricNames).toContain("database_connections_waiting");
-      expect(metricNames).toContain("database_connections_max");
-      expect(metricNames).toContain("database_connections_active");
+      expect(metricNames).toContain("nodejs_database_connections_total");
+      expect(metricNames).toContain("nodejs_database_connections_idle");
+      expect(metricNames).toContain("nodejs_database_connections_waiting");
+      expect(metricNames).toContain("nodejs_database_connections_max");
+      expect(metricNames).toContain("nodejs_database_connections_active");
       expect(metricNames).toContain("nodejs_process_memory_bytes");
-      expect(metricNames).toContain("nodejs_event_loop_utilization_percent");
+      expect(metricNames).toContain("nodejs_eventloop_utilization_percent");
     });
   });
 });
