@@ -19,22 +19,27 @@ export async function deleteUserHandler(
     const user = await getUserById(userId);
 
     if (!user) {
-      log.warn(`User with id ${userId} not found`);
-      return reply.status(404).send({ error: "User not found" });
+      log.debug(`User with id ${userId} not found`);
+      return reply.server.httpErrors.notFound({ error: "User not found" });
     }
 
     const deletedUser = await deleteUserById(userId);
 
     if (!deletedUser) {
-      log.error(`Failed to delete user with id ${userId}`);
-      return reply.status(500).send({ error: "Failed to delete user" });
+      log.debug(`Failed to delete user with id ${userId}`);
+      return reply.server.httpErrors.internalServerError();
     }
 
-    log.info(`User with id ${userId} deleted successfully`);
+    log.debug(`User with id ${userId} deleted successfully`);
 
-    return reply.status(204).send();
+    reply.statusCode = 204;
+
+    return;
   } catch (err) {
-    log.error(err, `Error deleting user with id ${userId}`);
-    return reply.status(500).send({ error: "Internal Server Error" });
+    if (err instanceof Error) {
+      log.error(err, `Error deleting user with id ${userId}`);
+    }
+
+    return reply.server.httpErrors.internalServerError();
   }
 }

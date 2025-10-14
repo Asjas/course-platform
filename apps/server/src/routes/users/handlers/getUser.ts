@@ -1,10 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { getUserById } from "~/db/queries/index.js";
-import {
-  CACHE_PRIVATE_REVALIDATE,
-  ONE_HOUR,
-  THIRTY_MINUTES,
-} from "~/lib/constants.js";
 
 export async function getUserHandler(
   request: FastifyRequest<{ Params: { userId: string } }>,
@@ -15,30 +10,29 @@ export async function getUserHandler(
     handler: "routes:users:single",
   });
 
-  // TODO: Check if the user has permission
-
   const { userId } = request.params;
 
   try {
     const user = await getUserById(userId);
 
     if (!user) {
-      log.warn(`User with id ${userId} not found`);
-      return reply.status(404).send({ error: "User not found" });
+      log.debug(`User with id ${userId} not found`);
+      return reply.server.httpErrors.notFound({ error: "User not found" });
     }
 
-    reply.headers(
-      CACHE_PRIVATE_REVALIDATE({
-        maxAge: THIRTY_MINUTES,
-        staleIfError: ONE_HOUR,
-      }),
-    );
+    reply.cacheControl("private");
+    reply.cacheControl("max-age", "5m");
+    reply.stale("if-error", "1h");
+    reply.vary("Authorization");
 
-    log.info(`Fetched user with id ${userId} successfully`);
+    log.debug(`Fetched user with id ${userId} successfully`);
 
     return user;
   } catch (err) {
-    log.error(err, `Failed to fetch user with id ${userId}`);
-    return reply.status(500).send({ error: "Internal server error" });
+    if (err instanceof Error) {
+      log.error(err, `Failed to fetch user with id ${userId}`);
+    }
+
+    return reply.server.httpErrors.internalServerError();
   }
 }

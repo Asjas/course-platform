@@ -27,7 +27,10 @@ export async function getUsersHandler(
 
     return users;
   } catch (error) {
-    log.error(error, "Failed to fetch all users");
+    if (error instanceof Error) {
+      log.error(error, "Failed to fetch all users");
+    }
+
     return reply.server.httpErrors.internalServerError();
   }
 }
