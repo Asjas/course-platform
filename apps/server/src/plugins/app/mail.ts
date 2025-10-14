@@ -5,12 +5,6 @@ import type {
 } from "fastify";
 import mailer from "~/lib/mailer.js";
 
-declare module "fastify" {
-  interface FastifyInstance {
-    mailer: typeof mailer;
-  }
-}
-
 export default function mailPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,

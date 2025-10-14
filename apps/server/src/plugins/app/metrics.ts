@@ -16,18 +16,6 @@ import {
 } from "~/lib/metrics.js";
 import { normalizeRoute } from "~/lib/normalized-route.js";
 
-declare module "fastify" {
-  interface FastifyInstance {
-    prometheus: typeof prometheus;
-    prometheusRegistry: typeof registry;
-  }
-
-  interface FastifyRequest {
-    startTime: bigint;
-    normalizedRoute: string;
-  }
-}
-
 export default function metricsPlugin(
   fastify: FastifyInstance,
   _opts: FastifyPluginOptions,
@@ -38,6 +26,14 @@ export default function metricsPlugin(
 
   fastify.decorateRequest("startTime", 0n);
   fastify.decorateRequest("normalizedRoute", "");
+
+  fastify.get("/metrics", async (_request, reply) => {
+    const metrics = await reply.server.prometheusRegistry.metrics();
+
+    reply.header("Content-Type", reply.server.prometheusRegistry.contentType);
+
+    return metrics;
+  });
 
   fastify.addHook(
     "onRequest",

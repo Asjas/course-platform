@@ -23,6 +23,8 @@ const schema = S.object()
   .prop("LEARN_FASTIFY_POLAR_PRODUCT_ID", S.string())
   .prop("PROMETHEUS_HOST", S.string())
   .prop("PROMETHEUS_PORT", S.number().default(9092))
+  .prop("MAX_HEAP_USED_BYTES", S.number().default(0))
+  .prop("MAX_RSS_BYTES", S.number().default(0))
   .valueOf();
 
 export interface Config {
@@ -49,6 +51,8 @@ export interface Config {
   LEARN_FASTIFY_POLAR_PRODUCT_ID: string;
   PROMETHEUS_HOST: string;
   PROMETHEUS_PORT: number;
+  MAX_HEAP_USED_BYTES: number;
+  MAX_RSS_BYTES: number;
 }
 
 export default envSchema({
