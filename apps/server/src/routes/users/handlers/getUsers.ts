@@ -26,9 +26,9 @@ export async function getUsersHandler(
     log.debug(`Fetched all ${users.count} users`);
 
     return users;
-  } catch (error) {
-    if (error instanceof Error) {
-      log.error(error, "Failed to fetch all users");
+  } catch (err) {
+    if (err instanceof Error) {
+      log.error(err, "Failed to fetch all users");
     }
 
     return reply.server.httpErrors.internalServerError();
