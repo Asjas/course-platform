@@ -1,13 +1,12 @@
 import fastifyMultipart, {
   type FastifyMultipartAttachFieldsToBodyOptions,
 } from "@fastify/multipart";
-
-const FIVE_MB = 5 * 1024 * 1024;
+import { ONE_MB } from "~/lib/constants.js";
 
 export const autoConfig: FastifyMultipartAttachFieldsToBodyOptions = {
   attachFieldsToBody: true,
   limits: {
-    fileSize: FIVE_MB,
+    fileSize: ONE_MB,
   },
 };
 

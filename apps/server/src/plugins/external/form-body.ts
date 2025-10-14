@@ -1,16 +1,8 @@
-import fastifyFormbody from "@fastify/formbody";
-import type {
-  FastifyInstance,
-  FastifyPluginOptions,
-  HookHandlerDoneFunction,
-} from "fastify";
+import fastifyFormbody, {
+  type FastifyFormbodyOptions,
+} from "@fastify/formbody";
+import { FIVE_MB } from "~/lib/constants.js";
 
-export default function formBodyPlugin(
-  fastify: FastifyInstance,
-  _opts: FastifyPluginOptions,
-  done: HookHandlerDoneFunction,
-) {
-  fastify.register(fastifyFormbody);
+export const autoConfig: FastifyFormbodyOptions = { bodyLimit: FIVE_MB };
 
-  done();
-}
+export default fastifyFormbody;

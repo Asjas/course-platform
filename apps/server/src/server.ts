@@ -9,6 +9,7 @@ import {
 } from "fastify-type-provider-zod";
 import { join } from "path";
 import type { Config } from "~/config.js";
+import { TEN_MB } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 
 /**
@@ -21,6 +22,7 @@ async function createServer(config: Config) {
     trustProxy: true,
     disableRequestLogging: true,
     loggerInstance: pinoLogger,
+    bodyLimit: TEN_MB,
     routerOptions: {
       maxParamLength: 5000,
     },
