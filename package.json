@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "pnpm run -parallel -filter \"./apps/**\" dev",
     "build": "turbo build --filter \"./apps/**\" build",
+    "test": "turbo test --filter \"./apps/**\" test",
     "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
     "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
