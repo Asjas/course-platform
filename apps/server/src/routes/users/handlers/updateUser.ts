@@ -11,7 +11,7 @@ export async function updateUserHandler(
 ) {
   const log = reply.server.log.child({
     reqId: request.id,
-    handler: "routes:users:update",
+    handler: "handlers:users:update",
   });
 
   const { userId } = request.params;

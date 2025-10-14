@@ -7,7 +7,7 @@ export async function getUserHandler(
 ) {
   const log = reply.server.log.child({
     reqId: request.id,
-    handler: "routes:users:single",
+    handler: "handlers:users:single",
   });
 
   const { userId } = request.params;

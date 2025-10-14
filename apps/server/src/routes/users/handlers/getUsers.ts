@@ -7,7 +7,7 @@ export async function getUsersHandler(
 ) {
   const log = reply.server.log.child({
     reqId: request.id,
-    handler: "routes:users:all",
+    handler: "handlers:users:all",
   });
 
   try {
