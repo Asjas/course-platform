@@ -23,7 +23,7 @@ export async function getUserByIdHandler(
     reply.cacheControl("private");
     reply.cacheControl("max-age", "5m");
     reply.stale("if-error", "1h");
-    reply.vary("Authorization");
+    reply.vary("Cookie");
 
     log.debug(`Fetched user with id ${userId} successfully`);
 

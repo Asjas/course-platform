@@ -42,7 +42,7 @@ export async function updateUserByIdHandler(
     reply.cacheControl("private");
     reply.cacheControl("max-age", "5m");
     reply.stale("if-error", "1h");
-    reply.vary("Authorization");
+    reply.vary("Cookie");
 
     log.debug(`User with id ${userId} updated successfully`);
 
