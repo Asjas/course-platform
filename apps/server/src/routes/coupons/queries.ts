@@ -2,10 +2,8 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
-const log = pinoLogger.child({ module: "db:queries:coupon" });
+const log = pinoLogger.child({ routes: "db:queries:coupon" });
 
-// All coupons are admin only
-// This query is used in the admin dashboard
 export async function getAllCoupons() {
   const preparedStatement = db.query.coupon
     .findMany({ with: { redemptions: true } })
@@ -16,45 +14,52 @@ export async function getAllCoupons() {
 
     return { coupons, count: coupons.length };
   } catch (err) {
-    log.error(err, "Failed to get all coupons");
+    if (err instanceof Error) {
+      log.error(err, "Failed to get all coupons");
+    }
+
     throw err;
   }
 }
 
-// Individual coupons are accessible by all users
-export async function getCouponById(id: string) {
+export async function getCouponById({ couponId }: { couponId: string }) {
   const preparedStatement = db.query.coupon
     .findFirst({
-      where: (coupon) => eq(coupon.id, sql.placeholder("id")),
+      where: (coupon) => eq(coupon.id, sql.placeholder("couponId")),
       with: { redemptions: true },
     })
     .prepare("getCouponById");
 
   try {
-    const coupon = await preparedStatement.execute({ id });
+    const coupon = await preparedStatement.execute({ couponId });
 
     return coupon ?? null;
   } catch (err) {
-    log.error(err, `Failed to get coupon with id ${id}`);
+    if (err instanceof Error) {
+      log.error(err, `Failed to get coupon with id ${couponId}`);
+    }
+
     throw err;
   }
 }
 
-// Individual coupons are accessible by all users
-export async function getCouponByCode(code: string) {
+export async function getCouponByCode({ couponCode }: { couponCode: string }) {
   const preparedStatement = db.query.coupon
     .findFirst({
-      where: (coupon) => eq(coupon.code, sql.placeholder("code")),
+      where: (coupon) => eq(coupon.code, sql.placeholder("couponCode")),
       with: { redemptions: true },
     })
     .prepare("getCouponByCode");
 
   try {
-    const coupon = await preparedStatement.execute({ code });
+    const coupon = await preparedStatement.execute({ couponCode });
 
     return coupon ?? null;
   } catch (err) {
-    log.error(err, `Failed to get coupon with code ${code}`);
+    if (err instanceof Error) {
+      log.error(err, `Failed to get coupon with code ${couponCode}`);
+    }
+
     throw err;
   }
 }
