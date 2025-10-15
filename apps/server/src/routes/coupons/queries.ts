@@ -2,7 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
-const log = pinoLogger.child({ routes: "db:queries:coupon" });
+const log = pinoLogger.child({ routes: "db:queries:coupons" });
 
 export async function getAllCoupons() {
   const preparedStatement = db.query.coupon

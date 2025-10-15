@@ -4,7 +4,7 @@ import { db } from "~/db/index.js";
 import { coupon } from "~/db/schema/coupon.js";
 import { pinoLogger } from "~/lib/logging.js";
 
-const log = pinoLogger.child({ routes: "db:mutations:coupon" });
+const log = pinoLogger.child({ routes: "db:mutations:coupons" });
 
 export type Coupon = typeof coupon.$inferSelect;
 export type NewCoupon = Omit<typeof coupon.$inferInsert, "id">;
