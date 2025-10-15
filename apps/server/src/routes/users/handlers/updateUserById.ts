@@ -1,44 +1,42 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { updateUserById } from "~/db/mutations/user.js";
-import { getUserById } from "~/db/queries/user.js";
+import { updateUserById } from "~/routes/users/mutations.js";
+import { getUserById } from "~/routes/users/queries.js";
 
-export async function updateUserHandler(
+export async function updateUserByIdHandler(
   request: FastifyRequest<{
     Params: { userId: string };
     Body: Partial<{ name: string; email: string }>;
   }>,
   reply: FastifyReply,
 ) {
-  const log = reply.server.log.child({
+  const log = request.log.child({
     reqId: request.id,
-    handler: "handlers:users:update",
+    routes: "handlers:users:update",
   });
 
   const { userId } = request.params;
   const updates = request.body;
 
   if (Object.keys(updates).length === 0) {
-    log.debug("No updates provided");
-    return reply.server.httpErrors.badRequest({
-      error: "No user updates provided",
-    });
+    log.debug("No user data provided in request body");
+    return reply.badRequest("No user data provided in request body");
   }
 
   try {
-    const user = await getUserById(userId);
+    const user = await getUserById({ userId });
 
     // TODO: Check if the user has permission to update this user
 
     if (!user) {
       log.debug(`User with id ${userId} not found for update`);
-      return reply.server.httpErrors.notFound({ error: `User not found` });
+      return reply.notFound("User not found");
     }
 
-    const updatedUser = await updateUserById(userId, updates);
+    const updatedUser = await updateUserById({ userId, updates });
 
     if (!updatedUser) {
       log.debug(`Failed to update user with id ${userId}`);
-      return reply.server.httpErrors.internalServerError();
+      return reply.internalServerError();
     }
 
     reply.cacheControl("private");
@@ -56,6 +54,6 @@ export async function updateUserHandler(
       log.error(err, `Error updating user with id ${userId}`);
     }
 
-    return reply.server.httpErrors.internalServerError();
+    return reply.internalServerError();
   }
 }

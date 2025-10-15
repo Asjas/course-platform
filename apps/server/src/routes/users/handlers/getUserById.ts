@@ -1,23 +1,23 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { getUserById } from "~/db/queries/index.js";
 
-export async function getUserHandler(
+export async function getUserByIdHandler(
   request: FastifyRequest<{ Params: { userId: string } }>,
   reply: FastifyReply,
 ) {
-  const log = reply.server.log.child({
+  const log = request.log.child({
     reqId: request.id,
-    handler: "handlers:users:single",
+    routes: "handlers:users:single",
   });
 
   const { userId } = request.params;
 
   try {
-    const user = await getUserById(userId);
+    const user = await getUserById({ userId });
 
     if (!user) {
       log.debug(`User with id ${userId} not found`);
-      return reply.server.httpErrors.notFound({ error: "User not found" });
+      return reply.notFound("User not found");
     }
 
     reply.cacheControl("private");
@@ -33,6 +33,6 @@ export async function getUserHandler(
       log.error(err, `Failed to fetch user with id ${userId}`);
     }
 
-    return reply.server.httpErrors.internalServerError();
+    return reply.internalServerError();
   }
 }

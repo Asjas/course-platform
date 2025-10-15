@@ -2,10 +2,8 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
-const log = pinoLogger.child({ module: "db:queries:user" });
+const log = pinoLogger.child({ routes: "db:queries:user" });
 
-// All users are admin only
-// This query is used in the admin dashboard
 export async function getAllUsers() {
   const preparedStatement = db.query.user
     .findMany({
@@ -34,13 +32,15 @@ export async function getAllUsers() {
 
     return { users, count: users.length };
   } catch (err) {
-    log.error(err, "Failed to get all users");
+    if (err instanceof Error) {
+      log.error(err, "Failed to get all users");
+    }
+
     throw err;
   }
 }
 
-// Individual users are accessible by admin and the user themselves
-export async function getUserById(userId: string) {
+export async function getUserById({ userId }: { userId: string }) {
   const preparedStatement = db.query.user
     .findFirst({
       where: (user) => eq(user.id, sql.placeholder("userId")),
@@ -87,7 +87,10 @@ export async function getUserById(userId: string) {
 
     return user ?? null;
   } catch (err) {
-    log.error(err, `Failed to get user with id ${userId}`);
+    if (err instanceof Error) {
+      log.error(err, `Failed to get user with id ${userId}`);
+    }
+
     throw err;
   }
 }

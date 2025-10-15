@@ -1,13 +1,13 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { getAllUsers } from "~/db/queries/user.js";
+import { getAllUsers } from "~/routes/users/queries.js";
 
-export async function getUsersHandler(
+export async function getAllUsersHandler(
   request: FastifyRequest,
   reply: FastifyReply,
 ) {
-  const log = reply.server.log.child({
+  const log = request.log.child({
     reqId: request.id,
-    handler: "handlers:users:all",
+    routes: "handlers:users:all",
   });
 
   try {
@@ -15,13 +15,13 @@ export async function getUsersHandler(
 
     if (!users) {
       log.debug("No users found");
-      return reply.server.httpErrors.notFound({ error: "No users found" });
+      return reply.notFound("No users found");
     }
 
     reply.cacheControl("private");
     reply.cacheControl("max-age", "5m");
     reply.stale("if-error", "1h");
-    reply.vary("Authorization");
+    reply.vary("Cookie");
 
     log.debug(`Fetched all ${users.count} users`);
 
@@ -31,6 +31,6 @@ export async function getUsersHandler(
       log.error(err, "Failed to fetch all users");
     }
 
-    return reply.server.httpErrors.internalServerError();
+    return reply.internalServerError();
   }
 }
