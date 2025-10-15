@@ -46,8 +46,6 @@ export async function updateUserByIdHandler(
 
     log.debug(`User with id ${userId} updated successfully`);
 
-    reply.statusCode = 201;
-
     return updatedUser;
   } catch (err) {
     if (err instanceof Error) {
