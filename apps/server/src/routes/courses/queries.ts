@@ -2,10 +2,8 @@ import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
-const log = pinoLogger.child({ module: "db:queries:course" });
+const log = pinoLogger.child({ routes: "db:queries:courses" });
 
-// All all courses as admin are accessible by admins only
-// since enrollments, progress and wishlists are included
 export async function getAllCoursesAsAdmin() {
   const preparedStatement = db.query.course
     .findMany({
@@ -27,14 +25,15 @@ export async function getAllCoursesAsAdmin() {
 
     return { courses, count: courses.length };
   } catch (err) {
-    log.error(err, "Failed to get all courses as admin");
+    if (err instanceof Error) {
+      log.error(err, "Failed to get all courses");
+    }
+
     throw err;
   }
 }
 
-// Getting a single course as admin are accessible by admins only
-// since enrollments, progress and wishlists are included
-export async function getCourseByIdAsAdmin(id: string) {
+export async function getCourseByIdAsAdmin({ courseId }: { courseId: string }) {
   const preparedStatement = db.query.course
     .findFirst({
       with: {
@@ -52,21 +51,23 @@ export async function getCourseByIdAsAdmin(id: string) {
         instructorNotes: true,
         faq: true,
       },
-      where: (course) => eq(course.id, sql.placeholder("id")),
+      where: (course) => eq(course.id, sql.placeholder("idcourseId")),
     })
     .prepare("getCourseByIdAsAdmin");
 
   try {
-    const course = await preparedStatement.execute({ id });
+    const course = await preparedStatement.execute({ courseId });
 
     return course ?? null;
   } catch (err) {
-    log.error(err, `Failed to get course with id ${id} as admin`);
+    if (err instanceof Error) {
+      log.error(err, `Failed to get course with id ${courseId}`);
+    }
+
     throw err;
   }
 }
 
-// All courses are accessible by all users
 export async function getAllCourses() {
   const preparedStatement = db.query.course
     .findMany({
@@ -85,13 +86,15 @@ export async function getAllCourses() {
 
     return { courses, count: courses.length };
   } catch (err) {
-    log.error(err, "Failed to get all courses");
+    if (err instanceof Error) {
+      log.error(err, "Failed to get all courses");
+    }
+
     throw err;
   }
 }
 
-// Individual courses are accessible by all users
-export async function getCourseById(id: string) {
+export async function getCourseById({ courseId }: { courseId: string }) {
   const preparedStatement = db.query.course
     .findFirst({
       with: {
@@ -106,16 +109,19 @@ export async function getCourseById(id: string) {
         instructorNotes: true,
         faq: true,
       },
-      where: (course) => eq(course.id, sql.placeholder("id")),
+      where: (course) => eq(course.id, sql.placeholder("courseId")),
     })
     .prepare("getCourseById");
 
   try {
-    const course = await preparedStatement.execute({ id });
+    const course = await preparedStatement.execute({ courseId });
 
     return course ?? null;
   } catch (err) {
-    log.error(err, `Failed to get course with id ${id}`);
+    if (err instanceof Error) {
+      log.error(err, `Failed to get course with id ${courseId}`);
+    }
+
     throw err;
   }
 }
