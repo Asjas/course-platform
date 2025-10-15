@@ -56,21 +56,18 @@ async function createServer(config: Config) {
 
   server.setErrorHandler((error, request, reply) => {
     if (hasZodFastifySchemaValidationErrors(error)) {
-      reply.code(400).send({
+      return reply.server.httpErrors.badRequest({
         error: "Validation Error",
         message: "Response doesn't match the schema",
-        statusCode: 400,
         details: {
           issues: error.validation,
           method: request.method,
           url: request.url,
         },
       });
-
-      return;
     }
 
-    reply.code(500).send({ error: "Internal Server Error" });
+    return reply.internalServerError();
   });
 
   server.setNotFoundHandler(
@@ -78,7 +75,7 @@ async function createServer(config: Config) {
       preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
     },
     function (_request, reply) {
-      throw reply.server.httpErrors.notFound("Resource not found.");
+      throw reply.notFound("Resource not found");
     },
   );
 

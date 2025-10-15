@@ -12,11 +12,11 @@ export const auth = async (
   // TODO: Verify token and set request.user
 
   if (!request.headers.authorization) {
-    throw reply.server.httpErrors.unauthorized();
+    throw reply.unauthorized();
   }
 
   if (request.user?.id === "ghost" || request.user?.banned) {
-    throw reply.server.httpErrors.forbidden();
+    throw reply.forbidden();
   }
 
   done();
@@ -28,7 +28,7 @@ export const isAdmin = async (
   done: DoneFuncWithErrOrRes,
 ) => {
   if (request.user?.role !== "admin") {
-    throw reply.server.httpErrors.forbidden();
+    throw reply.forbidden();
   }
 
   done();
