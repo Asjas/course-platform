@@ -23,11 +23,11 @@ export async function updateUserByIdHandler(
   }
 
   try {
-    const user = await getUserById({ userId });
+    const existingUser = await getUserById({ userId });
 
     // TODO: Check if the user has permission to update this user
 
-    if (!user) {
+    if (!existingUser) {
       log.debug(`User with id ${userId} not found for update`);
       return reply.notFound("User not found");
     }
