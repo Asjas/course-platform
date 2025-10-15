@@ -18,12 +18,12 @@ export default function couponRoutes(
   done: DoneFuncWithErrOrRes,
 ) {
   fastify.get("/coupons", getCouponsHandler);
-  fastify.get("/coupons/:id", getCouponByIdHandler);
+  fastify.get("/coupons/id/:id", getCouponByIdHandler);
   fastify.get("/coupons/code/:code", getCouponByCodeHandler);
   fastify.post("/coupons", createCouponHandler);
-  fastify.put("/coupons/:id", updateCouponByIdHandler);
+  fastify.put("/coupons/id/:id", updateCouponByIdHandler);
   fastify.put("/coupons/code/:code", updateCouponByCodeHandler);
-  fastify.delete("/coupons/:id", deleteCouponByIdHandler);
+  fastify.delete("/coupons/id/:id", deleteCouponByIdHandler);
   fastify.delete("/coupons/code/:code", deleteCouponByCodeHandler);
 
   done();

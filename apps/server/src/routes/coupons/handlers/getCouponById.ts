@@ -7,7 +7,7 @@ export async function getCouponByIdHandler(
 ) {
   const log = request.log.child({
     reqId: request.id,
-    routes: "handlers:coupons:id",
+    routes: "handlers:coupons:get:id",
   });
 
   const { couponId } = request.params;

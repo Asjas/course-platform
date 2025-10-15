@@ -7,7 +7,7 @@ export async function getCouponsHandler(
 ) {
   const log = request.log.child({
     reqId: request.id,
-    routes: "handlers:coupons:all",
+    routes: "handlers:coupons:get:all",
   });
 
   try {
