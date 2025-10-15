@@ -21,7 +21,7 @@ export async function updateUserById({
       .where(eq(user.id, userId))
       .returning();
 
-    return result;
+    return result[0];
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Failed to update user with id ${userId}`);
