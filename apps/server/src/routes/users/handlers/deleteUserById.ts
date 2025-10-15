@@ -8,7 +8,7 @@ export async function deleteUserByIdHandler(
 ) {
   const log = request.log.child({
     reqId: request.id,
-    routes: "handlers:users:delete",
+    routes: "handlers:users:delete:id",
   });
 
   // TODO: Check if the user has permission

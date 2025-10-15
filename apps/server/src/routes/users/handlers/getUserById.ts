@@ -7,7 +7,7 @@ export async function getUserByIdHandler(
 ) {
   const log = request.log.child({
     reqId: request.id,
-    routes: "handlers:users:single",
+    routes: "handlers:users:get:id",
   });
 
   const { userId } = request.params;

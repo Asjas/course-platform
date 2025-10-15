@@ -14,9 +14,9 @@ export default function usersRoutes(
   done: DoneFuncWithErrOrRes,
 ) {
   fastify.get("/users", getAllUsersHandler);
-  fastify.get("/users/:userId", getUserByIdHandler);
-  fastify.put("/users/:userId", updateUserByIdHandler);
-  fastify.delete("/users/:userId", deleteUserByIdHandler);
+  fastify.get("/users/id/:userId", getUserByIdHandler);
+  fastify.put("/users/id/:userId", updateUserByIdHandler);
+  fastify.delete("/users/id/:userId", deleteUserByIdHandler);
 
   done();
 }
