@@ -1,11 +1,11 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { updateUserById } from "~/routes/users/mutations.js";
+import { type User, updateUserById } from "~/routes/users/mutations.js";
 import { getUserById } from "~/routes/users/queries.js";
 
 export async function updateUserByIdHandler(
   request: FastifyRequest<{
     Params: { userId: string };
-    Body: Partial<{ name: string; email: string }>;
+    Body: { updates: Partial<User> };
   }>,
   reply: FastifyReply,
 ) {
@@ -15,7 +15,7 @@ export async function updateUserByIdHandler(
   });
 
   const { userId } = request.params;
-  const updates = request.body;
+  const { updates } = request.body;
 
   if (Object.keys(updates).length === 0) {
     log.debug("No user data provided in request body");
