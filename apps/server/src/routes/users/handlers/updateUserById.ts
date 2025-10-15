@@ -5,7 +5,7 @@ import { getUserById } from "~/routes/users/queries.js";
 export async function updateUserByIdHandler(
   request: FastifyRequest<{
     Params: { userId: string };
-    Body: { updates: Partial<User> };
+    Body: { updates: User };
   }>,
   reply: FastifyReply,
 ) {

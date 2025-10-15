@@ -31,7 +31,7 @@ export async function updateCouponById({
   updates,
 }: {
   couponId: string;
-  updates: Partial<Coupon>;
+  updates: Coupon;
 }) {
   try {
     const result = await db
@@ -55,7 +55,7 @@ export async function updateCouponByCode({
   updates,
 }: {
   couponCode: string;
-  updates: Partial<Coupon>;
+  updates: Coupon;
 }) {
   try {
     const result = await db

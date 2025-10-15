@@ -12,7 +12,7 @@ export async function updateUserById({
   updates,
 }: {
   userId: string;
-  updates: Partial<User>;
+  updates: User;
 }) {
   try {
     const result = await db

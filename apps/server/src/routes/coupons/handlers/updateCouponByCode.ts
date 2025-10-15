@@ -5,7 +5,7 @@ import { getCouponByCode } from "~/routes/coupons/queries.js";
 export async function updateCouponByCodeHandler(
   request: FastifyRequest<{
     Params: { couponCode: string };
-    Body: { updates: Partial<Coupon> };
+    Body: { updates: Coupon };
   }>,
   reply: FastifyReply,
 ) {
