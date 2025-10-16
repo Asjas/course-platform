@@ -1,5 +1,5 @@
 import os from "node:os";
-import prometheus from "prom-client";
+import prometheus, { Counter } from "prom-client";
 import { pool } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
@@ -146,5 +146,26 @@ export const eventLoopIdleGauge = new prometheus.Gauge({
 export const eventLoopActiveGauge = new prometheus.Gauge({
   name: "nodejs_eventloop_active_ms",
   help: "Node.js event loop active time in ms over last 100ms",
+  registers: [registry],
+});
+
+export const cacheHitCounter = new Counter({
+  name: "cache_hits_total",
+  help: "Total number of cache hits",
+  labelNames: ["key"],
+  registers: [registry],
+});
+
+export const cacheMissCounter = new Counter({
+  name: "cache_misses_total",
+  help: "Total number of cache misses",
+  labelNames: ["key"],
+  registers: [registry],
+});
+
+export const cacheErrorCounter = new Counter({
+  name: "cache_errors_total",
+  help: "Total number of cache errors",
+  labelNames: ["err"],
   registers: [registry],
 });
