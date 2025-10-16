@@ -4,7 +4,7 @@ export async function getAllUsersCache() {
   const { users, count } = await getAllUsers();
 
   if (!users) {
-    return { users: null, count: 0 };
+    return { users: null, count };
   }
 
   return {
