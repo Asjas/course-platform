@@ -18,7 +18,5 @@ RUN npm run drizzle:migrate:prod
 
 RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
-ENV NODE_ENV=production
-
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
