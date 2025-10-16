@@ -18,6 +18,16 @@ const schema = z.object({
   COOKIE_DOMAIN: z.url(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
   SENTRY_DSN: z.url().optional(),
+  MAX_HEAP_USED_BYTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().min(0))
+    .default(0),
+  MAX_RSS_BYTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().min(0))
+    .default(0),
 
   // Authentication variables
   BETTER_AUTH_SECRET: z.string().min(32),
@@ -48,7 +58,7 @@ const schema = z.object({
 
   // Payment variables
   POLAR_ACCESS_TOKEN: z.string().nonempty(),
-  POLAR_SUCCESS_URL: z.string().url(),
+  POLAR_SUCCESS_URL: z.url(),
   LEARN_FASTIFY_POLAR_PRODUCT_ID: z.string().uuid(),
 
   // Prometheus variables
@@ -58,16 +68,6 @@ const schema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().positive())
     .default(9092),
-  MAX_HEAP_USED_BYTES: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().min(0))
-    .default(0),
-  MAX_RSS_BYTES: z
-    .string()
-    .transform((val) => parseInt(val, 10))
-    .pipe(z.number().min(0))
-    .default(0),
 });
 
 export type Config = z.infer<typeof schema>;
