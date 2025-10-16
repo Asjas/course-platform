@@ -85,7 +85,11 @@ export async function getUserById({ userId }: { userId: string }) {
   try {
     const user = await preparedStatement.execute({ userId });
 
-    return user ?? null;
+    if (!user) {
+      return { user: null };
+    }
+
+    return { user };
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Failed to get user with id ${userId}`);

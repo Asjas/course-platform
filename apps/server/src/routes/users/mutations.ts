@@ -21,7 +21,11 @@ export async function updateUserById({
       .where(eq(user.id, userId))
       .returning();
 
-    return result[0];
+    if (result.length === 0) {
+      return { user: null };
+    }
+
+    return { user: result[0] };
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Failed to update user with id ${userId}`);
@@ -38,7 +42,11 @@ export async function deleteUserById({ userId }: { userId: string }) {
       .where(eq(user.id, userId))
       .returning({ id: user.id });
 
-    return result;
+    if (!result) {
+      return { user: null };
+    }
+
+    return { user: result };
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Failed to delete user with id ${userId}`);

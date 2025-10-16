@@ -14,13 +14,7 @@ export async function getAllUsersCache() {
 }
 
 export async function getUserByIdCache({ userId }: { userId: string }) {
-  const user = await getUserById({ userId });
+  const { user } = await getUserById({ userId });
 
-  if (!user) {
-    return { user: null };
-  }
-
-  return {
-    user,
-  };
+  return { user };
 }

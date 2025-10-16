@@ -28,7 +28,7 @@ export async function getUserByIdHandler(
 
     log.debug(`Fetched user with id ${user.id} successfully`);
 
-    return user;
+    return { user };
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Failed to fetch user with id ${userId}`);
