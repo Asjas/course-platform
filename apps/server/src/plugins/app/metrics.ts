@@ -39,7 +39,9 @@ export default function metricsPlugin(
     "onRequest",
     function metricsOnRequest(request, _reply, done) {
       request.startTime = process.hrtime.bigint();
-      request.normalizedRoute = normalizeRoute(request.routeOptions.url);
+      request.normalizedRoute = normalizeRoute(
+        request.routeOptions?.url || request.url,
+      );
 
       done();
     },
@@ -87,9 +89,7 @@ export default function metricsPlugin(
           {
             method: request.method,
             status: error.statusCode || 500,
-            route:
-              request.normalizedRoute ||
-              normalizeRoute(request.routeOptions.url),
+            route: request.normalizedRoute,
           },
           duration,
         );
