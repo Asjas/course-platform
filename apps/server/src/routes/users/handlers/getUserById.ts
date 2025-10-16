@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { getUserById } from "~/db/queries/index.js";
+import { getUserById } from "~/routes/users/queries.js";
 
 export async function getUserByIdHandler(
   request: FastifyRequest<{ Params: { userId: string } }>,
