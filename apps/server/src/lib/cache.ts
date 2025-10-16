@@ -3,7 +3,7 @@ import { deserialize, serialize } from "superjson";
 import { redis } from "~/lib/redis.js";
 
 export const cache = createCache({
-  storage: { type: "redis", options: { client: redis } },
+  storage: { type: "redis", options: { client: redis, invalidation: true } },
   transformer: {
     serialize: (result) => serialize(result),
     deserialize: (serialized) => deserialize(serialized),
