@@ -1,6 +1,6 @@
 import { relations, sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/schema.js";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";

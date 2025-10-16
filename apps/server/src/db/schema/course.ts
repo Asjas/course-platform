@@ -11,7 +11,7 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/schema.js";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { enrollment } from "~/db/schema/enrollment.js";
 import { courseProgress, lessonProgress } from "~/db/schema/progress.js";
