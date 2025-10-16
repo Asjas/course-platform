@@ -8,7 +8,7 @@ import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import type { PluginOption } from "vite";
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [
@@ -51,17 +51,5 @@ export default defineConfig({
     alias: {
       "~": resolve(__dirname, "./src"),
     },
-  },
-  test: {
-    globals: true,
-    environment: "jsdom",
-    include: [
-      "src/**/*.spec.ts",
-      "src/**/*.test.ts",
-      "src/**/*.spec.tsx",
-      "src/**/*.test.tsx",
-    ],
-    passWithNoTests: false,
-    setupFiles: ["./src/test-setup.ts"],
   },
 });
