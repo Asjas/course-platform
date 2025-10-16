@@ -2,7 +2,6 @@ import closeWithGrace from "close-with-grace";
 import config from "~/config.js";
 import createServer from "~/server.js";
 
-const PORT = Number(config.PORT) || 3000;
 const app = await createServer(config);
 
 process.on("uncaughtException", (err) => {
@@ -29,4 +28,4 @@ closeWithGrace(async function ({ signal, err }) {
   await app.close();
 });
 
-await app.listen({ port: PORT, host: "0.0.0.0" });
+await app.listen({ port: config.PORT, host: config.HOST });

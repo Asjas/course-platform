@@ -1,61 +1,75 @@
-import envSchema from "env-schema";
-import { S } from "fluent-json-schema";
+import * as z from "zod";
 
-const schema = S.object()
-  .prop("PORT", S.number().required())
-  .prop("NODE_ENV", S.string().default("development"))
-  .prop("LOG_LEVEL", S.string().default("info"))
-  .prop("DATABASE_URL", S.string())
-  .prop("ORIGIN", S.string())
-  .prop("COOKIE_SECRET", S.string())
-  .prop("COOKIE_DOMAIN", S.string())
-  .prop("BETTER_AUTH_SECRET", S.string())
-  .prop("PEPPER_SECRET", S.string())
-  .prop("MAIL_HOST", S.string())
-  .prop("MAIL_PORT", S.number())
-  .prop("MAIL_USER", S.string())
-  .prop("MAIL_PASS", S.string())
-  .prop("REDIS_HOST", S.string().default("localhost"))
-  .prop("REDIS_PORT", S.number().default(6379))
-  .prop("REDIS_PASSWORD", S.string())
-  .prop("POLAR_ACCESS_TOKEN", S.string())
-  .prop("POLAR_SUCCESS_URL", S.string())
-  .prop("LEARN_FASTIFY_POLAR_PRODUCT_ID", S.string())
-  .prop("PROMETHEUS_HOST", S.string())
-  .prop("PROMETHEUS_PORT", S.number().default(9092))
-  .prop("MAX_HEAP_USED_BYTES", S.number().default(0))
-  .prop("MAX_RSS_BYTES", S.number().default(0))
-  .valueOf();
+const schema = z.object({
+  // Application variables
+  PORT: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().positive()),
+  HOST: z.string(),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
+  LOG_LEVEL: z
+    .enum(["fatal", "error", "warn", "info", "debug", "trace"])
+    .default("info"),
+  ORIGIN: z.url(),
+  COOKIE_SECRET: z.string().min(32),
+  COOKIE_DOMAIN: z.url(),
+  SENTRY_AUTH_TOKEN: z.string().optional(),
+  SENTRY_DSN: z.url().optional(),
 
-export interface Config {
-  logger: boolean;
-  PORT: number;
-  NODE_ENV: string;
-  LOG_LEVEL: string;
-  PRETTY_PRINT: boolean;
-  DATABASE_URL: string;
-  ORIGIN: string;
-  COOKIE_SECRET: string;
-  COOKIE_DOMAIN: string;
-  BETTER_AUTH_SECRET: string;
-  PEPPER_SECRET: string;
-  MAIL_HOST: string;
-  MAIL_PORT: number;
-  MAIL_USER: string;
-  MAIL_PASS: string;
-  REDIS_HOST: string;
-  REDIS_PORT: number;
-  REDIS_PASSWORD: string;
-  POLAR_ACCESS_TOKEN: string;
-  POLAR_SUCCESS_URL: string;
-  LEARN_FASTIFY_POLAR_PRODUCT_ID: string;
-  PROMETHEUS_HOST: string;
-  PROMETHEUS_PORT: number;
-  MAX_HEAP_USED_BYTES: number;
-  MAX_RSS_BYTES: number;
-}
+  // Authentication variables
+  BETTER_AUTH_SECRET: z.string().min(32),
+  PEPPER_SECRET: z.string().min(32),
 
-export default envSchema({
-  schema,
-  dotenv: true,
-}) as Config;
+  // Email variables
+  SMTP_HOST: z.string().nonempty(),
+  SMTP_PORT: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().positive()),
+  SMTP_USER: z.email(),
+  SMTP_PASS: z.string().nonempty(),
+  SMTP_SECURE: z
+    .string()
+    .transform((val) => Boolean(val))
+    .default(false),
+
+  // Database variables
+  DATABASE_URL: z.url().regex(/^postgres:/, "Must be a PostgreSQL URL"),
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().positive())
+    .default(6379),
+  REDIS_PASSWORD: z.string().optional(),
+
+  // Payment variables
+  POLAR_ACCESS_TOKEN: z.string().nonempty(),
+  POLAR_SUCCESS_URL: z.string().url(),
+  LEARN_FASTIFY_POLAR_PRODUCT_ID: z.string().uuid(),
+
+  // Prometheus variables
+  PROMETHEUS_HOST: z.string().default("localhost"),
+  PROMETHEUS_PORT: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().positive())
+    .default(9092),
+  MAX_HEAP_USED_BYTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().min(0))
+    .default(0),
+  MAX_RSS_BYTES: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().min(0))
+    .default(0),
+});
+
+export type Config = z.infer<typeof schema>;
+
+export default schema.parse(process.env) as Config;

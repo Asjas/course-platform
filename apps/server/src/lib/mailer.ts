@@ -2,12 +2,12 @@ import nodemailer, { type Transporter } from "nodemailer";
 import config from "~/config.js";
 
 const mailer: Transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: config.MAIL_PORT,
-  secure: false,
+  host: config.SMTP_HOST,
+  port: config.SMTP_PORT,
+  secure: config.SMTP_SECURE,
   auth: {
-    user: config.MAIL_USER,
-    pass: config.MAIL_PASS,
+    user: config.SMTP_USER,
+    pass: config.SMTP_PASS,
   },
   pool: true,
 });
