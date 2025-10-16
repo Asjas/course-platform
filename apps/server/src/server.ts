@@ -51,8 +51,20 @@ async function createServer(config: Config) {
   await server.register(fastifyAutoload, {
     dir: join(import.meta.dirname, "routes"),
     dirNameRoutePrefix: false,
-    matchFilter: /index\.ts$/,
+    matchFilter: /index\.(?:ts|js)$/,
   });
+
+  server.setNotFoundHandler(
+    {
+      preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
+    },
+    function (_request, reply) {
+      return reply.status(404).send({
+        error: "Not Found",
+        message: "The requested resource was not found",
+      });
+    },
+  );
 
   server.setErrorHandler((error, request, reply) => {
     if (hasZodFastifySchemaValidationErrors(error)) {
@@ -69,15 +81,6 @@ async function createServer(config: Config) {
 
     return reply.internalServerError();
   });
-
-  server.setNotFoundHandler(
-    {
-      preHandler: server.rateLimit({ max: 60, timeWindow: "1 hour" }),
-    },
-    function (_request, reply) {
-      throw reply.notFound("Resource not found");
-    },
-  );
 
   return server;
 }
