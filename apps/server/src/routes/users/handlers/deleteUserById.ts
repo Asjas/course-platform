@@ -30,6 +30,8 @@ export async function deleteUserByIdHandler(
       return reply.internalServerError();
     }
 
+    await reply.server.cache.invalidateAll([`user:${userId}`, "users:all"]);
+
     log.debug(`User with id ${userId} deleted successfully`);
 
     reply.statusCode = 204;

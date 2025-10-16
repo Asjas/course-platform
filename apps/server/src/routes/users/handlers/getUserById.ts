@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { getUserById } from "~/routes/users/queries.js";
 
 export async function getUserByIdHandler(
   request: FastifyRequest<{ Params: { userId: string } }>,
@@ -13,7 +12,9 @@ export async function getUserByIdHandler(
   const { userId } = request.params;
 
   try {
-    const user = await getUserById({ userId });
+    const { user } = await reply.server.cache.getUserById({
+      userId,
+    });
 
     if (!user) {
       log.debug(`User with id ${userId} not found`);
@@ -25,7 +26,7 @@ export async function getUserByIdHandler(
     reply.stale("if-error", "1h");
     reply.vary("Cookie");
 
-    log.debug(`Fetched user with id ${userId} successfully`);
+    log.debug(`Fetched user with id ${user.id} successfully`);
 
     return user;
   } catch (err) {

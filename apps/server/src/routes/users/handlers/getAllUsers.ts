@@ -1,5 +1,4 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { getAllUsers } from "~/routes/users/queries.js";
 
 export async function getAllUsersHandler(
   request: FastifyRequest,
@@ -11,7 +10,7 @@ export async function getAllUsersHandler(
   });
 
   try {
-    const users = await getAllUsers();
+    const { users, count } = await reply.server.cache.getAllUsers();
 
     if (!users) {
       log.debug("No users found");
@@ -23,9 +22,9 @@ export async function getAllUsersHandler(
     reply.stale("if-error", "1h");
     reply.vary("Cookie");
 
-    log.debug(`Fetched all ${users.count} users`);
+    log.debug(`Fetched all ${count} users`);
 
-    return users;
+    return { users, count };
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, "Failed to fetch all users");

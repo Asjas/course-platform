@@ -39,6 +39,8 @@ export async function updateUserByIdHandler(
       return reply.internalServerError();
     }
 
+    await reply.server.cache.invalidateAll([`user:${userId}`, "users:all"]);
+
     reply.cacheControl("private");
     reply.cacheControl("max-age", "5m");
     reply.stale("if-error", "1h");

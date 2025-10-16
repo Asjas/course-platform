@@ -1,5 +1,6 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
+import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import {
   cacheErrorCounter,
@@ -29,5 +30,19 @@ export const cache = createCache({
     cacheErrorCounter.inc({ err: 1 });
   },
 })
-  .define("getAllUsers", getAllUsersCache)
-  .define("getUserById", getUserByIdCache);
+  .define(
+    "getAllUsers",
+    {
+      ttl: ONE_HOUR,
+      references: () => "users:all",
+    },
+    getAllUsersCache,
+  )
+  .define(
+    "getUserById",
+    {
+      ttl: ONE_HOUR,
+      references: (args) => `user:${args.userId}"`,
+    },
+    getUserByIdCache,
+  );
