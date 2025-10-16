@@ -8,10 +8,13 @@ import {
   cacheMissCounter,
 } from "~/lib/metrics.js";
 import { redis } from "~/lib/redis.js";
-import { getAllUsersCache, getUserByIdCache } from "~/routes/users/cache.js";
+import { getAllUsers, getUserById } from "~/routes/users/queries.js";
 
 export const cache = createCache({
-  storage: { type: "redis", options: { client: redis, invalidation: true } },
+  storage: {
+    type: "redis",
+    options: { client: redis, invalidation: { referencesTTL: ONE_HOUR * 2 } },
+  },
   transformer: {
     serialize: (result) => serialize(result),
     deserialize: (serialized) => deserialize(serialized),
@@ -34,15 +37,21 @@ export const cache = createCache({
     "getAllUsers",
     {
       ttl: ONE_HOUR,
-      references: () => "users:all",
+      serialize: () => "all",
+      references() {
+        return ["user~all"];
+      },
     },
-    getAllUsersCache,
+    getAllUsers,
   )
   .define(
     "getUserById",
     {
       ttl: ONE_HOUR,
-      references: (args) => `user:${args.userId}"`,
+      serialize: (args) => args.userId,
+      references(args) {
+        return [args.userId];
+      },
     },
-    getUserByIdCache,
+    getUserById,
   );

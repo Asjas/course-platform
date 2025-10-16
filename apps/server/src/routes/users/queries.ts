@@ -1,8 +1,5 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { pinoLogger } from "~/lib/logging.js";
-
-const log = pinoLogger.child({ routes: "db:queries:user" });
 
 const preparedGetAllUsers = db.query.user
   .findMany({
@@ -68,33 +65,17 @@ const preparedGetUserById = db.query.user
   .prepare("getUserById");
 
 export async function getAllUsers() {
-  try {
-    const users = await preparedGetAllUsers.execute();
+  const users = await preparedGetAllUsers.execute();
 
-    return { users, count: users.length };
-  } catch (err) {
-    if (err instanceof Error) {
-      log.error(err, "Failed to get all users");
-    }
-
-    throw err;
-  }
+  return users;
 }
 
 export async function getUserById({ userId }: { userId: string }) {
-  try {
-    const user = await preparedGetUserById.execute({ userId });
+  const user = await preparedGetUserById.execute({ userId });
 
-    if (!user) {
-      return { user: null };
-    }
-
-    return { user };
-  } catch (err) {
-    if (err instanceof Error) {
-      log.error(err, `Failed to get user with id ${userId}`);
-    }
-
-    throw err;
+  if (!user) {
+    return null;
   }
+
+  return user;
 }

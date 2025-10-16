@@ -9,27 +9,22 @@ export async function getAllUsersHandler(
     routes: "handlers:users:get:all",
   });
 
-  try {
-    const { users, count } = await reply.server.cache.getAllUsers();
+  const fastify = reply.server;
 
-    if (!users) {
-      log.debug("No users found");
-      return reply.notFound("No users found");
-    }
+  const [err, users] = await fastify.to(fastify.cache.getAllUsers());
+  const count = users.length ?? 0;
 
-    reply.cacheControl("private");
-    reply.cacheControl("max-age", "5m");
-    reply.stale("if-error", "1h");
-    reply.vary("Cookie");
-
-    log.debug(`Fetched all ${count} users`);
-
-    return { users, count };
-  } catch (err) {
-    if (err instanceof Error) {
-      log.error(err, "Failed to fetch all users");
-    }
-
+  if (err) {
+    log.error(err, "Failed to fetch all users");
     return reply.internalServerError();
   }
+
+  reply.cacheControl("private");
+  reply.cacheControl("max-age", "5m");
+  reply.stale("if-error", "1h");
+  reply.vary("Cookie");
+
+  log.debug(`Fetched all ${count} users`);
+
+  return { users, count };
 }
