@@ -8,6 +8,10 @@ import {
   cacheMissCounter,
 } from "~/lib/metrics.js";
 import { redis } from "~/lib/redis.js";
+import {
+  getAllSupportTickets,
+  getSupportTicketById,
+} from "~/routes/support-tickets/queries.js";
 import { getAllUsers, getUserById } from "~/routes/users/queries.js";
 
 export const cache = createCache({
@@ -54,4 +58,26 @@ export const cache = createCache({
       },
     },
     getUserById,
+  )
+  .define(
+    "getAllSupportTickets",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "all",
+      references() {
+        return ["support-ticket~all"];
+      },
+    },
+    getAllSupportTickets,
+  )
+  .define(
+    "getSupportTicketById",
+    {
+      ttl: ONE_HOUR,
+      serialize: (args) => args.ticketId,
+      references(args) {
+        return [args.ticketId];
+      },
+    },
+    getSupportTicketById,
   );

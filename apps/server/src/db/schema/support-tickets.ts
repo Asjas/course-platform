@@ -80,6 +80,7 @@ export const supportTicketComment = mySchema.table(
   {
     id: text().primaryKey(),
     comment: text().notNull(),
+    attachments: text().array(),
     userId: text()
       .notNull()
       .references(() => user.id, { onDelete: "set default" })
@@ -171,12 +172,13 @@ export const supportTicketRelations = relations(
 // Support ticket comment relation (back-reference to ticket)
 export const supportTicketCommentRelations = relations(
   supportTicketComment,
-  ({ one }) => ({
+  ({ one, many }) => ({
     ticket: one(supportTicket, {
       fields: [supportTicketComment.ticketId],
       references: [supportTicket.id],
       relationName: "support_ticket_comments",
     }),
+    attachments: many(supportTicketAttachment),
     user: one(user, {
       fields: [supportTicketComment.userId],
       references: [user.id],

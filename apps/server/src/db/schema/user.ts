@@ -7,7 +7,7 @@ import { enrollment } from "~/db/schema/enrollment.js";
 import { platformAnnouncement } from "~/db/schema/platformAnnouncements.js";
 import { courseProgress } from "~/db/schema/progress.js";
 import { payment } from "~/db/schema/purchase.js";
-import { supportTicket } from "~/db/schema/support.js";
+import { supportTicket } from "~/db/schema/support-tickets.js";
 import { teamLicense } from "~/db/schema/teamLicense.js";
 
 // Enums

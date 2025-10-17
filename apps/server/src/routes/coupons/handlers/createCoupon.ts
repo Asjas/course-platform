@@ -18,9 +18,9 @@ export async function createCouponHandler(
   }
 
   try {
-    const result = await insertCoupon({ newCoupon });
+    const coupon = await insertCoupon({ newCoupon });
 
-    if (!result) {
+    if (!coupon) {
       log.debug(`Failed to create coupon: ${JSON.stringify(newCoupon)}`);
       return reply.badRequest("Failed to create coupon");
     }
@@ -30,11 +30,11 @@ export async function createCouponHandler(
     reply.stale("if-error", "1h");
     reply.vary("Cookie");
 
-    log.debug(`Coupon created successfully with id ${result.id}`);
+    log.debug(`Coupon created successfully with id ${coupon.id}`);
 
     reply.statusCode = 201;
 
-    return result;
+    return coupon;
   } catch (err) {
     if (err instanceof Error) {
       log.error(err, `Error creating coupon: ${JSON.stringify(newCoupon)}`);

@@ -3,7 +3,7 @@ export * from "~/db/schema/coupon.js";
 export * from "~/db/schema/course.js";
 export * from "~/db/schema/enrollment.js";
 export * from "~/db/schema/purchase.js";
-export * from "~/db/schema/support.js";
+export * from "~/db/schema/support-tickets.js";
 export * from "~/db/schema/teamLicense.js";
 export * from "~/db/schema/progress.js";
 export * from "~/db/schema/platformAnnouncements.js";

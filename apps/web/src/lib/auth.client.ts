@@ -27,7 +27,7 @@ export const authClient = createAuthClient({
       const { response } = context;
 
       if (response.status === 429) {
-        const message = `Rate limit exceeded. Please try again later.`;
+        const message = "Rate limit exceeded. Please try again later.";
 
         console.error(message);
         toast.error(message);

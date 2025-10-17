@@ -1,13 +1,10 @@
-import { Link, useNavigate, useRouter } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button } from "~/components/ui/button.tsx";
 import { NavLink } from "~/components/ui/nav-link";
 import type { AuthState } from "~/lib/auth.context.ts";
 
 export default function Header({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
-  const router = useRouter();
-
-  console.log("Header auth:", auth);
 
   return (
     <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/[0.02] bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60">
@@ -42,7 +39,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 activeProps={{
                   className: "bg-gray-700 text-white dark:bg-gray-700",
                 }}
-                to="/dashboard"
+                to="/support"
               >
                 Support
               </NavLink>
@@ -95,11 +92,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               onClick={async () => {
                 await auth.signOut();
 
-                router.invalidate();
-
-                if (!auth.isAuthenticated) {
-                  navigate({ to: "/" });
-                }
+                navigate({ to: "/", reloadDocument: true });
               }}
             >
               Logout
