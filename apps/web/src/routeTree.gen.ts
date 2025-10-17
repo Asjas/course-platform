@@ -131,7 +131,7 @@ const EducationCoursesCourseIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof authRouteRouteWithChildren
+  "/": typeof IndexRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
@@ -150,7 +150,7 @@ export interface FileRoutesByFullPath {
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof authRouteRouteWithChildren
+  "/": typeof IndexRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
@@ -294,8 +294,8 @@ declare module "@tanstack/react-router" {
     }
     "/(auth)": {
       id: "/(auth)"
-      path: "/"
-      fullPath: "/"
+      path: ""
+      fullPath: ""
       preLoaderRoute: typeof authRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
