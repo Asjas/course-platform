@@ -275,6 +275,8 @@ importers:
         specifier: 5.90.5
         version: 5.90.5
       '@tanstack/query-db-collection':
+        specifier: 0.2.32
+        version: 0.2.32(@tanstack/query-core@5.90.3)(typescript@5.9.3)
         specifier: 0.2.30
         version: 0.2.30(@tanstack/query-core@5.90.5)(typescript@5.9.3)
       '@tanstack/react-db':
@@ -3877,11 +3879,6 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@tanstack/db-ivm@0.1.10':
-    resolution: {integrity: sha512-AWKpe431GqPp94XOlnyYchLUmUVJpjTwdb3ID0gBfSwPDir5/lXqdA1tkeyxv4kbwV8TLOC9Kch/nVLPw5D0cw==}
-    peerDependencies:
-      typescript: '>=4.7'
-
   '@tanstack/db-ivm@0.1.11':
     resolution: {integrity: sha512-xLCbIPRE6DUAKfR/Png2G5gqI+LseZ0qFdwSX+vs3q/37dzdHex5xDC666VQPz9IYy6nWjYebK3U7N0jx/xgSQ==}
     peerDependencies:
@@ -3892,8 +3889,8 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
-  '@tanstack/db@0.4.9':
-    resolution: {integrity: sha512-8X3EaBOXGgHg6XihOGP2sJk4G6VKW8J58p+ZYeEf+mmhZF5HjWKYF8qx/+vatRISSMNKhcaZrhgfLBdqnpTYsg==}
+  '@tanstack/db@0.4.11':
+    resolution: {integrity: sha512-xFK2ltAqpoW4Nr30cSNFXI40ILy9jWrcg3l3od4vUuG0O/Xhc5B5rcwGNMKvKOGS8LN1E0kyFHgMTC/mRKigtQ==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -3921,8 +3918,8 @@ packages:
   '@tanstack/query-core@5.90.5':
     resolution: {integrity: sha512-wLamYp7FaDq6ZnNehypKI5fNvxHPfTYylE0m/ZpuuzJfJqhR5Pxg9gvGBHZx4n7J+V5Rg5mZxHHTlv25Zt5u+w==}
 
-  '@tanstack/query-db-collection@0.2.30':
-    resolution: {integrity: sha512-H5cmc04hCpNiGD/D77xtm0CkeZOFx/yefvDvAKoniQxrnenwygBB6w1VfAQnvK+dqIch9h0nIVD38YLa7Esirw==}
+  '@tanstack/query-db-collection@0.2.32':
+    resolution: {integrity: sha512-M+PSrUpo5FyDZK22lGiyi6Qm6/etDfTD+xd2UjBDLClu4810AKo+980FRBTd0fDd5gkIBCjiI2eByuUe42ZwcA==}
     peerDependencies:
       '@tanstack/query-core': ^5.0.0
       typescript: '>=4.7'
@@ -13549,12 +13546,6 @@ snapshots:
       tailwindcss: 4.1.14
       vite: 7.1.10(@types/node@24.7.2)(jiti@2.6.0)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
 
-  '@tanstack/db-ivm@0.1.10(typescript@5.9.3)':
-    dependencies:
-      fractional-indexing: 3.2.0
-      sorted-btree: 1.8.1
-      typescript: 5.9.3
-
   '@tanstack/db-ivm@0.1.11(typescript@5.9.3)':
     dependencies:
       fractional-indexing: 3.2.0
@@ -13567,10 +13558,10 @@ snapshots:
       '@tanstack/db-ivm': 0.1.11(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@tanstack/db@0.4.9(typescript@5.9.3)':
+  '@tanstack/db@0.4.11(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.0.0
-      '@tanstack/db-ivm': 0.1.10(typescript@5.9.3)
+      '@tanstack/db-ivm': 0.1.11(typescript@5.9.3)
       typescript: 5.9.3
 
   '@tanstack/devtools-event-client@0.3.2': {}
@@ -13600,6 +13591,11 @@ snapshots:
 
   '@tanstack/query-core@5.90.5': {}
 
+  '@tanstack/query-db-collection@0.2.32(@tanstack/query-core@5.90.3)(typescript@5.9.3)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@tanstack/db': 0.4.11(typescript@5.9.3)
+      '@tanstack/query-core': 5.90.3
   '@tanstack/query-db-collection@0.2.30(@tanstack/query-core@5.90.5)(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.0.0
