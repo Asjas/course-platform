@@ -276,9 +276,7 @@ importers:
         version: 5.90.5
       '@tanstack/query-db-collection':
         specifier: 0.2.32
-        version: 0.2.32(@tanstack/query-core@5.90.3)(typescript@5.9.3)
-        specifier: 0.2.30
-        version: 0.2.30(@tanstack/query-core@5.90.5)(typescript@5.9.3)
+        version: 0.2.32(@tanstack/query-core@5.90.5)(typescript@5.9.3)
       '@tanstack/react-db':
         specifier: 0.1.33
         version: 0.1.33(react@19.2.0)(typescript@5.9.3)
@@ -3881,11 +3879,6 @@ packages:
 
   '@tanstack/db-ivm@0.1.11':
     resolution: {integrity: sha512-xLCbIPRE6DUAKfR/Png2G5gqI+LseZ0qFdwSX+vs3q/37dzdHex5xDC666VQPz9IYy6nWjYebK3U7N0jx/xgSQ==}
-    peerDependencies:
-      typescript: '>=4.7'
-
-  '@tanstack/db@0.4.11':
-    resolution: {integrity: sha512-xFK2ltAqpoW4Nr30cSNFXI40ILy9jWrcg3l3od4vUuG0O/Xhc5B5rcwGNMKvKOGS8LN1E0kyFHgMTC/mRKigtQ==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -13558,12 +13551,6 @@ snapshots:
       '@tanstack/db-ivm': 0.1.11(typescript@5.9.3)
       typescript: 5.9.3
 
-  '@tanstack/db@0.4.11(typescript@5.9.3)':
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      '@tanstack/db-ivm': 0.1.11(typescript@5.9.3)
-      typescript: 5.9.3
-
   '@tanstack/devtools-event-client@0.3.2': {}
 
   '@tanstack/eslint-plugin-query@5.91.2(eslint@9.37.0(jiti@2.6.0))(typescript@5.9.3)':
@@ -13591,15 +13578,10 @@ snapshots:
 
   '@tanstack/query-core@5.90.5': {}
 
-  '@tanstack/query-db-collection@0.2.32(@tanstack/query-core@5.90.3)(typescript@5.9.3)':
+  '@tanstack/query-db-collection@0.2.32(@tanstack/query-core@5.90.5)(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.0.0
       '@tanstack/db': 0.4.11(typescript@5.9.3)
-      '@tanstack/query-core': 5.90.3
-  '@tanstack/query-db-collection@0.2.30(@tanstack/query-core@5.90.5)(typescript@5.9.3)':
-    dependencies:
-      '@standard-schema/spec': 1.0.0
-      '@tanstack/db': 0.4.9(typescript@5.9.3)
       '@tanstack/query-core': 5.90.5
       typescript: 5.9.3
 
