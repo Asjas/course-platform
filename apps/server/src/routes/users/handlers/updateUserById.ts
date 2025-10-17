@@ -14,6 +14,7 @@ export async function updateUserByIdHandler(
     routes: "handlers:users:update:id",
   });
 
+  const fastify = request.server;
   const { userId } = request.params;
   const { updates } = request.body;
 
@@ -22,38 +23,42 @@ export async function updateUserByIdHandler(
     return reply.badRequest("No user data provided in request body");
   }
 
-  try {
-    const existingUser = await getUserById({ userId });
+  const [err, existingUser] = await fastify.to(getUserById({ userId }));
 
-    // TODO: Check if the user has permission to update this user
-
-    if (!existingUser) {
-      log.debug(`User with id ${userId} not found for update`);
-      return reply.notFound("User not found");
-    }
-
-    const updatedUser = await updateUserById({ userId, updates });
-
-    if (!updatedUser) {
-      log.debug(`Failed to update user with id ${userId}`);
-      return reply.internalServerError();
-    }
-
-    await reply.server.cache.invalidateAll([`user:${userId}`, "users:all"]);
-
-    reply.cacheControl("private");
-    reply.cacheControl("max-age", "5m");
-    reply.stale("if-error", "1h");
-    reply.vary("Cookie");
-
-    log.debug(`User with id ${userId} updated successfully`);
-
-    return updatedUser;
-  } catch (err) {
-    if (err instanceof Error) {
-      log.error(err, `Error updating user with id ${userId}`);
-    }
-
+  if (err) {
+    log.error(err, `Error fetching user with id ${userId}`);
     return reply.internalServerError();
   }
+
+  if (!existingUser) {
+    log.debug(`User with id ${userId} not found for update`);
+    return reply.notFound("User not found");
+  }
+
+  // TODO: Check if the user has permission to update this user
+
+  const [updateErr, updatedUser] = await fastify.to(
+    updateUserById({ userId, updates }),
+  );
+
+  if (updateErr) {
+    log.error(updateErr, `Error updating user with id ${userId}`);
+    return reply.internalServerError();
+  }
+
+  if (!updatedUser) {
+    log.debug(`Failed to update user with id ${userId}`);
+    return reply.internalServerError();
+  }
+
+  await reply.server.cache.invalidateAll([userId, "users~all"]);
+
+  reply.cacheControl("private");
+  reply.cacheControl("max-age", "5m");
+  reply.stale("if-error", "1h");
+  reply.vary("Cookie");
+
+  log.debug(`User with id ${userId} updated successfully`);
+
+  return updatedUser;
 }

@@ -17,10 +17,6 @@ export async function updateUserById({
     .where(eq(user.id, userId))
     .returning();
 
-  if (!updatedUser) {
-    return null;
-  }
-
   return updatedUser;
 }
 
@@ -29,10 +25,6 @@ export async function deleteUserById({ userId }: { userId: string }) {
     .delete(user)
     .where(eq(user.id, userId))
     .returning();
-
-  if (!deletedUser) {
-    return null;
-  }
 
   return deletedUser;
 }
