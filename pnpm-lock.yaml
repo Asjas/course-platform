@@ -278,8 +278,8 @@ importers:
         specifier: 0.2.30
         version: 0.2.30(@tanstack/query-core@5.90.5)(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: 0.1.32
-        version: 0.1.32(react@19.2.0)(typescript@5.9.3)
+        specifier: 0.1.33
+        version: 0.1.33(react@19.2.0)(typescript@5.9.3)
       '@tanstack/react-form':
         specifier: 1.23.7
         version: 1.23.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -3887,8 +3887,8 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
-  '@tanstack/db@0.4.10':
-    resolution: {integrity: sha512-I4gTlzO9zgY+qUl1GqoAtUsoyPr+HNTdq3/rbL3znx8pxlUJTGA78WxrEmxTJtzCyfQoUwTwM5JYIMJnz2IFcQ==}
+  '@tanstack/db@0.4.11':
+    resolution: {integrity: sha512-xFK2ltAqpoW4Nr30cSNFXI40ILy9jWrcg3l3od4vUuG0O/Xhc5B5rcwGNMKvKOGS8LN1E0kyFHgMTC/mRKigtQ==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -3930,8 +3930,8 @@ packages:
   '@tanstack/query-devtools@5.90.1':
     resolution: {integrity: sha512-GtINOPjPUH0OegJExZ70UahT9ykmAhmtNVcmtdnOZbxLwT7R5OmRztR5Ahe3/Cu7LArEmR6/588tAycuaWb1xQ==}
 
-  '@tanstack/react-db@0.1.32':
-    resolution: {integrity: sha512-XSWeR8nOQW2uvf/vTaGcSz9zw6UFRv7jPiznZDDg5y/u627upLEJz/rrJZl2is+EikQDErUD1pMqDyu945w9Ew==}
+  '@tanstack/react-db@0.1.33':
+    resolution: {integrity: sha512-xsxNFTV8TuSuOMDT8/sbXa2GP2m7MZEryWsS1m8a/22APDQsacSq/IiPrSO08R09w1CRzuQ05TkxhZrYZH0ROA==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -13561,7 +13561,7 @@ snapshots:
       sorted-btree: 1.8.1
       typescript: 5.9.3
 
-  '@tanstack/db@0.4.10(typescript@5.9.3)':
+  '@tanstack/db@0.4.11(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.0.0
       '@tanstack/db-ivm': 0.1.11(typescript@5.9.3)
@@ -13609,9 +13609,9 @@ snapshots:
 
   '@tanstack/query-devtools@5.90.1': {}
 
-  '@tanstack/react-db@0.1.32(react@19.2.0)(typescript@5.9.3)':
+  '@tanstack/react-db@0.1.33(react@19.2.0)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.4.10(typescript@5.9.3)
+      '@tanstack/db': 0.4.11(typescript@5.9.3)
       react: 19.2.0
       use-sync-external-store: 1.6.0(react@19.2.0)
     transitivePeerDependencies:
