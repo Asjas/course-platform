@@ -2,6 +2,8 @@ import mdx from "@mdx-js/rollup";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
+import browserslist from "browserslist";
+import { browserslistToTargets } from "lightningcss";
 import { resolve } from "node:path";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
@@ -42,6 +44,9 @@ export default defineConfig({
   ],
   css: {
     transformer: "lightningcss",
+    lightningcss: {
+      targets: browserslistToTargets(browserslist(">= 0.25%")),
+    },
   },
   build: {
     cssMinify: "lightningcss",

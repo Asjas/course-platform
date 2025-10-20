@@ -1,0 +1,16 @@
+.box {
+  padding: var(--space-size-1);
+  background: var(--color-secondary);
+  border: var(--border-thin) solid;
+  color: var(--color-dark);
+  background-color: var(--color-light);
+}
+
+.box * {
+  color: inherit;
+}
+
+.box.light {
+  color: var(--color-light);
+  background-color: var(--color-dark);
+}
