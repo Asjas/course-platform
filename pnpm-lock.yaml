@@ -81,8 +81,8 @@ importers:
         specifier: 3.0.1
         version: 3.0.1
       eslint-plugin-unused-imports:
-        specifier: 4.2.0
-        version: 4.2.0(@typescript-eslint/eslint-plugin@8.46.1(@typescript-eslint/parser@8.46.1(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))
+        specifier: 4.3.0
+        version: 4.3.0(@typescript-eslint/eslint-plugin@8.46.1(@typescript-eslint/parser@8.46.1(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))
       eslint-plugin-yml:
         specifier: 1.19.0
         version: 1.19.0(eslint@9.38.0(jiti@2.6.0))
@@ -5543,8 +5543,8 @@ packages:
     resolution: {integrity: sha512-XjVGBhtDZJfyuhIxnQ/WMm385RbX3DBu7H1J7HNNhmB2tnGxMeqVSnYv79oAj992ayvIBZghsymwkYFS6cGH4Q==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  eslint-plugin-unused-imports@4.2.0:
-    resolution: {integrity: sha512-hLbJ2/wnjKq4kGA9AUaExVFIbNzyxYdVo49QZmKCnhk5pc9wcYRbfgLHvWJ8tnsdcseGhoUAddm9gn/lt+d74w==}
+  eslint-plugin-unused-imports@4.3.0:
+    resolution: {integrity: sha512-ZFBmXMGBYfHttdRtOG9nFFpmUvMtbHSjsKrS20vdWdbfiVYsO3yA2SGYy9i9XmZJDfMGBflZGBCm70SEnFQtOA==}
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^8.0.0-0 || ^7.0.0 || ^6.0.0 || ^5.0.0
       eslint: ^9.0.0 || ^8.0.0
@@ -15554,7 +15554,7 @@ snapshots:
     dependencies:
       safe-regex: 2.1.1
 
-  eslint-plugin-unused-imports@4.2.0(@typescript-eslint/eslint-plugin@8.46.1(@typescript-eslint/parser@8.46.1(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0)):
+  eslint-plugin-unused-imports@4.3.0(@typescript-eslint/eslint-plugin@8.46.1(@typescript-eslint/parser@8.46.1(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0))(typescript@5.9.3))(eslint@9.38.0(jiti@2.6.0)):
     dependencies:
       eslint: 9.38.0(jiti@2.6.0)
     optionalDependencies:
