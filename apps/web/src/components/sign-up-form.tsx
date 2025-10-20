@@ -1,13 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import * as z from "zod";
 import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { authClient } from "~/lib/auth.client";
+import type { AuthState } from "~/lib/auth.context.ts";
 
 const formSchema = z
   .object({
@@ -29,8 +28,7 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-export default function SignUpForm() {
-  const [serverError, setServerError] = useState<string | null>(null);
+export default function SignUpForm({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -41,25 +39,14 @@ export default function SignUpForm() {
       confirmPassword: "",
     },
     validators: {
-      onBlur: formSchema,
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value: { name, email, password } }) => {
-      setServerError(null);
+      await auth.signUp(name, email, password);
 
-      const { error } = await authClient.signUp.email(
-        { name, email, password },
-        {
-          onSuccess: (ctx) => {
-            console.log("successful", ctx);
-            navigate({ to: "/dashboard" });
-          },
-          onError: ({ error }) => {
-            setServerError(error.message);
-          },
-        },
-      );
-
-      if (error) console.error(error);
+      if (auth.isAuthenticated) {
+        navigate({ to: "/dashboard" });
+      }
     },
   });
 
@@ -75,7 +62,7 @@ export default function SignUpForm() {
       {/* Server error */}
       <FormStatusMessage
         statusMessage={null}
-        serverError={serverError}
+        serverError={auth?.serverError}
       />
 
       {/* Name Field */}

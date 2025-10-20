@@ -21,15 +21,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (data?.user) {
-      toast.success("Signed up successfully");
       setServerError(null);
+      toast.success("Signed up successfully");
     }
 
     if (error?.message) {
       toast.error(error.message);
       setServerError(error.message);
-
-      return error.message;
     }
   };
 
@@ -45,15 +43,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (data?.user) {
-      toast.success("Signed in successfully");
       setServerError(null);
+      toast.success("Signed in successfully");
     }
 
     if (error?.message) {
       toast.error(error.message);
       setServerError(error.message);
-
-      return error.message;
     }
   };
 
@@ -66,8 +62,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (error?.message) {
       toast.error(error.message);
-
-      return error.message;
     }
   };
 

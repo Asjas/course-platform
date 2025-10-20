@@ -6,17 +6,13 @@ export interface AuthState {
   session: AuthSession | null;
   serverError: string | null;
   hasRole: (role: string) => boolean;
-  signUp: (
-    name: string,
-    email: string,
-    password: string,
-  ) => Promise<string | undefined>;
+  signUp: (name: string, email: string, password: string) => Promise<void>;
   signIn: (
     email: string,
     password: string,
     rememberMe?: boolean,
-  ) => Promise<string | undefined>;
-  signOut: () => Promise<string | undefined>;
+  ) => Promise<void>;
+  signOut: () => Promise<void>;
 }
 
 export const defaultAuthState: AuthState = {

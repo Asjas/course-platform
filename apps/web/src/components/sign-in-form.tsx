@@ -28,12 +28,12 @@ export default function SignInForm({ auth }: { auth: AuthState }) {
       remember: false,
     },
     validators: {
-      onBlur: formSchema,
+      onSubmit: formSchema,
     },
     onSubmit: async ({ value: { email, password, remember } }) => {
-      const error = await auth.signIn(email, password, remember);
+      await auth.signIn(email, password, remember);
 
-      if (!error && auth.isAuthenticated) {
+      if (auth.isAuthenticated) {
         navigate({ to: "/dashboard" });
       }
     },
@@ -51,7 +51,7 @@ export default function SignInForm({ auth }: { auth: AuthState }) {
       {/* Server error */}
       <FormStatusMessage
         statusMessage={null}
-        serverError={auth.serverError}
+        serverError={auth?.serverError}
       />
 
       {/* Email Field */}
