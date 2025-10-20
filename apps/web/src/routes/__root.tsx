@@ -4,7 +4,7 @@ import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner.tsx";
-import { type AuthState } from "~/lib/auth.context";
+import { type AuthState, useAuth } from "~/lib/auth.context";
 
 interface MyRouterContext {
   auth: AuthState;
@@ -15,7 +15,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 });
 
 function RootRoute() {
-  const { auth } = Route.useRouteContext();
+  const auth = useAuth();
 
   return (
     <>

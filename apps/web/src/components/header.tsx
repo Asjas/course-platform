@@ -92,7 +92,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               onClick={async () => {
                 await auth.signOut();
 
-                navigate({ to: "/", reloadDocument: true });
+                navigate({ to: "/" });
               }}
             >
               Logout
