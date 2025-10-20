@@ -1,3 +1,16 @@
 .aspect-ratio {
-  aspect-ratio: 16 / 9;
+  --numerator: 16;
+  --denominator: 9;
+  aspect-ratio: var(--numerator) / var(--denominator);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.aspect-ratio > img,
+.aspect-ratio > video {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
 }

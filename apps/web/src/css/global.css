@@ -1,49 +1,36 @@
-/* Global styles */
+* {
+  max-inline-size: var(--max-inline-size);
+  font-family: "Geist", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+}
+
 body {
   padding: var(--space-size-2) var(--space-size-1);
-  @apply bg-light text-dark text-size-1 font-sans;
 }
 
-h1,
-h2,
-h3 {
-  line-height: 1.1;
-  font-weight: 900;
-}
-
-h1 {
-  @apply text-size-4;
-}
-
-h2 {
-  @apply text-size-3;
-}
-
-h3 {
-  @apply text-size-2;
-}
-
-p,
-li {
-  max-width: 70ch;
-}
-
-h1 {
-  max-width: 15ch;
-}
-
-h2,
-h3 {
-  max-width: 30ch;
-}
-
-a {
-  color: currentcolor;
-  text-decoration-color: var(--color-primary);
-}
-
-a:hover {
-  text-decoration: none;
+html,
+body,
+div,
+header,
+nav,
+main,
+footer {
+  max-inline-size: none;
 }
 
 /* Prose */
@@ -57,9 +44,32 @@ h3 + * {
   --flow-space: var(--space-base);
 }
 
-/* So text scale renders nicely */
-div[class*="text-"] {
-  --flow-space: 1rem;
-  line-height: 1;
-  font-weight: 700;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Arvo", serif;
+}
+
+/* https://webkit.org/blog/16831/line-height-units/ */
+p {
+  margin-block: 1lh;
+}
+
+img {
+  max-inline-size: 100%;
+}
+
+a {
+  text-decoration-color: var(--color-primary);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+[id] {
+  scroll-margin-top: 120px;
 }
