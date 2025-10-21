@@ -14,6 +14,7 @@ const formSchema = z.object({
 
 export default function PasswordResetForm() {
   const [serverError, setServerError] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const form = useForm({
     defaultValues: {
@@ -42,8 +43,6 @@ export default function PasswordResetForm() {
       if (error) console.error(error);
     },
   });
-
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   return (
     <form
