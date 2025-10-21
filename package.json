@@ -23,7 +23,7 @@
     "@eslint/compat": "1.4.0",
     "@eslint/js": "9.38.0",
     "@tanstack/eslint-plugin-query": "5.91.2",
-    "@tanstack/eslint-plugin-router": "1.133.3",
+    "@tanstack/eslint-plugin-router": "1.133.19",
     "@trivago/prettier-plugin-sort-imports": "5.2.2",
     "@types/eslint-plugin-security": "3.0.0",
     "@xeonlink/prettier-plugin-organize-attributes": "1.1.0",
