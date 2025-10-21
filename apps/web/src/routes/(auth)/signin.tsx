@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
 import SignInForm from "~/components/sign-in-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
+import { useAuth } from "~/lib/auth.context.ts";
 
 export const Route = createFileRoute("/(auth)/signin")({
   component: SignInPage,
 });
 
 function SignInPage() {
-  const { auth } = Route.useRouteContext();
+  const auth = useAuth();
 
   return (
     <div className="flex w-100 grow flex-col justify-center self-center">
