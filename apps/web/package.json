@@ -13,8 +13,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@epic-web/invariant": "1.0.0",
     "@apps/server": "workspace:^",
+    "@epic-web/invariant": "1.0.0",
     "@hookform/resolvers": "5.2.2",
     "@opentelemetry/instrumentation-http": "0.206.0",
     "@opentelemetry/sdk-node": "0.206.0",
