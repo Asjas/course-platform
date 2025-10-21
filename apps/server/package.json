@@ -11,7 +11,7 @@
     "test:watch": "vitest watch",
     "drizzle:migrate": "drizzle-kit migrate --config ./src/drizzle.config.ts",
     "drizzle:generate": "drizzle-kit generate --config ./src/drizzle.config.ts",
-    "drizzle:migrate:prod": "drizzle-kit migrate --config ./dist/src/drizzle.config.js",
+    "drizzle:migrate:prod": "drizzle-kit migrate --config ./dist/drizzle.config.js",
     "drizzle:studio": "drizzle-kit studio",
     "clean": "rimraf dist/ node_modules/",
     "typecheck": "tsc --noEmit"
