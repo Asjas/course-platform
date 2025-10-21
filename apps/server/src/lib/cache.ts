@@ -8,11 +8,11 @@ import {
   cacheMissCounter,
 } from "~/lib/metrics.js";
 import { redis } from "~/lib/redis.js";
+import { getAllUsers, getUserById } from "~/routers/users/queries.js";
 import {
   getAllSupportTickets,
   getSupportTicketById,
 } from "~/routes/support-tickets/queries.js";
-import { getAllUsers, getUserById } from "~/routes/users/queries.js";
 
 export const cache = createCache({
   storage: {

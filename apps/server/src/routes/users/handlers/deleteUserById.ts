@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { deleteUserById } from "~/routes/users/mutations.js";
+import { deleteUserById } from "~/routers/users/mutations.js";
 
 export async function deleteUserByIdHandler(
   request: FastifyRequest<{ Params: { userId: string } }>,

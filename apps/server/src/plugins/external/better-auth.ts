@@ -1,10 +1,12 @@
+import { fromNodeHeaders } from "better-auth/node";
 import type {
   FastifyInstance,
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import fastifyBetterAuth from "fastify-better-auth";
+import fastifyBetterAuth, { getAuthDecorator } from "fastify-better-auth";
 import { auth } from "~/lib/auth.server.js";
+import type { User } from "~/routers/users/mutations.js";
 
 export default function betterAuthPlugin(
   fastify: FastifyInstance,
@@ -14,6 +16,16 @@ export default function betterAuthPlugin(
   fastify.decorateRequest("user", null);
 
   fastify.register(fastifyBetterAuth, { auth });
+
+  fastify.addHook("onRequest", async (request, reply) => {
+    const auth = getAuthDecorator(reply.server);
+
+    const session = await auth.api.getSession({
+      headers: fromNodeHeaders(request.headers),
+    });
+
+    request.user = (session?.user as User) || null;
+  });
 
   done();
 }

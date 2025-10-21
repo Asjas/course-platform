@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
-import { type User, updateUserById } from "~/routes/users/mutations.js";
-import { getUserById } from "~/routes/users/queries.js";
+import { type User, updateUserById } from "~/routers/users/mutations.js";
+import { getUserById } from "~/routers/users/queries.js";
 
 export async function updateUserByIdHandler(
   request: FastifyRequest<{

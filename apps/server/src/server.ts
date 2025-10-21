@@ -1,4 +1,8 @@
 import { fastifyAutoload } from "@fastify/autoload";
+import {
+  type FastifyTRPCPluginOptions,
+  fastifyTRPCPlugin,
+} from "@trpc/server/adapters/fastify";
 import Fastify, { type FastifyServerOptions } from "fastify";
 import fastifyPrintRoutes from "fastify-print-routes";
 import {
@@ -9,8 +13,10 @@ import {
 } from "fastify-type-provider-zod";
 import { join } from "path";
 import type { Config } from "~/config.js";
+import { createContext } from "~/context.js";
 import { TEN_MB } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
+import { type AppRouter, appRouter } from "~/routers/index.js";
 
 /**
  * Creates and configures the Fastify server instance.
@@ -52,6 +58,18 @@ async function createServer(config: Config) {
     dir: join(import.meta.dirname, "routes"),
     dirNameRoutePrefix: false,
     matchFilter: /index\.(?:ts|js)$/,
+  });
+
+  await server.register(fastifyTRPCPlugin, {
+    prefix: "/trpc",
+    trpcOptions: {
+      router: appRouter,
+      createContext,
+      onError({ path, error }) {
+        // report to error monitoring
+        console.error(`Error in tRPC handler on path '${path}':`, error);
+      },
+    } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
   });
 
   server.setNotFoundHandler(

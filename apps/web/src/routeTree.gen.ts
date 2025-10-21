@@ -16,6 +16,7 @@ import { Route as SupportRouteRouteImport } from "./routes/support/route"
 import { Route as AuthenticatedRouteRouteImport } from "./routes/_authenticated/route"
 import { Route as authRouteRouteImport } from "./routes/(auth)/route"
 import { Route as IndexRouteImport } from "./routes/index"
+import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
@@ -24,11 +25,13 @@ import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
 import { Route as authResetPasswordRouteImport } from "./routes/(auth)/reset-password"
 import { Route as EducationCoursesRouteRouteImport } from "./routes/education/courses/route"
-import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/_admin/route"
+import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/admin/route"
+import { Route as SupportSupportTicketIndexRouteImport } from "./routes/support/$supportTicket/index"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
-import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/_admin/users"
-import { Route as AuthenticatedAdminAdminRouteImport } from "./routes/_authenticated/_admin/admin"
+import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
+import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
+import { Route as SupportSupportTicketEditIndexRouteImport } from "./routes/support/$supportTicket/edit/index"
 import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
 
 const TermsRoute = TermsRouteImport.update({
@@ -63,6 +66,11 @@ const IndexRoute = IndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => rootRouteImport,
+} as any)
+const SupportIndexRoute = SupportIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => SupportRouteRoute,
 } as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: "/blog/",
@@ -105,9 +113,16 @@ const EducationCoursesRouteRoute = EducationCoursesRouteRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
-  id: "/_admin",
+  id: "/admin",
+  path: "/admin",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const SupportSupportTicketIndexRoute =
+  SupportSupportTicketIndexRouteImport.update({
+    id: "/$supportTicket/",
+    path: "/$supportTicket/",
+    getParentRoute: () => SupportRouteRoute,
+  } as any)
 const EducationCoursesIndexRoute = EducationCoursesIndexRouteImport.update({
   id: "/",
   path: "/",
@@ -118,16 +133,23 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: "/users",
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
-const AuthenticatedAdminAdminRoute = AuthenticatedAdminAdminRouteImport.update({
-  id: "/admin",
-  path: "/admin",
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
+const SupportSupportTicketEditRouteRoute =
+  SupportSupportTicketEditRouteRouteImport.update({
+    id: "/$supportTicket/edit",
+    path: "/$supportTicket/edit",
+    getParentRoute: () => SupportRouteRoute,
+  } as any)
 const EducationCoursesCourseRouteRoute =
   EducationCoursesCourseRouteRouteImport.update({
     id: "/$course",
     path: "/$course",
     getParentRoute: () => EducationCoursesRouteRoute,
+  } as any)
+const SupportSupportTicketEditIndexRoute =
+  SupportSupportTicketEditIndexRouteImport.update({
+    id: "/",
+    path: "/",
+    getParentRoute: () => SupportSupportTicketEditRouteRoute,
   } as any)
 const EducationCoursesCourseIndexRoute =
   EducationCoursesCourseIndexRouteImport.update({
@@ -138,10 +160,11 @@ const EducationCoursesCourseIndexRoute =
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
-  "/support": typeof SupportRouteRoute
+  "/support": typeof SupportRouteRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
+  "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
   "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
@@ -150,18 +173,21 @@ export interface FileRoutesByFullPath {
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
+  "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
-  "/admin": typeof AuthenticatedAdminAdminRoute
-  "/users": typeof AuthenticatedAdminUsersRoute
+  "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/admin/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
+  "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
+  "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
-  "/support": typeof SupportRouteRoute
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
+  "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
@@ -169,21 +195,23 @@ export interface FileRoutesByTo {
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
-  "/admin": typeof AuthenticatedAdminAdminRoute
-  "/users": typeof AuthenticatedAdminUsersRoute
+  "/support": typeof SupportIndexRoute
+  "/admin/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses": typeof EducationCoursesIndexRoute
+  "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseIndexRoute
+  "/support/$supportTicket/edit": typeof SupportSupportTicketEditIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   "/": typeof IndexRoute
   "/(auth)": typeof authRouteRouteWithChildren
   "/_authenticated": typeof AuthenticatedRouteRouteWithChildren
-  "/support": typeof SupportRouteRoute
+  "/support": typeof SupportRouteRouteWithChildren
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
-  "/_authenticated/_admin": typeof AuthenticatedAdminRouteRouteWithChildren
+  "/_authenticated/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
   "/(auth)/reset-password": typeof authResetPasswordRoute
   "/(auth)/signin": typeof authSigninRoute
@@ -192,11 +220,14 @@ export interface FileRoutesById {
   "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
+  "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
-  "/_authenticated/_admin/admin": typeof AuthenticatedAdminAdminRoute
-  "/_authenticated/_admin/users": typeof AuthenticatedAdminUsersRoute
+  "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
+  "/support/$supportTicket/": typeof SupportSupportTicketIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
+  "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -206,6 +237,7 @@ export interface FileRouteTypes {
     | "/downloads"
     | "/privacy"
     | "/terms"
+    | "/admin"
     | "/education/courses"
     | "/reset-password"
     | "/signin"
@@ -214,18 +246,21 @@ export interface FileRouteTypes {
     | "/settings"
     | "/blog/$slug"
     | "/blog"
+    | "/support/"
     | "/education/courses/$course"
-    | "/admin"
-    | "/users"
+    | "/support/$supportTicket/edit"
+    | "/admin/users"
     | "/education/courses/"
+    | "/support/$supportTicket"
     | "/education/courses/$course/"
+    | "/support/$supportTicket/edit/"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
-    | "/support"
     | "/downloads"
     | "/privacy"
     | "/terms"
+    | "/admin"
     | "/reset-password"
     | "/signin"
     | "/signup"
@@ -233,10 +268,12 @@ export interface FileRouteTypes {
     | "/settings"
     | "/blog/$slug"
     | "/blog"
-    | "/admin"
-    | "/users"
+    | "/support"
+    | "/admin/users"
     | "/education/courses"
+    | "/support/$supportTicket"
     | "/education/courses/$course"
+    | "/support/$supportTicket/edit"
   id:
     | "__root__"
     | "/"
@@ -246,7 +283,7 @@ export interface FileRouteTypes {
     | "/downloads"
     | "/privacy"
     | "/terms"
-    | "/_authenticated/_admin"
+    | "/_authenticated/admin"
     | "/education/courses"
     | "/(auth)/reset-password"
     | "/(auth)/signin"
@@ -255,18 +292,21 @@ export interface FileRouteTypes {
     | "/_authenticated/settings"
     | "/blog/$slug"
     | "/blog/"
+    | "/support/"
     | "/education/courses/$course"
-    | "/_authenticated/_admin/admin"
-    | "/_authenticated/_admin/users"
+    | "/support/$supportTicket/edit"
+    | "/_authenticated/admin/users"
     | "/education/courses/"
+    | "/support/$supportTicket/"
     | "/education/courses/$course/"
+    | "/support/$supportTicket/edit/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  SupportRouteRoute: typeof SupportRouteRoute
+  SupportRouteRoute: typeof SupportRouteRouteWithChildren
   DownloadsRoute: typeof DownloadsRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -326,6 +366,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/support/": {
+      id: "/support/"
+      path: "/"
+      fullPath: "/support/"
+      preLoaderRoute: typeof SupportIndexRouteImport
+      parentRoute: typeof SupportRouteRoute
+    }
     "/blog/": {
       id: "/blog/"
       path: "/blog"
@@ -382,12 +429,19 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof EducationCoursesRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/_authenticated/_admin": {
-      id: "/_authenticated/_admin"
-      path: ""
-      fullPath: ""
+    "/_authenticated/admin": {
+      id: "/_authenticated/admin"
+      path: "/admin"
+      fullPath: "/admin"
       preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    "/support/$supportTicket/": {
+      id: "/support/$supportTicket/"
+      path: "/$supportTicket"
+      fullPath: "/support/$supportTicket"
+      preLoaderRoute: typeof SupportSupportTicketIndexRouteImport
+      parentRoute: typeof SupportRouteRoute
     }
     "/education/courses/": {
       id: "/education/courses/"
@@ -396,19 +450,19 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof EducationCoursesIndexRouteImport
       parentRoute: typeof EducationCoursesRouteRoute
     }
-    "/_authenticated/_admin/users": {
-      id: "/_authenticated/_admin/users"
+    "/_authenticated/admin/users": {
+      id: "/_authenticated/admin/users"
       path: "/users"
-      fullPath: "/users"
+      fullPath: "/admin/users"
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    "/_authenticated/_admin/admin": {
-      id: "/_authenticated/_admin/admin"
-      path: "/admin"
-      fullPath: "/admin"
-      preLoaderRoute: typeof AuthenticatedAdminAdminRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+    "/support/$supportTicket/edit": {
+      id: "/support/$supportTicket/edit"
+      path: "/$supportTicket/edit"
+      fullPath: "/support/$supportTicket/edit"
+      preLoaderRoute: typeof SupportSupportTicketEditRouteRouteImport
+      parentRoute: typeof SupportRouteRoute
     }
     "/education/courses/$course": {
       id: "/education/courses/$course"
@@ -416,6 +470,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/education/courses/$course"
       preLoaderRoute: typeof EducationCoursesCourseRouteRouteImport
       parentRoute: typeof EducationCoursesRouteRoute
+    }
+    "/support/$supportTicket/edit/": {
+      id: "/support/$supportTicket/edit/"
+      path: "/"
+      fullPath: "/support/$supportTicket/edit/"
+      preLoaderRoute: typeof SupportSupportTicketEditIndexRouteImport
+      parentRoute: typeof SupportSupportTicketEditRouteRoute
     }
     "/education/courses/$course/": {
       id: "/education/courses/$course/"
@@ -444,13 +505,11 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 )
 
 interface AuthenticatedAdminRouteRouteChildren {
-  AuthenticatedAdminAdminRoute: typeof AuthenticatedAdminAdminRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
-    AuthenticatedAdminAdminRoute: AuthenticatedAdminAdminRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
 
@@ -473,6 +532,37 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
+interface SupportSupportTicketEditRouteRouteChildren {
+  SupportSupportTicketEditIndexRoute: typeof SupportSupportTicketEditIndexRoute
+}
+
+const SupportSupportTicketEditRouteRouteChildren: SupportSupportTicketEditRouteRouteChildren =
+  {
+    SupportSupportTicketEditIndexRoute: SupportSupportTicketEditIndexRoute,
+  }
+
+const SupportSupportTicketEditRouteRouteWithChildren =
+  SupportSupportTicketEditRouteRoute._addFileChildren(
+    SupportSupportTicketEditRouteRouteChildren,
+  )
+
+interface SupportRouteRouteChildren {
+  SupportIndexRoute: typeof SupportIndexRoute
+  SupportSupportTicketEditRouteRoute: typeof SupportSupportTicketEditRouteRouteWithChildren
+  SupportSupportTicketIndexRoute: typeof SupportSupportTicketIndexRoute
+}
+
+const SupportRouteRouteChildren: SupportRouteRouteChildren = {
+  SupportIndexRoute: SupportIndexRoute,
+  SupportSupportTicketEditRouteRoute:
+    SupportSupportTicketEditRouteRouteWithChildren,
+  SupportSupportTicketIndexRoute: SupportSupportTicketIndexRoute,
+}
+
+const SupportRouteRouteWithChildren = SupportRouteRoute._addFileChildren(
+  SupportRouteRouteChildren,
+)
 
 interface EducationCoursesCourseRouteRouteChildren {
   EducationCoursesCourseIndexRoute: typeof EducationCoursesCourseIndexRoute
@@ -508,7 +598,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  SupportRouteRoute: SupportRouteRoute,
+  SupportRouteRoute: SupportRouteRouteWithChildren,
   DownloadsRoute: DownloadsRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,

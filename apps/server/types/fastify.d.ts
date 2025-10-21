@@ -4,7 +4,7 @@ import { db } from "~/db/index.js";
 import { cache } from "~/lib/cache.js";
 import mailer from "~/lib/mailer.js";
 import { registry } from "~/lib/metrics.js";
-import type { User } from "~/routes/users/mutations.ts";
+import type { User } from "~/routers/users/mutations.ts";
 
 declare module "fastify" {
   interface FastifyServerOptions {

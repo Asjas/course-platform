@@ -26,41 +26,6 @@ const preparedGetAllUsers = db.query.user
 const preparedGetUserById = db.query.user
   .findFirst({
     where: (user) => eq(user.id, sql.placeholder("userId")),
-    with: {
-      enrollments: {
-        with: {
-          course: {
-            with: {
-              progress: true,
-              modules: {
-                with: {
-                  lessons: {
-                    with: {
-                      progress: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-      tickets: {
-        with: {
-          comments: true,
-          attachments: true,
-        },
-      },
-      payments: { with: { invoice: true } },
-      wishlists: { with: { course: true } },
-      announcements: {
-        with: {
-          reads: true,
-        },
-      },
-      sessions: true,
-      teamLicenses: { with: { invites: true } },
-    },
   })
   .prepare("getUserById");
 
