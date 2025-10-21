@@ -304,6 +304,9 @@ importers:
       better-auth:
         specifier: 1.3.28
         version: 1.3.28(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      browserslist:
+        specifier: 4.26.3
+        version: 4.26.3
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -4813,8 +4816,8 @@ packages:
   brotli@1.3.3:
     resolution: {integrity: sha512-oTKjJdShmDuGW94SyyaoQvAjf30dZaHnjJ8uAF+u2/vGJkJbJPJAT1gDiOJP5v1Zb6f9KEyW/1HpuaWIXtGHPg==}
 
-  browserslist@4.26.2:
-    resolution: {integrity: sha512-ECFzp6uFOSB+dcZ5BK/IBaGWssbSYBHvuMeMt3MMFyhI0Z8SqGgEkBLARgpRH3hutIgPVsALcMwbDrJqPxQ65A==}
+  browserslist@4.26.3:
+    resolution: {integrity: sha512-lAUU+02RFBuCKQPj/P6NgjlbCnLBMp4UtgTx7vNHd3XSIJF87s9a5rA3aH2yw3GS9DqZAUbOtZdCCiZeVRqt0w==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
@@ -4857,6 +4860,9 @@ packages:
 
   caniuse-lite@1.0.30001745:
     resolution: {integrity: sha512-ywt6i8FzvdgrrrGbr1jZVObnVv6adj+0if2/omv9cmR2oiZs30zL4DIyaptKcbOrBdOIc74QTMoJvSE2QHh5UQ==}
+
+  caniuse-lite@1.0.30001751:
+    resolution: {integrity: sha512-A0QJhug0Ly64Ii3eIqHu5X51ebln3k4yTUkY1j8drqpWHVreg/VLijN48cZ1bYPiqOQuqpkIKnzr/Ul8V+p6Cw==}
 
   caseless@0.12.0:
     resolution: {integrity: sha512-4tYFyifaFfGacoiObjJegolkwSU4xQNGbVgUiNYVUxbQ2x2lUsFvY4hVgVzGiIe6WLOPqycWXA40l+PWsxthUw==}
@@ -9593,7 +9599,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.28.4
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.26.2
+      browserslist: 4.26.3
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -14561,7 +14567,7 @@ snapshots:
 
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:
-      browserslist: 4.26.2
+      browserslist: 4.26.3
       caniuse-lite: 1.0.30001745
       fraction.js: 4.3.7
       normalize-range: 0.1.2
@@ -14714,13 +14720,13 @@ snapshots:
     dependencies:
       base64-js: 1.5.1
 
-  browserslist@4.26.2:
+  browserslist@4.26.3:
     dependencies:
       baseline-browser-mapping: 2.8.9
-      caniuse-lite: 1.0.30001745
+      caniuse-lite: 1.0.30001751
       electron-to-chromium: 1.5.227
       node-releases: 2.0.21
-      update-browserslist-db: 1.1.3(browserslist@4.26.2)
+      update-browserslist-db: 1.1.3(browserslist@4.26.3)
 
   buffer-crc32@0.2.13: {}
 
@@ -14757,6 +14763,8 @@ snapshots:
   camelcase@8.0.0: {}
 
   caniuse-lite@1.0.30001745: {}
+
+  caniuse-lite@1.0.30001751: {}
 
   caseless@0.12.0: {}
 
@@ -14914,7 +14922,7 @@ snapshots:
 
   core-js-compat@3.45.1:
     dependencies:
-      browserslist: 4.26.2
+      browserslist: 4.26.3
 
   core-util-is@1.0.2: {}
 
@@ -19188,9 +19196,9 @@ snapshots:
 
   upath@1.2.0: {}
 
-  update-browserslist-db@1.1.3(browserslist@4.26.2):
+  update-browserslist-db@1.1.3(browserslist@4.26.3):
     dependencies:
-      browserslist: 4.26.2
+      browserslist: 4.26.3
       escalade: 3.2.0
       picocolors: 1.1.1
 
