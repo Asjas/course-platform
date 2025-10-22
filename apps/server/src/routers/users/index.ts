@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import { publicProcedure, router } from "~/router.js";
 import { deleteUserById, updateUserById } from "~/routers/users/mutations.js";
@@ -10,7 +11,10 @@ export const usersRouter = router({
   getAllUsers: publicProcedure.query(
     async ({ ctx }): Promise<UsersReturnType> => {
       if (!ctx.user || !ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to access this resource",
+        });
       }
 
       const fastify = ctx.reply.server;
@@ -19,7 +23,10 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, "Failed to fetch all users");
-        return ctx.reply.internalServerError();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       return users;
@@ -29,7 +36,10 @@ export const usersRouter = router({
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
       if (!ctx.user || ctx.user.id !== userId) {
-        throw ctx.reply.unauthorized();
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to access this resource",
+        });
       }
 
       const fastify = ctx.reply.server;
@@ -40,12 +50,18 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, `Failed to fetch user with id ${userId}`);
-        return ctx.reply.internalServerError();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       if (!user) {
         ctx.request.log.debug(`User with id ${userId} not found`);
-        return ctx.reply.notFound("User not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
       }
 
       ctx.request.log.debug(`Fetched user with id ${user.id} successfully`);
@@ -56,16 +72,35 @@ export const usersRouter = router({
     .input(
       z.object({
         id: z.string(),
-        name: z.string().optional(),
-        username: z.string().optional(),
-        displayUsername: z.string().optional(),
-        email: z.email().optional(),
-        image: z.string().nullable(),
+        name: z.string().trim(),
+        username: z.string().trim().nullable(),
+        email: z.email().trim(),
+        metadata: z.string().trim().nullable(),
+        country: z.string().trim().nullable(),
+        image: z
+          .string()
+          .nullable()
+          .refine(
+            (value) => {
+              if (!value) return true;
+
+              try {
+                Buffer.from(value, "base64");
+                return true;
+              } catch {
+                return false;
+              }
+            },
+            { message: "Invalid base64 string" },
+          ),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<UserByIdReturnType> => {
       if (!ctx.user || ctx.user.id !== input.id) {
-        throw ctx.reply.unauthorized();
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to access this resource",
+        });
       }
 
       const fastify = ctx.reply.server;
@@ -76,7 +111,10 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, `Error updating user with id ${input.id}`);
-        return ctx.reply.internalServerError();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.reply.server.cache.invalidateAll([input.id, "users~all"]);
@@ -87,7 +125,10 @@ export const usersRouter = router({
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input: { userId } }): Promise<void> => {
       if (!ctx.user || ctx.user.id !== userId || ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You are not authorized to access this resource",
+        });
       }
 
       const fastify = ctx.reply.server;
@@ -96,7 +137,10 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, `Error deleting user with id ${userId}`);
-        return ctx.reply.internalServerError();
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
@@ -109,7 +153,10 @@ export const usersRouter = router({
         input: { userId, banReason },
       }): Promise<UserByIdReturnType> => {
         if (!ctx.user || !ctx.hasRole("admin")) {
-          throw ctx.reply.unauthorized();
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to access this resource",
+          });
         }
 
         const fastify = ctx.reply.server;
@@ -123,7 +170,10 @@ export const usersRouter = router({
 
         if (err) {
           ctx.request.log.error(err, `Error banning user with id ${userId}`);
-          return ctx.reply.internalServerError();
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
         }
 
         ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
@@ -136,7 +186,10 @@ export const usersRouter = router({
     .mutation(
       async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
         if (!ctx.user || !ctx.hasRole("admin")) {
-          throw ctx.reply.unauthorized();
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "You are not authorized to access this resource",
+          });
         }
 
         const fastify = ctx.reply.server;
@@ -147,7 +200,10 @@ export const usersRouter = router({
 
         if (err) {
           ctx.request.log.error(err, `Error unbanning user with id ${userId}`);
-          return ctx.reply.internalServerError();
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
         }
 
         ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
