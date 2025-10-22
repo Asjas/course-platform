@@ -88,7 +88,7 @@ export default function Header({ auth }: { auth: AuthState }) {
         <div className="flex">
           {auth.isAuthenticated ? (
             <Button
-              className="bg-green-600 text-white"
+              className="cursor-pointer bg-green-600 text-white hover:bg-gray-600"
               onClick={async () => {
                 await auth.signOut();
 
