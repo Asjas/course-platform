@@ -3,7 +3,6 @@ import {
   boolean,
   check,
   index,
-  integer,
   smallint,
   text,
   timestamp,
@@ -13,6 +12,9 @@ import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
+
+export type Coupon = typeof coupon.$inferSelect;
+export type NewCoupon = Omit<typeof coupon.$inferInsert, "id">;
 
 // Enums
 export const discountType = mySchema.enum("discountType", [
@@ -29,8 +31,7 @@ export const coupon = mySchema.table(
     description: text(),
     discountType: discountType().default("percentage").notNull(),
     discountValue: smallint().notNull(),
-    currentRedemptions: integer().default(0).notNull(),
-    redemptionLimit: integer().default(1).notNull(),
+    redemptionLimit: smallint().default(1).notNull(),
     validFrom: timestamp({ withTimezone: true }).defaultNow().notNull(),
     validUntil: timestamp({ withTimezone: true }),
     active: boolean().default(true).notNull(),
@@ -44,7 +45,6 @@ export const coupon = mySchema.table(
   },
   (table) => [
     index("coupon_code_idx").on(table.code),
-    index("coupon_course_idx").on(table.courseId),
     check("coupon_discount_value_check", sql`${table.discountValue} > 0`),
     check(
       "coupon_validity_check",
@@ -55,15 +55,7 @@ export const coupon = mySchema.table(
       sql`${table.discountType} IN ('percentage', 'fixed')`,
     ),
     check("coupon_active_check", sql`${table.active} IN (true, false)`),
-    check(
-      "coupon_current_redemptions_check",
-      sql`${table.currentRedemptions} >= 0`,
-    ),
     check("coupon_redemption_limit_check", sql`${table.redemptionLimit} > 0`),
-    check(
-      "coupon_redemptions_limit_check",
-      sql`${table.currentRedemptions} <= ${table.redemptionLimit}`,
-    ),
     check(
       "coupon_percentage_discount_check",
       sql`(${table.discountType} != 'percentage') OR (${table.discountType} = 'percentage' AND ${table.discountValue} <= 100)`,

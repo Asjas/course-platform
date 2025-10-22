@@ -8,6 +8,11 @@ import {
   cacheMissCounter,
 } from "~/lib/metrics.js";
 import { redis } from "~/lib/redis.js";
+import {
+  getAllCoupons,
+  getCouponByCode,
+  getCouponById,
+} from "~/routers/coupons/queries.js";
 import { getAllUsers, getUserById } from "~/routers/users/queries.js";
 import {
   getAllSupportTickets,
@@ -80,4 +85,37 @@ export const cache = createCache({
       },
     },
     getSupportTicketById,
+  )
+  .define(
+    "getAllCoupons",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "all",
+      references() {
+        return ["coupon~all"];
+      },
+    },
+    getAllCoupons,
+  )
+  .define(
+    "getCouponById",
+    {
+      ttl: ONE_HOUR,
+      serialize: (args) => args.couponId,
+      references(args) {
+        return [args.couponId];
+      },
+    },
+    getCouponById,
+  )
+  .define(
+    "getCouponByCode",
+    {
+      ttl: ONE_HOUR,
+      serialize: (args) => args.couponCode,
+      references(args) {
+        return [`coupon~code~${args.couponCode}`];
+      },
+    },
+    getCouponByCode,
   );
