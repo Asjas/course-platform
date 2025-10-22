@@ -5,6 +5,7 @@ import ReactDOM from "react-dom/client";
 import { defaultAuthState, useAuth } from "~/lib/auth.context";
 import { AuthProvider } from "~/lib/auth.provider";
 import { queryClient } from "~/lib/query.client.ts";
+import { trpc } from "~/lib/trpc.client.ts";
 import reportWebVitals from "~/reportWebVitals";
 import { routeTree } from "~/routeTree.gen";
 import "~/tailwind.css";
@@ -13,6 +14,8 @@ const router = createRouter({
   routeTree,
   context: {
     auth: defaultAuthState,
+    queryClient,
+    trpc,
   },
   defaultPreload: "intent",
   scrollRestoration: true,

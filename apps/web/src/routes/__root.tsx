@@ -1,3 +1,4 @@
+import type { QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
@@ -5,9 +6,12 @@ import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner.tsx";
 import { type AuthState, useAuth } from "~/lib/auth.context";
+import { trpc } from "~/lib/trpc.client.ts";
 
 interface MyRouterContext {
   auth: AuthState;
+  queryClient: QueryClient;
+  trpc: typeof trpc;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
