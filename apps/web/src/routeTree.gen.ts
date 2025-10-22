@@ -19,7 +19,6 @@ import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
-import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
@@ -28,11 +27,18 @@ import { Route as EducationCoursesRouteRouteImport } from "./routes/education/co
 import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/admin/route"
 import { Route as SupportSupportTicketIndexRouteImport } from "./routes/support/$supportTicket/index"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
+import { Route as AuthenticatedSettingsUserIdRouteImport } from "./routes/_authenticated/settings.$userId"
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
+import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
+import { Route as AuthenticatedAdminCoursesRouteImport } from "./routes/_authenticated/admin/courses"
+import { Route as AuthenticatedAdminCouponsRouteImport } from "./routes/_authenticated/admin/coupons"
 import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as SupportSupportTicketEditIndexRouteImport } from "./routes/support/$supportTicket/edit/index"
 import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
+import { Route as AuthenticatedAdminCoursesInstructorNotesRouteImport } from "./routes/_authenticated/admin/courses.instructor-notes"
+import { Route as AuthenticatedAdminCoursesFaqRouteImport } from "./routes/_authenticated/admin/courses.faq"
+import { Route as AuthenticatedAdminCouponsCreateRouteImport } from "./routes/_authenticated/admin/coupons.create"
 
 const TermsRoute = TermsRouteImport.update({
   id: "/terms",
@@ -82,11 +88,6 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: "/blog/$slug",
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
@@ -128,11 +129,35 @@ const EducationCoursesIndexRoute = EducationCoursesIndexRouteImport.update({
   path: "/",
   getParentRoute: () => EducationCoursesRouteRoute,
 } as any)
+const AuthenticatedSettingsUserIdRoute =
+  AuthenticatedSettingsUserIdRouteImport.update({
+    id: "/settings/$userId",
+    path: "/settings/$userId",
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: "/users",
   path: "/users",
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminPurchasesRoute =
+  AuthenticatedAdminPurchasesRouteImport.update({
+    id: "/purchases",
+    path: "/purchases",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCoursesRoute =
+  AuthenticatedAdminCoursesRouteImport.update({
+    id: "/courses",
+    path: "/courses",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: "/coupons",
+    path: "/coupons",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const SupportSupportTicketEditRouteRoute =
   SupportSupportTicketEditRouteRouteImport.update({
     id: "/$supportTicket/edit",
@@ -157,6 +182,24 @@ const EducationCoursesCourseIndexRoute =
     path: "/",
     getParentRoute: () => EducationCoursesCourseRouteRoute,
   } as any)
+const AuthenticatedAdminCoursesInstructorNotesRoute =
+  AuthenticatedAdminCoursesInstructorNotesRouteImport.update({
+    id: "/instructor-notes",
+    path: "/instructor-notes",
+    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+  } as any)
+const AuthenticatedAdminCoursesFaqRoute =
+  AuthenticatedAdminCoursesFaqRouteImport.update({
+    id: "/faq",
+    path: "/faq",
+    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+  } as any)
+const AuthenticatedAdminCouponsCreateRoute =
+  AuthenticatedAdminCouponsCreateRouteImport.update({
+    id: "/create",
+    path: "/create",
+    getParentRoute: () => AuthenticatedAdminCouponsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   "/": typeof IndexRoute
@@ -170,15 +213,21 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
-  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
+  "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
+  "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
+  "/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
+  "/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
+  "/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
 }
@@ -192,13 +241,19 @@ export interface FileRoutesByTo {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
-  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
+  "/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
+  "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
+  "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
+  "/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
+  "/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
+  "/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/education/courses/$course": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditIndexRoute
 }
@@ -217,15 +272,21 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
-  "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/_authenticated/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
+  "/_authenticated/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
+  "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/_authenticated/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket/": typeof SupportSupportTicketIndexRoute
+  "/_authenticated/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
+  "/_authenticated/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
+  "/_authenticated/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
 }
@@ -243,15 +304,21 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
-    | "/settings"
     | "/blog/$slug"
     | "/blog"
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/admin/coupons"
+    | "/admin/courses"
+    | "/admin/purchases"
     | "/admin/users"
+    | "/settings/$userId"
     | "/education/courses/"
     | "/support/$supportTicket"
+    | "/admin/coupons/create"
+    | "/admin/courses/faq"
+    | "/admin/courses/instructor-notes"
     | "/education/courses/$course/"
     | "/support/$supportTicket/edit/"
   fileRoutesByTo: FileRoutesByTo
@@ -265,13 +332,19 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
-    | "/settings"
     | "/blog/$slug"
     | "/blog"
     | "/support"
+    | "/admin/coupons"
+    | "/admin/courses"
+    | "/admin/purchases"
     | "/admin/users"
+    | "/settings/$userId"
     | "/education/courses"
     | "/support/$supportTicket"
+    | "/admin/coupons/create"
+    | "/admin/courses/faq"
+    | "/admin/courses/instructor-notes"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
   id:
@@ -289,15 +362,21 @@ export interface FileRouteTypes {
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/_authenticated/dashboard"
-    | "/_authenticated/settings"
     | "/blog/$slug"
     | "/blog/"
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/_authenticated/admin/coupons"
+    | "/_authenticated/admin/courses"
+    | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/users"
+    | "/_authenticated/settings/$userId"
     | "/education/courses/"
     | "/support/$supportTicket/"
+    | "/_authenticated/admin/coupons/create"
+    | "/_authenticated/admin/courses/faq"
+    | "/_authenticated/admin/courses/instructor-notes"
     | "/education/courses/$course/"
     | "/support/$supportTicket/edit/"
   fileRoutesById: FileRoutesById
@@ -387,13 +466,6 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/_authenticated/settings": {
-      id: "/_authenticated/settings"
-      path: "/settings"
-      fullPath: "/settings"
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     "/_authenticated/dashboard": {
       id: "/_authenticated/dashboard"
       path: "/dashboard"
@@ -450,11 +522,39 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof EducationCoursesIndexRouteImport
       parentRoute: typeof EducationCoursesRouteRoute
     }
+    "/_authenticated/settings/$userId": {
+      id: "/_authenticated/settings/$userId"
+      path: "/settings/$userId"
+      fullPath: "/settings/$userId"
+      preLoaderRoute: typeof AuthenticatedSettingsUserIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     "/_authenticated/admin/users": {
       id: "/_authenticated/admin/users"
       path: "/users"
       fullPath: "/admin/users"
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    "/_authenticated/admin/purchases": {
+      id: "/_authenticated/admin/purchases"
+      path: "/purchases"
+      fullPath: "/admin/purchases"
+      preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    "/_authenticated/admin/courses": {
+      id: "/_authenticated/admin/courses"
+      path: "/courses"
+      fullPath: "/admin/courses"
+      preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    "/_authenticated/admin/coupons": {
+      id: "/_authenticated/admin/coupons"
+      path: "/coupons"
+      fullPath: "/admin/coupons"
+      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     "/support/$supportTicket/edit": {
@@ -485,6 +585,27 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof EducationCoursesCourseIndexRouteImport
       parentRoute: typeof EducationCoursesCourseRouteRoute
     }
+    "/_authenticated/admin/courses/instructor-notes": {
+      id: "/_authenticated/admin/courses/instructor-notes"
+      path: "/instructor-notes"
+      fullPath: "/admin/courses/instructor-notes"
+      preLoaderRoute: typeof AuthenticatedAdminCoursesInstructorNotesRouteImport
+      parentRoute: typeof AuthenticatedAdminCoursesRoute
+    }
+    "/_authenticated/admin/courses/faq": {
+      id: "/_authenticated/admin/courses/faq"
+      path: "/faq"
+      fullPath: "/admin/courses/faq"
+      preLoaderRoute: typeof AuthenticatedAdminCoursesFaqRouteImport
+      parentRoute: typeof AuthenticatedAdminCoursesRoute
+    }
+    "/_authenticated/admin/coupons/create": {
+      id: "/_authenticated/admin/coupons/create"
+      path: "/create"
+      fullPath: "/admin/coupons/create"
+      preLoaderRoute: typeof AuthenticatedAdminCouponsCreateRouteImport
+      parentRoute: typeof AuthenticatedAdminCouponsRoute
+    }
   }
 }
 
@@ -504,12 +625,49 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
   authRouteRouteChildren,
 )
 
+interface AuthenticatedAdminCouponsRouteChildren {
+  AuthenticatedAdminCouponsCreateRoute: typeof AuthenticatedAdminCouponsCreateRoute
+}
+
+const AuthenticatedAdminCouponsRouteChildren: AuthenticatedAdminCouponsRouteChildren =
+  {
+    AuthenticatedAdminCouponsCreateRoute: AuthenticatedAdminCouponsCreateRoute,
+  }
+
+const AuthenticatedAdminCouponsRouteWithChildren =
+  AuthenticatedAdminCouponsRoute._addFileChildren(
+    AuthenticatedAdminCouponsRouteChildren,
+  )
+
+interface AuthenticatedAdminCoursesRouteChildren {
+  AuthenticatedAdminCoursesFaqRoute: typeof AuthenticatedAdminCoursesFaqRoute
+  AuthenticatedAdminCoursesInstructorNotesRoute: typeof AuthenticatedAdminCoursesInstructorNotesRoute
+}
+
+const AuthenticatedAdminCoursesRouteChildren: AuthenticatedAdminCoursesRouteChildren =
+  {
+    AuthenticatedAdminCoursesFaqRoute: AuthenticatedAdminCoursesFaqRoute,
+    AuthenticatedAdminCoursesInstructorNotesRoute:
+      AuthenticatedAdminCoursesInstructorNotesRoute,
+  }
+
+const AuthenticatedAdminCoursesRouteWithChildren =
+  AuthenticatedAdminCoursesRoute._addFileChildren(
+    AuthenticatedAdminCoursesRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRouteWithChildren
+  AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
+  AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRouteWithChildren,
+    AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
+    AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   }
 
@@ -521,13 +679,13 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSettingsUserIdRoute: typeof AuthenticatedSettingsUserIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSettingsUserIdRoute: AuthenticatedSettingsUserIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
