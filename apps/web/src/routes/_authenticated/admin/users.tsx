@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client.ts";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
-  loader: async () => {
+  loader: async ({ context }) => {
+    const { queryClient } = context;
+
     return await queryClient.ensureQueryData(
       trpc.users.getAllUsers.queryOptions(),
     );

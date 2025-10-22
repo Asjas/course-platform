@@ -38,9 +38,5 @@ export async function getAllUsers() {
 export async function getUserById({ userId }: { userId: string }) {
   const user = await preparedGetUserById.execute({ userId });
 
-  if (!user) {
-    return null;
-  }
-
   return user;
 }
