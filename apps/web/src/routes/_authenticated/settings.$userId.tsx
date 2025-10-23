@@ -177,11 +177,22 @@ function SettingsComponent() {
                       value={state.value}
                       onChange={(event) => handleChange(event.target.value)}
                       onBlur={handleBlur}
+                      aria-invalid={
+                        state.meta.errors.length > 0 ? "true" : "false"
+                      }
+                      aria-describedby={
+                        state.meta.errors.length > 0 ? "name-error" : undefined
+                      }
                     />
                   </div>
                   {state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {state.meta.errors.join(", ")}
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="name-error"
+                    >
+                      {state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -208,11 +219,22 @@ function SettingsComponent() {
                       value={state.value}
                       onChange={(event) => handleChange(event.target.value)}
                       onBlur={handleBlur}
+                      aria-invalid={
+                        state.meta.errors.length > 0 ? "true" : "false"
+                      }
+                      aria-describedby={
+                        state.meta.errors.length > 0 ? "email-error" : undefined
+                      }
                     />
                   </div>
                   {state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {state.meta.errors.join(", ")}
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="email-error"
+                    >
+                      {state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -242,11 +264,24 @@ function SettingsComponent() {
                         value={state.value ?? ""}
                         onChange={(event) => handleChange(event.target.value)}
                         onBlur={handleBlur}
+                        aria-invalid={
+                          state.meta.errors.length > 0 ? "true" : "false"
+                        }
+                        aria-describedby={
+                          state.meta.errors.length > 0
+                            ? "username-error"
+                            : undefined
+                        }
                       />
                     </div>
                     {state.meta.errors && (
-                      <p className="mt-2 text-sm text-red-600">
-                        {state.meta.errors.join(", ")}
+                      <p
+                        className="mt-2 text-sm text-red-600"
+                        id="username-error"
+                      >
+                        {state.meta.errors
+                          .map((error) => error?.message)
+                          .join(", ")}
                       </p>
                     )}
                   </div>
@@ -304,10 +339,21 @@ function SettingsComponent() {
                       reader.readAsDataURL(file);
                     }}
                     onBlur={handleBlur}
+                    aria-invalid={
+                      state.meta.errors.length > 0 ? "true" : "false"
+                    }
+                    aria-describedby={
+                      state.meta.errors.length > 0 ? "image-error" : undefined
+                    }
                   />
                   {state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {state.meta.errors.join(", ")}
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="image-error"
+                    >
+                      {state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -336,11 +382,24 @@ function SettingsComponent() {
                       value={state.value ?? ""}
                       onChange={(event) => handleChange(event.target.value)}
                       onBlur={handleBlur}
+                      aria-invalid={
+                        state.meta.errors.length > 0 ? "true" : "false"
+                      }
+                      aria-describedby={
+                        state.meta.errors.length > 0
+                          ? "country-error"
+                          : undefined
+                      }
                     />
                   </div>
                   {state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {state.meta.errors.join(", ")}
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="country-error"
+                    >
+                      {state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                 </div>
@@ -366,11 +425,24 @@ function SettingsComponent() {
                       value={state.value ?? ""}
                       onChange={(event) => handleChange(event.target.value)}
                       onBlur={handleBlur}
+                      aria-invalid={
+                        state.meta.errors.length > 0 ? "true" : "false"
+                      }
+                      aria-describedby={
+                        state.meta.errors.length > 0
+                          ? "metadata-error"
+                          : undefined
+                      }
                     />
                   </div>
                   {state.meta.errors && (
-                    <p className="mt-2 text-sm text-red-600">
-                      {state.meta.errors.join(", ")}
+                    <p
+                      className="mt-2 text-sm text-red-600"
+                      id="metadata-error"
+                    >
+                      {state.meta.errors
+                        .map((error) => error?.message)
+                        .join(", ")}
                     </p>
                   )}
                   <p className="mt-3 text-sm/6 text-gray-600 dark:text-gray-400">
