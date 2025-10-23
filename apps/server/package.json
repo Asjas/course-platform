@@ -41,7 +41,7 @@
     "fastify-healthcheck": "5.1.0",
     "fastify-print-routes": "4.1.0",
     "fastify-type-provider-zod": "6.0.0",
-    "ioredis": "5.8.1",
+    "ioredis": "5.8.2",
     "isbot": "5.1.31",
     "nodemailer": "7.0.9",
     "pg": "8.16.3",
