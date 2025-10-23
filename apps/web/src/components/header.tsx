@@ -115,7 +115,7 @@ export default function Header({ auth }: { auth: AuthState }) {
         <div className="flex flex-1 justify-end">
           {auth.isAuthenticated ? (
             <Button
-              className="cursor-pointer bg-green-600 text-white hover:bg-gray-600"
+              className="cursor-pointer bg-green-700 text-white hover:bg-gray-600"
               onClick={async () => {
                 await auth.signOut();
 
@@ -126,7 +126,7 @@ export default function Header({ auth }: { auth: AuthState }) {
             </Button>
           ) : (
             <NavLink
-              className="bg-green-900"
+              className="bg-green-700"
               preload="intent"
               to="/signin"
             >
@@ -141,7 +141,7 @@ export default function Header({ auth }: { auth: AuthState }) {
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
       >
-        <DialogPanel className="fixed inset-y-0 top-0 left-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-6 py-5">
+        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-6 pt-[21px] pb-5">
           <div className="flex items-center justify-between">
             <div className="flex flex-1">
               <button
@@ -175,7 +175,7 @@ export default function Header({ auth }: { auth: AuthState }) {
             <div className="flex flex-1 justify-end">
               {auth.isAuthenticated ? (
                 <Button
-                  className="cursor-pointer bg-green-600 text-white hover:bg-gray-600"
+                  className="cursor-pointer bg-green-700 text-white hover:bg-gray-600"
                   onClick={async () => {
                     await auth.signOut();
 
@@ -186,7 +186,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 </Button>
               ) : (
                 <NavLink
-                  className="bg-green-900"
+                  className="bg-green-700"
                   preload="intent"
                   to="/signin"
                 >
@@ -195,7 +195,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               )}
             </div>
           </div>
-          <div className="mt-6">
+          <div className="mt-20">
             <ul className="flex w-full flex-col space-y-2">
               <li>
                 <NavLink
