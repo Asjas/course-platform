@@ -196,7 +196,7 @@ export default function Header({ auth }: { auth: AuthState }) {
             </div>
           </div>
           <div className="mt-6">
-            <ul className="flex w-full flex-col space-y-4">
+            <ul className="flex w-full flex-col space-y-2">
               <li>
                 <NavLink
                   className="flex w-full"
