@@ -1,7 +1,7 @@
 {
   "author": "A-J Roos <asjasroos@proton.me>",
   "license": "MIT",
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.19.0",
   "scripts": {
     "dev": "pnpm run -parallel -filter \"./apps/**\" dev",
     "build": "turbo build --filter \"./apps/**\" build",
