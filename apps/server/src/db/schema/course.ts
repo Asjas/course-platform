@@ -62,7 +62,6 @@ export const course = mySchema.table(
     ...timestamps,
   },
   (table) => [
-    index("course_slug_idx").on(table.slug),
     check("course_price_non_negative", sql`${table.price} >= 0`),
     check("course_sale_price_non_negative", sql`${table.salePrice} >= 0`),
     check(

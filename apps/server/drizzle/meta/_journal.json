@@ -5,43 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1759238597825,
-      "tag": "0000_damp_maddog",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1759341838743,
-      "tag": "0001_pale_lockheed",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1759342876517,
-      "tag": "0002_cultured_darkhawk",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1760605169566,
-      "tag": "0003_glossy_the_order",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1761146009467,
-      "tag": "0004_quiet_mother_askani",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1761156295128,
-      "tag": "0005_third_roland_deschain",
+      "when": 1761223688299,
+      "tag": "0000_military_speed",
       "breakpoints": true
     }
   ]

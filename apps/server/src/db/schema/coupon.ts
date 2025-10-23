@@ -80,9 +80,6 @@ export const couponRedemption = mySchema.table(
     ...timestamps,
   },
   (table) => [
-    index("coupon_redemption_course_idx").on(table.courseId),
-    index("coupon_redemption_user_idx").on(table.userId),
-    index("coupon_redemption_coupon_idx").on(table.couponId),
     uniqueIndex("coupon_redemption_unique_idx").on(
       table.couponId,
       table.userId,

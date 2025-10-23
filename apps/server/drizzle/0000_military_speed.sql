@@ -7,7 +7,7 @@ CREATE TYPE "my_schema"."video_provider" AS ENUM('youtube');--> statement-breakp
 CREATE TYPE "my_schema"."course_enrollment_source" AS ENUM('direct', 'gift', 'team_invite');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_enrollment_status" AS ENUM('active', 'cancelled', 'refunded', 'completed');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_enrollment_type" AS ENUM('individual', 'gift', 'team');--> statement-breakpoint
-CREATE TYPE "my_schema"."members" AS ENUM('member', 'admin', 'owner', 'ghost');--> statement-breakpoint
+CREATE TYPE "my_schema"."members" AS ENUM('member', 'admin');--> statement-breakpoint
 CREATE TYPE "my_schema"."paid_status" AS ENUM('paid', 'refunded');--> statement-breakpoint
 CREATE TYPE "my_schema"."payment_status" AS ENUM('pending', 'completed', 'failed', 'refunded');--> statement-breakpoint
 CREATE TYPE "my_schema"."purchase_type" AS ENUM('individual', 'team');--> statement-breakpoint
@@ -21,8 +21,7 @@ CREATE TABLE "my_schema"."coupon" (
 	"description" text,
 	"discount_type" "my_schema"."discountType" DEFAULT 'percentage' NOT NULL,
 	"discount_value" smallint NOT NULL,
-	"current_redemptions" integer DEFAULT 0 NOT NULL,
-	"redemption_limit" integer DEFAULT 1 NOT NULL,
+	"redemption_limit" smallint DEFAULT 1 NOT NULL,
 	"valid_from" timestamp with time zone DEFAULT now() NOT NULL,
 	"valid_until" timestamp with time zone,
 	"active" boolean DEFAULT true NOT NULL,
@@ -35,9 +34,7 @@ CREATE TABLE "my_schema"."coupon" (
 	CONSTRAINT "coupon_validity_check" CHECK ("my_schema"."coupon"."valid_until" IS NULL OR "my_schema"."coupon"."valid_until" > "my_schema"."coupon"."valid_from"),
 	CONSTRAINT "coupon_discount_type_check" CHECK ("my_schema"."coupon"."discount_type" IN ('percentage', 'fixed')),
 	CONSTRAINT "coupon_active_check" CHECK ("my_schema"."coupon"."active" IN (true, false)),
-	CONSTRAINT "coupon_current_redemptions_check" CHECK ("my_schema"."coupon"."current_redemptions" >= 0),
 	CONSTRAINT "coupon_redemption_limit_check" CHECK ("my_schema"."coupon"."redemption_limit" > 0),
-	CONSTRAINT "coupon_redemptions_limit_check" CHECK ("my_schema"."coupon"."current_redemptions" <= "my_schema"."coupon"."redemption_limit"),
 	CONSTRAINT "coupon_percentage_discount_check" CHECK (("my_schema"."coupon"."discount_type" != 'percentage') OR ("my_schema"."coupon"."discount_type" = 'percentage' AND "my_schema"."coupon"."discount_value" <= 100))
 );
 --> statement-breakpoint
@@ -266,16 +263,16 @@ CREATE TABLE "my_schema"."session" (
 CREATE TABLE "my_schema"."user" (
 	"id" text PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"country" text,
 	"username" text,
 	"display_username" text,
 	"email" text NOT NULL,
 	"email_verified" boolean DEFAULT false NOT NULL,
-	"image" text,
+	"image" "bytea",
 	"role" "my_schema"."members" DEFAULT 'member' NOT NULL,
 	"banned" boolean DEFAULT false,
 	"ban_reason" text,
 	"ban_expires" timestamp with time zone,
-	"is_anonymous" boolean,
 	"metadata" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -415,6 +412,7 @@ CREATE TABLE "my_schema"."support_ticket_attachment" (
 CREATE TABLE "my_schema"."support_ticket_comment" (
 	"id" text PRIMARY KEY NOT NULL,
 	"comment" text NOT NULL,
+	"attachments" text[],
 	"user_id" text DEFAULT 'ghost' NOT NULL,
 	"ticket_id" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -582,12 +580,7 @@ ALTER TABLE "my_schema"."platform_announcement" ADD CONSTRAINT "platform_announc
 ALTER TABLE "my_schema"."platform_announcement_read" ADD CONSTRAINT "platform_announcement_read_announcement_id_platform_announcement_id_fk" FOREIGN KEY ("announcement_id") REFERENCES "my_schema"."platform_announcement"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."platform_announcement_read" ADD CONSTRAINT "platform_announcement_read_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "coupon_code_idx" ON "my_schema"."coupon" USING btree ("code");--> statement-breakpoint
-CREATE INDEX "coupon_course_idx" ON "my_schema"."coupon" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "coupon_redemption_course_idx" ON "my_schema"."coupon_redemption" USING btree ("course_id");--> statement-breakpoint
-CREATE INDEX "coupon_redemption_user_idx" ON "my_schema"."coupon_redemption" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "coupon_redemption_coupon_idx" ON "my_schema"."coupon_redemption" USING btree ("coupon_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "coupon_redemption_unique_idx" ON "my_schema"."coupon_redemption" USING btree ("coupon_id","user_id","course_id");--> statement-breakpoint
-CREATE INDEX "course_slug_idx" ON "my_schema"."course" USING btree ("slug");--> statement-breakpoint
 CREATE UNIQUE INDEX "course_certificate_unique_idx" ON "my_schema"."course_completion_certificate" USING btree ("user_id","course_id");--> statement-breakpoint
 CREATE INDEX "course_certificate_user_idx" ON "my_schema"."course_completion_certificate" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "course_faq_course_idx" ON "my_schema"."course_faq" USING btree ("course_id");--> statement-breakpoint
@@ -614,45 +607,8 @@ CREATE INDEX "enrollment_gifter_idx" ON "my_schema"."enrollment" USING btree ("g
 CREATE INDEX "enrollment_team_license_idx" ON "my_schema"."enrollment" USING btree ("team_license_id");--> statement-breakpoint
 CREATE INDEX "enrollment_team_invite_idx" ON "my_schema"."enrollment" USING btree ("team_invite_id");--> statement-breakpoint
 CREATE INDEX "enrollment_status_idx" ON "my_schema"."enrollment" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "account_account_id_idx" ON "my_schema"."account" USING btree ("account_id");--> statement-breakpoint
-CREATE INDEX "account_provider_id_idx" ON "my_schema"."account" USING btree ("provider_id");--> statement-breakpoint
-CREATE INDEX "account_access_token_idx" ON "my_schema"."account" USING btree ("access_token");--> statement-breakpoint
-CREATE INDEX "account_refresh_token_idx" ON "my_schema"."account" USING btree ("refresh_token");--> statement-breakpoint
-CREATE INDEX "account_id_token_idx" ON "my_schema"."account" USING btree ("id_token");--> statement-breakpoint
-CREATE INDEX "account_user_id_idx" ON "my_schema"."account" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "account_refresh_token_expires_at_idx" ON "my_schema"."account" USING btree ("refresh_token_expires_at");--> statement-breakpoint
-CREATE INDEX "account_access_token_expires_at_idx" ON "my_schema"."account" USING btree ("access_token_expires_at");--> statement-breakpoint
-CREATE UNIQUE INDEX "account_provider_user_unique_idx" ON "my_schema"."account" USING btree ("provider_id","account_id");--> statement-breakpoint
-CREATE INDEX "invitation_email_idx" ON "my_schema"."invitation" USING btree ("email");--> statement-breakpoint
-CREATE INDEX "invitation_status_idx" ON "my_schema"."invitation" USING btree ("status");--> statement-breakpoint
-CREATE INDEX "invitation_organization_idx" ON "my_schema"."invitation" USING btree ("organization_id");--> statement-breakpoint
-CREATE INDEX "invitation_inviter_idx" ON "my_schema"."invitation" USING btree ("inviter_id");--> statement-breakpoint
-CREATE UNIQUE INDEX "invitation_organization_email_unique_idx" ON "my_schema"."invitation" USING btree ("organization_id","email");--> statement-breakpoint
-CREATE INDEX "member_organization_idx" ON "my_schema"."member" USING btree ("organization_id");--> statement-breakpoint
-CREATE INDEX "member_user_idx" ON "my_schema"."member" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "member_role_idx" ON "my_schema"."member" USING btree ("role");--> statement-breakpoint
-CREATE UNIQUE INDEX "member_organization_user_unique_idx" ON "my_schema"."member" USING btree ("organization_id","user_id");--> statement-breakpoint
-CREATE INDEX "organization_name_idx" ON "my_schema"."organization" USING btree ("name");--> statement-breakpoint
-CREATE INDEX "organization_slug_idx" ON "my_schema"."organization" USING btree ("slug");--> statement-breakpoint
-CREATE INDEX "organization_created_at_idx" ON "my_schema"."organization" USING btree ("created_at");--> statement-breakpoint
-CREATE INDEX "organization_updated_at_idx" ON "my_schema"."organization" USING btree ("updated_at");--> statement-breakpoint
 CREATE INDEX "session_token_idx" ON "my_schema"."session" USING btree ("token");--> statement-breakpoint
-CREATE INDEX "session_user_idx" ON "my_schema"."session" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "session_ip_address_idx" ON "my_schema"."session" USING btree ("ip_address");--> statement-breakpoint
-CREATE INDEX "session_user_agent_idx" ON "my_schema"."session" USING btree ("user_agent");--> statement-breakpoint
-CREATE INDEX "session_expires_at_idx" ON "my_schema"."session" USING btree ("expires_at");--> statement-breakpoint
-CREATE INDEX "session_impersonated_by_idx" ON "my_schema"."session" USING btree ("impersonated_by");--> statement-breakpoint
-CREATE INDEX "user_name_idx" ON "my_schema"."user" USING btree ("name");--> statement-breakpoint
-CREATE INDEX "user_username_idx" ON "my_schema"."user" USING btree ("username");--> statement-breakpoint
 CREATE INDEX "user_email_idx" ON "my_schema"."user" USING btree ("email");--> statement-breakpoint
-CREATE INDEX "user_role_idx" ON "my_schema"."user" USING btree ("role");--> statement-breakpoint
-CREATE INDEX "user_banned_idx" ON "my_schema"."user" USING btree ("banned");--> statement-breakpoint
-CREATE INDEX "user_email_verified_idx" ON "my_schema"."user" USING btree ("email_verified");--> statement-breakpoint
-CREATE INDEX "user_created_at_idx" ON "my_schema"."user" USING btree ("created_at");--> statement-breakpoint
-CREATE INDEX "user_updated_at_idx" ON "my_schema"."user" USING btree ("updated_at");--> statement-breakpoint
-CREATE INDEX "verification_identifier_idx" ON "my_schema"."verification" USING btree ("identifier");--> statement-breakpoint
-CREATE INDEX "verification_value_idx" ON "my_schema"."verification" USING btree ("value");--> statement-breakpoint
-CREATE INDEX "verification_expires_at_idx" ON "my_schema"."verification" USING btree ("expires_at");--> statement-breakpoint
 CREATE UNIQUE INDEX "invoice_payment_unique_idx" ON "my_schema"."invoice" USING btree ("payment_id");--> statement-breakpoint
 CREATE INDEX "invoice_coupon_idx" ON "my_schema"."invoice" USING btree ("coupon_id");--> statement-breakpoint
 CREATE INDEX "invoice_user_idx" ON "my_schema"."invoice" USING btree ("user_id");--> statement-breakpoint

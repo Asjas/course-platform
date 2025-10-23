@@ -1,1 +1,0 @@
-ALTER TABLE "my_schema"."user" DROP COLUMN "is_anonymous";
