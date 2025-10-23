@@ -9,7 +9,6 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
-import { Button } from "~/components/ui/button.tsx";
 import { NavLink } from "~/components/ui/nav-link";
 import type { AuthState } from "~/lib/auth.context.ts";
 
@@ -182,7 +181,7 @@ export default function Header({ auth }: { auth: AuthState }) {
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
       >
-        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-6 pt-[21px] pb-5">
+        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex flex-1">
               <button
@@ -215,16 +214,60 @@ export default function Header({ auth }: { auth: AuthState }) {
 
             <div className="flex flex-1 justify-end">
               {auth.isAuthenticated ? (
-                <Button
-                  className="cursor-pointer bg-green-700 text-white hover:bg-gray-600"
-                  onClick={async () => {
-                    await auth.signOut();
+                <div className="flex flex-1 justify-end">
+                  {auth.isAuthenticated && user ? (
+                    <MenuTrigger>
+                      <MenuButton aria-label="Menu">
+                        {user.image ? (
+                          <img
+                            className="size-10 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                            src={`data:image/jpeg;base64,${user.image}`}
+                            alt="profile"
+                          />
+                        ) : (
+                          <UserIcon
+                            className="hover:text-green-700"
+                            size={28}
+                          />
+                        )}
+                      </MenuButton>
+                      <Popover>
+                        <Menu className="rounded-md bg-gray-700 px-4 py-4">
+                          <MenuItem
+                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                            onAction={() =>
+                              navigate({
+                                to: "/settings/$userId",
+                                params: { userId: user.id },
+                              })
+                            }
+                          >
+                            Settings
+                          </MenuItem>
+                          <MenuItem
+                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                            onAction={async () => {
+                              await auth.signOut();
 
-                    navigate({ to: "/" });
-                  }}
-                >
-                  Logout
-                </Button>
+                              navigate({ to: "/" });
+                            }}
+                          >
+                            Logout
+                          </MenuItem>
+                        </Menu>
+                      </Popover>
+                    </MenuTrigger>
+                  ) : (
+                    <NavLink
+                      className="bg-green-700"
+                      preload="intent"
+                      to="/signin"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign In
+                    </NavLink>
+                  )}
+                </div>
               ) : (
                 <NavLink
                   className="bg-green-700"
