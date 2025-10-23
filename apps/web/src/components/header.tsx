@@ -100,7 +100,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               <MenuIcon
                 aria-hidden="true"
                 size={30}
-                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+                color="white"
               />
             </button>
           </div>
