@@ -1,3 +1,4 @@
+import type { SessionQueryParams } from "better-auth";
 import { createContext, useContext } from "react";
 import type { AuthSession } from "~/lib/auth.client.ts";
 
@@ -13,6 +14,9 @@ export interface AuthState {
     rememberMe?: boolean,
   ) => Promise<void>;
   signOut: () => Promise<void>;
+  refetchSession?: (
+    queryParams?: { query?: SessionQueryParams | undefined } | undefined,
+  ) => void;
 }
 
 export const defaultAuthState: AuthState = {

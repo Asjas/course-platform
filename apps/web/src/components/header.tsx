@@ -141,12 +141,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 <Menu className="rounded-md bg-gray-700 px-4 py-4">
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
-                    onAction={() =>
-                      navigate({
-                        to: "/settings/$userId",
-                        params: { userId: user.id },
-                      })
-                    }
+                    onAction={() => navigate({ to: "/settings" })}
                   >
                     Settings
                   </MenuItem>
@@ -235,12 +230,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                         <Menu className="rounded-md bg-gray-700 px-4 py-4">
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
-                            onAction={() =>
-                              navigate({
-                                to: "/settings/$userId",
-                                params: { userId: user.id },
-                              })
-                            }
+                            onAction={() => navigate({ to: "/settings" })}
                           >
                             Settings
                           </MenuItem>

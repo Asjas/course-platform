@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
+import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
@@ -27,7 +28,6 @@ import { Route as EducationCoursesRouteRouteImport } from "./routes/education/co
 import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/admin/route"
 import { Route as SupportSupportTicketIndexRouteImport } from "./routes/support/$supportTicket/index"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
-import { Route as AuthenticatedSettingsUserIdRouteImport } from "./routes/_authenticated/settings.$userId"
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
 import { Route as AuthenticatedAdminCoursesRouteImport } from "./routes/_authenticated/admin/courses"
@@ -88,6 +88,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: "/blog/$slug",
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
@@ -129,12 +134,6 @@ const EducationCoursesIndexRoute = EducationCoursesIndexRouteImport.update({
   path: "/",
   getParentRoute: () => EducationCoursesRouteRoute,
 } as any)
-const AuthenticatedSettingsUserIdRoute =
-  AuthenticatedSettingsUserIdRouteImport.update({
-    id: "/settings/$userId",
-    path: "/settings/$userId",
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: "/users",
   path: "/users",
@@ -213,6 +212,7 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
@@ -222,7 +222,6 @@ export interface FileRoutesByFullPath {
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
-  "/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
@@ -241,6 +240,7 @@ export interface FileRoutesByTo {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
@@ -248,7 +248,6 @@ export interface FileRoutesByTo {
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
-  "/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
@@ -272,6 +271,7 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
+  "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
@@ -281,7 +281,6 @@ export interface FileRoutesById {
   "/_authenticated/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
-  "/_authenticated/settings/$userId": typeof AuthenticatedSettingsUserIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket/": typeof SupportSupportTicketIndexRoute
   "/_authenticated/admin/coupons/create": typeof AuthenticatedAdminCouponsCreateRoute
@@ -304,6 +303,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/settings"
     | "/blog/$slug"
     | "/blog"
     | "/support/"
@@ -313,7 +313,6 @@ export interface FileRouteTypes {
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
-    | "/settings/$userId"
     | "/education/courses/"
     | "/support/$supportTicket"
     | "/admin/coupons/create"
@@ -332,6 +331,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/settings"
     | "/blog/$slug"
     | "/blog"
     | "/support"
@@ -339,7 +339,6 @@ export interface FileRouteTypes {
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
-    | "/settings/$userId"
     | "/education/courses"
     | "/support/$supportTicket"
     | "/admin/coupons/create"
@@ -362,6 +361,7 @@ export interface FileRouteTypes {
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/_authenticated/dashboard"
+    | "/_authenticated/settings"
     | "/blog/$slug"
     | "/blog/"
     | "/support/"
@@ -371,7 +371,6 @@ export interface FileRouteTypes {
     | "/_authenticated/admin/courses"
     | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/users"
-    | "/_authenticated/settings/$userId"
     | "/education/courses/"
     | "/support/$supportTicket/"
     | "/_authenticated/admin/coupons/create"
@@ -466,6 +465,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    "/_authenticated/settings": {
+      id: "/_authenticated/settings"
+      path: "/settings"
+      fullPath: "/settings"
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     "/_authenticated/dashboard": {
       id: "/_authenticated/dashboard"
       path: "/dashboard"
@@ -521,13 +527,6 @@ declare module "@tanstack/react-router" {
       fullPath: "/education/courses/"
       preLoaderRoute: typeof EducationCoursesIndexRouteImport
       parentRoute: typeof EducationCoursesRouteRoute
-    }
-    "/_authenticated/settings/$userId": {
-      id: "/_authenticated/settings/$userId"
-      path: "/settings/$userId"
-      fullPath: "/settings/$userId"
-      preLoaderRoute: typeof AuthenticatedSettingsUserIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
     }
     "/_authenticated/admin/users": {
       id: "/_authenticated/admin/users"
@@ -679,13 +678,13 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
-  AuthenticatedSettingsUserIdRoute: typeof AuthenticatedSettingsUserIdRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
-  AuthenticatedSettingsUserIdRoute: AuthenticatedSettingsUserIdRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

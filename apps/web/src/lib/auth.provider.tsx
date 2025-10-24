@@ -4,7 +4,7 @@ import { authClient } from "~/lib/auth.client.ts";
 import { AuthContext } from "~/lib/auth.context";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session, isPending, refetch } = authClient.useSession();
   const [serverError, setServerError] = useState<string | null>(null);
 
   const isAuthenticated = !!session;
@@ -83,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         session,
         serverError,
+        refetchSession: refetch,
       }}
     >
       {children}
