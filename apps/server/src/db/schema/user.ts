@@ -1,11 +1,5 @@
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  customType,
-  index,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { boolean, index, text, timestamp } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { courseWishlist } from "~/db/schema/course.js";
@@ -16,27 +10,6 @@ import { payment } from "~/db/schema/purchase.js";
 import { supportTicket } from "~/db/schema/support-tickets.js";
 import { teamLicense } from "~/db/schema/teamLicense.js";
 
-// Custom Types
-const bytea = customType<{
-  data: string | null;
-  driverData: Buffer;
-  default: false;
-}>({
-  dataType() {
-    return "bytea";
-  },
-  toDriver(data: string | null): Buffer {
-    if (!data) {
-      return Buffer.alloc(0);
-    }
-
-    return Buffer.from(data, "base64");
-  },
-  fromDriver(data: Buffer): string | null {
-    return data ? data.toString("base64") : null;
-  },
-});
-
 // Enums
 export const members = mySchema.enum("members", ["member", "admin"]);
 
@@ -46,12 +19,11 @@ export const user = mySchema.table(
   {
     id: text().primaryKey(),
     name: text().notNull(),
-    country: text(),
     username: text(),
     displayUsername: text(),
     email: text().notNull().unique(),
     emailVerified: boolean().default(false).notNull(),
-    image: bytea(),
+    image: text(),
     role: members().default("member").notNull(),
     banned: boolean().default(false),
     banReason: text(),

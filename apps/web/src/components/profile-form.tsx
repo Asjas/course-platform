@@ -30,9 +30,9 @@ export default function ProfileForm() {
 
   const form = useForm({
     defaultValues: {
-      username: null,
+      username: user?.username ?? "",
       name: user?.name ?? "",
-      image: null,
+      image: user?.image ?? null,
     } as z.infer<typeof formSchema>,
     validators: {
       onBlur: formSchema,
@@ -196,7 +196,7 @@ export default function ProfileForm() {
                     {user?.image ? (
                       <img
                         className="size-12 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                        src={`data:image/jpeg;base64,${user.image}`}
+                        src={user.image}
                         alt="profile"
                       />
                     ) : (

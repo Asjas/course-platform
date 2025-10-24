@@ -128,7 +128,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 {user.image ? (
                   <img
                     className="size-10 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                    src={`data:image/jpeg;base64,${user.image}`}
+                    src={user.image}
                     alt="profile"
                   />
                 ) : (
@@ -224,7 +224,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                         {user.image ? (
                           <img
                             className="size-10 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                            src={`data:image/jpeg;base64,${user.image}`}
+                            src={user.image}
                             alt="profile"
                           />
                         ) : (
