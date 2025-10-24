@@ -21,7 +21,7 @@ export default function Header({ auth }: { auth: AuthState }) {
   return (
     <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/2 bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60">
       <nav
-        className="mx-auto flex flex-1 items-center justify-between px-6 py-5 lg:px-8"
+        className="mx-auto flex flex-1 items-center justify-between px-4 md:px-6 lg:px-8"
         aria-label="Global"
       >
         <div className="flex flex-1 items-center">
@@ -147,6 +147,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </MenuItem>
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                    onAction={() => navigate({ to: "/profile" })}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem
+                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
                       await auth.signOut();
 
@@ -233,6 +239,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                             onAction={() => navigate({ to: "/settings" })}
                           >
                             Settings
+                          </MenuItem>
+                          <MenuItem
+                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                            onAction={() => navigate({ to: "/profile" })}
+                          >
+                            Profile
                           </MenuItem>
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"

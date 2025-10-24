@@ -58,7 +58,7 @@ export default function ProfileForm() {
 
   return (
     <form
-      className="mt-20 flex flex-col px-12"
+      className="mt-20 flex flex-col px-4 md:px-6 lg:px-8"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -70,7 +70,7 @@ export default function ProfileForm() {
         selector={(state) => [state.isDirty, state.isSubmitting]}
         children={([isDirty, isSubmitting]) => (
           <div className="flex">
-            <div className="flex w-full flex-col justify-between lg:flex-row lg:items-center">
+            <div className="flex w-full flex-col justify-between">
               <div className="mb-4 flex flex-col">
                 <h2 className="text-base/7 font-semibold text-gray-900 dark:text-white">
                   Profile
@@ -81,7 +81,7 @@ export default function ProfileForm() {
                 </p>
               </div>
 
-              <div className="flex gap-2 lg:justify-end">
+              <div className="flex gap-2">
                 <button
                   className={cn(
                     "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
@@ -113,15 +113,15 @@ export default function ProfileForm() {
         )}
       />
 
-      <div className="flex flex-col justify-between gap-6 lg:mt-10 lg:flex-row lg:gap-20 lg:space-y-12">
+      <div className="flex flex-col justify-between gap-6">
         <div className="w-full lg:pb-12">
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
             {/* Name Field */}
             <form.Field
               name="name"
               children={(field) => {
                 return (
-                  <div className="sm:col-span-3">
+                  <div className="col-span-3">
                     <label
                       className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
@@ -181,64 +181,63 @@ export default function ProfileForm() {
                 </div>
               )}
             />
+            {/* Image Upload Field */}
+            <form.Field
+              name="image"
+              children={(field) => (
+                <div className="flex flex-col">
+                  <label
+                    className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+                    htmlFor={field.name}
+                  >
+                    Photo
+                  </label>
+                  <div className="mt-2 flex flex-col items-start md:flex-row md:items-center md:gap-4">
+                    {user?.image ? (
+                      <img
+                        className="size-12 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                        src={`data:image/jpeg;base64,${user.image}`}
+                        alt="profile"
+                      />
+                    ) : (
+                      <UserCircleIcon
+                        className="size-12 text-gray-300 dark:text-gray-500"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <input
+                      className="mt-4 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-none inset-ring inset-ring-white/5 hover:bg-white/20 md:mt-0"
+                      id={field.name}
+                      type="file"
+                      name={field.name}
+                      accept="image/jpeg,image/png"
+                      onChange={async (event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+
+                        // Convert file to base64
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                          const base64String = reader.result
+                            ?.toString()
+                            .split(",")[1]; // Remove data:image/jpeg;base64, prefix
+
+                          field.handleChange(base64String ?? null);
+                        };
+
+                        reader.readAsDataURL(file);
+                      }}
+                      onBlur={field.handleBlur}
+                    />
+                    <FieldInfo field={field} />
+                  </div>
+                </div>
+              )}
+            />
           </div>
         </div>
 
-        <div className="w-full px-4 pb-12">
-          {/* Image Upload Field */}
-          <form.Field
-            name="image"
-            children={(field) => (
-              <div className="col-span-full">
-                <label
-                  className="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                  htmlFor={field.name}
-                >
-                  Photo
-                </label>
-                <div className="mt-2 flex items-center gap-x-3">
-                  {user?.image ? (
-                    <img
-                      className="size-12 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                      src={`data:image/jpeg;base64,${user.image}`}
-                      alt="profile"
-                    />
-                  ) : (
-                    <UserCircleIcon
-                      className="size-12 text-gray-300 dark:text-gray-500"
-                      aria-hidden="true"
-                    />
-                  )}
-                  <input
-                    className="rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-none inset-ring inset-ring-white/5 hover:bg-white/20"
-                    id={field.name}
-                    type="file"
-                    name={field.name}
-                    accept="image/jpeg,image/png"
-                    onChange={async (event) => {
-                      const file = event.target.files?.[0];
-                      if (!file) return;
-
-                      // Convert file to base64
-                      const reader = new FileReader();
-                      reader.onload = () => {
-                        const base64String = reader.result
-                          ?.toString()
-                          .split(",")[1]; // Remove data:image/jpeg;base64, prefix
-
-                        field.handleChange(base64String ?? null);
-                      };
-
-                      reader.readAsDataURL(file);
-                    }}
-                    onBlur={field.handleBlur}
-                  />
-                  <FieldInfo field={field} />
-                </div>
-              </div>
-            )}
-          />
-        </div>
+        <div className="w-full px-4 pb-12"></div>
       </div>
     </form>
   );

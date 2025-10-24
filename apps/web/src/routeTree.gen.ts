@@ -20,6 +20,7 @@ import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
+import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
@@ -91,6 +92,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: "/settings",
   path: "/settings",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: "/profile",
+  path: "/profile",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -212,6 +218,7 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/profile": typeof AuthenticatedProfileRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/profile": typeof AuthenticatedProfileRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
@@ -271,6 +279,7 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
+  "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
@@ -303,6 +312,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/profile"
     | "/settings"
     | "/blog/$slug"
     | "/blog"
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/dashboard"
+    | "/profile"
     | "/settings"
     | "/blog/$slug"
     | "/blog"
@@ -361,6 +372,7 @@ export interface FileRouteTypes {
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/_authenticated/dashboard"
+    | "/_authenticated/profile"
     | "/_authenticated/settings"
     | "/blog/$slug"
     | "/blog/"
@@ -470,6 +482,13 @@ declare module "@tanstack/react-router" {
       path: "/settings"
       fullPath: "/settings"
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    "/_authenticated/profile": {
+      id: "/_authenticated/profile"
+      path: "/profile"
+      fullPath: "/profile"
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     "/_authenticated/dashboard": {
@@ -678,12 +697,14 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }
 

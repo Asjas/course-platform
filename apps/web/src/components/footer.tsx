@@ -3,7 +3,7 @@ import { Link } from "~/components/ui/nav-link";
 export default function Footer() {
   return (
     <footer className="mt-auto border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
-      <div className="px-6 py-8 md:px-6 md:py-12">
+      <div className="px-4 py-8 md:px-6 md:py-12 lg:px-8">
         <div className="m-auto">
           <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex flex-col space-y-2">
