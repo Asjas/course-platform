@@ -1,4 +1,5 @@
 import { useForm } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import * as z from "zod";
@@ -8,39 +9,58 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
 
-const formSchema = z.object({
-  email: z.email("Invalid email address").trim(),
-});
+const formSchema = z
+  .object({
+    password: z
+      .string()
+      .min(5, "Password must be at least 5 characters")
+      .max(100, "Password must be at most 100 characters")
+      .trim(),
+    confirmPassword: z
+      .string()
+      .min(5, "Confirm password must be at least 5 characters")
+      .max(100, "Confirm password must be at most 100 characters")
+      .trim(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
-export default function PasswordResetForm() {
+export default function PasswordResetForm({ token }: { token: string }) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const form = useForm({
     defaultValues: {
-      email: "",
+      password: "",
+      confirmPassword: "",
     },
     validators: {
       onBlur: formSchema,
     },
-    onSubmit: async ({ value: { email } }) => {
+    onSubmit: async ({ value: { password } }) => {
       setServerError(null);
 
-      const { error } = await authClient.requestPasswordReset(
-        { email },
-        {
-          onSuccess: () => {
-            setStatusMessage(
-              "If an account is associated with the provided email, a password reset link has been sent. (Please check your inbox and spam/junk folder.)",
-            );
-          },
-          onError: ({ error }) => {
-            setServerError(error.message);
-          },
-        },
+      const { error } = await authClient.resetPassword({
+        newPassword: password,
+        token,
+      });
+
+      if (error) {
+        console.error(error);
+        setServerError(error.message || "Failed to reset password");
+        return;
+      }
+
+      setStatusMessage(
+        "Password reset successfully! Redirecting to sign in...",
       );
 
-      if (error) console.error(error);
+      setTimeout(() => {
+        navigate({ to: "/signin", replace: true });
+      }, 500);
     },
   });
 
@@ -49,6 +69,7 @@ export default function PasswordResetForm() {
       className="space-y-4 md:space-y-6"
       onSubmit={(event) => {
         event.preventDefault();
+        event.stopPropagation();
         form.handleSubmit();
       }}
       noValidate
@@ -59,38 +80,60 @@ export default function PasswordResetForm() {
         serverError={serverError}
       />
 
-      {/* Email Field */}
+      {/* Password Field */}
       <form.Field
-        name="email"
-        children={({ state, handleChange, handleBlur }) => (
+        name="password"
+        children={(field) => (
           <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="new-password">New Password</Label>
             <Input
-              id="email"
-              type="email"
-              placeholder="you@company.com"
-              autoComplete="email"
-              state={state}
-              handleChange={handleChange}
-              handleBlur={handleBlur}
-              errorType="reset-password"
+              id="new-password"
+              type="password"
+              placeholder="Enter your password"
+              autoComplete="new-password"
+              state={field.state}
+              handleChange={field.handleChange}
+              handleBlur={field.handleBlur}
+              errorType="new-password"
             />
           </div>
         )}
       />
 
-      {/* Submit Button */}
-      <Button
-        className="flex items-center gap-2"
-        type="submit"
-        disabled={form.state.isSubmitting}
-        aria-disabled={form.state.isSubmitting}
-      >
-        {form.state.isSubmitting && (
-          <Loader2 className="h-4 w-4 animate-spin" />
+      {/* Confirm Password Field */}
+      <form.Field
+        name="confirmPassword"
+        children={(field) => (
+          <div className="grid gap-2">
+            <Label htmlFor="confirm-password">Confirm Password</Label>
+            <Input
+              id="confirm-password"
+              type="password"
+              placeholder="Confirm your password"
+              autoComplete="new-password"
+              state={field.state}
+              handleChange={field.handleChange}
+              handleBlur={field.handleBlur}
+              errorType="confirm-password"
+            />
+          </div>
         )}
-        {form.state.isSubmitting ? "Sending reset link…" : "Send reset link"}
-      </Button>
+      />
+      {/* Submit Button */}
+      <form.Subscribe
+        selector={(state) => [state.isDirty, state.isSubmitting]}
+        children={([isDirty, isSubmitting]) => (
+          <Button
+            className="flex items-center gap-2"
+            type="submit"
+            disabled={!isDirty || isSubmitting}
+            aria-disabled={!isDirty || isSubmitting}
+          >
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting ? "Resetting password…" : "Reset password"}
+          </Button>
+        )}
+      />
     </form>
   );
 }

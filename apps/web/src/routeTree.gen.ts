@@ -33,6 +33,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authentic
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
 import { Route as AuthenticatedAdminCoursesRouteImport } from "./routes/_authenticated/admin/courses"
 import { Route as AuthenticatedAdminCouponsRouteImport } from "./routes/_authenticated/admin/coupons"
+import { Route as authResetPasswordTokenRouteImport } from "./routes/(auth)/reset-password.$token"
 import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as SupportSupportTicketEditIndexRouteImport } from "./routes/support/$supportTicket/edit/index"
@@ -163,6 +164,11 @@ const AuthenticatedAdminCouponsRoute =
     path: "/coupons",
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const authResetPasswordTokenRoute = authResetPasswordTokenRouteImport.update({
+  id: "/$token",
+  path: "/$token",
+  getParentRoute: () => authResetPasswordRoute,
+} as any)
 const SupportSupportTicketEditRouteRoute =
   SupportSupportTicketEditRouteRouteImport.update({
     id: "/$supportTicket/edit",
@@ -214,7 +220,7 @@ export interface FileRoutesByFullPath {
   "/terms": typeof TermsRoute
   "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
-  "/reset-password": typeof authResetPasswordRoute
+  "/reset-password": typeof authResetPasswordRouteWithChildren
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/reset-password/$token": typeof authResetPasswordTokenRoute
   "/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
@@ -243,7 +250,7 @@ export interface FileRoutesByTo {
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
   "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
-  "/reset-password": typeof authResetPasswordRoute
+  "/reset-password": typeof authResetPasswordRouteWithChildren
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
+  "/reset-password/$token": typeof authResetPasswordTokenRoute
   "/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
@@ -275,7 +283,7 @@ export interface FileRoutesById {
   "/terms": typeof TermsRoute
   "/_authenticated/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
-  "/(auth)/reset-password": typeof authResetPasswordRoute
+  "/(auth)/reset-password": typeof authResetPasswordRouteWithChildren
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/(auth)/reset-password/$token": typeof authResetPasswordTokenRoute
   "/_authenticated/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
   "/_authenticated/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/reset-password/$token"
     | "/admin/coupons"
     | "/admin/courses"
     | "/admin/purchases"
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | "/blog/$slug"
     | "/blog"
     | "/support"
+    | "/reset-password/$token"
     | "/admin/coupons"
     | "/admin/courses"
     | "/admin/purchases"
@@ -379,6 +390,7 @@ export interface FileRouteTypes {
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/(auth)/reset-password/$token"
     | "/_authenticated/admin/coupons"
     | "/_authenticated/admin/courses"
     | "/_authenticated/admin/purchases"
@@ -575,6 +587,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/(auth)/reset-password/$token": {
+      id: "/(auth)/reset-password/$token"
+      path: "/$token"
+      fullPath: "/reset-password/$token"
+      preLoaderRoute: typeof authResetPasswordTokenRouteImport
+      parentRoute: typeof authResetPasswordRoute
+    }
     "/support/$supportTicket/edit": {
       id: "/support/$supportTicket/edit"
       path: "/$supportTicket/edit"
@@ -627,14 +646,25 @@ declare module "@tanstack/react-router" {
   }
 }
 
+interface authResetPasswordRouteChildren {
+  authResetPasswordTokenRoute: typeof authResetPasswordTokenRoute
+}
+
+const authResetPasswordRouteChildren: authResetPasswordRouteChildren = {
+  authResetPasswordTokenRoute: authResetPasswordTokenRoute,
+}
+
+const authResetPasswordRouteWithChildren =
+  authResetPasswordRoute._addFileChildren(authResetPasswordRouteChildren)
+
 interface authRouteRouteChildren {
-  authResetPasswordRoute: typeof authResetPasswordRoute
+  authResetPasswordRoute: typeof authResetPasswordRouteWithChildren
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
-  authResetPasswordRoute: authResetPasswordRoute,
+  authResetPasswordRoute: authResetPasswordRouteWithChildren,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
 }

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
-import PasswordResetForm from "~/components/password-reset-form";
+import RequestPasswordResetForm from "~/components/request-password-reset-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/reset-password")({
@@ -12,7 +12,7 @@ function AuthPage() {
     <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>
         <CardHeader>Reset Password</CardHeader>
-        <PasswordResetForm />
+        <RequestPasswordResetForm />
         <CardFooter>
           <AuthLinks
             showSignIn
