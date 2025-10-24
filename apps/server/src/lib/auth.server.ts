@@ -124,7 +124,7 @@ export const auth = betterAuth({
     organization({ allowUserToCreateOrganization: false }),
     username({
       usernameValidator: (username) => {
-        const invalidUsernames = ["admin", "support", "codewizard", "asjas"];
+        const invalidUsernames = ["admin", "support", "asjas"];
 
         return !invalidUsernames.includes(username);
       },
