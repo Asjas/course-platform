@@ -60,6 +60,7 @@ export const auth = betterAuth({
     autoSignIn: true,
     minPasswordLength: 5,
     maxPasswordLength: 80,
+    revokeSessionsOnPasswordReset: true,
     password: {
       hash: async function (password) {
         const hashedPassword = await argon2.hash(password, {
