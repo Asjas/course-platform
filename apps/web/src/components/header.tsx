@@ -110,6 +110,7 @@ export default function Header({ auth }: { auth: AuthState }) {
           <Link
             className="text-lg font-bold text-gray-900 dark:text-gray-50"
             to="/"
+            onClick={() => setMobileMenuOpen(false)}
             aria-label="Codewizard Training"
           >
             <img
@@ -203,6 +204,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               <Link
                 className="text-lg font-bold text-gray-900 dark:text-gray-50"
                 to="/"
+                onClick={() => setMobileMenuOpen(false)}
                 aria-label="Codewizard Training"
               >
                 <img
@@ -275,6 +277,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   className="bg-green-700"
                   preload="intent"
                   to="/signin"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Sign In
                 </NavLink>
