@@ -80,7 +80,7 @@ export const auth = betterAuth({
     async sendResetPassword({ user, token }) {
       let text = "";
 
-      text += `You can reset your password by clicking the link below:\n\n${config.ORIGIN}/reset-password?token=${token}`;
+      text += `You can reset your password by clicking the link below:\n\n${config.ORIGIN}/reset-password/token=${token}`;
       text += `\n\nIf you did not request a password reset, please ignore this email.`;
       text += `\n\nThis link will expire in 1 hour.`;
       text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
