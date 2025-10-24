@@ -45,6 +45,7 @@ export default function AuthLinks({
           <Link
             className="text-primary-600 underline hover:text-green-600 hover:no-underline"
             to="/reset-password"
+            search={{ token: undefined }}
           >
             Reset Password
           </Link>

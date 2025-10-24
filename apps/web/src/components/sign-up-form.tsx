@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import type { AuthState } from "~/lib/auth.context.ts";
+import { useAuth } from "~/lib/auth.context.ts";
 
 const formSchema = z
   .object({
@@ -28,8 +28,9 @@ const formSchema = z
     path: ["confirmPassword"],
   });
 
-export default function SignUpForm({ auth }: { auth: AuthState }) {
+export default function SignUpForm() {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const form = useForm({
     defaultValues: {

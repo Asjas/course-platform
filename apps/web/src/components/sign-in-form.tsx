@@ -6,7 +6,7 @@ import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import type { AuthState } from "~/lib/auth.context.ts";
+import { useAuth } from "~/lib/auth.context.ts";
 
 const formSchema = z.object({
   email: z.email().trim(),
@@ -18,8 +18,9 @@ const formSchema = z.object({
   remember: z.boolean(),
 });
 
-export default function SignInForm({ auth }: { auth: AuthState }) {
+export default function SignInForm() {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const form = useForm({
     defaultValues: {
