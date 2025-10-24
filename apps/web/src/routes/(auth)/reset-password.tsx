@@ -4,12 +4,16 @@ import PasswordResetForm from "~/components/password-reset-form.tsx";
 import RequestPasswordResetForm from "~/components/request-password-reset-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
-export const Route = createFileRoute("/(auth)/reset-password/$token")({
+export const Route = createFileRoute("/(auth)/reset-password")({
+  parseParams: (params: Record<string, string>) => ({
+    token: params.token ? String(params.token) : undefined,
+  }),
+  stringifyParams: ({ token }) => ({ token: token ?? "" }),
   component: AuthPage,
 });
 
 function AuthPage() {
-  const { token } = useParams({ from: "/(auth)/reset-password/$token" });
+  const { token } = useParams({ from: "/(auth)/reset-password" });
 
   return (
     <div className="flex w-100 grow flex-col justify-center self-center">
