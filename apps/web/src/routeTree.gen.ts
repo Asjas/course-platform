@@ -20,6 +20,7 @@ import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
+import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
@@ -92,6 +93,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: "/settings",
   path: "/settings",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPurchasesRoute = AuthenticatedPurchasesRouteImport.update({
+  id: "/purchases",
+  path: "/purchases",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
+  "/purchases": typeof AuthenticatedPurchasesRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   "/signup": typeof authSignupRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
+  "/purchases": typeof AuthenticatedPurchasesRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog": typeof BlogIndexRoute
@@ -280,6 +288,7 @@ export interface FileRoutesById {
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
+  "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
   "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/blog/": typeof BlogIndexRoute
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | "/signup"
     | "/dashboard"
     | "/profile"
+    | "/purchases"
     | "/settings"
     | "/blog/$slug"
     | "/blog"
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | "/signup"
     | "/dashboard"
     | "/profile"
+    | "/purchases"
     | "/settings"
     | "/blog/$slug"
     | "/blog"
@@ -373,6 +384,7 @@ export interface FileRouteTypes {
     | "/(auth)/signup"
     | "/_authenticated/dashboard"
     | "/_authenticated/profile"
+    | "/_authenticated/purchases"
     | "/_authenticated/settings"
     | "/blog/$slug"
     | "/blog/"
@@ -482,6 +494,13 @@ declare module "@tanstack/react-router" {
       path: "/settings"
       fullPath: "/settings"
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    "/_authenticated/purchases": {
+      id: "/_authenticated/purchases"
+      path: "/purchases"
+      fullPath: "/purchases"
+      preLoaderRoute: typeof AuthenticatedPurchasesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     "/_authenticated/profile": {
@@ -698,6 +717,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
 
@@ -705,6 +725,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }
 

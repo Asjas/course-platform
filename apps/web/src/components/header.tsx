@@ -154,6 +154,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </MenuItem>
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                    onAction={() => navigate({ to: "/purchases" })}
+                  >
+                    Purchases
+                  </MenuItem>
+                  <MenuItem
+                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
                       await auth.signOut();
 
@@ -247,6 +253,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                             onAction={() => navigate({ to: "/profile" })}
                           >
                             Profile
+                          </MenuItem>
+                          <MenuItem
+                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                            onAction={() => navigate({ to: "/purchases" })}
+                          >
+                            Purchases
                           </MenuItem>
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
