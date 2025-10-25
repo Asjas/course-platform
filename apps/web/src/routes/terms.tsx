@@ -535,21 +535,21 @@ function TermsComponent() {
             <ul className="space-y-3 text-gray-700 dark:text-gray-300">
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>System damage from following our tutorials</span>
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>Lost productivity during your learning process</span>
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>
@@ -560,7 +560,7 @@ function TermsComponent() {
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>
@@ -572,7 +572,7 @@ function TermsComponent() {
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>
@@ -583,7 +583,7 @@ function TermsComponent() {
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>
@@ -594,7 +594,7 @@ function TermsComponent() {
               </li>
               <li className="flex items-start">
                 <CrossIcon
-                  className="mr-2 h-[24px] min-h-[24px] w-[24px] min-w-[24px] rotate-45"
+                  className="mr-2 h-6 min-h-6 w-6 min-w-6 rotate-45"
                   color="red"
                 />
                 <span>
