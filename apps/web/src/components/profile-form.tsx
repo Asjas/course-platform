@@ -1,9 +1,11 @@
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { UserCircleIcon } from "lucide-react";
 import * as z from "zod";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
+import { trpc } from "~/lib/trpc.client.ts";
 import { cn } from "~/lib/utils.ts";
 
 function FieldInfo({ field }: { field: AnyFieldApi }) {
@@ -27,6 +29,9 @@ const formSchema = z.object({
 export default function ProfileForm() {
   const auth = useAuth();
   const user = auth.session?.user;
+  const signedUrlMutation = useMutation(
+    trpc.profile.getPresignedUrl.mutationOptions(),
+  );
 
   const form = useForm({
     defaultValues: {
@@ -215,17 +220,35 @@ export default function ProfileForm() {
                         const file = event.target.files?.[0];
                         if (!file) return;
 
-                        // Convert file to base64
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                          const base64String = reader.result
-                            ?.toString()
-                            .split(",")[1]; // Remove data:image/jpeg;base64, prefix
+                        const extension = file.name.split(".").pop() || "jpg";
+                        const filename = `${crypto.randomUUID()}.${extension}`;
 
-                          field.handleChange(base64String ?? null);
-                        };
+                        // Request presigned URL from backend
+                        const { presignedUrl, publicUrl } =
+                          await signedUrlMutation.mutateAsync({
+                            filename,
+                            contentType: file.type,
+                          });
 
-                        reader.readAsDataURL(file);
+                        console.log({ presignedUrl, publicUrl });
+
+                        // Upload directly to R2
+                        const uploadResponse = await fetch(presignedUrl, {
+                          method: "PUT",
+                          body: file,
+                          headers: {
+                            "Content-Type": file.type,
+                          },
+                        });
+
+                        if (!uploadResponse.ok) {
+                          throw new Error(
+                            `Upload failed: ${uploadResponse.statusText}`,
+                          );
+                        }
+
+                        // Set the public URL as the field value
+                        field.handleChange(publicUrl);
                       }}
                       onBlur={field.handleBlur}
                     />

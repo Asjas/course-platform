@@ -68,6 +68,13 @@ const schema = z.object({
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().positive())
     .default(9092),
+
+  // R2 Images
+  R2_ACCESS_KEY_ID: z.string().nonempty(),
+  R2_SECRET_ACCESS_KEY: z.string().nonempty(),
+  R2_BUCKET_NAME: z.string().nonempty(),
+  R2_ENDPOINT: z.url(),
+  R2_PUBLIC_URL: z.url(),
 });
 
 export type Config = z.infer<typeof schema>;
