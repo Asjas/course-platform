@@ -20,6 +20,10 @@ import { redis } from "~/lib/redis.js";
 const polarClient = new Polar({
   accessToken: config.POLAR_ACCESS_TOKEN,
   server: config.NODE_ENV === "production" ? "production" : "sandbox",
+  retryConfig: {
+    strategy: "backoff",
+    retryConnectionErrors: true,
+  },
 });
 
 export const auth = betterAuth({
@@ -38,10 +42,11 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendOnSignUp: true,
     sendOnSignIn: true,
+    expiresIn: ONE_HOUR,
     async sendVerificationEmail(data) {
       let text = "";
 
-      text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email?=${data.token}`;
+      text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email?token=${data.token}`;
       text += `\n\nIf you did not create an account, please ignore this email.`;
       text += `\n\nThis link will expire in 1 hour.`;
       text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
@@ -95,6 +100,39 @@ export const auth = betterAuth({
       });
     },
   },
+  user: {
+    changeEmail: {
+      enabled: true,
+      async sendChangeEmailVerification(data) {
+        let text = "";
+
+        text += `You can verify your email address change by clicking the link below:\n\n${config.ORIGIN}/verify-email-change?token=${data.token}`;
+        text += `\n\nIf you did not request an email address change, please ignore this email.`;
+        text += `\n\nThis link will expire in 1 hour.`;
+        text += `\n\n\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
+
+        await mailer.sendMail({
+          sender: "Codewizard Training <support@codewizard.training>",
+          replyTo: "support@codewizard.training",
+          to: data.newEmail,
+          subject: "Verify your email address change",
+          text,
+        });
+      },
+    },
+    deleteUser: {
+      enabled: true,
+      afterDelete: async (user) => {
+        await polarClient.customers.delete({ id: user.id });
+      },
+    },
+  },
+  advanced: {
+    cookiePrefix: "cw",
+    database: {
+      generateId: () => `user:${ulid()}`,
+    },
+  },
   rateLimit: {
     enabled: true,
     storage: "secondary-storage",
@@ -114,12 +152,6 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
-  advanced: {
-    cookiePrefix: "cw",
-    database: {
-      generateId: () => `user:${ulid()}`,
-    },
-  },
   plugins: [
     admin({ defaultRole: "member" }),
     haveIBeenPwned(),
