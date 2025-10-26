@@ -25,7 +25,7 @@
     "@fastify/formbody": "8.0.2",
     "@fastify/helmet": "13.0.2",
     "@fastify/http-proxy": "11.3.0",
-    "@fastify/multipart": "9.2.1",
+    "@fastify/multipart": "9.3.0",
     "@fastify/rate-limit": "10.3.0",
     "@fastify/sensible": "6.0.3",
     "@polar-sh/better-auth": "1.1.11",
