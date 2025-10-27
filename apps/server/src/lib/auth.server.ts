@@ -33,10 +33,6 @@ export const auth = betterAuth({
   session: {
     expiresIn: ONE_YEAR,
     updateAge: ONE_WEEK * 4,
-    cookieCache: {
-      enabled: true,
-      maxAge: ONE_HOUR,
-    },
   },
   emailVerification: {
     autoSignInAfterVerification: true,
