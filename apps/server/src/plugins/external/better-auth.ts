@@ -24,7 +24,21 @@ export default function betterAuthPlugin(
       headers: fromNodeHeaders(request.headers),
     });
 
-    request.user = (session?.user as User) || null;
+    request.user = session?.user as User;
+  });
+
+  // Override the sign-out endpoint to add the Clear-Site-Data header
+  fastify.post("/api/auth/sign-out", async (request, reply) => {
+    const auth = getAuthDecorator(reply.server);
+
+    await auth.api.signOut({
+      headers: fromNodeHeaders(request.headers),
+    });
+
+    // Set the Clear-Site-Data header
+    reply.header("Clear-Site-Data", "*");
+
+    return reply.status(200).send({ message: "Logged out successfully" });
   });
 
   done();

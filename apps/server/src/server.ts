@@ -29,8 +29,8 @@ async function createServer(config: Config) {
     disableRequestLogging: true,
     loggerInstance: pinoLogger,
     bodyLimit: TEN_MB,
-    ignoreTrailingSlash: true,
     routerOptions: {
+      ignoreTrailingSlash: true,
       maxParamLength: 5000,
     },
   };

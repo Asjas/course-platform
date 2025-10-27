@@ -1,4 +1,4 @@
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { UserCircleIcon } from "lucide-react";
@@ -60,6 +60,10 @@ export default function ProfileForm() {
       form.reset({ username, name, image });
     },
   });
+
+  const errors = useStore(form.store, (state) => state.errorMap);
+
+  console.log("Form errors:", errors);
 
   return (
     <form

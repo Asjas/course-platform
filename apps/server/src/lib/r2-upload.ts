@@ -10,7 +10,6 @@ const s3Client = new S3Client({
     accessKeyId: config.R2_ACCESS_KEY_ID,
     secretAccessKey: config.R2_SECRET_ACCESS_KEY,
   },
-  forcePathStyle: false, // Default for R2
 });
 
 interface GeneratePresignedUrlInput {
@@ -28,7 +27,7 @@ export async function generatePresignedUploadUrl({
   const command = new PutObjectCommand({
     Bucket: config.R2_BUCKET_NAME,
     Key: key,
-    ContentType: contentType, // Optional: Enforces MIME type on upload
+    ContentType: contentType,
   });
 
   const presignedUrl = await getSignedUrl(s3Client, command, {
