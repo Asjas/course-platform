@@ -18,6 +18,7 @@ import { Route as authRouteRouteImport } from "./routes/(auth)/route"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
+import { Route as VerifyEmailTokenRouteImport } from "./routes/verify-email.$token"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
@@ -83,6 +84,11 @@ const SupportIndexRoute = SupportIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: "/blog/",
   path: "/blog/",
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VerifyEmailTokenRoute = VerifyEmailTokenRouteImport.update({
+  id: "/verify-email/$token",
+  path: "/verify-email/$token",
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
@@ -228,6 +234,7 @@ export interface FileRoutesByFullPath {
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
@@ -258,6 +265,7 @@ export interface FileRoutesByTo {
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
   "/admin/coupons": typeof AuthenticatedAdminCouponsRouteWithChildren
@@ -291,6 +299,7 @@ export interface FileRoutesById {
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
   "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
@@ -325,6 +334,7 @@ export interface FileRouteTypes {
     | "/purchases"
     | "/settings"
     | "/blog/$slug"
+    | "/verify-email/$token"
     | "/blog"
     | "/support/"
     | "/education/courses/$course"
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | "/purchases"
     | "/settings"
     | "/blog/$slug"
+    | "/verify-email/$token"
     | "/blog"
     | "/support"
     | "/admin/coupons"
@@ -387,6 +398,7 @@ export interface FileRouteTypes {
     | "/_authenticated/purchases"
     | "/_authenticated/settings"
     | "/blog/$slug"
+    | "/verify-email/$token"
     | "/blog/"
     | "/support/"
     | "/education/courses/$course"
@@ -414,6 +426,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   EducationCoursesRouteRoute: typeof EducationCoursesRouteRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
+  VerifyEmailTokenRoute: typeof VerifyEmailTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -480,6 +493,13 @@ declare module "@tanstack/react-router" {
       path: "/blog"
       fullPath: "/blog"
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    "/verify-email/$token": {
+      id: "/verify-email/$token"
+      path: "/verify-email/$token"
+      fullPath: "/verify-email/$token"
+      preLoaderRoute: typeof VerifyEmailTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/blog/$slug": {
@@ -803,6 +823,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   EducationCoursesRouteRoute: EducationCoursesRouteRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
+  VerifyEmailTokenRoute: VerifyEmailTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
