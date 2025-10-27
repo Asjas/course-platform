@@ -42,7 +42,7 @@ export const auth = betterAuth({
     async sendVerificationEmail(data) {
       let text = "";
 
-      text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email/token=${data.token}`;
+      text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email/${data.token}`;
       text += `\n\nIf you did not create an account, please ignore this email.`;
       text += `\n\nThis link will expire in 1 hour.`;
       text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
