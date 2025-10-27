@@ -67,8 +67,25 @@ async function createServer(config: Config) {
       router: appRouter,
       createContext,
       onError({ path, error }) {
-        // report to error monitoring
         console.error(`Error in tRPC handler on path '${path}':`, error);
+      },
+      responseMeta: (opts) => {
+        const { errors } = opts;
+
+        if (errors.length) {
+          return {
+            message: "Internal server error",
+            status: 500,
+          };
+        }
+
+        return {
+          headers: new Headers([
+            ["cache-control", "no-store, no-cache, must-revalidate, private"],
+            ["Pragma", "no-cache"],
+            ["Expires", "0"],
+          ]),
+        };
       },
     } satisfies FastifyTRPCPluginOptions<AppRouter>["trpcOptions"],
   });
