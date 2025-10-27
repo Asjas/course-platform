@@ -2,6 +2,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { UserCircleIcon } from "lucide-react";
+import { useState } from "react";
 import * as z from "zod";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
@@ -14,15 +15,19 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 
   return (
     <>
-      {isInvalid ? <em>{meta.errors.join(", ")}</em> : null}
+      {isInvalid ? (
+        <em className="text-sm text-red-600">
+          {meta.errors.map((error) => error.message).join(", ")}
+        </em>
+      ) : null}
       {meta.isValidating ? "Validating..." : null}
     </>
   );
 }
 
 const formSchema = z.object({
-  name: z.string().trim(),
-  username: z.string().trim().nullable().optional(),
+  name: z.string().min(3).trim(),
+  username: z.string().min(3).trim().nullable().optional(),
   image: z.string().nullable().optional(),
 });
 
@@ -30,8 +35,9 @@ export default function ProfileForm() {
   const auth = useAuth();
   const user = auth.session?.user;
   const signedUrlMutation = useMutation(
-    trpc.profile.getPresignedUrl.mutationOptions(),
+    trpc.profile.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -61,9 +67,7 @@ export default function ProfileForm() {
     },
   });
 
-  const errors = useStore(form.store, (state) => state.errorMap);
-
-  console.log("Form errors:", errors);
+  const image = useStore(form.store, (state) => state.values.image);
 
   return (
     <form
@@ -190,22 +194,33 @@ export default function ProfileForm() {
                 </div>
               )}
             />
+
             {/* Image Upload Field */}
             <form.Field
               name="image"
               children={(field) => (
                 <div className="flex flex-col">
-                  <label
-                    className="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                    htmlFor={field.name}
-                  >
-                    Photo
-                  </label>
+                  <div className="flex items-center">
+                    <label
+                      className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+                      htmlFor={field.name}
+                    >
+                      Photo
+                    </label>
+                    <div className="ml-6 items-center">
+                      {isUploading && (
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Uploading image...
+                        </span>
+                      )}
+                      <FieldInfo field={field} />
+                    </div>
+                  </div>
                   <div className="mt-2 flex flex-col items-start md:flex-row md:items-center md:gap-4">
                     {user?.image ? (
                       <img
                         className="size-12 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                        src={user.image}
+                        src={image || user.image}
                         alt="profile"
                       />
                     ) : (
@@ -214,57 +229,63 @@ export default function ProfileForm() {
                         aria-hidden="true"
                       />
                     )}
-                    <input
-                      className="mt-4 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-none inset-ring inset-ring-white/5 hover:bg-white/20 md:mt-0"
-                      id={field.name}
-                      type="file"
-                      name={field.name}
-                      accept="image/jpeg,image/png"
-                      onChange={async (event) => {
-                        const file = event.target.files?.[0];
-                        if (!file) return;
+                    <div className="flex flex-col gap-2">
+                      <input
+                        className="mt-2 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-none inset-ring inset-ring-white/5 hover:bg-white/20 md:mt-0"
+                        id={field.name}
+                        type="file"
+                        name={field.name}
+                        accept="image/jpeg,image/png"
+                        onChange={async (event) => {
+                          const file = event.target.files?.[0];
+                          if (!file) return;
 
-                        const extension = file.name.split(".").pop() || "jpg";
-                        const filename = `${crypto.randomUUID()}.${extension}`;
+                          const extension = file.name.split(".").pop() || "jpg";
+                          const filename = `${crypto.randomUUID()}.${extension}`;
 
-                        // Request presigned URL from backend
-                        const { presignedUrl, publicUrl } =
-                          await signedUrlMutation.mutateAsync({
-                            filename,
-                            contentType: file.type,
-                          });
+                          const { presignedUrl, publicUrl } =
+                            await signedUrlMutation.mutateAsync({
+                              filename,
+                              contentType: file.type,
+                            });
 
-                        console.log({ presignedUrl, publicUrl });
+                          setIsUploading(true);
 
-                        // Upload directly to R2
-                        const uploadResponse = await fetch(presignedUrl, {
-                          method: "PUT",
-                          body: file,
-                          headers: {
-                            "Content-Type": file.type,
-                          },
-                        });
+                          try {
+                            const uploadResponse = await fetch(presignedUrl, {
+                              method: "PUT",
+                              body: file,
+                              headers: {
+                                "Content-Type": file.type,
+                              },
+                            });
 
-                        if (!uploadResponse.ok) {
-                          throw new Error(
-                            `Upload failed: ${uploadResponse.statusText}`,
-                          );
-                        }
+                            if (!uploadResponse.ok) {
+                              throw new Error(
+                                `Upload failed: ${uploadResponse.statusText}`,
+                              );
+                            }
 
-                        // Set the public URL as the field value
-                        field.handleChange(publicUrl);
-                      }}
-                      onBlur={field.handleBlur}
-                    />
-                    <FieldInfo field={field} />
+                            field.handleChange(publicUrl);
+                          } catch (error) {
+                            form.setFieldMeta("image", (oldMeta) => ({
+                              ...oldMeta,
+                              isTouched: true,
+                              errorMap: { onSubmit: error },
+                            }));
+                          } finally {
+                            setIsUploading(false);
+                          }
+                        }}
+                        onBlur={field.handleBlur}
+                      />
+                    </div>
                   </div>
                 </div>
               )}
             />
           </div>
         </div>
-
-        <div className="w-full px-4 pb-12"></div>
       </div>
     </form>
   );
