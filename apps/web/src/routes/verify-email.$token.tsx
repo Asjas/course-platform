@@ -10,7 +10,18 @@ export const Route = createFileRoute("/verify-email/$token")({
     if (isValid) {
       throw redirect({ to: "/dashboard" });
     } else {
-      throw redirect({ to: "/signin" });
+      return { status: "error", message: "Invalid or expired token" };
     }
   },
+  component: VerifyEmailPage,
 });
+
+function VerifyEmailPage() {
+  const { message } = Route.useLoaderData();
+
+  return (
+    <div className="flex w-100 grow flex-col justify-center self-center">
+      <p className="text-center text-lg">{message}</p>
+    </div>
+  );
+}
