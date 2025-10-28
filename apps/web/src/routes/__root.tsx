@@ -25,8 +25,6 @@ function RootRoute() {
   const user = auth.session?.user;
   const [isEmailResent, setEmailResent] = useState(false);
 
-  console.log("user", user);
-
   return (
     <>
       <a

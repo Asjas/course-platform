@@ -1,6 +1,12 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import { publicProcedure, router } from "~/router.js";
+import {
+  isAdmin,
+  isOwner,
+  isOwnerOrAdmin,
+  publicProcedure,
+  router,
+} from "~/router.js";
 import { deleteUserById, updateUserById } from "~/routers/users/mutations.js";
 import { getAllUsers, getUserById } from "~/routers/users/queries.js";
 
@@ -8,15 +14,9 @@ type UsersReturnType = Awaited<ReturnType<typeof getAllUsers>>;
 type UserByIdReturnType = Awaited<ReturnType<typeof getUserById>>;
 
 export const usersRouter = router({
-  getAllUsers: publicProcedure.query(
-    async ({ ctx }): Promise<UsersReturnType> => {
-      if (!ctx.user || !ctx.hasRole("admin")) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not authorized to access this resource",
-        });
-      }
-
+  getAllUsers: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<UsersReturnType> => {
       const fastify = ctx.reply.server;
 
       const [err, users] = await fastify.to(fastify.cache.getAllUsers());
@@ -30,18 +30,11 @@ export const usersRouter = router({
       }
 
       return users;
-    },
-  ),
+    }),
   getUserById: publicProcedure
+    .use(isOwner)
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
-      if (!ctx.user || ctx.user.id !== userId) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not authorized to access this resource",
-        });
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, user] = await fastify.to(
@@ -69,6 +62,7 @@ export const usersRouter = router({
       return user;
     }),
   updateUserById: publicProcedure
+    .use(isOwner)
     .input(
       z.object({
         id: z.string(),
@@ -96,13 +90,6 @@ export const usersRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }): Promise<UserByIdReturnType> => {
-      if (!ctx.user || ctx.user.id !== input.id) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not authorized to access this resource",
-        });
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, updatedUser] = await fastify.to(
@@ -122,15 +109,9 @@ export const usersRouter = router({
       return updatedUser;
     }),
   deleteUserById: publicProcedure
+    .use(isOwnerOrAdmin)
     .input(z.object({ userId: z.string() }))
     .mutation(async ({ ctx, input: { userId } }): Promise<void> => {
-      if (!ctx.user || ctx.user.id !== userId || ctx.hasRole("admin")) {
-        throw new TRPCError({
-          code: "UNAUTHORIZED",
-          message: "You are not authorized to access this resource",
-        });
-      }
-
       const fastify = ctx.reply.server;
 
       const [err] = await fastify.to(deleteUserById({ userId }));
@@ -146,19 +127,13 @@ export const usersRouter = router({
       ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
     }),
   banUserById: publicProcedure
+    .use(isAdmin)
     .input(z.object({ userId: z.string(), banReason: z.string().optional() }))
     .mutation(
       async ({
         ctx,
         input: { userId, banReason },
       }): Promise<UserByIdReturnType> => {
-        if (!ctx.user || !ctx.hasRole("admin")) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "You are not authorized to access this resource",
-          });
-        }
-
         const fastify = ctx.reply.server;
 
         const [err, bannedUser] = await fastify.to(
@@ -182,16 +157,10 @@ export const usersRouter = router({
       },
     ),
   unbanUserById: publicProcedure
+    .use(isAdmin)
     .input(z.object({ userId: z.string() }))
     .mutation(
       async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
-        if (!ctx.user || !ctx.hasRole("admin")) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "You are not authorized to access this resource",
-          });
-        }
-
         const fastify = ctx.reply.server;
 
         const [err, unbannedUser] = await fastify.to(

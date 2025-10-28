@@ -15,7 +15,6 @@ import type { AuthState } from "~/lib/auth.context.ts";
 export default function Header({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   const user = auth.session?.user;
 
   return (
