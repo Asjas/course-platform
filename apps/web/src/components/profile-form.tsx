@@ -71,7 +71,7 @@ export default function ProfileForm() {
 
   return (
     <form
-      className="mt-20 flex flex-col px-4 md:px-6 lg:px-8"
+      className="flex flex-col"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -84,16 +84,6 @@ export default function ProfileForm() {
         children={([isDirty, isSubmitting]) => (
           <div className="flex">
             <div className="flex w-full flex-col justify-between">
-              <div className="mb-4 flex flex-col">
-                <h2 className="text-base/7 font-semibold text-gray-900 dark:text-white">
-                  Profile
-                </h2>
-                <p className="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">
-                  This information will be displayed publicly so be careful what
-                  you share.
-                </p>
-              </div>
-
               <div className="flex gap-2">
                 <button
                   className={cn(
