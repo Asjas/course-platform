@@ -26,7 +26,7 @@ export default function SignInForm() {
     defaultValues: {
       email: "",
       password: "",
-      remember: false,
+      remember: true,
     },
     validators: {
       onSubmit: formSchema,
