@@ -12,7 +12,7 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
   return (
     <>
       {isInvalid ? (
-        <em className="text-sm text-red-600">
+        <em className="ml-6 text-sm/6 text-red-600">
           {meta.errors.map((error) => error.message).join(", ")}
         </em>
       ) : null}
@@ -37,9 +37,17 @@ export default function ChangeEmailForm() {
       onBlur: changeEmailFormSchema,
     },
     onSubmit: async ({ value: { newEmail } }) => {
-      await authClient.changeEmail({ newEmail });
+      const { error } = await authClient.changeEmail({ newEmail });
 
-      form.reset({ newEmail: "" });
+      if (error) {
+        form.setFieldMeta("newEmail", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
+      } else {
+        form.reset({ newEmail: "" });
+      }
     },
   });
 
@@ -108,12 +116,15 @@ export default function ChangeEmailForm() {
               children={(field) => {
                 return (
                   <div className="col-span-3">
-                    <label
-                      className="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                      htmlFor={field.name}
-                    >
-                      New Email
-                    </label>
+                    <div className="flex items-center">
+                      <label
+                        className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+                        htmlFor={field.name}
+                      >
+                        New Email
+                      </label>
+                      <FieldInfo field={field} />
+                    </div>
                     <div className="mt-2">
                       <input
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
@@ -128,8 +139,11 @@ export default function ChangeEmailForm() {
                         }
                         onBlur={field.handleBlur}
                       />
+                      <p className="mt-2 text-sm/6 text-gray-600 dark:text-gray-400">
+                        You'll need to click a confirmation link sent to your
+                        new email address to complete the change.
+                      </p>
                     </div>
-                    <FieldInfo field={field} />
                   </div>
                 );
               }}
