@@ -20,10 +20,10 @@ import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as VerifyEmailTokenRouteImport } from "./routes/verify-email.$token"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
-import { Route as AuthenticatedSettingsRouteImport } from "./routes/_authenticated/settings"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
+import { Route as AuthenticatedAccountRouteImport } from "./routes/_authenticated/account"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
 import { Route as authResetPasswordRouteImport } from "./routes/(auth)/reset-password"
@@ -96,11 +96,6 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: "/blog/$slug",
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: "/settings",
-  path: "/settings",
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedPurchasesRoute = AuthenticatedPurchasesRouteImport.update({
   id: "/purchases",
   path: "/purchases",
@@ -114,6 +109,11 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: "/dashboard",
   path: "/dashboard",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: "/account",
+  path: "/account",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const authSignupRoute = authSignupRouteImport.update({
@@ -229,10 +229,10 @@ export interface FileRoutesByFullPath {
   "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
+  "/account": typeof AuthenticatedAccountRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
-  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
@@ -260,10 +260,10 @@ export interface FileRoutesByTo {
   "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
+  "/account": typeof AuthenticatedAccountRoute
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
-  "/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
@@ -294,10 +294,10 @@ export interface FileRoutesById {
   "/(auth)/reset-password": typeof authResetPasswordRoute
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
+  "/_authenticated/account": typeof AuthenticatedAccountRoute
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
-  "/_authenticated/settings": typeof AuthenticatedSettingsRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog/": typeof BlogIndexRoute
@@ -329,10 +329,10 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/signin"
     | "/signup"
+    | "/account"
     | "/dashboard"
     | "/profile"
     | "/purchases"
-    | "/settings"
     | "/blog/$slug"
     | "/verify-email/$token"
     | "/blog"
@@ -360,10 +360,10 @@ export interface FileRouteTypes {
     | "/reset-password"
     | "/signin"
     | "/signup"
+    | "/account"
     | "/dashboard"
     | "/profile"
     | "/purchases"
-    | "/settings"
     | "/blog/$slug"
     | "/verify-email/$token"
     | "/blog"
@@ -393,10 +393,10 @@ export interface FileRouteTypes {
     | "/(auth)/reset-password"
     | "/(auth)/signin"
     | "/(auth)/signup"
+    | "/_authenticated/account"
     | "/_authenticated/dashboard"
     | "/_authenticated/profile"
     | "/_authenticated/purchases"
-    | "/_authenticated/settings"
     | "/blog/$slug"
     | "/verify-email/$token"
     | "/blog/"
@@ -509,13 +509,6 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    "/_authenticated/settings": {
-      id: "/_authenticated/settings"
-      path: "/settings"
-      fullPath: "/settings"
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     "/_authenticated/purchases": {
       id: "/_authenticated/purchases"
       path: "/purchases"
@@ -535,6 +528,13 @@ declare module "@tanstack/react-router" {
       path: "/dashboard"
       fullPath: "/dashboard"
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    "/_authenticated/account": {
+      id: "/_authenticated/account"
+      path: "/account"
+      fullPath: "/account"
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     "/(auth)/signup": {
@@ -735,18 +735,18 @@ const AuthenticatedAdminRouteRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
-  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,
-  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
