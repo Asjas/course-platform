@@ -23,6 +23,7 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, "Failed to fetch all users");
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
@@ -43,6 +44,7 @@ export const usersRouter = router({
 
       if (err) {
         ctx.request.log.error(err, `Failed to fetch user with id ${userId}`);
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
@@ -51,6 +53,7 @@ export const usersRouter = router({
 
       if (!user) {
         ctx.request.log.debug(`User with id ${userId} not found`);
+
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "User not found",

@@ -119,9 +119,6 @@ export const payment = mySchema.table(
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
-    couponId: text().references(() => coupon.id, {
-      onDelete: "set null",
-    }),
     giftRecipientUserId: text().references(() => user.id, {
       onDelete: "set null",
     }),
@@ -130,7 +127,6 @@ export const payment = mySchema.table(
   (table) => [
     index("payment_user_idx").on(table.userId),
     index("payment_course_idx").on(table.courseId),
-    index("payment_coupon_idx").on(table.couponId),
     index("payment_gift_recipient_user_idx").on(table.giftRecipientUserId),
     index("payment_purchase_type_idx").on(table.purchaseType),
     uniqueIndex("payment_redeem_token_idx").on(table.giftRedeemToken),
@@ -206,10 +202,6 @@ export const paymentRelations = relations(payment, ({ one }) => ({
   course: one(course, {
     fields: [payment.courseId],
     references: [course.id],
-  }),
-  coupon: one(coupon, {
-    fields: [payment.couponId],
-    references: [coupon.id],
   }),
   user: one(user, {
     fields: [payment.userId],

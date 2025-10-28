@@ -1,5 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import { publicProcedure, router } from "~/router.js";
+import { isAdmin, publicProcedure, router } from "~/router.js";
 import {
   deleteCouponById,
   insertCoupon,
@@ -13,32 +14,29 @@ import {
 } from "~/routers/coupons/queries.js";
 
 export const couponsRouter = router({
-  getAllCoupons: publicProcedure.query(
-    async ({ ctx }): Promise<CouponsReturnType> => {
-      if (!ctx.user || !ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
-      }
-
+  getAllCoupons: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<CouponsReturnType> => {
       const fastify = ctx.reply.server;
 
       const [err, coupons] = await fastify.to(fastify.cache.getAllCoupons());
 
       if (err) {
         ctx.request.log.error(err, "Failed to fetch all coupons");
-        return ctx.reply.internalServerError();
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       return coupons;
-    },
-  ),
+    }),
   getCouponById: publicProcedure
+    .use(isAdmin)
     .input(z.object({ couponId: z.string() }))
     .query(
       async ({ ctx, input: { couponId } }): Promise<CouponByIdReturnType> => {
-        if (!ctx.user || !ctx.hasRole("admin")) {
-          throw ctx.reply.unauthorized();
-        }
-
         const fastify = ctx.reply.server;
 
         const [err, coupon] = await fastify.to(
@@ -50,12 +48,20 @@ export const couponsRouter = router({
             err,
             `Failed to fetch coupon with id ${couponId}`,
           );
-          return ctx.reply.internalServerError();
+
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
         }
 
         if (!coupon) {
           ctx.request.log.debug(`Coupon with id ${couponId} not found`);
-          return ctx.reply.notFound("Coupon not found");
+
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Coupon not found",
+          });
         }
 
         ctx.request.log.debug(
@@ -66,16 +72,13 @@ export const couponsRouter = router({
       },
     ),
   getCouponByCode: publicProcedure
+    .use(isAdmin)
     .input(z.object({ couponCode: z.string() }))
     .query(
       async ({
         ctx,
         input: { couponCode },
       }): Promise<CouponByCodeReturnType> => {
-        if (!ctx.user || !ctx.hasRole("admin")) {
-          throw ctx.reply.unauthorized();
-        }
-
         const fastify = ctx.reply.server;
 
         const [err, coupon] = await fastify.to(
@@ -87,12 +90,19 @@ export const couponsRouter = router({
             err,
             `Failed to fetch coupon with code ${couponCode}`,
           );
-          return ctx.reply.internalServerError();
+
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
         }
 
         if (!coupon) {
           ctx.request.log.debug(`Coupon with code ${couponCode} not found`);
-          return ctx.reply.notFound("Coupon not found");
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Coupon not found",
+          });
         }
 
         ctx.request.log.debug(
@@ -103,6 +113,7 @@ export const couponsRouter = router({
       },
     ),
   insertCoupon: publicProcedure
+    .use(isAdmin)
     .input(
       z.object({
         active: z.boolean(),
@@ -118,10 +129,6 @@ export const couponsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.user || !ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, coupon] = await fastify.to(
@@ -130,7 +137,11 @@ export const couponsRouter = router({
 
       if (err) {
         ctx.request.log.error(err, "Failed to insert coupon");
-        return ctx.reply.internalServerError();
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.request.log.debug(
@@ -140,6 +151,7 @@ export const couponsRouter = router({
       return coupon;
     }),
   updateCouponById: publicProcedure
+    .use(isAdmin)
     .input(
       z.object({
         id: z.string(),
@@ -156,10 +168,6 @@ export const couponsRouter = router({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.user || !ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, coupon] = await fastify.to(
@@ -174,7 +182,11 @@ export const couponsRouter = router({
           err,
           `Failed to update coupon with id ${input.id}`,
         );
-        return ctx.reply.internalServerError();
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.request.log.debug(`Updated coupon with id ${coupon.id} successfully`);
@@ -182,12 +194,9 @@ export const couponsRouter = router({
       return coupon;
     }),
   deleteCouponById: publicProcedure
+    .use(isAdmin)
     .input(z.object({ couponId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.user || !ctx.hasRole("admin")) {
-        throw ctx.reply.unauthorized();
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, coupon] = await fastify.to(
@@ -199,7 +208,11 @@ export const couponsRouter = router({
           err,
           `Failed to delete coupon with id ${input.couponId}`,
         );
-        return ctx.reply.internalServerError();
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.request.log.debug(`Deleted coupon with id ${coupon.id} successfully`);
@@ -207,18 +220,20 @@ export const couponsRouter = router({
       return coupon;
     }),
   redeemCouponByCode: publicProcedure
-    .input(z.object({ couponCode: z.string(), courseId: z.string() }))
+    .input(
+      z.object({
+        couponCode: z.string(),
+        paymentId: z.string(),
+        courseId: z.string(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.user) {
-        throw ctx.reply.unauthorized();
-      }
-
       const fastify = ctx.reply.server;
 
       const [err, redemption] = await fastify.to(
         redeemCouponByCode({
           couponCode: input.couponCode,
-          userId: ctx.user.id,
+          paymentId: input.paymentId,
           courseId: input.courseId,
         }),
       );
@@ -228,7 +243,11 @@ export const couponsRouter = router({
           err,
           `Failed to redeem coupon with code ${input.couponCode}`,
         );
-        return ctx.reply.internalServerError();
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
       }
 
       ctx.request.log.debug(

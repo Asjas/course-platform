@@ -45,11 +45,11 @@ export async function deleteCouponById({ couponId }: { couponId: string }) {
 
 export async function redeemCouponByCode({
   couponCode,
-  userId,
+  paymentId,
   courseId,
 }: {
   couponCode: string;
-  userId: string;
+  paymentId: string;
   courseId: string;
 }) {
   const coupon = await preparedGetCouponByCode.execute({ couponCode });
@@ -62,7 +62,7 @@ export async function redeemCouponByCode({
 
   const [redemption] = await db
     .insert(couponRedemption)
-    .values({ id, couponId: coupon.id, userId, courseId })
+    .values({ id, couponId: coupon.id, paymentId, courseId })
     .returning();
 
   return redemption;

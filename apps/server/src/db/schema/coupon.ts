@@ -11,6 +11,7 @@ import {
 import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
+import { payment } from "~/db/schema/purchase.js";
 import { user } from "~/db/schema/user.js";
 
 export type Coupon = typeof coupon.$inferSelect;
@@ -70,9 +71,9 @@ export const couponRedemption = mySchema.table(
     couponId: text()
       .notNull()
       .references(() => coupon.id, { onDelete: "cascade" }),
-    userId: text()
+    paymentId: text()
       .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
+      .references(() => payment.id, { onDelete: "cascade" }),
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
@@ -82,7 +83,7 @@ export const couponRedemption = mySchema.table(
   (table) => [
     uniqueIndex("coupon_redemption_unique_idx").on(
       table.couponId,
-      table.userId,
+      table.paymentId,
       table.courseId,
     ),
   ],
@@ -101,10 +102,10 @@ export const couponRedemptionRelations = relations(
       references: [coupon.id],
       relationName: "coupon_redemption_coupon",
     }),
-    user: one(user, {
-      fields: [couponRedemption.userId],
-      references: [user.id],
-      relationName: "coupon_redemption_user",
+    payment: one(payment, {
+      fields: [couponRedemption.paymentId],
+      references: [payment.id],
+      relationName: "coupon_redemption_payment",
     }),
     course: one(course, {
       fields: [couponRedemption.courseId],
