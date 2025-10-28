@@ -51,7 +51,7 @@ export default function ChangePasswordForm() {
 
   return (
     <form
-      className="mt-5 flex w-full flex-col md:mt-20"
+      className="mt-10 flex w-full flex-col md:mt-20"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();

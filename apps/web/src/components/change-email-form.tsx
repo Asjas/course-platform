@@ -45,7 +45,7 @@ export default function ChangeEmailForm() {
 
   return (
     <form
-      className="mt-5 mb-20 flex w-full flex-col md:mt-20"
+      className="mt-10 mb-20 flex w-full flex-col md:mt-20"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
