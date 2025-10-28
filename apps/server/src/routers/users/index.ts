@@ -33,8 +33,8 @@ export const usersRouter = router({
       return users;
     }),
   getUserById: publicProcedure
-    .use(isOwner)
     .input(z.object({ userId: z.string() }))
+    .use(isOwnerOrAdmin)
     .query(async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
       const fastify = ctx.reply.server;
 
@@ -65,7 +65,6 @@ export const usersRouter = router({
       return user;
     }),
   updateUserById: publicProcedure
-    .use(isOwner)
     .input(
       z.object({
         id: z.string(),
@@ -92,6 +91,7 @@ export const usersRouter = router({
           ),
       }),
     )
+    .use(isOwner)
     .mutation(async ({ ctx, input }): Promise<UserByIdReturnType> => {
       const fastify = ctx.reply.server;
 
@@ -112,8 +112,8 @@ export const usersRouter = router({
       return updatedUser;
     }),
   deleteUserById: publicProcedure
-    .use(isOwnerOrAdmin)
     .input(z.object({ userId: z.string() }))
+    .use(isOwnerOrAdmin)
     .mutation(async ({ ctx, input: { userId } }): Promise<void> => {
       const fastify = ctx.reply.server;
 
@@ -130,8 +130,8 @@ export const usersRouter = router({
       ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
     }),
   banUserById: publicProcedure
-    .use(isAdmin)
     .input(z.object({ userId: z.string(), banReason: z.string().optional() }))
+    .use(isAdmin)
     .mutation(
       async ({
         ctx,
@@ -160,8 +160,8 @@ export const usersRouter = router({
       },
     ),
   unbanUserById: publicProcedure
-    .use(isAdmin)
     .input(z.object({ userId: z.string() }))
+    .use(isAdmin)
     .mutation(
       async ({ ctx, input: { userId } }): Promise<UserByIdReturnType> => {
         const fastify = ctx.reply.server;

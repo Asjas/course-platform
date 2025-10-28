@@ -33,8 +33,8 @@ export const couponsRouter = router({
       return coupons;
     }),
   getCouponById: publicProcedure
-    .use(isAdmin)
     .input(z.object({ couponId: z.string() }))
+    .use(isAdmin)
     .query(
       async ({ ctx, input: { couponId } }): Promise<CouponByIdReturnType> => {
         const fastify = ctx.reply.server;
@@ -72,8 +72,8 @@ export const couponsRouter = router({
       },
     ),
   getCouponByCode: publicProcedure
-    .use(isAdmin)
     .input(z.object({ couponCode: z.string() }))
+    .use(isAdmin)
     .query(
       async ({
         ctx,
@@ -113,7 +113,6 @@ export const couponsRouter = router({
       },
     ),
   insertCoupon: publicProcedure
-    .use(isAdmin)
     .input(
       z.object({
         active: z.boolean(),
@@ -128,6 +127,7 @@ export const couponsRouter = router({
         validTo: z.date().nullable(),
       }),
     )
+    .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
@@ -151,7 +151,6 @@ export const couponsRouter = router({
       return coupon;
     }),
   updateCouponById: publicProcedure
-    .use(isAdmin)
     .input(
       z.object({
         id: z.string(),
@@ -167,6 +166,7 @@ export const couponsRouter = router({
         validTo: z.date().nullable(),
       }),
     )
+    .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
@@ -194,8 +194,8 @@ export const couponsRouter = router({
       return coupon;
     }),
   deleteCouponById: publicProcedure
-    .use(isAdmin)
     .input(z.object({ couponId: z.string() }))
+    .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
