@@ -3,10 +3,10 @@ import ChangeEmailForm from "~/components/change-email-form.tsx";
 import ChangePasswordForm from "~/components/change-password-form";
 
 export const Route = createFileRoute("/_authenticated/account")({
-  component: AccountPageComponent,
+  component: AuthenticatedAccountPage,
 });
 
-function AccountPageComponent() {
+function AuthenticatedAccountPage() {
   return (
     <div className="mx-auto mt-20 w-full max-w-7xl px-4 md:px-6 lg:px-8">
       <h1 className="text-2xl/9 font-semibold text-white">

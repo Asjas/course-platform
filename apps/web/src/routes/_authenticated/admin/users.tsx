@@ -10,10 +10,10 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
       trpc.users.getAllUsers.queryOptions(),
     );
   },
-  component: AdminUsersComponent,
+  component: AdminUsersPage,
 });
 
-function AdminUsersComponent() {
+function AdminUsersPage() {
   const { data } = useQuery(trpc.users.getAllUsers.queryOptions());
 
   console.log("users", data);

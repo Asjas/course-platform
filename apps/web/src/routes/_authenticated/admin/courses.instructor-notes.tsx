@@ -3,9 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 export const Route = createFileRoute(
   "/_authenticated/admin/courses/instructor-notes",
 )({
-  component: RouteComponent,
+  component: AdminInstructorNotesPage,
 });
 
-function RouteComponent() {
+function AdminInstructorNotesPage() {
   return <div>Hello "/_authenticated/admin/courses/instructor-notes"!</div>;
 }

@@ -10,10 +10,10 @@ export const Route = createFileRoute("/_authenticated/admin/coupons")({
       trpc.coupons.getAllCoupons.queryOptions(),
     );
   },
-  component: AdminCouponsComponent,
+  component: AdminCouponsPage,
 });
 
-function AdminCouponsComponent() {
+function AdminCouponsPage() {
   const { data: coupons, isLoading } = useQuery(
     trpc.coupons.getAllCoupons.queryOptions(),
   );

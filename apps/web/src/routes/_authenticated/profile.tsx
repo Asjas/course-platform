@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import ProfileForm from "~/components/profile-form.tsx";
 
 export const Route = createFileRoute("/_authenticated/profile")({
-  component: RouteComponent,
+  component: ProfilePage,
 });
 
-function RouteComponent() {
+function ProfilePage() {
   return (
     <div className="mx-auto mt-20 max-w-7xl px-4 md:px-6 lg:px-8">
       <div className="mb-4 flex flex-col">

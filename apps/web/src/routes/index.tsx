@@ -5,10 +5,10 @@ import PricingSection from "~/components/pricing-section";
 import Section from "~/components/ui/section";
 
 export const Route = createFileRoute("/")({
-  component: IndexComponent,
+  component: IndexPage,
 });
 
-function IndexComponent() {
+function IndexPage() {
   return (
     <div className="flex w-full flex-col px-6">
       {/* Hero Section */}

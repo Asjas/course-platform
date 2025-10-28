@@ -4,10 +4,10 @@ import SignInForm from "~/components/sign-in-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/signin")({
-  component: SignInPage,
+  component: AuthSignInPage,
 });
 
-function SignInPage() {
+function AuthSignInPage() {
   return (
     <div className="flex w-100 grow flex-col justify-center self-center">
       <Card>

@@ -29,9 +29,9 @@ export const Route = createFileRoute("/_authenticated")({
     // Return the user data to cache it for child routes
     return user;
   },
-  component: AuthenticatedLayout,
+  component: AuthenticatedPageLayout,
 });
 
-function AuthenticatedLayout() {
+function AuthenticatedPageLayout() {
   return <Outlet />;
 }

@@ -19,9 +19,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
       });
     }
   },
-  component: AdminLayout,
+  component: AdminPageLayout,
 });
 
-function AdminLayout() {
+function AdminPageLayout() {
   return <Outlet />;
 }
