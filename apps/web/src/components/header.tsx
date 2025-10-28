@@ -37,7 +37,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Home
                 </NavLink>
               </li>
-              <li className="relative inline-flex">
+              <li className="relative inline-flex border-l border-gray-600 pl-2">
                 <NavLink
                   preload="intent"
                   activeProps={{
