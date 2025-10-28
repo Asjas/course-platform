@@ -129,7 +129,7 @@ export default function ProfileForm() {
                       className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
-                      Name
+                      Name (Required)
                     </label>
                     <div className="mt-2">
                       <input
