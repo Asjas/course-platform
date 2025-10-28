@@ -171,14 +171,28 @@ export default function Header({ auth }: { auth: AuthState }) {
               </Popover>
             </MenuTrigger>
           ) : (
-            <NavLink
-              className="bg-green-700"
-              preload="intent"
-              to="/signin"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Sign In
-            </NavLink>
+            <ul className="ml-4 flex space-x-2">
+              <li className="relative inline-flex">
+                <NavLink
+                  className="bg-green-700"
+                  preload="intent"
+                  to="/signin"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign In
+                </NavLink>
+              </li>
+              <li className="relative inline-flex">
+                <NavLink
+                  className="bg-green-700"
+                  preload="intent"
+                  to="/signup"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
+                </NavLink>
+              </li>
+            </ul>
           )}
         </div>
       </nav>
