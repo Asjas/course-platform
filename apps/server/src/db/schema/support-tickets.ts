@@ -5,6 +5,20 @@ import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
 
+export type SupportTicket = typeof supportTicket.$inferSelect;
+export type NewSupportTicket = Omit<typeof supportTicket.$inferInsert, "id">;
+export type SupportTicketComment = typeof supportTicketComment.$inferSelect;
+export type NewSupportTicketComment = Omit<
+  typeof supportTicketComment.$inferInsert,
+  "id"
+>;
+export type SupportTicketAttachment =
+  typeof supportTicketAttachment.$inferSelect;
+export type NewSupportTicketAttachment = Omit<
+  typeof supportTicketAttachment.$inferInsert,
+  "id"
+>;
+
 export const supportTicketStatus = mySchema.enum("support_ticket_status", [
   "open",
   "in_progress",
