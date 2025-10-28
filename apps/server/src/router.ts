@@ -30,8 +30,9 @@ export const isOwner = t.middleware(({ ctx, next, input }) => {
     });
   }
 
-  // Extract userId from input (we'll make this generic)
-  const userId = (input as Record<"id", string>)?.id;
+  const userId =
+    (input as Record<"userId", string>)?.userId ||
+    (input as Record<"id", string>)?.id;
 
   if (!userId || typeof userId !== "string") {
     throw new TRPCError({
@@ -77,7 +78,9 @@ export const isOwnerOrAdmin = t.middleware(({ ctx, next, input }) => {
     });
   }
 
-  const userId = (input as Record<"id", string>)?.id;
+  const userId =
+    (input as Record<"userId", string>)?.userId ||
+    (input as Record<"id", string>)?.id;
 
   if (!userId || typeof userId !== "string") {
     throw new TRPCError({
@@ -92,7 +95,7 @@ export const isOwnerOrAdmin = t.middleware(({ ctx, next, input }) => {
   if (!isOwner && !isAdmin) {
     throw new TRPCError({
       code: "FORBIDDEN",
-      message: "You can only delete your own account or must be an admin",
+      message: "You can only access your own account or you must be an admin",
     });
   }
 
