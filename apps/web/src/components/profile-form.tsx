@@ -231,11 +231,12 @@ export default function ProfileForm() {
                           if (!file) return;
 
                           const extension = file.name.split(".").pop() || "jpg";
-                          const filename = `${crypto.randomUUID()}.${extension}`;
+                          const filename = `${user?.id}.${extension}`;
+                          const key = `profile_images/${filename}`;
 
                           const { presignedUrl, publicUrl } =
                             await signedUrlMutation.mutateAsync({
-                              filename,
+                              key,
                               contentType: file.type,
                             });
 
