@@ -9,7 +9,7 @@ export const autoConfig = (
 ): FastifyRateLimitOptions => {
   return {
     allowList: [fastify.config.ORIGIN],
-    max: 100,
+    max: 500,
     redis: redis,
     timeWindow: "1 minute",
     nameSpace: "codewizard-rate-limit-",
