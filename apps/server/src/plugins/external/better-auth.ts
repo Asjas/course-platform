@@ -5,8 +5,8 @@ import type {
   HookHandlerDoneFunction,
 } from "fastify";
 import fastifyBetterAuth, { getAuthDecorator } from "fastify-better-auth";
+import type { User } from "~/db/schema/user.js";
 import { auth } from "~/lib/auth.server.js";
-import type { User } from "~/routers/users/mutations.js";
 
 export default function betterAuthPlugin(
   fastify: FastifyInstance,
