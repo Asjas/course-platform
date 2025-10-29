@@ -16,14 +16,14 @@ prometheus.collectDefaultMetrics({
 });
 
 export const httpRequestCount = new prometheus.Counter({
-  name: "nodejs_http_request_total",
+  name: "course_platform_http_request_total",
   help: "Total number of HTTP requests",
   labelNames: ["method", "route", "status"],
   registers: [registry],
 });
 
 export const httpRequestDuration = new prometheus.Histogram({
-  name: "nodejs_http_request_duration_seconds",
+  name: "course_platform_http_request_duration_seconds",
   help: "HTTP request duration in seconds",
   labelNames: ["method", "route", "status"],
   registers: [registry],
@@ -50,7 +50,7 @@ export const httpRequestDuration = new prometheus.Histogram({
 });
 
 export const databaseConnectionsTotalGauge = new prometheus.Gauge({
-  name: "nodejs_database_connections_total",
+  name: "course_platform_database_connections_total",
   help: "Total number of database connections in the pool",
   registers: [registry],
   collect: function () {
@@ -65,7 +65,7 @@ export const databaseConnectionsTotalGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsIdleGauge = new prometheus.Gauge({
-  name: "nodejs_database_connections_idle",
+  name: "course_platform_database_connections_idle",
   help: "Number of idle database connections in the pool",
   registers: [registry],
   collect: function () {
@@ -80,7 +80,7 @@ export const databaseConnectionsIdleGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsWaitingGauge = new prometheus.Gauge({
-  name: "nodejs_database_connections_waiting",
+  name: "course_platform_database_connections_waiting",
   help: "Number of queries waiting for a database connection",
   registers: [registry],
   collect: function () {
@@ -95,7 +95,7 @@ export const databaseConnectionsWaitingGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsMaxGauge = new prometheus.Gauge({
-  name: "nodejs_database_connections_max",
+  name: "course_platform_database_connections_max",
   help: "Maximum number of database connections allowed in the pool",
   registers: [registry],
   collect: function () {
@@ -110,7 +110,7 @@ export const databaseConnectionsMaxGauge = new prometheus.Gauge({
 });
 
 export const databaseConnectionsActiveGauge = new prometheus.Gauge({
-  name: "nodejs_database_connections_active",
+  name: "course_platform_database_connections_active",
   help: "Number of active database connections in the pool",
   registers: [registry],
   collect: function () {
@@ -125,46 +125,46 @@ export const databaseConnectionsActiveGauge = new prometheus.Gauge({
 });
 
 export const memoryUsageGauge = new prometheus.Gauge({
-  name: "nodejs_process_memory_bytes",
+  name: "course_platform_process_memory_bytes",
   help: "Node.js process memory usage in bytes",
   labelNames: ["type"],
   registers: [registry],
 });
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({
-  name: "nodejs_eventloop_utilization_percent",
+  name: "course_platform_eventloop_utilization_percent",
   help: "Node.js event loop utilization in percent over last 100ms",
   registers: [registry],
 });
 
 export const eventLoopIdleGauge = new prometheus.Gauge({
-  name: "nodejs_eventloop_idle_ms",
+  name: "course_platform_eventloop_idle_ms",
   help: "Node.js event loop idle time in ms over last 100ms",
   registers: [registry],
 });
 
 export const eventLoopActiveGauge = new prometheus.Gauge({
-  name: "nodejs_eventloop_active_ms",
+  name: "course_platform_eventloop_active_ms",
   help: "Node.js event loop active time in ms over last 100ms",
   registers: [registry],
 });
 
 export const cacheHitCounter = new Counter({
-  name: "cache_hits_total",
+  name: "course_platform_cache_hits_total",
   help: "Total number of cache hits",
   labelNames: ["key"],
   registers: [registry],
 });
 
 export const cacheMissCounter = new Counter({
-  name: "cache_misses_total",
+  name: "course_platform_cache_misses_total",
   help: "Total number of cache misses",
   labelNames: ["key"],
   registers: [registry],
 });
 
 export const cacheErrorCounter = new Counter({
-  name: "cache_errors_total",
+  name: "course_platform_cache_errors_total",
   help: "Total number of cache errors",
   labelNames: ["err"],
   registers: [registry],
