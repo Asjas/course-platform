@@ -10,6 +10,9 @@ import { payment } from "~/db/schema/purchase.js";
 import { supportTicket } from "~/db/schema/support-tickets.js";
 import { teamLicense } from "~/db/schema/teamLicense.js";
 
+// Types
+export type User = typeof user.$inferSelect;
+
 // Enums
 export const members = mySchema.enum("members", ["member", "admin"]);
 

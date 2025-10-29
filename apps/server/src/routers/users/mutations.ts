@@ -1,8 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "~/db/index.js";
-import { user } from "~/db/schema/user.js";
-
-export type User = typeof user.$inferSelect;
+import { type User, user } from "~/db/schema/user.js";
 
 export async function updateUserById({
   userId,
