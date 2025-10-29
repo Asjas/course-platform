@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { trpc } from "~/lib/trpc.client.ts";
 
@@ -6,15 +6,13 @@ export const Route = createFileRoute("/_authenticated/admin/coupons")({
   loader: async ({ context }) => {
     const { queryClient } = context;
 
-    return await queryClient.ensureQueryData(
-      trpc.coupons.getAllCoupons.queryOptions(),
-    );
+    queryClient.ensureQueryData(trpc.coupons.getAllCoupons.queryOptions());
   },
   component: AdminCouponsPage,
 });
 
 function AdminCouponsPage() {
-  const { data: coupons, isLoading } = useQuery(
+  const { data: coupons, isLoading } = useSuspenseQuery(
     trpc.coupons.getAllCoupons.queryOptions(),
   );
 

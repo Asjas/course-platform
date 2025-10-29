@@ -1,4 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { useEffect } from "react";
 import { authClient } from "~/lib/auth.client.ts";
 import { AUTH_QUERY_KEY } from "~/lib/query.client.ts";
@@ -17,7 +21,7 @@ export function useUser() {
     data: user,
     isLoading,
     error,
-  } = useQuery({
+  } = useSuspenseQuery({
     queryKey: AUTH_QUERY_KEY,
     queryFn: fetchUser,
     initialDataUpdatedAt: () => {
