@@ -2,6 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import ErrorBoundaryComponent from "~/components/error-boundary.tsx";
 import { defaultAuthState, useAuth } from "~/lib/auth.context";
 import { AuthProvider } from "~/lib/auth.provider";
 import { queryClient } from "~/lib/query.client.ts";
@@ -21,6 +22,7 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultErrorComponent: ErrorBoundaryComponent,
 });
 
 declare module "@tanstack/react-router" {
