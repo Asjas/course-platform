@@ -94,9 +94,12 @@ export default function ChangePasswordForm() {
                       ? "hover:bg-gray-600"
                       : "cursor-not-allowed opacity-50",
                   )}
-                  type="button"
+                  type="reset"
                   disabled={!isDirty}
-                  onClick={() => form.reset()}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    form.reset();
+                  }}
                 >
                   Cancel
                 </button>
