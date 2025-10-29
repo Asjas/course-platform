@@ -11,7 +11,7 @@ RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
 
-FROM nginx:1.29.2-alpine3.22
+FROM nginx:1.29.3-alpine3.22
 
 RUN apk --no-cache add curl bash
 
