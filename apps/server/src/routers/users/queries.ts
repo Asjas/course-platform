@@ -1,6 +1,9 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 
+export type UsersReturnType = Awaited<ReturnType<typeof getAllUsers>>;
+export type UserByIdReturnType = Awaited<ReturnType<typeof getUserById>>;
+
 const preparedGetAllUsers = db.query.user
   .findMany({
     with: {

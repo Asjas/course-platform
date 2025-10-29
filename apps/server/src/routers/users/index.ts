@@ -8,10 +8,10 @@ import {
   router,
 } from "~/router.js";
 import { deleteUserById, updateUserById } from "~/routers/users/mutations.js";
-import { getAllUsers, getUserById } from "~/routers/users/queries.js";
-
-type UsersReturnType = Awaited<ReturnType<typeof getAllUsers>>;
-type UserByIdReturnType = Awaited<ReturnType<typeof getUserById>>;
+import type {
+  UserByIdReturnType,
+  UsersReturnType,
+} from "~/routers/users/queries.js";
 
 export const usersRouter = router({
   getAllUsers: publicProcedure
