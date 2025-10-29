@@ -1,5 +1,9 @@
 // Time durations in seconds
+export const TEN_SECONDS = 10;
+export const FIFTEEN_SECONDS = 15;
+export const THIRTY_SECONDS = 30;
 export const ONE_MINUTE = 60;
+export const TWO_MINUTES = 120;
 export const FIVE_MINUTES = 300;
 export const TEN_MINUTES = 600;
 export const THIRTY_MINUTES = 1800;

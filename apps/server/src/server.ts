@@ -3,7 +3,7 @@ import {
   type FastifyTRPCPluginOptions,
   fastifyTRPCPlugin,
 } from "@trpc/server/adapters/fastify";
-import Fastify, { type FastifyServerOptions } from "fastify";
+import Fastify, { type FastifyHttpOptions } from "fastify";
 import fastifyPrintRoutes from "fastify-print-routes";
 import {
   type ZodTypeProvider,
@@ -11,10 +11,17 @@ import {
   serializerCompiler,
   validatorCompiler,
 } from "fastify-type-provider-zod";
+import type http from "node:http";
 import { join } from "path";
 import type { Config } from "~/config.js";
 import { createContext } from "~/context.js";
-import { TEN_MB } from "~/lib/constants.js";
+import {
+  FIFTEEN_SECONDS,
+  ONE_MINUTE,
+  TEN_MB,
+  TEN_SECONDS,
+  TWO_MINUTES,
+} from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { type AppRouter, appRouter } from "~/routers/index.js";
 
@@ -24,14 +31,20 @@ import { type AppRouter, appRouter } from "~/routers/index.js";
  * @returns Configured Fastify instance.
  */
 async function createServer(config: Config) {
-  const opts: FastifyServerOptions = {
+  const opts: FastifyHttpOptions<http.Server> = {
     trustProxy: true,
     disableRequestLogging: true,
     loggerInstance: pinoLogger,
+    connectionTimeout: TWO_MINUTES,
+    requestTimeout: ONE_MINUTE,
+    keepAliveTimeout: TEN_SECONDS,
     bodyLimit: TEN_MB,
     routerOptions: {
       ignoreTrailingSlash: true,
       maxParamLength: 5000,
+    },
+    http: {
+      headersTimeout: FIFTEEN_SECONDS,
     },
   };
 
