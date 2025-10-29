@@ -3,6 +3,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import ErrorBoundaryComponent from "~/components/error-boundary.tsx";
+import NotFoundComponent from "~/components/not-found.tsx";
 import { defaultAuthState, useAuth } from "~/lib/auth.context";
 import { AuthProvider } from "~/lib/auth.provider";
 import { queryClient } from "~/lib/query.client.ts";
@@ -23,6 +24,7 @@ const router = createRouter({
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
   defaultErrorComponent: ErrorBoundaryComponent,
+  defaultNotFoundComponent: NotFoundComponent,
 });
 
 declare module "@tanstack/react-router" {
