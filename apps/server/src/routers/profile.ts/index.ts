@@ -7,14 +7,13 @@ export const profileRouter = router({
     .use(isAuthenticated)
     .input(
       z.object({
-        filename: z.string().min(1),
         contentType: z.string(),
+        key: z.string(),
       }),
     )
     .mutation(async ({ input }) => {
-      const key = `profile_images/${input.filename}`;
       const { presignedUrl, publicUrl } = await generatePresignedUploadUrl({
-        key,
+        key: input.key,
         contentType: input.contentType,
       });
 

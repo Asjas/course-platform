@@ -19,6 +19,7 @@ import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as VerifyEmailTokenRouteImport } from "./routes/verify-email.$token"
+import { Route as SupportCreateTicketRouteImport } from "./routes/support/create-ticket"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
@@ -90,6 +91,11 @@ const VerifyEmailTokenRoute = VerifyEmailTokenRouteImport.update({
   id: "/verify-email/$token",
   path: "/verify-email/$token",
   getParentRoute: () => rootRouteImport,
+} as any)
+const SupportCreateTicketRoute = SupportCreateTicketRouteImport.update({
+  id: "/create-ticket",
+  path: "/create-ticket",
+  getParentRoute: () => SupportRouteRoute,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: "/blog/$slug",
@@ -234,6 +240,7 @@ export interface FileRoutesByFullPath {
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/support/create-ticket": typeof SupportCreateTicketRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/support/create-ticket": typeof SupportCreateTicketRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
@@ -299,6 +307,7 @@ export interface FileRoutesById {
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
+  "/support/create-ticket": typeof SupportCreateTicketRoute
   "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
@@ -334,6 +343,7 @@ export interface FileRouteTypes {
     | "/profile"
     | "/purchases"
     | "/blog/$slug"
+    | "/support/create-ticket"
     | "/verify-email/$token"
     | "/blog"
     | "/support/"
@@ -365,6 +375,7 @@ export interface FileRouteTypes {
     | "/profile"
     | "/purchases"
     | "/blog/$slug"
+    | "/support/create-ticket"
     | "/verify-email/$token"
     | "/blog"
     | "/support"
@@ -398,6 +409,7 @@ export interface FileRouteTypes {
     | "/_authenticated/profile"
     | "/_authenticated/purchases"
     | "/blog/$slug"
+    | "/support/create-ticket"
     | "/verify-email/$token"
     | "/blog/"
     | "/support/"
@@ -501,6 +513,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/verify-email/$token"
       preLoaderRoute: typeof VerifyEmailTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    "/support/create-ticket": {
+      id: "/support/create-ticket"
+      path: "/create-ticket"
+      fullPath: "/support/create-ticket"
+      preLoaderRoute: typeof SupportCreateTicketRouteImport
+      parentRoute: typeof SupportRouteRoute
     }
     "/blog/$slug": {
       id: "/blog/$slug"
@@ -767,12 +786,14 @@ const SupportSupportTicketEditRouteRouteWithChildren =
   )
 
 interface SupportRouteRouteChildren {
+  SupportCreateTicketRoute: typeof SupportCreateTicketRoute
   SupportIndexRoute: typeof SupportIndexRoute
   SupportSupportTicketEditRouteRoute: typeof SupportSupportTicketEditRouteRouteWithChildren
   SupportSupportTicketIndexRoute: typeof SupportSupportTicketIndexRoute
 }
 
 const SupportRouteRouteChildren: SupportRouteRouteChildren = {
+  SupportCreateTicketRoute: SupportCreateTicketRoute,
   SupportIndexRoute: SupportIndexRoute,
   SupportSupportTicketEditRouteRoute:
     SupportSupportTicketEditRouteRouteWithChildren,
