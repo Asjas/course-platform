@@ -13,6 +13,7 @@ export const autoConfig = (
     redis: redis,
     timeWindow: "1 minute",
     nameSpace: "codewizard-rate-limit-",
+    skipOnError: false,
     keyGenerator: (request: FastifyRequest) => {
       return (
         (request.headers["cf-connecting-ip"] as string) ||
