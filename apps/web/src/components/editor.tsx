@@ -25,7 +25,7 @@ export default function GitHubMessageEditor({
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
 
   const signedUrlMutation = useMutation(
-    trpc.profile.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
+    trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
 
   useEffect(() => {

@@ -36,7 +36,7 @@ export default function ProfileForm() {
   const auth = useAuth();
   const user = auth.session?.user;
   const signedUrlMutation = useMutation(
-    trpc.profile.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
+    trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
   const [isUploading, setIsUploading] = useState(false);
 

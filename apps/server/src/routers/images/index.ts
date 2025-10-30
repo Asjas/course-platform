@@ -2,7 +2,7 @@ import * as z from "zod";
 import { generatePresignedUploadUrl } from "~/lib/r2-upload.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
-export const profileRouter = router({
+export const imagesRouter = router({
   getPresignedUrl: publicProcedure
     .use(isAuthenticated)
     .input(
