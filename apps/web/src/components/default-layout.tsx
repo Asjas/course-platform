@@ -27,16 +27,18 @@ export default function DefaultLayoutComponent({
       <Toaster />
       <div className="grid min-h-screen grid-rows-[1fr_auto]">
         <Header auth={auth} />
-        <main className="mt-15">
+        <main className="mt-10 flex w-full flex-col px-6 md:mt-20">
           {user && !user?.emailVerified ? (
-            <div className="flex items-center justify-between bg-green-400 p-4 text-sm text-black">
+            <div className="-mx-6 flex items-center justify-between bg-green-400 p-4 text-sm text-black">
               Your email is not verified. Please check your inbox for a
               verification email.
               <button
                 className="rounded-sm border bg-gray-800 px-2 py-1 text-white"
                 type="button"
                 onClick={async () => {
-                  await authClient.sendVerificationEmail({ email: user.email });
+                  await authClient.sendVerificationEmail({
+                    email: user.email,
+                  });
                   setEmailResent(true);
                 }}
               >

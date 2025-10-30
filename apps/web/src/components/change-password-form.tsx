@@ -48,7 +48,11 @@ export default function ChangePasswordForm() {
       onBlur: changePasswordFormSchema,
     },
     onSubmit: async ({ value: { currentPassword, newPassword } }) => {
-      await authClient.changePassword({ currentPassword, newPassword });
+      await authClient.changePassword({
+        currentPassword,
+        newPassword,
+        revokeOtherSessions: true,
+      });
 
       // Wait 300ms before navigating
       toast.success("Password changed successfully!");

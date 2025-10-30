@@ -10,7 +10,7 @@ export const Route = createFileRoute("/")({
 
 function IndexPage() {
   return (
-    <div className="flex w-full flex-col px-6">
+    <>
       {/* Hero Section */}
       <div className="pt-20 text-center">
         <h1 className="mb-6 bg-linear-to-r from-white to-slate-300 bg-clip-text pb-12 text-5xl font-bold text-transparent md:text-7xl">
@@ -40,6 +40,6 @@ function IndexPage() {
 
       {/* Final Call To Action */}
       <CTASection />
-    </div>
+    </>
   );
 }
