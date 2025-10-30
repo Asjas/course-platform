@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { renderMarkdown } from "~/lib/markdown";
 import { trpc } from "~/lib/trpc.client.ts";
@@ -8,7 +8,7 @@ import { cn } from "~/lib/utils";
 interface GitHubMessageEditorProps {
   id: string;
   value: string;
-  onChange: (value: string) => void;
+  onChange: (value: string | ((prev: string) => string)) => void; // ← FUNCTIONAL UPDATE
   placeholder?: string;
 }
 
@@ -20,9 +20,9 @@ export default function GitHubMessageEditor({
 }: GitHubMessageEditorProps) {
   const [preview, setPreview] = useState<string>("");
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
@@ -51,30 +51,11 @@ export default function GitHubMessageEditor({
     return () => clearTimeout(timer);
   }, [value]);
 
-  const insertImageMarkdown = useCallback(
-    (publicUrl: string, alt: string, cursorPos: number) => {
-      const imageMarkdown = `\n![${alt}](${publicUrl})\n`;
-      const newValue =
-        value.slice(0, cursorPos) + imageMarkdown + value.slice(cursorPos);
-
-      // IMPORTANT: Call onChange **immediately** – this forces a re-render
-      onChange(newValue);
-
-      // Move cursor after the inserted markdown
-      requestAnimationFrame(() => {
-        const textarea = textareaRef.current;
-        if (!textarea) return;
-        textarea.focus();
-        const newPos = cursorPos + imageMarkdown.length;
-        textarea.setSelectionRange(newPos, newPos);
-      });
-    },
-    [value, onChange],
-  );
-
-  const handleImageUpload = async (file: File) => {
-    setIsUploading(true);
-
+  const handleImageUpload = async (
+    file: File,
+    index: number,
+    total: number,
+  ) => {
     try {
       const extension = file.name.split(".").pop() || "jpg";
       const filename = `${crypto.randomUUID()}.${extension}`;
@@ -92,28 +73,41 @@ export default function GitHubMessageEditor({
       const uploadResponse = await fetch(presignedUrl, {
         method: "PUT",
         body: file,
-        headers: {
-          "Content-Type": file.type,
-        },
+        headers: { "Content-Type": file.type },
       });
 
       if (!uploadResponse.ok) {
         throw new Error(`Upload failed: ${uploadResponse.statusText}`);
       }
 
+      // Step 3: Insert Markdown
       const textarea = textareaRef.current;
       const cursorPos = textarea?.selectionStart ?? value.length;
       const alt = file.name.split(".").slice(0, -1).join(".") || "image";
+      const imageMarkdown = `\n![${alt}](${publicUrl})\n`;
 
-      insertImageMarkdown(publicUrl, alt, cursorPos);
+      onChange(
+        (prev) =>
+          prev.slice(0, cursorPos) + imageMarkdown + prev.slice(cursorPos),
+      );
 
-      toast.success("Image uploaded and embedded!");
+      // Restore cursor
+      requestAnimationFrame(() => {
+        if (!textarea) return;
+        textarea.focus();
+        const newPos = cursorPos + imageMarkdown.length;
+        textarea.setSelectionRange(newPos, newPos);
+      });
+
+      toast.success(`Image ${index + 1}/${total} uploaded!`);
     } catch (error) {
-      console.error("Upload error:", error);
+      if (error instanceof Error) {
+        console.error("Upload error:", error);
+        toast.error(`Failed to upload ${file.name}`);
+      }
 
-      toast.error("Upload failed. Please try again.");
-    } finally {
-      setIsUploading(false);
+      // Only turn off uploading when ALL are done
+      // We'll handle this in the loop
     }
   };
 
@@ -122,25 +116,46 @@ export default function GitHubMessageEditor({
     e.stopPropagation();
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     const files = Array.from(e.dataTransfer.files);
-    const imageFiles = files.filter((file) => file.type.startsWith("image/"));
+    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+    if (imageFiles.length === 0) return;
 
-    if (imageFiles.length > 0) {
-      handleImageUpload(imageFiles[0]); // Handle one at a time
+    setUploadingCount(imageFiles.length);
+    const toastId = toast.loading(`Uploading 0/${imageFiles.length}...`);
+
+    for (let i = 0; i < imageFiles.length; i++) {
+      toast.loading(`Uploading ${i + 1}/${imageFiles.length}...`, {
+        id: toastId,
+      });
+      await handleImageUpload(imageFiles[i], i, imageFiles.length);
     }
+
+    toast.success("All images uploaded!", { id: toastId });
+    setUploadingCount(0);
   };
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+    if (imageFiles.length === 0) return;
 
-    if (file) {
-      handleImageUpload(file);
-      e.target.value = ""; // Reset for next upload
+    setUploadingCount(imageFiles.length);
+    const toastId = toast.loading(`Uploading 0/${imageFiles.length}...`);
+
+    for (let i = 0; i < imageFiles.length; i++) {
+      toast.loading(`Uploading ${i + 1}/${imageFiles.length}...`, {
+        id: toastId,
+      });
+      await handleImageUpload(imageFiles[i], i, imageFiles.length);
     }
+
+    toast.success("All images uploaded!", { id: toastId });
+    setUploadingCount(0);
+    e.target.value = "";
   };
 
   return (
@@ -189,7 +204,7 @@ export default function GitHubMessageEditor({
               "dark:bg-gray-900 dark:text-white",
               "placeholder-gray-500 dark:placeholder-gray-400",
               "box-border leading-normal", // Critical
-              isUploading && "opacity-75",
+              uploadingCount > 0 && "opacity-75",
             )}
             id={id}
             placeholder={placeholder}
@@ -197,7 +212,7 @@ export default function GitHubMessageEditor({
             onChange={(e) => onChange(e.target.value)}
             spellCheck
             wrap="soft"
-            disabled={isUploading}
+            disabled={uploadingCount > 0}
           />
 
           {/* Upload Button & Drag Hint */}
@@ -208,20 +223,23 @@ export default function GitHubMessageEditor({
                 className="absolute inset-0 z-10 cursor-pointer opacity-0"
                 type="file"
                 accept="image/*"
+                multiple
+                disabled={uploadingCount > 0}
                 onChange={handleFileSelect}
-                disabled={isUploading}
               />
 
               {/* Custom button — looks like GitHub */}
               <span
                 className={cn(
                   "inline-flex items-center rounded px-3 py-1 text-xs font-medium text-white transition",
-                  isUploading
+                  uploadingCount > 0
                     ? "cursor-not-allowed bg-gray-500"
                     : "bg-green-600 hover:bg-green-700",
                 )}
               >
-                {isUploading ? "Uploading..." : "Upload Image"}
+                {uploadingCount > 0
+                  ? `Uploading... (${uploadingCount})`
+                  : "Upload Images"}
               </span>
             </label>
           </div>
