@@ -230,7 +230,7 @@ export default function ProfileForm() {
                         id={field.name}
                         type="file"
                         name={field.name}
-                        accept="image/jpeg,image/png"
+                        accept="image/*"
                         onChange={async (event) => {
                           const file = event.target.files?.[0];
                           if (!file) return;
