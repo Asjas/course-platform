@@ -1,15 +1,12 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { ulid } from "ulid";
 import { db } from "~/db/index.js";
 import {
   type NewSupportTicket,
-  type NewSupportTicketAttachment,
   type NewSupportTicketComment,
   type SupportTicket,
-  type SupportTicketAttachment,
   type SupportTicketComment,
   supportTicket,
-  supportTicketAttachment,
   supportTicketComment,
 } from "~/db/schema/support-tickets.js";
 
@@ -101,72 +98,4 @@ export async function deleteSupportTicketCommentById({
     .returning();
 
   return deletedComment;
-}
-
-export async function insertSupportTicketAttachment({
-  newSupportTicketAttachment,
-}: {
-  newSupportTicketAttachment: NewSupportTicketAttachment;
-}) {
-  const id = `suptikatt:${ulid()}`;
-  const newSupportTicketAttachmentWithId = {
-    id,
-    ...newSupportTicketAttachment,
-  };
-
-  const [ticketAttachment] = await db
-    .insert(supportTicketAttachment)
-    .values(newSupportTicketAttachmentWithId)
-    .returning();
-
-  return ticketAttachment;
-}
-
-export async function updateSupportTicketAttachmentById({
-  attachmentId,
-  updates,
-}: {
-  attachmentId: string;
-  updates: Partial<SupportTicketAttachment>;
-}) {
-  const [updatedAttachment] = await db
-    .update(supportTicketAttachment)
-    .set({ ...updates })
-    .where(eq(supportTicketAttachment.id, attachmentId))
-    .returning();
-
-  return updatedAttachment;
-}
-
-export async function deleteSupportTicketAttachmentById({
-  attachmentId,
-}: {
-  attachmentId: string;
-}) {
-  const [deletedAttachment] = await db
-    .delete(supportTicketAttachment)
-    .where(eq(supportTicketAttachment.id, attachmentId))
-    .returning();
-
-  return deletedAttachment;
-}
-
-export async function deleteSupportTicketCommentAttachmentsById({
-  commentId,
-  attachmentId,
-}: {
-  commentId: string;
-  attachmentId: string;
-}) {
-  const [deletedAttachment] = await db
-    .delete(supportTicketAttachment)
-    .where(
-      and(
-        eq(supportTicketAttachment.commentId, commentId),
-        eq(supportTicketAttachment.id, attachmentId),
-      ),
-    )
-    .returning();
-
-  return deletedAttachment;
 }
