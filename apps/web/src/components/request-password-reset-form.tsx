@@ -1,49 +1,43 @@
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import * as z from "zod";
+import { toast } from "sonner";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
-import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-
-const formSchema = z.object({
-  email: z.email("Invalid email address").trim(),
-});
+import { requestPasswordResetFormSchema } from "~/schema/request-password-reset.tsx";
 
 export default function RequestPasswordResetForm() {
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
-
   const form = useForm({
     defaultValues: {
       email: "",
     },
     validators: {
-      onBlur: formSchema,
+      onBlur: requestPasswordResetFormSchema,
+      onSubmit: requestPasswordResetFormSchema,
     },
     onSubmit: async ({ value: { email } }) => {
-      setServerError(null);
+      const { error } = await authClient.requestPasswordReset({ email });
 
-      const { error } = await authClient.requestPasswordReset(
-        { email },
-        {
-          onSuccess: () => {
-            setStatusMessage(
-              "If an account is associated with the provided email, a password reset link has been sent. (Please check your inbox and spam/junk folder.)",
-            );
-          },
-          onError: ({ error }) => {
-            setServerError(error.message);
-          },
-        },
-      );
+      if (error) {
+        form.setFieldMeta("email", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
 
-      if (error) console.error(error);
+        toast.error(error.message || "Failed to request password reset");
+        return;
+      }
+
+      form.reset();
+      toast.success("Password reset link sent! Please check your inbox.");
     },
   });
+
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -55,11 +49,7 @@ export default function RequestPasswordResetForm() {
       }}
       noValidate
     >
-      {/* Server error */}
-      <FormStatusMessage
-        statusMessage={statusMessage}
-        serverError={serverError}
-      />
+      <BlockerComponent formIsDirty={isDirty} />
 
       {/* Email Field */}
       <form.Field
@@ -82,23 +72,15 @@ export default function RequestPasswordResetForm() {
       />
 
       {/* Submit Button */}
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <>
-            <Button
-              className="flex items-center gap-2"
-              type="submit"
-              disabled={!isDirty || isSubmitting}
-              aria-disabled={!isDirty || isSubmitting}
-            >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Sending reset link…" : "Send reset link"}
-            </Button>
-            <BlockerComponent formIsDirty={isDirty} />
-          </>
-        )}
-      />
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={!isDirty || isSubmitting}
+        aria-disabled={!isDirty || isSubmitting}
+      >
+        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isSubmitting ? "Sending reset link…" : "Send reset link"}
+      </Button>
     </form>
   );
 }

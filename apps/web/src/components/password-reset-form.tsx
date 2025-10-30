@@ -1,36 +1,15 @@
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
-import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
-import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-
-const formSchema = z
-  .object({
-    password: z
-      .string()
-      .min(5, "Password must be at least 5 characters")
-      .max(100, "Password must be at most 100 characters")
-      .trim(),
-    confirmPassword: z
-      .string()
-      .min(5, "Confirm password must be at least 5 characters")
-      .max(100, "Confirm password must be at most 100 characters")
-      .trim(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+import { passwordResetFormSchema } from "~/schema/password-reset.tsx";
 
 export default function PasswordResetForm({ token }: { token: string }) {
-  const [serverError, setServerError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -39,30 +18,36 @@ export default function PasswordResetForm({ token }: { token: string }) {
       confirmPassword: "",
     },
     validators: {
-      onBlur: formSchema,
+      onBlur: passwordResetFormSchema,
+      onSubmit: passwordResetFormSchema,
     },
     onSubmit: async ({ value: { password } }) => {
-      setServerError(null);
-
       const { error } = await authClient.resetPassword({
         newPassword: password,
         token,
       });
 
       if (error) {
-        console.error(error);
-        setServerError(error.message || "Failed to reset password");
+        form.setFieldMeta("confirmPassword", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
+
+        toast.error(error.message || "Failed to reset password");
         return;
       }
 
-      // Wait 300ms before navigating
-      toast.success("Password reset successfully!");
       form.reset();
+      toast.success("Password reset successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       navigate({ to: "/signin", replace: true });
     },
   });
+
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -74,11 +59,7 @@ export default function PasswordResetForm({ token }: { token: string }) {
       }}
       noValidate
     >
-      {/* Server error */}
-      <FormStatusMessage
-        statusMessage={null}
-        serverError={serverError}
-      />
+      <BlockerComponent formIsDirty={isDirty} />
 
       {/* Password Field */}
       <form.Field
@@ -121,23 +102,15 @@ export default function PasswordResetForm({ token }: { token: string }) {
       />
 
       {/* Submit Button */}
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <>
-            <Button
-              className="flex items-center gap-2"
-              type="submit"
-              disabled={!isDirty || isSubmitting}
-              aria-disabled={!isDirty || isSubmitting}
-            >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Resetting password..." : "Reset password"}
-            </Button>
-            <BlockerComponent formIsDirty={isDirty} />
-          </>
-        )}
-      />
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={!isDirty || isSubmitting}
+        aria-disabled={!isDirty || isSubmitting}
+      >
+        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isSubmitting ? "Resetting password..." : "Reset password"}
+      </Button>
     </form>
   );
 }

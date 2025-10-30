@@ -1,40 +1,11 @@
-import { useForm } from "@tanstack/react-form";
-import type { AnyFieldApi } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
+import FieldInfo from "~/components/field-info.tsx";
 import { authClient } from "~/lib/auth.client.ts";
 import { cn } from "~/lib/utils.ts";
-
-function FieldInfo({ field }: { field: AnyFieldApi }) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-  const meta = field.state.meta;
-
-  return (
-    <>
-      {isInvalid ? (
-        <em className="text-sm text-red-600">
-          {meta.errors.map((error) => error.message).join(", ")}
-        </em>
-      ) : null}
-      {meta.isValidating ? "Validating..." : null}
-    </>
-  );
-}
-
-const changePasswordFormSchema = z.object({
-  currentPassword: z
-    .string()
-    .min(5, "Password must be at least 5 characters")
-    .max(80, "Password must be at most 80 characters")
-    .trim(),
-  newPassword: z
-    .string()
-    .min(5, "Password must be at least 5 characters")
-    .max(80, "Password must be at most 80 characters")
-    .trim(),
-});
+import { changePasswordFormSchema } from "~/schema/change-password.tsx";
 
 export default function ChangePasswordForm() {
   const navigate = useNavigate();
@@ -43,25 +14,39 @@ export default function ChangePasswordForm() {
     defaultValues: {
       currentPassword: "",
       newPassword: "",
-    } as z.infer<typeof changePasswordFormSchema>,
+    },
     validators: {
       onBlur: changePasswordFormSchema,
+      onSubmit: changePasswordFormSchema,
     },
     onSubmit: async ({ value: { currentPassword, newPassword } }) => {
-      await authClient.changePassword({
+      const { error } = await authClient.changePassword({
         currentPassword,
         newPassword,
         revokeOtherSessions: true,
       });
 
-      // Wait 300ms before navigating
-      toast.success("Password changed successfully!");
+      if (error) {
+        form.setFieldMeta("currentPassword", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
+
+        toast.error(error.message || "Failed to change password");
+        return;
+      }
+
       form.reset();
+      toast.success("Password changed successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       navigate({ to: "/signin", replace: true });
     },
   });
+
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -73,56 +58,47 @@ export default function ChangePasswordForm() {
       }}
       noValidate
     >
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <div className="flex">
-            <div className="flex w-full flex-col justify-between">
-              <div className="mb-4 flex flex-col">
-                <h2 className="text-base/7 font-semibold text-gray-900 dark:text-white">
-                  Change your password
-                </h2>
-                <p className="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">
-                  Make sure to use a strong password that you don't use
-                  elsewhere.
-                </p>
-              </div>
+      <BlockerComponent formIsDirty={isDirty} />
 
-              <div className="flex gap-2">
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-                    isDirty
-                      ? "hover:bg-gray-600"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="submit"
-                  disabled={!isDirty}
-                >
-                  {isSubmitting ? "Saving..." : "Save"}
-                </button>
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
-                    isDirty
-                      ? "hover:bg-gray-600"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="reset"
-                  disabled={!isDirty}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    form.reset();
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-            <BlockerComponent formIsDirty={isDirty} />
+      <div className="flex">
+        <div className="flex w-full flex-col justify-between">
+          <div className="mb-4 flex flex-col">
+            <h2 className="text-base/7 font-semibold text-gray-900 dark:text-white">
+              Change your password
+            </h2>
+            <p className="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">
+              Make sure to use a strong password that you don't use elsewhere.
+            </p>
           </div>
-        )}
-      />
+
+          <div className="flex gap-2">
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
+                isDirty ? "hover:bg-gray-600" : "cursor-not-allowed opacity-50",
+              )}
+              type="submit"
+              disabled={!isDirty}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
+                isDirty ? "hover:bg-gray-600" : "cursor-not-allowed opacity-50",
+              )}
+              type="reset"
+              disabled={!isDirty}
+              onClick={(event) => {
+                event.preventDefault();
+                form.reset();
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
 
       <div className="flex flex-col justify-between gap-6">
         <div className="w-full lg:pb-12">

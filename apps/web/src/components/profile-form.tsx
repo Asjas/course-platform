@@ -1,53 +1,34 @@
 import { useForm, useStore } from "@tanstack/react-form";
-import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { UserCircleIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
+import FieldInfo from "~/components/field-info.tsx";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
 import { trpc } from "~/lib/trpc.client.ts";
 import { cn } from "~/lib/utils.ts";
-
-function FieldInfo({ field }: { field: AnyFieldApi }) {
-  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
-  const meta = field.state.meta;
-
-  return (
-    <>
-      {isInvalid ? (
-        <em className="text-sm text-red-600">
-          {meta.errors.map((error) => error.message).join(", ")}
-        </em>
-      ) : null}
-      {meta.isValidating ? "Validating..." : null}
-    </>
-  );
-}
-
-const formSchema = z.object({
-  name: z.string().min(3).trim(),
-  username: z.string().min(3).trim().nullable().optional(),
-  image: z.string().nullable().optional(),
-});
+import { profileFormSchema } from "~/schema/profile-form.tsx";
 
 export default function ProfileForm() {
   const auth = useAuth();
   const user = auth.session?.user;
+  const [isUploading, setIsUploading] = useState(false);
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
-  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm({
     defaultValues: {
       username: user?.username ?? "",
       name: user?.name ?? "",
       image: user?.image ?? null,
-    } as z.infer<typeof formSchema>,
+    } as z.infer<typeof profileFormSchema>,
     validators: {
-      onBlur: formSchema,
+      onBlur: profileFormSchema,
+      onSubmit: profileFormSchema,
     },
     onSubmit: async ({ value: { username, name, image } }) => {
       const { error } = await authClient.updateUser({
@@ -62,13 +43,19 @@ export default function ProfileForm() {
           isTouched: true,
           errorMap: { onSubmit: error },
         }));
+
+        toast.error(error.message || "Failed to update profile");
+        return;
       }
 
       form.reset({ username, name, image });
+      toast.success("Profile updated successfully!");
     },
   });
 
   const image = useStore(form.store, (state) => state.values.image);
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -80,46 +67,37 @@ export default function ProfileForm() {
       }}
       noValidate
     >
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <div className="flex">
-            <div className="flex w-full flex-col justify-between">
-              <div className="flex gap-2">
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-                    isDirty
-                      ? "hover:bg-gray-600"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="submit"
-                  disabled={!isDirty}
-                >
-                  {isSubmitting ? "Saving..." : "Save"}
-                </button>
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
-                    isDirty
-                      ? "hover:bg-gray-600"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="reset"
-                  disabled={!isDirty}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    form.reset();
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-            <BlockerComponent formIsDirty={isDirty} />
+      <div className="flex">
+        <div className="flex w-full flex-col justify-between">
+          <div className="flex gap-2">
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
+                isDirty ? "hover:bg-gray-600" : "cursor-not-allowed opacity-50",
+              )}
+              type="submit"
+              disabled={!isDirty}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
+                isDirty ? "hover:bg-gray-600" : "cursor-not-allowed opacity-50",
+              )}
+              type="reset"
+              disabled={!isDirty}
+              onClick={(event) => {
+                event.preventDefault();
+                form.reset();
+              }}
+            >
+              Cancel
+            </button>
           </div>
-        )}
-      />
+        </div>
+        <BlockerComponent formIsDirty={isDirty} />
+      </div>
 
       <div className="flex flex-col justify-between gap-6">
         <div className="w-full lg:pb-12">
@@ -140,7 +118,6 @@ export default function ProfileForm() {
                       <input
                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
                         id={field.name}
-                        required
                         name={field.name}
                         type="text"
                         autoComplete="name"
@@ -264,11 +241,17 @@ export default function ProfileForm() {
 
                             field.handleChange(publicUrl);
                           } catch (error) {
-                            form.setFieldMeta("image", (oldMeta) => ({
-                              ...oldMeta,
-                              isTouched: true,
-                              errorMap: { onSubmit: error },
-                            }));
+                            if (error instanceof Error) {
+                              form.setFieldMeta("image", (oldMeta) => ({
+                                ...oldMeta,
+                                isTouched: true,
+                                errorMap: { onSubmit: error },
+                              }));
+
+                              toast.error(
+                                error.message || "Failed to upload image",
+                              );
+                            }
                           } finally {
                             setIsUploading(false);
                           }

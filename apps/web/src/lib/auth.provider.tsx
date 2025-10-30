@@ -1,68 +1,13 @@
-import React, { useState } from "react";
-import { toast } from "sonner";
+import React from "react";
 import { authClient } from "~/lib/auth.client.ts";
 import { AuthContext } from "~/lib/auth.context";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data: session, isPending, refetch } = authClient.useSession();
-  const [serverError, setServerError] = useState<string | null>(null);
-
+  const { data: session, isPending } = authClient.useSession();
   const isAuthenticated = !!session;
 
   const hasRole = (role: string) => {
     return session?.user?.role === role;
-  };
-
-  const signUp = async (name: string, email: string, password: string) => {
-    const { data, error } = await authClient.signUp.email({
-      name,
-      email,
-      password,
-    });
-
-    if (data?.user) {
-      setServerError(null);
-      toast.success("Signed up successfully");
-    }
-
-    if (error?.message) {
-      toast.error(error.message);
-      setServerError(error.message);
-    }
-  };
-
-  const signIn = async (
-    email: string,
-    password: string,
-    rememberMe?: boolean,
-  ) => {
-    const { data, error } = await authClient.signIn.email({
-      email,
-      password,
-      rememberMe,
-    });
-
-    if (data?.user) {
-      setServerError(null);
-      toast.success("Signed in successfully");
-    }
-
-    if (error?.message) {
-      toast.error(error.message);
-      setServerError(error.message);
-    }
-  };
-
-  const signOut = async () => {
-    const { data, error } = await authClient.signOut();
-
-    if (data?.success) {
-      toast.success("Signed out successfully");
-    }
-
-    if (error?.message) {
-      toast.error(error.message);
-    }
   };
 
   if (isPending) {
@@ -78,12 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       value={{
         isAuthenticated,
         hasRole,
-        signUp,
-        signIn,
-        signOut,
         session,
-        serverError,
-        refetchSession: refetch,
       }}
     >
       {children}

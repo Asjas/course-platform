@@ -1,34 +1,14 @@
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
-import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
-
-const formSchema = z
-  .object({
-    name: z.string().min(2, "Name must be at least 2 characters").trim(),
-    email: z.email().trim(),
-    password: z
-      .string()
-      .min(5, "Password must be at least 5 characters")
-      .max(80, "Password must be at most 80 characters")
-      .trim(),
-    confirmPassword: z
-      .string()
-      .min(5, "Password must be at least 5 characters")
-      .max(80, "Password must be at most 80 characters")
-      .trim(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+import { signUpFormSchema } from "~/schema/sign-up.tsx";
 
 export default function SignUpForm() {
   const navigate = useNavigate();
@@ -42,14 +22,29 @@ export default function SignUpForm() {
       confirmPassword: "",
     },
     validators: {
-      onSubmit: formSchema,
+      onBlur: signUpFormSchema,
+      onSubmit: signUpFormSchema,
     },
     onSubmit: async ({ value: { name, email, password } }) => {
-      await auth.signUp(name, email, password);
+      const { error } = await authClient.signUp.email({
+        name,
+        email,
+        password,
+      });
 
-      // Wait 300ms before navigating
-      toast.success("Signed up successfully!");
+      if (error) {
+        form.setFieldMeta("email", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
+
+        toast.error(error.message || "Failed to sign up");
+        return;
+      }
+
       form.reset();
+      toast.success("Signed up successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       if (auth.isAuthenticated) {
@@ -57,6 +52,9 @@ export default function SignUpForm() {
       }
     },
   });
+
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -67,11 +65,7 @@ export default function SignUpForm() {
       }}
       noValidate
     >
-      {/* Server error */}
-      <FormStatusMessage
-        statusMessage={null}
-        serverError={auth?.serverError}
-      />
+      <BlockerComponent formIsDirty={isDirty} />
 
       {/* Name Field */}
       <form.Field
@@ -88,7 +82,6 @@ export default function SignUpForm() {
               handleChange={handleChange}
               handleBlur={handleBlur}
               errorType="name-error"
-              required={true}
             />
           </div>
         )}
@@ -109,7 +102,6 @@ export default function SignUpForm() {
               handleChange={handleChange}
               handleBlur={handleBlur}
               errorType="email-error"
-              required={true}
             />
           </div>
         )}
@@ -129,7 +121,6 @@ export default function SignUpForm() {
               handleChange={handleChange}
               handleBlur={handleBlur}
               errorType="password-error"
-              required={true}
             />
           </div>
         )}
@@ -149,30 +140,21 @@ export default function SignUpForm() {
               handleChange={handleChange}
               handleBlur={handleBlur}
               errorType="confirm-password-error"
-              required={true}
             />
           </div>
         )}
       />
 
       {/* Submit Button */}
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <>
-            <Button
-              className="flex items-center gap-2"
-              type="submit"
-              disabled={!isDirty || isSubmitting}
-              aria-disabled={!isDirty || isSubmitting}
-            >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Signing up..." : "Sign Up"}
-            </Button>
-            <BlockerComponent formIsDirty={isDirty} />
-          </>
-        )}
-      />
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={!isDirty || isSubmitting}
+        aria-disabled={!isDirty || isSubmitting}
+      >
+        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isSubmitting ? "Signing up..." : "Sign Up"}
+      </Button>
     </form>
   );
 }

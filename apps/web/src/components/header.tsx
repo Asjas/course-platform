@@ -9,7 +9,9 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
+import { toast } from "sonner";
 import { NavLink } from "~/components/ui/nav-link";
+import { authClient } from "~/lib/auth.client.ts";
 import type { AuthState } from "~/lib/auth.context.ts";
 
 export default function Header({ auth }: { auth: AuthState }) {
@@ -160,7 +162,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
-                      await auth.signOut();
+                      const { error } = await authClient.signOut();
+
+                      if (error) {
+                        toast.error(error.message || "Failed to logout");
+                        return;
+                      }
 
                       navigate({ to: "/" });
                     }}
@@ -276,7 +283,14 @@ export default function Header({ auth }: { auth: AuthState }) {
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={async () => {
-                              await auth.signOut();
+                              const { error } = await authClient.signOut();
+
+                              if (error) {
+                                toast.error(
+                                  error.message || "Failed to logout",
+                                );
+                                return;
+                              }
 
                               navigate({ to: "/" });
                             }}

@@ -1,24 +1,14 @@
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
-import FormStatusMessage from "~/components/ui/form-status-message";
 import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
+import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
-
-const formSchema = z.object({
-  email: z.email().trim(),
-  password: z
-    .string()
-    .min(5, "Password must be at least 5 characters")
-    .max(80, "Password must be at most 80 characters")
-    .trim(),
-  remember: z.boolean(),
-});
+import { signInFormSchema } from "~/schema/sign-in.tsx";
 
 export default function SignInForm() {
   const navigate = useNavigate();
@@ -31,14 +21,29 @@ export default function SignInForm() {
       remember: true,
     },
     validators: {
-      onSubmit: formSchema,
+      onBlur: signInFormSchema,
+      onSubmit: signInFormSchema,
     },
     onSubmit: async ({ value: { email, password, remember } }) => {
-      await auth.signIn(email, password, remember);
+      const { error } = await authClient.signIn.email({
+        email,
+        password,
+        rememberMe: remember,
+      });
 
-      // Wait 300ms before navigating
-      toast.success("Signed in successfully!");
+      if (error) {
+        form.setFieldMeta("email", (oldMeta) => ({
+          ...oldMeta,
+          isTouched: true,
+          errorMap: { onSubmit: error },
+        }));
+
+        toast.error(error.message || "Failed to sign in");
+        return;
+      }
+
       form.reset();
+      toast.success("Signed in successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       if (auth.isAuthenticated) {
@@ -46,6 +51,9 @@ export default function SignInForm() {
       }
     },
   });
+
+  const isDirty = useStore(form.store, (state) => state.isDirty);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
 
   return (
     <form
@@ -56,11 +64,7 @@ export default function SignInForm() {
       }}
       noValidate
     >
-      {/* Server error */}
-      <FormStatusMessage
-        statusMessage={null}
-        serverError={auth?.serverError}
-      />
+      <BlockerComponent formIsDirty={isDirty} />
 
       {/* Email Field */}
       <form.Field
@@ -77,7 +81,6 @@ export default function SignInForm() {
               state={state}
               handleChange={handleChange}
               handleBlur={handleBlur}
-              required={true}
             />
           </div>
         )}
@@ -97,7 +100,6 @@ export default function SignInForm() {
               state={state}
               handleChange={handleChange}
               handleBlur={handleBlur}
-              required={true}
             />
           </div>
         )}
@@ -118,23 +120,16 @@ export default function SignInForm() {
         )}
       />
 
-      <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <>
-            <Button
-              className="flex items-center gap-2"
-              type="submit"
-              disabled={!isDirty || isSubmitting}
-              aria-disabled={!isDirty || isSubmitting}
-            >
-              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSubmitting ? "Signing in..." : "Sign In"}
-            </Button>
-            <BlockerComponent formIsDirty={isDirty} />
-          </>
-        )}
-      />
+      {/* Submit Button */}
+      <Button
+        className="flex items-center gap-2"
+        type="submit"
+        disabled={!isDirty || isSubmitting}
+        aria-disabled={!isDirty || isSubmitting}
+      >
+        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isSubmitting ? "Signing in..." : "Sign In"}
+      </Button>
     </form>
   );
 }
