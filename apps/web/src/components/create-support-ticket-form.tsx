@@ -172,6 +172,7 @@ export default function NewSupportTicketForm() {
                   </label>
                   <div className="mt-2">
                     <GitHubMessageEditor
+                      id={field.name}
                       value={field.state.value}
                       onChange={field.handleChange}
                       placeholder="Describe the issue..."
