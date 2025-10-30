@@ -1,4 +1,8 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import config from "~/config.js";
 import { ONE_HOUR } from "~/lib/constants.js";
@@ -37,4 +41,13 @@ export async function generatePresignedUploadUrl({
   const publicUrl = `${config.R2_PUBLIC_URL}/${key}`;
 
   return { presignedUrl, publicUrl };
+}
+
+export async function deleteR2Object(key: string): Promise<void> {
+  const command = new DeleteObjectCommand({
+    Bucket: config.R2_BUCKET_NAME,
+    Key: key,
+  });
+
+  await s3Client.send(command);
 }
