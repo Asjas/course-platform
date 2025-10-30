@@ -12,7 +12,7 @@ import {
 import { ulid } from "ulid";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
-import { FIVE_MINUTES, ONE_HOUR, ONE_WEEK, ONE_YEAR } from "~/lib/constants.js";
+import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
 import mailer from "~/lib/mailer.js";
 import { redis } from "~/lib/redis.js";
@@ -32,8 +32,7 @@ export const auth = betterAuth({
   secret: config.BETTER_AUTH_SECRET,
   session: {
     expiresIn: ONE_YEAR,
-    updateAge: ONE_WEEK * 4,
-    freshAge: FIVE_MINUTES,
+    updateAge: ONE_DAY,
   },
   emailVerification: {
     autoSignInAfterVerification: true,
