@@ -1,5 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { authClient } from "~/lib/auth.client.ts";
@@ -35,6 +37,8 @@ const changePasswordFormSchema = z.object({
 });
 
 export default function ChangePasswordForm() {
+  const navigate = useNavigate();
+
   const form = useForm({
     defaultValues: {
       currentPassword: "",
@@ -46,7 +50,12 @@ export default function ChangePasswordForm() {
     onSubmit: async ({ value: { currentPassword, newPassword } }) => {
       await authClient.changePassword({ currentPassword, newPassword });
 
-      form.reset({ currentPassword: "", newPassword: "" });
+      // Wait 300ms before navigating
+      toast.success("Password changed successfully!");
+      form.reset();
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      navigate({ to: "/signin", replace: true });
     },
   });
 

@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
@@ -45,6 +46,11 @@ export default function SignUpForm() {
     },
     onSubmit: async ({ value: { name, email, password } }) => {
       await auth.signUp(name, email, password);
+
+      // Wait 300ms before navigating
+      toast.success("Signed up successfully!");
+      form.reset();
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       if (auth.isAuthenticated) {
         navigate({ to: "/dashboard" });

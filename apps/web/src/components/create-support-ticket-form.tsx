@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import GitHubMessageEditor from "~/components/editor";
@@ -59,9 +60,9 @@ export default function NewSupportTicketForm() {
       const newSupportTicket =
         await createSupportTicketMutation.mutateAsync(value);
 
+      // Wait 300ms before navigating
+      toast.success("Support ticket created successfully!");
       form.reset();
-
-      // 2. Wait 300ms before navigating
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       navigate({

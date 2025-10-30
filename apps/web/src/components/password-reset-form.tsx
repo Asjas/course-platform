@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
@@ -30,7 +31,6 @@ const formSchema = z
 
 export default function PasswordResetForm({ token }: { token: string }) {
   const [serverError, setServerError] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const form = useForm({
@@ -55,13 +55,12 @@ export default function PasswordResetForm({ token }: { token: string }) {
         return;
       }
 
-      setStatusMessage(
-        "Password reset successfully! Redirecting to sign in...",
-      );
+      // Wait 300ms before navigating
+      toast.success("Password reset successfully!");
+      form.reset();
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
-      setTimeout(() => {
-        navigate({ to: "/signin", replace: true });
-      }, 500);
+      navigate({ to: "/signin", replace: true });
     },
   });
 
@@ -77,7 +76,7 @@ export default function PasswordResetForm({ token }: { token: string }) {
     >
       {/* Server error */}
       <FormStatusMessage
-        statusMessage={statusMessage}
+        statusMessage={null}
         serverError={serverError}
       />
 
