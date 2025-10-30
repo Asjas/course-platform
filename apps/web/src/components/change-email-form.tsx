@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import * as z from "zod";
+import BlockerComponent from "~/components/blocker.tsx";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
 import { cn } from "~/lib/utils.ts";
@@ -106,6 +107,7 @@ export default function ChangeEmailForm() {
                 </button>
               </div>
             </div>
+            <BlockerComponent formIsDirty={isDirty} />
           </div>
         )}
       />

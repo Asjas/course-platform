@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import * as z from "zod";
+import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { CheckboxInput, Input } from "~/components/ui/input";
@@ -111,18 +112,23 @@ export default function SignInForm() {
         )}
       />
 
-      {/* Submit Button */}
-      <Button
-        className="flex items-center gap-2"
-        type="submit"
-        disabled={form.state.isSubmitting}
-        aria-disabled={form.state.isSubmitting}
-      >
-        {form.state.isSubmitting && (
-          <Loader2 className="h-4 w-4 animate-spin" />
+      <form.Subscribe
+        selector={(state) => [state.isDirty, state.isSubmitting]}
+        children={([isDirty, isSubmitting]) => (
+          <>
+            <Button
+              className="flex items-center gap-2"
+              type="submit"
+              disabled={!isDirty || isSubmitting}
+              aria-disabled={!isDirty || isSubmitting}
+            >
+              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isSubmitting ? "Signing in..." : "Sign In"}
+            </Button>
+            <BlockerComponent formIsDirty={isDirty} />
+          </>
         )}
-        {form.state.isSubmitting ? "Signing in…" : "Sign In"}
-      </Button>
+      />
     </form>
   );
 }

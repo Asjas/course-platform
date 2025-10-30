@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import NewSupportTicketForm from "~/components/new-support-ticket-form.tsx";
+import NewSupportTicketForm from "~/components/create-support-ticket-form";
 
 export const Route = createFileRoute("/support/create-ticket")({
   component: SupportCreateTicketPage,

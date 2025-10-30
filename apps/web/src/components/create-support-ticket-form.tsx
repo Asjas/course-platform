@@ -3,6 +3,7 @@ import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 // import { useState } from "react";
 import * as z from "zod";
+import BlockerComponent from "~/components/blocker.tsx";
 import GitHubMessageEditor from "~/components/editor";
 // import { useAuth } from "~/lib/auth.context.ts";
 import { trpc } from "~/lib/trpc.client.ts";
@@ -118,6 +119,7 @@ export default function NewSupportTicketForm() {
                 </button>
               </div>
             </div>
+            <BlockerComponent formIsDirty={isDirty} />
           </div>
         )}
       />

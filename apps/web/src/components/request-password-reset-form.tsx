@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import * as z from "zod";
+import BlockerComponent from "~/components/blocker.tsx";
 import { Button } from "~/components/ui/button";
 import FormStatusMessage from "~/components/ui/form-status-message";
 import { Input } from "~/components/ui/input";
@@ -84,15 +85,18 @@ export default function RequestPasswordResetForm() {
       <form.Subscribe
         selector={(state) => [state.isDirty, state.isSubmitting]}
         children={([isDirty, isSubmitting]) => (
-          <Button
-            className="flex items-center gap-2"
-            type="submit"
-            disabled={!isDirty || isSubmitting}
-            aria-disabled={!isDirty || isSubmitting}
-          >
-            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-            {isSubmitting ? "Sending reset link…" : "Send reset link"}
-          </Button>
+          <>
+            <Button
+              className="flex items-center gap-2"
+              type="submit"
+              disabled={!isDirty || isSubmitting}
+              aria-disabled={!isDirty || isSubmitting}
+            >
+              {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+              {isSubmitting ? "Sending reset link…" : "Send reset link"}
+            </Button>
+            <BlockerComponent formIsDirty={isDirty} />
+          </>
         )}
       />
     </form>
