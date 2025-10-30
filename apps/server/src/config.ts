@@ -75,6 +75,9 @@ const schema = z.object({
   R2_BUCKET_NAME: z.string().nonempty(),
   R2_ENDPOINT: z.url(),
   R2_PUBLIC_URL: z.url(),
+
+  // Support Ticket variables
+  SUPPORT_ASSIGNED_TO_USER_ID: z.string().nonempty(),
 });
 
 export type Config = z.infer<typeof schema>;

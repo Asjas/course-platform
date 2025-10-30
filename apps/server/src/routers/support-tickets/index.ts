@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import config from "~/config.js";
 import type {
   NewSupportTicket,
   SupportTicket,
@@ -26,7 +27,7 @@ export const supportTicketsRouter = router({
       const newSupportTicket: NewSupportTicket = {
         ...input,
         userId: ctx.user?.id,
-        assignedToUserId: "user:01K8B1ATHAZW6J8M31Q2E96RF0",
+        assignedToUserId: config.SUPPORT_ASSIGNED_TO_USER_ID,
       };
 
       const [err, newTicket] = await fastify.to(
