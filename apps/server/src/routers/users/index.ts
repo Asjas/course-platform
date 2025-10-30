@@ -1,13 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import {
-  isAdmin,
-  isOwner,
-  isOwnerOrAdmin,
-  publicProcedure,
-  router,
-} from "~/router.js";
-import { deleteUserById, updateUserById } from "~/routers/users/mutations.js";
+import { isAdmin, isOwnerOrAdmin, publicProcedure, router } from "~/router.js";
+import { updateUserById } from "~/routers/users/mutations.js";
 import type {
   UserByIdReturnType,
   UsersReturnType,
@@ -63,71 +57,6 @@ export const usersRouter = router({
       ctx.request.log.debug(`Fetched user with id ${user.id} successfully`);
 
       return user;
-    }),
-  updateUserById: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        name: z.string().trim(),
-        username: z.string().trim().nullable(),
-        email: z.email().trim(),
-        metadata: z.string().trim().nullable(),
-        country: z.string().trim().nullable(),
-        image: z
-          .string()
-          .nullable()
-          .refine(
-            (value) => {
-              if (!value) return true;
-
-              try {
-                Buffer.from(value, "base64");
-                return true;
-              } catch {
-                return false;
-              }
-            },
-            { message: "Invalid base64 string" },
-          ),
-      }),
-    )
-    .use(isOwner)
-    .mutation(async ({ ctx, input }): Promise<UserByIdReturnType> => {
-      const fastify = ctx.reply.server;
-
-      const [err, updatedUser] = await fastify.to(
-        updateUserById({ userId: input.id, updates: input }),
-      );
-
-      if (err) {
-        ctx.request.log.error(err, `Error updating user with id ${input.id}`);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Internal server error",
-        });
-      }
-
-      ctx.reply.server.cache.invalidateAll([input.id, "users~all"]);
-
-      return updatedUser;
-    }),
-  deleteUserById: publicProcedure
-    .input(z.object({ userId: z.string() }))
-    .use(isOwnerOrAdmin)
-    .mutation(async ({ ctx, input: { userId } }): Promise<void> => {
-      const fastify = ctx.reply.server;
-
-      const [err] = await fastify.to(deleteUserById({ userId }));
-
-      if (err) {
-        ctx.request.log.error(err, `Error deleting user with id ${userId}`);
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Internal server error",
-        });
-      }
-
-      ctx.reply.server.cache.invalidateAll([userId, "users~all"]);
     }),
   banUserById: publicProcedure
     .input(z.object({ userId: z.string(), banReason: z.string().optional() }))

@@ -6,7 +6,6 @@ const preparedGetAllSupportTickets = db.query.supportTicket
     with: {
       user: true,
       comments: true,
-      attachments: true,
       assignedToUser: true,
       course: true,
       module: true,
@@ -26,7 +25,6 @@ const preparedGetSupportTicketById = db.query.supportTicket
           user: true,
         },
       },
-      attachments: true,
       assignedToUser: true,
       course: true,
       module: true,
@@ -40,7 +38,6 @@ const preparedSupportTicketComment = db.query.supportTicketComment
     where: (comment) => eq(comment.id, sql.placeholder("commentId")),
     with: {
       user: true,
-      attachments: true,
     },
   })
   .prepare("getSupportTicketCommentById");

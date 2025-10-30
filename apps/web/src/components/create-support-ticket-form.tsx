@@ -1,11 +1,10 @@
 import { useForm } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-// import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker.tsx";
 import GitHubMessageEditor from "~/components/editor";
-// import { useAuth } from "~/lib/auth.context.ts";
 import { trpc } from "~/lib/trpc.client.ts";
 import { cn } from "~/lib/utils.ts";
 
@@ -27,27 +26,21 @@ function FieldInfo({ field }: { field: AnyFieldApi }) {
 
 const supportTicketSchema = z.object({
   title: z.string().min(5).max(100),
-  description: z.string().min(10).max(1000),
-  repo: z.url().optional(),
+  description: z.string().max(1000),
+  repo: z.url(),
   priority: z.enum(["low", "medium", "high", "urgent"]),
   status: z.enum(["open", "in_progress", "resolved", "closed"]),
-  attachments: z.array(z.string()).max(5),
   moduleId: z.string().optional(),
   lessonId: z.string().optional(),
 });
 
 export default function NewSupportTicketForm() {
-  // const auth = useAuth();
-  // const user = auth.session?.user;
+  const navigate = useNavigate();
   const createSupportTicketMutation = useMutation(
     trpc.supportTickets.createSupportTicket.mutationOptions({
       keyPrefix: undefined,
     }),
   );
-  // const signedUrlMutation = useMutation(
-  //   trpc.profile.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
-  // );
-  // const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm({
     defaultValues: {
@@ -56,7 +49,6 @@ export default function NewSupportTicketForm() {
       repo: "",
       priority: "medium",
       status: "open",
-      attachments: [],
       moduleId: undefined,
       lessonId: undefined,
     } as z.infer<typeof supportTicketSchema>,
@@ -64,14 +56,20 @@ export default function NewSupportTicketForm() {
       onBlur: supportTicketSchema,
     },
     onSubmit: async ({ value }) => {
-      // const newSupportTicket =
-      await createSupportTicketMutation.mutateAsync(value);
+      const newSupportTicket =
+        await createSupportTicketMutation.mutateAsync(value);
 
       form.reset();
+
+      // 2. Wait 300ms before navigating
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      navigate({
+        to: "/support/$supportTicket",
+        params: { supportTicket: newSupportTicket.id },
+      });
     },
   });
-
-  // const attachments = useStore(form.store, (state) => state.values.attachments);
 
   return (
     <form
@@ -138,6 +136,38 @@ export default function NewSupportTicketForm() {
                       htmlFor={field.name}
                     >
                       Title (Required)
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                        id={field.name}
+                        required
+                        name={field.name}
+                        type="text"
+                        value={field.state.value}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        onBlur={field.handleBlur}
+                      />
+                    </div>
+                    <FieldInfo field={field} />
+                  </div>
+                );
+              }}
+            />
+
+            {/* Repo Field */}
+            <form.Field
+              name="repo"
+              children={(field) => {
+                return (
+                  <div className="col-span-3">
+                    <label
+                      className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+                      htmlFor={field.name}
+                    >
+                      Repostitory URL (Required)
                     </label>
                     <div className="mt-2">
                       <input

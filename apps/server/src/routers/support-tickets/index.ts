@@ -1,5 +1,9 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import type {
+  NewSupportTicket,
+  SupportTicket,
+} from "~/db/schema/support-tickets.js";
 import { publicProcedure, router } from "~/router.js";
 import { insertSupportTicket } from "~/routes/support-tickets/mutations.js";
 
@@ -8,20 +12,25 @@ export const supportTicketsRouter = router({
     .input(
       z.object({
         title: z.string().min(5).max(100),
-        description: z.string().min(10).max(1000),
-        repo: z.url().optional(),
+        description: z.string().max(1000),
+        repo: z.url(),
         priority: z.enum(["low", "medium", "high", "urgent"]),
         status: z.enum(["open", "in_progress", "resolved", "closed"]),
-        attachments: z.array(z.string()).max(5),
         moduleId: z.string().optional(),
         lessonId: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
       const fastify = ctx.reply.server;
 
+      const newSupportTicket: NewSupportTicket = {
+        ...input,
+        userId: ctx.user?.id,
+        assignedToUserId: "user:01K8B1ATHAZW6J8M31Q2E96RF0",
+      };
+
       const [err, newTicket] = await fastify.to(
-        insertSupportTicket({ newSupportTicket: input }),
+        insertSupportTicket({ newSupportTicket }),
       );
 
       if (err) {
