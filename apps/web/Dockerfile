@@ -3,6 +3,11 @@ FROM node:24.11.0-alpine3.22 AS vite-builder
 ARG VITE_BETTER_AUTH_URL
 ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
 
+RUN apk --no-cache add python3 py3-pip make g++
+
+# Set Python path for node-gyp
+ENV PYTHON=/usr/bin/python3
+
 WORKDIR /app
 
 COPY . .
