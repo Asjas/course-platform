@@ -6,6 +6,6 @@ export const supportTicketFormSchema = z.object({
   repo: z.url(),
   priority: z.enum(["low", "medium", "high", "urgent"]),
   status: z.enum(["open", "in_progress", "resolved", "closed"]),
-  moduleId: z.string().optional(),
-  lessonId: z.string().optional(),
+  moduleId: z.ulid().optional(),
+  lessonId: z.ulid().optional(),
 });

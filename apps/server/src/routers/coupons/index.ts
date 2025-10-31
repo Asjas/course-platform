@@ -156,7 +156,7 @@ export const couponsRouter = router({
         id: z.ulid(),
         active: z.boolean().optional(),
         code: z.string(),
-        courseId: z.string().nullable(),
+        courseId: z.ulid().nullable(),
         currentRedemptions: z.number().optional(),
         description: z.string().nullable(),
         discountType: z.enum(["percentage", "fixed"]),
