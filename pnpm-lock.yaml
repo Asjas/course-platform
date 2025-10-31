@@ -3,6 +3,7 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
+  injectWorkspacePackages: true
 
 importers:
 
@@ -254,7 +255,7 @@ importers:
     dependencies:
       '@apps/server':
         specifier: workspace:^
-        version: link:../server
+        version: file:apps/server(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(typescript@5.9.3)
       '@epic-web/invariant':
         specifier: 1.0.0
         version: 1.0.0
@@ -592,6 +593,10 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       ajv: '>=8'
+
+  '@apps/server@file:apps/server':
+    resolution: {directory: apps/server, type: directory}
+    engines: {node: '>=22.16.0'}
 
   '@asamuzakjp/css-color@4.0.5':
     resolution: {integrity: sha512-lMrXidNhPGsDjytDy11Vwlb6OIGrT3CmLg3VWNFyWkLWtijKl7xjvForlh8vuj0SHGjgl4qZEQzUmYTeQA2JFQ==}
@@ -2210,6 +2215,12 @@ packages:
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
+
+  '@packages/db@file:packages/db':
+    resolution: {directory: packages/db, type: directory}
+
+  '@packages/schema@file:packages/schema':
+    resolution: {directory: packages/schema, type: directory}
 
   '@peculiar/asn1-android@2.5.0':
     resolution: {integrity: sha512-t8A83hgghWQkcneRsgGs2ebAlRe54ns88p7ouv8PW2tzF1nAW4yHcL4uZKrFpIU+uszIRzTkcCuie37gpkId0A==}
@@ -9183,6 +9194,95 @@ snapshots:
       jsonpointer: 5.0.1
       leven: 3.1.0
 
+  '@apps/server@file:apps/server(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(typescript@5.9.3)':
+    dependencies:
+      '@aws-sdk/client-s3': 3.921.0
+      '@aws-sdk/s3-request-presigner': 3.921.0
+      '@fastify/autoload': 6.3.1
+      '@fastify/cors': 11.1.0
+      '@fastify/etag': 6.1.0
+      '@fastify/formbody': 8.0.2
+      '@fastify/helmet': 13.0.2
+      '@fastify/http-proxy': 11.3.0
+      '@fastify/multipart': 9.3.0
+      '@fastify/rate-limit': 10.3.0
+      '@fastify/sensible': 6.0.3
+      '@packages/db': file:packages/db(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)
+      '@packages/schema': file:packages/schema
+      '@polar-sh/better-auth': 1.2.1(@polar-sh/sdk@0.40.1)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(zod@4.1.12)
+      '@polar-sh/sdk': 0.40.1
+      '@trpc/server': 11.7.1(typescript@5.9.3)
+      argon2: 0.44.0
+      async-cache-dedupe: 3.3.0
+      better-auth: 1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      close-with-grace: 2.3.0
+      fastify: 5.6.1
+      fastify-allow: 2.1.1
+      fastify-better-auth: 1.2.0(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1)
+      fastify-favicon: 5.0.0
+      fastify-healthcheck: 5.1.0
+      fastify-print-routes: 4.1.0
+      fastify-type-provider-zod: 6.1.0(fastify@5.6.1)(zod@4.1.12)
+      ioredis: 5.8.2
+      isbot: 5.1.31
+      nodemailer: 7.0.10
+      pino: 10.1.0
+      prom-client: 15.1.3
+      resolve-tspaths: 0.8.23(typescript@5.9.3)
+      superjson: 2.2.5
+      ulid: 3.0.1
+      zod: 4.1.12
+    transitivePeerDependencies:
+      - '@aws-sdk/client-rds-data'
+      - '@cloudflare/workers-types'
+      - '@electric-sql/pglite'
+      - '@fastify/swagger'
+      - '@libsql/client'
+      - '@libsql/client-wasm'
+      - '@lynx-js/react'
+      - '@neondatabase/serverless'
+      - '@op-engineering/op-sqlite'
+      - '@opentelemetry/api'
+      - '@planetscale/database'
+      - '@prisma/client'
+      - '@stripe/react-stripe-js'
+      - '@stripe/stripe-js'
+      - '@sveltejs/kit'
+      - '@tidbcloud/serverless'
+      - '@types/better-sqlite3'
+      - '@types/pg'
+      - '@types/react'
+      - '@types/react-dom'
+      - '@types/sql.js'
+      - '@upstash/redis'
+      - '@vercel/postgres'
+      - '@xata.io/client'
+      - aws-crt
+      - better-sqlite3
+      - bufferutil
+      - bun-types
+      - expo-sqlite
+      - gel
+      - knex
+      - kysely
+      - mysql2
+      - next
+      - openapi-types
+      - postgres
+      - prisma
+      - react
+      - react-dom
+      - react-is
+      - redux
+      - solid-js
+      - sql.js
+      - sqlite3
+      - supports-color
+      - svelte
+      - typescript
+      - utf-8-validate
+      - vue
+
   '@asamuzakjp/css-color@4.0.5':
     dependencies:
       '@csstools/css-calc': 2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
@@ -11509,6 +11609,48 @@ snapshots:
   '@opentelemetry/api@1.9.0': {}
 
   '@oslojs/encoding@1.1.0': {}
+
+  '@packages/db@file:packages/db(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)':
+    dependencies:
+      '@packages/schema': file:packages/schema
+      drizzle-orm: 0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2))
+      pg: 8.16.3(pg-native@3.5.2)
+    optionalDependencies:
+      pg-native: 3.5.2
+    transitivePeerDependencies:
+      - '@aws-sdk/client-rds-data'
+      - '@cloudflare/workers-types'
+      - '@electric-sql/pglite'
+      - '@libsql/client'
+      - '@libsql/client-wasm'
+      - '@neondatabase/serverless'
+      - '@op-engineering/op-sqlite'
+      - '@opentelemetry/api'
+      - '@planetscale/database'
+      - '@prisma/client'
+      - '@tidbcloud/serverless'
+      - '@types/better-sqlite3'
+      - '@types/pg'
+      - '@types/sql.js'
+      - '@upstash/redis'
+      - '@vercel/postgres'
+      - '@xata.io/client'
+      - better-sqlite3
+      - bun-types
+      - expo-sqlite
+      - gel
+      - knex
+      - kysely
+      - mysql2
+      - postgres
+      - prisma
+      - sql.js
+      - sqlite3
+
+  '@packages/schema@file:packages/schema':
+    dependencies:
+      ulid: 3.0.1
+      zod: 4.1.12
 
   '@peculiar/asn1-android@2.5.0':
     dependencies:
