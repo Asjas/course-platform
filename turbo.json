@@ -19,7 +19,6 @@
       "outputs": ["tsconfig.tsbuildinfo"]
     },
     "drizzle:generate": {
-      "dependsOn": ["^build"],
       "outputs": ["drizzle/**"]
     },
     "drizzle:migrate": {
