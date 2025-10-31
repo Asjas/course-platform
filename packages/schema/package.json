@@ -7,7 +7,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsc"
+    "build": "rm -rf dist && tsc -b tsconfig.build.json"
   },
   "dependencies": {
     "ulid": "3.0.1",
