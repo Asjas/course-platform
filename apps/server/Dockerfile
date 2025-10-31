@@ -6,15 +6,18 @@ RUN apk --no-cache add python3 py3-pip make g++ postgresql-dev postgresql-client
 ENV PYTHON=/usr/bin/python3
 
 RUN mkdir /app
-WORKDIR /app
 
 COPY . .
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
 RUN pnpm run build
-RUN cd apps/server && ls -alh
+
+# Run migration inside @packages/db
+WORKDIR /app/packages/db
 RUN pnpm run drizzle:migrate:prod
+
+WORKDIR /app
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 FROM node:24.11.0-alpine3.22
