@@ -30,6 +30,7 @@ EXPOSE 3000
 
 WORKDIR /app
 
+COPY .npmrc ./
 COPY --from=builder /prod/server ./
 
 RUN npm i -g pnpm@10.20.0
