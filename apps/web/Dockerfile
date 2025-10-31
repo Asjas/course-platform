@@ -9,7 +9,7 @@ COPY . .
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
-RUN pnpm run build
+RUN pnpm run build:web
 
 FROM nginx:1.29.3-alpine3.22
 
