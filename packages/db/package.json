@@ -41,9 +41,9 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "drizzle:generate": "tsx node_modules/drizzle-kit/bin.cjs generate",
-    "drizzle:migrate": "tsx node_modules/drizzle-kit/bin.cjs migrate",
-    "drizzle:drop": "tsx node_modules/drizzle-kit/bin.cjs drop"
+    "drizzle:generate": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs generate",
+    "drizzle:migrate": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs migrate",
+    "drizzle:drop": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs drop"
   },
   "dependencies": {
     "@packages/schema": "workspace:*",

@@ -6,6 +6,4 @@ const schema = z.object({
 
 export type Config = z.infer<typeof schema>;
 
-console.log("process.env:", process.env);
-
 export default schema.parse(process.env) as Config;
