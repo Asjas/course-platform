@@ -8,7 +8,7 @@ ENV PYTHON=/usr/bin/python3
 RUN mkdir /app
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
 COPY apps/server ./apps/server
 COPY packages/schema ./packages/schema
 
