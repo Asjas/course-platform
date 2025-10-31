@@ -13,11 +13,11 @@ const schema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
-  ORIGIN: z.url(),
+  ORIGIN: z.httpUrl(),
   COOKIE_SECRET: z.string().min(32),
-  COOKIE_DOMAIN: z.url(),
+  COOKIE_DOMAIN: z.httpUrl(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
-  SENTRY_DSN: z.url().optional(),
+  SENTRY_DSN: z.httpUrl().optional(),
   MAX_HEAP_USED_BYTES: z
     .string()
     .transform((val) => parseInt(val, 10))
@@ -58,7 +58,7 @@ const schema = z.object({
 
   // Payment variables
   POLAR_ACCESS_TOKEN: z.string().nonempty(),
-  POLAR_SUCCESS_URL: z.url(),
+  POLAR_SUCCESS_URL: z.httpUrl(),
   LEARN_FASTIFY_POLAR_PRODUCT_ID: z.string().uuid(),
 
   // Prometheus variables
@@ -73,8 +73,8 @@ const schema = z.object({
   R2_ACCESS_KEY_ID: z.string().nonempty(),
   R2_SECRET_ACCESS_KEY: z.string().nonempty(),
   R2_BUCKET_NAME: z.string().nonempty(),
-  R2_ENDPOINT: z.url(),
-  R2_PUBLIC_URL: z.url(),
+  R2_ENDPOINT: z.httpUrl(),
+  R2_PUBLIC_URL: z.httpUrl(),
 
   // Support Ticket variables
   SUPPORT_ASSIGNED_TO_USER_ID: z.ulid().nonempty(),
