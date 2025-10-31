@@ -22,6 +22,10 @@ RUN pnpm i --frozen-lockfile
 RUN pnpm run build:server
 RUN pnpm deploy --filter @apps/server --prod /prod/server
 
+# Run migration inside @packages/db
+RUN pnpm --filter @packages/db run drizzle:migrate
+RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
+
 FROM node:24.11.0-alpine3.22
 
 RUN apk --no-cache add bash curl dumb-init
@@ -32,11 +36,6 @@ WORKDIR /app
 
 COPY .npmrc ./
 COPY --from=builder /prod/server ./
-
-# Run migration inside @packages/db
-RUN npm i -g pnpm@10.20.0
-RUN pnpm --filter @packages/db run drizzle:migrate
-RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
