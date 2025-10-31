@@ -9,6 +9,7 @@ WORKDIR /app
 
 COPY .npmrc ./
 COPY pnpm-workspace.yaml ./
+COPY turbo.json ./
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY apps/server apps/server
