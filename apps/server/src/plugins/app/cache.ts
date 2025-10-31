@@ -1,9 +1,9 @@
+import { cache } from "../../lib/cache.ts";
 import type {
   FastifyInstance,
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import { cache } from "~/lib/cache.js";
 
 export default function dbPlugin(
   fastify: FastifyInstance,

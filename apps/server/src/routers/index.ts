@@ -1,8 +1,8 @@
-import { imagesRouter } from "./images/index.js";
-import { router } from "~/router.js";
-import { couponsRouter } from "~/routers/coupons/index.js";
-import { coursesRouter } from "~/routers/courses/index.js";
-import { supportTicketsRouter } from "~/routers/support-tickets/index.js";
+import { router } from "../router.ts";
+import { couponsRouter } from "./coupons/index.ts";
+import { coursesRouter } from "./courses/index.ts";
+import { imagesRouter } from "./images/index.ts";
+import { supportTicketsRouter } from "./support-tickets/index.ts";
 
 export const appRouter = router({
   coupons: couponsRouter,

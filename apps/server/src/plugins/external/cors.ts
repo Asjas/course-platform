@@ -1,5 +1,5 @@
+import config from "../../config.ts";
 import fastifyCors, { type FastifyCorsOptions } from "@fastify/cors";
-import config from "~/config.js";
 
 export const autoConfig: FastifyCorsOptions = {
   credentials: true,

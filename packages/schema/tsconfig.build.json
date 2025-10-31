@@ -1,6 +1,5 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["drizzle.config.ts"],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",

@@ -1,8 +1,8 @@
 {
   "extends": "../../tooling/tsconfig/tsconfig.base.json",
   "references": [
-    { "path": "../../packages/db" },
-    { "path": "../../packages/schema" }
+    { "path": "../../packages/db/tsconfig.build.json" },
+    { "path": "../../packages/schema/tsconfig.build.json" }
   ],
   "include": ["src/**/*", "tests/**/*", "./types/"],
   "exclude": ["node_modules", "dist", ".turbo"],
@@ -10,9 +10,9 @@
     "target": "esnext",
     "module": "node16",
     "moduleResolution": "node16",
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "rootDir": "./src",
-    "outDir": "./dist",
+    "noEmit": true,
     "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types/"]
   }

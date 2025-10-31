@@ -1,10 +1,3 @@
-import type {
-  FastifyInstance,
-  FastifyPluginOptions,
-  HookHandlerDoneFunction,
-} from "fastify";
-import { performance } from "node:perf_hooks";
-import prometheus from "prom-client";
 import {
   eventLoopActiveGauge,
   eventLoopIdleGauge,
@@ -13,8 +6,15 @@ import {
   httpRequestDuration,
   memoryUsageGauge,
   registry,
-} from "~/lib/metrics.js";
-import { normalizeRoute } from "~/lib/normalized-route.js";
+} from "../../lib/metrics.ts";
+import { normalizeRoute } from "../../lib/normalized-route.ts";
+import type {
+  FastifyInstance,
+  FastifyPluginOptions,
+  HookHandlerDoneFunction,
+} from "fastify";
+import { performance } from "node:perf_hooks";
+import prometheus from "prom-client";
 
 export default function metricsPlugin(
   fastify: FastifyInstance,

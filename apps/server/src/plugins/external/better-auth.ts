@@ -1,3 +1,4 @@
+import { auth } from "../../lib/auth.server.ts";
 import type { User } from "@packages/db/schema/user";
 import { fromNodeHeaders } from "better-auth/node";
 import type {
@@ -6,7 +7,6 @@ import type {
   HookHandlerDoneFunction,
 } from "fastify";
 import fastifyBetterAuth, { getAuthDecorator } from "fastify-better-auth";
-import { auth } from "~/lib/auth.server.js";
 
 export default function betterAuthPlugin(
   fastify: FastifyInstance,

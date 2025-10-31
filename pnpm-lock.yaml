@@ -3,7 +3,6 @@ lockfileVersion: '9.0'
 settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
-  injectWorkspacePackages: true
 
 importers:
 
@@ -213,9 +212,6 @@ importers:
       prom-client:
         specifier: 15.1.3
         version: 15.1.3
-      resolve-tspaths:
-        specifier: 0.8.23
-        version: 0.8.23(typescript@5.9.3)
       superjson:
         specifier: 2.2.5
         version: 2.2.5
@@ -244,9 +240,6 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
-      vite-tsconfig-paths:
-        specifier: 5.1.4
-        version: 5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       vitest:
         specifier: 4.0.5
         version: 4.0.5(@types/debug@4.1.12)(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.0.1(postcss@8.5.6))(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
@@ -255,7 +248,7 @@ importers:
     dependencies:
       '@apps/server':
         specifier: workspace:^
-        version: file:apps/server(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(typescript@5.9.3)
+        version: link:../server
       '@epic-web/invariant':
         specifier: 1.0.0
         version: 1.0.0
@@ -593,10 +586,6 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       ajv: '>=8'
-
-  '@apps/server@file:apps/server':
-    resolution: {directory: apps/server, type: directory}
-    engines: {node: '>=22.16.0'}
 
   '@asamuzakjp/css-color@4.0.5':
     resolution: {integrity: sha512-lMrXidNhPGsDjytDy11Vwlb6OIGrT3CmLg3VWNFyWkLWtijKl7xjvForlh8vuj0SHGjgl4qZEQzUmYTeQA2JFQ==}
@@ -2215,12 +2204,6 @@ packages:
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
-
-  '@packages/db@file:packages/db':
-    resolution: {directory: packages/db, type: directory}
-
-  '@packages/schema@file:packages/schema':
-    resolution: {directory: packages/schema, type: directory}
 
   '@peculiar/asn1-android@2.5.0':
     resolution: {integrity: sha512-t8A83hgghWQkcneRsgGs2ebAlRe54ns88p7ouv8PW2tzF1nAW4yHcL4uZKrFpIU+uszIRzTkcCuie37gpkId0A==}
@@ -5125,10 +5108,6 @@ packages:
   comma-separated-tokens@2.0.3:
     resolution: {integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==}
 
-  commander@12.1.0:
-    resolution: {integrity: sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==}
-    engines: {node: '>=18'}
-
   commander@14.0.2:
     resolution: {integrity: sha512-TywoWNNRbhoD0BXs1P3ZEScW8W5iKrnbithIl0YH+uCmBd0QpPOA8yc82DS3BIE5Ma6FnBVUsJ7wVUDz4dvOWQ==}
     engines: {node: '>=20'}
@@ -5925,10 +5904,6 @@ packages:
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
-
-  fast-glob@3.3.2:
-    resolution: {integrity: sha512-oX2ruAFQwf/Orj8m737Y5adxDQO0LAB7/S5MnxCdTNDd4p6BsyIVsv9JQsATbTSq8KHRpLwIHbVlUNatxd+1Ow==}
-    engines: {node: '>=8.6.0'}
 
   fast-glob@3.3.3:
     resolution: {integrity: sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==}
@@ -7894,12 +7869,6 @@ packages:
   resolve-pkg-maps@1.0.0:
     resolution: {integrity: sha512-seS2Tj26TBVOC2NIc2rOe2y2ZO7efxITtLZcGSOnHHNOQ7CkiUBfw0Iw2ck6xkIhPwLhKNLS8BO+hEpngQlqzw==}
 
-  resolve-tspaths@0.8.23:
-    resolution: {integrity: sha512-VMZPjXnYLHnNHXOmJ9Unkkls08zDc+0LSBUo8Rp+SKzRt8rfD9dMpBudQJ5PNG8Szex/fnwdNKzd7rqipIH/zg==}
-    hasBin: true
-    peerDependencies:
-      typescript: '>=3.0.3'
-
   resolve@1.22.11:
     resolution: {integrity: sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==}
     engines: {node: '>= 0.4'}
@@ -8804,14 +8773,6 @@ packages:
       '@vite-pwa/assets-generator':
         optional: true
 
-  vite-tsconfig-paths@5.1.4:
-    resolution: {integrity: sha512-cYj0LRuLV2c2sMqhqhGpaO3LretdtMn/BVX4cPLanIZuwwrkVl+lK84E/miEXkCHWXuq65rhNN4rXsBcOB3S4w==}
-    peerDependencies:
-      vite: '*'
-    peerDependenciesMeta:
-      vite:
-        optional: true
-
   vite@6.4.1:
     resolution: {integrity: sha512-+Oxm7q9hDoLMyJOYfUYBuHQo+dkAloi33apOPP56pzj+vsdJDzr+j1NISE5pyaAuKL4A3UD34qd0lx5+kfKp2g==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -9193,95 +9154,6 @@ snapshots:
       json-schema: 0.4.0
       jsonpointer: 5.0.1
       leven: 3.1.0
-
-  '@apps/server@file:apps/server(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(typescript@5.9.3)':
-    dependencies:
-      '@aws-sdk/client-s3': 3.921.0
-      '@aws-sdk/s3-request-presigner': 3.921.0
-      '@fastify/autoload': 6.3.1
-      '@fastify/cors': 11.1.0
-      '@fastify/etag': 6.1.0
-      '@fastify/formbody': 8.0.2
-      '@fastify/helmet': 13.0.2
-      '@fastify/http-proxy': 11.3.0
-      '@fastify/multipart': 9.3.0
-      '@fastify/rate-limit': 10.3.0
-      '@fastify/sensible': 6.0.3
-      '@packages/db': file:packages/db(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)
-      '@packages/schema': file:packages/schema
-      '@polar-sh/better-auth': 1.2.1(@polar-sh/sdk@0.40.1)(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react-is@16.13.1)(react@19.2.0)(redux@5.0.1)(zod@4.1.12)
-      '@polar-sh/sdk': 0.40.1
-      '@trpc/server': 11.7.1(typescript@5.9.3)
-      argon2: 0.44.0
-      async-cache-dedupe: 3.3.0
-      better-auth: 1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      close-with-grace: 2.3.0
-      fastify: 5.6.1
-      fastify-allow: 2.1.1
-      fastify-better-auth: 1.2.0(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1)
-      fastify-favicon: 5.0.0
-      fastify-healthcheck: 5.1.0
-      fastify-print-routes: 4.1.0
-      fastify-type-provider-zod: 6.1.0(fastify@5.6.1)(zod@4.1.12)
-      ioredis: 5.8.2
-      isbot: 5.1.31
-      nodemailer: 7.0.10
-      pino: 10.1.0
-      prom-client: 15.1.3
-      resolve-tspaths: 0.8.23(typescript@5.9.3)
-      superjson: 2.2.5
-      ulid: 3.0.1
-      zod: 4.1.12
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@fastify/swagger'
-      - '@libsql/client'
-      - '@libsql/client-wasm'
-      - '@lynx-js/react'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@stripe/react-stripe-js'
-      - '@stripe/stripe-js'
-      - '@sveltejs/kit'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/react'
-      - '@types/react-dom'
-      - '@types/sql.js'
-      - '@upstash/redis'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - aws-crt
-      - better-sqlite3
-      - bufferutil
-      - bun-types
-      - expo-sqlite
-      - gel
-      - knex
-      - kysely
-      - mysql2
-      - next
-      - openapi-types
-      - postgres
-      - prisma
-      - react
-      - react-dom
-      - react-is
-      - redux
-      - solid-js
-      - sql.js
-      - sqlite3
-      - supports-color
-      - svelte
-      - typescript
-      - utf-8-validate
-      - vue
 
   '@asamuzakjp/css-color@4.0.5':
     dependencies:
@@ -11609,48 +11481,6 @@ snapshots:
   '@opentelemetry/api@1.9.0': {}
 
   '@oslojs/encoding@1.1.0': {}
-
-  '@packages/db@file:packages/db(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)':
-    dependencies:
-      '@packages/schema': file:packages/schema
-      drizzle-orm: 0.44.7(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2))
-      pg: 8.16.3(pg-native@3.5.2)
-    optionalDependencies:
-      pg-native: 3.5.2
-    transitivePeerDependencies:
-      - '@aws-sdk/client-rds-data'
-      - '@cloudflare/workers-types'
-      - '@electric-sql/pglite'
-      - '@libsql/client'
-      - '@libsql/client-wasm'
-      - '@neondatabase/serverless'
-      - '@op-engineering/op-sqlite'
-      - '@opentelemetry/api'
-      - '@planetscale/database'
-      - '@prisma/client'
-      - '@tidbcloud/serverless'
-      - '@types/better-sqlite3'
-      - '@types/pg'
-      - '@types/sql.js'
-      - '@upstash/redis'
-      - '@vercel/postgres'
-      - '@xata.io/client'
-      - better-sqlite3
-      - bun-types
-      - expo-sqlite
-      - gel
-      - knex
-      - kysely
-      - mysql2
-      - postgres
-      - prisma
-      - sql.js
-      - sqlite3
-
-  '@packages/schema@file:packages/schema':
-    dependencies:
-      ulid: 3.0.1
-      zod: 4.1.12
 
   '@peculiar/asn1-android@2.5.0':
     dependencies:
@@ -15533,8 +15363,6 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
-  commander@12.1.0: {}
-
   commander@14.0.2: {}
 
   commander@2.20.3: {}
@@ -16465,14 +16293,6 @@ snapshots:
   fast-decode-uri-component@1.0.1: {}
 
   fast-deep-equal@3.1.3: {}
-
-  fast-glob@3.3.2:
-    dependencies:
-      '@nodelib/fs.stat': 2.0.5
-      '@nodelib/fs.walk': 1.2.8
-      glob-parent: 5.1.2
-      merge2: 1.4.1
-      micromatch: 4.0.8
 
   fast-glob@3.3.3:
     dependencies:
@@ -18932,13 +18752,6 @@ snapshots:
 
   resolve-pkg-maps@1.0.0: {}
 
-  resolve-tspaths@0.8.23(typescript@5.9.3):
-    dependencies:
-      ansi-colors: 4.1.3
-      commander: 12.1.0
-      fast-glob: 3.3.2
-      typescript: 5.9.3
-
   resolve@1.22.11:
     dependencies:
       is-core-module: 2.16.1
@@ -19924,17 +19737,6 @@ snapshots:
     transitivePeerDependencies:
       - '@types/babel__core'
       - supports-color
-
-  vite-tsconfig-paths@5.1.4(typescript@5.9.3)(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)):
-    dependencies:
-      debug: 4.4.3(supports-color@8.1.1)
-      globrex: 0.1.2
-      tsconfck: 3.1.6(typescript@5.9.3)
-    optionalDependencies:
-      vite: 7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1)
-    transitivePeerDependencies:
-      - supports-color
-      - typescript
 
   vite@6.4.1(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1):
     dependencies:

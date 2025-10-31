@@ -1,8 +1,8 @@
-import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { enrollment } from "../schema/enrollment";
-import { courseProgress, lessonProgress } from "../schema/progress";
-import { user } from "../schema/user";
+import { mySchema } from "../my-schema.ts";
+import { timestamps } from "./columns.helpers.ts";
+import { enrollment } from "./enrollment.ts";
+import { courseProgress, lessonProgress } from "./progress.ts";
+import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,

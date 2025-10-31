@@ -1,6 +1,6 @@
+import config from "./config.ts";
+import createServer from "./server.ts";
 import closeWithGrace from "close-with-grace";
-import config from "~/config.js";
-import createServer from "~/server.js";
 
 const app = await createServer(config);
 

@@ -1,6 +1,6 @@
 {
   "extends": "../../tooling/tsconfig/tsconfig.base.json",
-  "references": [{ "path": "../server" }, { "path": "../../packages/schema" }],
+  "references": [{ "path": "../../packages/schema/tsconfig.build.json" }],
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
     "composite": false,

@@ -1,3 +1,8 @@
+import config from "../config.ts";
+import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "./constants.ts";
+import { betterAuthLogger } from "./logging.ts";
+import mailer from "./mailer.ts";
+import { redis } from "./redis.ts";
 import { db } from "@packages/db";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
@@ -11,11 +16,6 @@ import {
   username,
 } from "better-auth/plugins";
 import { ulid } from "ulid";
-import config from "~/config.js";
-import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
-import { betterAuthLogger } from "~/lib/logging.js";
-import mailer from "~/lib/mailer.js";
-import { redis } from "~/lib/redis.js";
 
 const polarClient = new Polar({
   accessToken: config.POLAR_ACCESS_TOKEN,

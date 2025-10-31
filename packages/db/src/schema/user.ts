@@ -1,12 +1,12 @@
-import { payment } from "..//schema/purchase";
-import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { courseWishlist } from "../schema/course";
-import { enrollment } from "../schema/enrollment";
-import { courseProgress } from "../schema/progress";
-import { platformAnnouncement } from "./platform-announcement";
-import { supportTicket } from "./support-ticket";
-import { teamLicense } from "./team-license";
+import { mySchema } from "../my-schema.ts";
+import { timestamps } from "./columns.helpers.ts";
+import { courseWishlist } from "./course.ts";
+import { enrollment } from "./enrollment.ts";
+import { platformAnnouncement } from "./platform-announcement.ts";
+import { courseProgress } from "./progress.ts";
+import { payment } from "./purchase.ts";
+import { supportTicket } from "./support-ticket.ts";
+import { teamLicense } from "./team-license.ts";
 import { relations } from "drizzle-orm";
 import { boolean, index, text, timestamp } from "drizzle-orm/pg-core";
 

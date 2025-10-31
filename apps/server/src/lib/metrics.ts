@@ -1,7 +1,7 @@
+import { pinoLogger } from "./logging.ts";
 import { pool } from "@packages/db";
 import os from "node:os";
 import prometheus, { Counter } from "prom-client";
-import { pinoLogger } from "~/lib/logging.js";
 
 export const registry = new prometheus.Registry();
 

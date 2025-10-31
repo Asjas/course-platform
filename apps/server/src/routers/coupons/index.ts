@@ -1,21 +1,21 @@
-import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.js";
-import { newCouponSchema } from "@packages/schema/trpc/new-coupon.js";
-import { redeemCouponSchema } from "@packages/schema/trpc/redeem-coupon.js";
-import { updateCouponSchema } from "@packages/schema/trpc/update-coupon.js";
-import { TRPCError } from "@trpc/server";
-import * as z from "zod";
-import { isAdmin, publicProcedure, router } from "~/router.js";
+import { isAdmin, publicProcedure, router } from "../../router.ts";
 import {
   deleteCouponById,
   insertCoupon,
   redeemCouponByCode,
   updateCouponById,
-} from "~/routers/coupons/mutations.js";
+} from "../../routers/coupons/mutations.ts";
 import {
   type CouponByCodeReturnType,
   type CouponByIdReturnType,
   type CouponsReturnType,
-} from "~/routers/coupons/queries.js";
+} from "../../routers/coupons/queries.ts";
+import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.ts";
+import { newCouponSchema } from "@packages/schema/trpc/new-coupon.ts";
+import { redeemCouponSchema } from "@packages/schema/trpc/redeem-coupon.ts";
+import { updateCouponSchema } from "@packages/schema/trpc/update-coupon.ts";
+import { TRPCError } from "@trpc/server";
+import * as z from "zod";
 
 export const couponsRouter = router({
   getAllCoupons: publicProcedure

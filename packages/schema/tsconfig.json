@@ -2,10 +2,9 @@
   "extends": "../../tooling/tsconfig/tsconfig.base.json",
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "outDir": "./dist",
-    "rootDir": "."
+    "noEmit": true
   }
 }

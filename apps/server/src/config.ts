@@ -1,4 +1,4 @@
-import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.js";
+import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.ts";
 import * as z from "zod";
 
 const schema = z.object({

@@ -1,7 +1,7 @@
+import { ONE_MB } from "../../lib/constants.ts";
 import fastifyMultipart, {
   type FastifyMultipartAttachFieldsToBodyOptions,
 } from "@fastify/multipart";
-import { ONE_MB } from "~/lib/constants.js";
 
 export const autoConfig: FastifyMultipartAttachFieldsToBodyOptions = {
   attachFieldsToBody: true,

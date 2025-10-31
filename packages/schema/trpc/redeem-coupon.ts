@@ -1,4 +1,4 @@
-import { prefixedUlid } from "../base/prefixed-ulid.js";
+import { prefixedUlid } from "../base/prefixed-ulid.ts";
 import z from "zod";
 
 export const redeemCouponSchema = z.object({

@@ -1,6 +1,8 @@
 FROM node:24.11.0-alpine3.22 AS builder
 
-RUN apk --no-cache add python3 py3-pip make g++ postgresql-dev postgresql-client
+RUN apk --no-cache add bash curl dumb-init python3 py3-pip make g++ postgresql-dev postgresql-client
+
+EXPOSE 3000
 
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
@@ -19,23 +21,9 @@ COPY apps/server apps/server
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
-RUN pnpm run build:server
-RUN pnpm deploy --filter @apps/server --prod /prod/server
 
-# Run migration inside @packages/db
 RUN pnpm --filter @packages/db run drizzle:migrate
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
-FROM node:24.11.0-alpine3.22
-
-RUN apk --no-cache add bash curl dumb-init
-
-EXPOSE 3000
-
-WORKDIR /app
-
-COPY .npmrc ./
-COPY --from=builder /prod/server ./
-
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
+CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "--experimental-transform-types", "src/index.ts"]

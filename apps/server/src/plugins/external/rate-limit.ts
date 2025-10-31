@@ -1,8 +1,8 @@
+import { redis } from "../../lib/redis.ts";
 import fastifyRateLimit, {
   type FastifyRateLimitOptions,
 } from "@fastify/rate-limit";
 import type { FastifyInstance, FastifyRequest } from "fastify";
-import { redis } from "~/lib/redis.js";
 
 export const autoConfig = (
   fastify: FastifyInstance,

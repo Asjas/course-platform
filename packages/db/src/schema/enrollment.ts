@@ -1,9 +1,9 @@
-import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { course } from "../schema/course";
-import { invoice, payment } from "../schema/purchase";
-import { user } from "../schema/user";
-import { teamLicense, teamLicenseInvite } from "./team-license";
+import { mySchema } from "../my-schema.ts";
+import { timestamps } from "./columns.helpers.ts";
+import { course } from "./course.ts";
+import { invoice, payment } from "./purchase.ts";
+import { teamLicense, teamLicenseInvite } from "./team-license.ts";
+import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   check,

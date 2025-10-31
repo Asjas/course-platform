@@ -1,9 +1,9 @@
+import mailer from "../../lib/mailer.ts";
 import type {
   FastifyInstance,
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import mailer from "~/lib/mailer.js";
 
 export default function mailPlugin(
   fastify: FastifyInstance,

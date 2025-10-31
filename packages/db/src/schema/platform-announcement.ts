@@ -1,6 +1,6 @@
-import { mySchema } from "../my-schema";
-import { timestamps } from "./columns.helpers";
-import { user } from "./user";
+import { mySchema } from "../my-schema.ts";
+import { timestamps } from "./columns.helpers.ts";
+import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   check,

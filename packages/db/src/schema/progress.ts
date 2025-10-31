@@ -1,7 +1,7 @@
-import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { course, courseLesson } from "../schema/course";
-import { user } from "../schema/user";
+import { mySchema } from "../my-schema.ts";
+import { timestamps } from "./columns.helpers.ts";
+import { course, courseLesson } from "./course.ts";
+import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,

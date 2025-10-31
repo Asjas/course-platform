@@ -1,3 +1,14 @@
+import type { Config } from "./config.ts";
+import { createContext } from "./context.ts";
+import {
+  FIFTEEN_SECONDS,
+  ONE_MINUTE,
+  TEN_MB,
+  TEN_SECONDS,
+  TWO_MINUTES,
+} from "./lib/constants.ts";
+import { pinoLogger } from "./lib/logging.ts";
+import { type AppRouter, appRouter } from "./routers/index.ts";
 import { fastifyAutoload } from "@fastify/autoload";
 import {
   type FastifyTRPCPluginOptions,
@@ -13,17 +24,6 @@ import {
 } from "fastify-type-provider-zod";
 import type http from "node:http";
 import { join } from "path";
-import type { Config } from "~/config.js";
-import { createContext } from "~/context.js";
-import {
-  FIFTEEN_SECONDS,
-  ONE_MINUTE,
-  TEN_MB,
-  TEN_SECONDS,
-  TWO_MINUTES,
-} from "~/lib/constants.js";
-import { pinoLogger } from "~/lib/logging.js";
-import { type AppRouter, appRouter } from "~/routers/index.js";
 
 /**
  * Creates and configures the Fastify server instance.
