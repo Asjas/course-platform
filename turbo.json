@@ -3,12 +3,28 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", ".astro/**"]
+      "outputs": ["dist/**", "build/**", ".astro/**", "!.turbo/**"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": []
     },
     "test": {
       "dependsOn": ["^test"]
     },
-    "typecheck": {}
+    "typecheck": {
+      "outputs": ["tsconfig.tsbuildinfo"]
+    },
+    "drizzle:generate": {
+      "dependsOn": ["^build"],
+      "outputs": ["drizzle/**"]
+    },
+    "drizzle:migrate": {
+      "dependsOn": ["drizzle:generate"]
+    }
   },
   "globalDependencies": ["package.json", "tsconfig.json", "turbo.json"],
   "remoteCache": {
