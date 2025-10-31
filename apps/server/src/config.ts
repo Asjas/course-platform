@@ -15,7 +15,7 @@ const schema = z.object({
     .default("info"),
   ORIGIN: z.url(),
   COOKIE_SECRET: z.string().min(32),
-  COOKIE_DOMAIN: z.url(),
+  COOKIE_DOMAIN: z.string(),
   SENTRY_AUTH_TOKEN: z.string().optional(),
   SENTRY_DSN: z.httpUrl().optional(),
   MAX_HEAP_USED_BYTES: z
