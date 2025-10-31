@@ -1,3 +1,4 @@
+import { changePasswordFormSchema } from "@packages/schema/forms/change-password";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -5,7 +6,6 @@ import BlockerComponent from "~/components/blocker.tsx";
 import FieldInfo from "~/components/field-info.tsx";
 import { authClient } from "~/lib/auth.client.ts";
 import { cn } from "~/lib/utils.ts";
-import { changePasswordFormSchema } from "~/schema/change-password.tsx";
 
 export default function ChangePasswordForm() {
   const navigate = useNavigate();

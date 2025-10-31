@@ -1,3 +1,4 @@
+import { supportTicketFormSchema } from "@packages/schema/forms/support-ticket.tsx";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -8,7 +9,6 @@ import GitHubMessageEditor from "~/components/editor";
 import FieldInfo from "~/components/field-info.tsx";
 import { trpc } from "~/lib/trpc.client.ts";
 import { cn } from "~/lib/utils.ts";
-import { supportTicketFormSchema } from "~/schema/support-ticket.tsx";
 
 export default function NewSupportTicketForm() {
   const navigate = useNavigate();

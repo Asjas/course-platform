@@ -1,3 +1,4 @@
+import { profileFormSchema } from "@packages/schema/forms/profile";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { UserCircleIcon } from "lucide-react";
@@ -10,7 +11,6 @@ import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
 import { trpc } from "~/lib/trpc.client.ts";
 import { cn } from "~/lib/utils.ts";
-import { profileFormSchema } from "~/schema/profile-form.tsx";
 
 export default function ProfileForm() {
   const auth = useAuth();

@@ -1,3 +1,4 @@
+import { signInFormSchema } from "@packages/schema/forms/sign-in";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
@@ -8,7 +9,6 @@ import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
-import { signInFormSchema } from "~/schema/sign-in.tsx";
 
 export default function SignInForm() {
   const navigate = useNavigate();

@@ -1,3 +1,4 @@
+import { requestPasswordResetFormSchema } from "@packages/schema/forms/request-password-reset";
 import { useForm, useStore } from "@tanstack/react-form";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -6,7 +7,6 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-import { requestPasswordResetFormSchema } from "~/schema/request-password-reset.tsx";
 
 export default function RequestPasswordResetForm() {
   const form = useForm({

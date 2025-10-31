@@ -1,3 +1,4 @@
+import { signUpFormSchema } from "@packages/schema/forms/sign-up";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
@@ -8,7 +9,6 @@ import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client.ts";
 import { useAuth } from "~/lib/auth.context.ts";
-import { signUpFormSchema } from "~/schema/sign-up.tsx";
 
 export default function SignUpForm() {
   const navigate = useNavigate();

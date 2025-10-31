@@ -1,4 +1,4 @@
-import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
+import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.js";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import { publicProcedure, router } from "~/router.js";

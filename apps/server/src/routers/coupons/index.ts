@@ -1,4 +1,7 @@
-import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
+import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.js";
+import { newCouponSchema } from "@packages/schema/trpc/new-coupon.js";
+import { redeemCouponSchema } from "@packages/schema/trpc/redeem-coupon.js";
+import { updateCouponSchema } from "@packages/schema/trpc/update-coupon.js";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import { isAdmin, publicProcedure, router } from "~/router.js";
@@ -114,20 +117,7 @@ export const couponsRouter = router({
       },
     ),
   insertCoupon: publicProcedure
-    .input(
-      z.object({
-        active: z.boolean(),
-        code: z.string(),
-        courseId: prefixedUlid.nullable(),
-        currentRedemptions: z.number().optional(),
-        description: z.string().nullable(),
-        discountType: z.enum(["percentage", "fixed"]),
-        discountValue: z.number(),
-        redemptionLimit: z.number(),
-        validFrom: z.date(),
-        validTo: z.date().nullable(),
-      }),
-    )
+    .input(newCouponSchema)
     .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
@@ -152,21 +142,7 @@ export const couponsRouter = router({
       return coupon;
     }),
   updateCouponById: publicProcedure
-    .input(
-      z.object({
-        id: prefixedUlid,
-        active: z.boolean().optional(),
-        code: z.string(),
-        courseId: prefixedUlid.nullable(),
-        currentRedemptions: z.number().optional(),
-        description: z.string().nullable(),
-        discountType: z.enum(["percentage", "fixed"]),
-        discountValue: z.number(),
-        maxRedemptions: z.number().nullable(),
-        validFrom: z.date(),
-        validTo: z.date().nullable(),
-      }),
-    )
+    .input(updateCouponSchema)
     .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
@@ -221,13 +197,7 @@ export const couponsRouter = router({
       return coupon;
     }),
   redeemCouponByCode: publicProcedure
-    .input(
-      z.object({
-        couponCode: z.string(),
-        paymentId: prefixedUlid,
-        courseId: prefixedUlid,
-      }),
-    )
+    .input(redeemCouponSchema)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 

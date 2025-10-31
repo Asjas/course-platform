@@ -1,11 +1,8 @@
 {
-  "references": [{ "path": "../server" }],
   "compilerOptions": {
     "target": "ES2022",
-    "jsx": "react-jsx",
     "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "lib": ["ES2022"],
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "forceConsistentCasingInFileNames": true,
@@ -18,8 +15,12 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
+    "outDir": "./dist",
+    "rootDir": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./*"]
     }
-  }
+  },
+
+  "exclude": ["node_modules", "dist"]
 }

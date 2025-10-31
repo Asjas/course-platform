@@ -1,4 +1,4 @@
-import { prefixedUlid } from "@packages/schema/prefixed-ulid.ts";
+import { prefixedUlid } from "../base/prefixed-ulid.js";
 import * as z from "zod";
 
 export const supportTicketFormSchema = z.object({

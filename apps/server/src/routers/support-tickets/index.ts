@@ -1,6 +1,5 @@
-import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
+import { createSupportTicketSchema } from "@packages/schema/trpc/create-support-ticket.js";
 import { TRPCError } from "@trpc/server";
-import * as z from "zod";
 import config from "~/config.js";
 import type {
   NewSupportTicket,
@@ -11,17 +10,7 @@ import { insertSupportTicket } from "~/routes/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   createSupportTicket: publicProcedure
-    .input(
-      z.object({
-        title: z.string().min(5).max(100),
-        description: z.string().max(1000),
-        repo: z.httpUrl(),
-        priority: z.enum(["low", "medium", "high", "urgent"]),
-        status: z.enum(["open", "in_progress", "resolved", "closed"]),
-        moduleId: prefixedUlid.optional(),
-        lessonId: prefixedUlid.optional(),
-      }),
-    )
+    .input(createSupportTicketSchema)
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
       const fastify = ctx.reply.server;
 
