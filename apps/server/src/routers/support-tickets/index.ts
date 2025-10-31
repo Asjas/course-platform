@@ -1,3 +1,4 @@
+import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import config from "~/config.js";
@@ -17,8 +18,8 @@ export const supportTicketsRouter = router({
         repo: z.httpUrl(),
         priority: z.enum(["low", "medium", "high", "urgent"]),
         status: z.enum(["open", "in_progress", "resolved", "closed"]),
-        moduleId: z.string().optional(),
-        lessonId: z.string().optional(),
+        moduleId: prefixedUlid.optional(),
+        lessonId: prefixedUlid.optional(),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {

@@ -1,0 +1,16 @@
+{
+  "name": "@packages/schema",
+  "type": "module",
+  "author": "A-J Roos <asjasroos@proton.me>",
+  "license": "MIT",
+  "scripts": {
+    "build": "rm -rf dist && tsc"
+  },
+  "dependencies": {
+    "ulid": "3.0.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}

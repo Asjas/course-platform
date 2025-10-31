@@ -1,3 +1,4 @@
+import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import { publicProcedure, router } from "~/router.js";
@@ -6,7 +7,7 @@ export const coursesRouter = router({
   getModulesAndLessonsByCourseId: publicProcedure
     .input(
       z.object({
-        courseId: z.string(),
+        courseId: prefixedUlid,
       }),
     )
     .query(async ({ ctx, input }) => {

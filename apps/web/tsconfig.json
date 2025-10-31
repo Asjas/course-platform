@@ -1,5 +1,5 @@
 {
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "../../packages/schema/index.ts"],
   "references": [{ "path": "../server" }],
   "compilerOptions": {
     "target": "ES2022",

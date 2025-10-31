@@ -1,3 +1,4 @@
+import { prefixedUlid } from "@packages/schema/prefixed-ulid.js";
 import * as z from "zod";
 
 const schema = z.object({
@@ -59,7 +60,7 @@ const schema = z.object({
   // Payment variables
   POLAR_ACCESS_TOKEN: z.string().nonempty(),
   POLAR_SUCCESS_URL: z.url(),
-  LEARN_FASTIFY_POLAR_PRODUCT_ID: z.string().uuid(),
+  LEARN_FASTIFY_POLAR_PRODUCT_ID: z.uuid(),
 
   // Prometheus variables
   PROMETHEUS_HOST: z.hostname().default("localhost"),
@@ -77,7 +78,7 @@ const schema = z.object({
   R2_PUBLIC_URL: z.url(),
 
   // Support Ticket variables
-  SUPPORT_ASSIGNED_TO_USER_ID: z.string().nonempty(),
+  SUPPORT_ASSIGNED_TO_USER_ID: prefixedUlid,
 });
 
 export type Config = z.infer<typeof schema>;
