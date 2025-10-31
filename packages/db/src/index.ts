@@ -1,4 +1,3 @@
-import { mySchema } from "./my-schema";
 import * as schemas from "./schema";
 import config from "@packages/schema/db-config";
 import { drizzle } from "drizzle-orm/node-postgres";
@@ -16,7 +15,6 @@ export { pool };
 
 export const db = drizzle({
   schema: {
-    mySchema,
     ...schemas,
   },
   client: pool,

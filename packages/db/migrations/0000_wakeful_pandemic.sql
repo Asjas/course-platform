@@ -1,3 +1,5 @@
+CREATE SCHEMA "my_schema";
+--> statement-breakpoint
 CREATE TYPE "my_schema"."discountType" AS ENUM('percentage', 'fixed');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_access" AS ENUM('public', 'private', 'unlisted');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_level" AS ENUM('All levels', 'Beginner', 'Intermediate', 'Advanced');--> statement-breakpoint

@@ -1,3 +1,4 @@
+export * from "../my-schema";
 export * from "../schema/user";
 export * from "../schema/coupon";
 export * from "../schema/course";
