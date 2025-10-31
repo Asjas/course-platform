@@ -12,7 +12,7 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
 COPY apps/server ./apps/server
 COPY packages/schema ./packages/schema
 
-RUN npm i -g pnpm@9.15.9
+RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile --filter "./apps/server" --filter "./packages/schema"
 RUN pnpm run build --filter "./apps/server"
 RUN pnpm run drizzle:migrate:prod --filter "./apps/server"

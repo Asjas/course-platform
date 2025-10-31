@@ -9,8 +9,8 @@ COPY . .
 COPY apps/web ./apps/web
 COPY packages/schema ./packages/schema
 
-RUN npm i -g pnpm@9.15.9
-RUN pnpm i --frozen-lockfile --filter "./apps/web" --filter "./packages/schema"
+RUN npm i -g pnpm@10.20.0
+RUN pnpm i --frozen-lockfile
 RUN pnpm run build --filter "./apps/web"
 
 FROM nginx:1.29.3-alpine3.22
