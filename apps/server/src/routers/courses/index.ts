@@ -6,7 +6,7 @@ export const coursesRouter = router({
   getModulesAndLessonsByCourseId: publicProcedure
     .input(
       z.object({
-        courseId: z.ulid(),
+        courseId: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
