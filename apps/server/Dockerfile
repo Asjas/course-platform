@@ -5,20 +5,19 @@ RUN apk --no-cache add python3 py3-pip make g++ postgresql-dev postgresql-client
 # Set Python path for node-gyp
 ENV PYTHON=/usr/bin/python3
 
-RUN mkdir /app
 WORKDIR /app
 
-COPY . .
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+COPY pnpm-workspace.yaml ./
+COPY apps/server apps/server
+COPY packages/db packages/db
+COPY packages/schema packages/schema
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
 RUN pnpm run build:server
-
-# Run migration inside @packages/db
-RUN pnpm --filter @packages/db run drizzle:migrate
-
-WORKDIR /app
-RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
+RUN pnpm deploy --filter @apps/server --prod /prod/server
 
 FROM node:24.11.0-alpine3.22
 
@@ -26,16 +25,17 @@ RUN apk --no-cache add bash curl dumb-init
 
 EXPOSE 3000
 
-RUN mkdir /app
 WORKDIR /app
 
-COPY --from=builder /app/apps/server/package.json /app
-COPY --from=builder /app/apps/server/pnpm-lock.yaml /app
+COPY --from=builder /prod/server ./
 
 RUN npm i -g pnpm@10.20.0
-RUN pnpm i --frozen-lockfile
+RUN pnpm i --prod --frozen-lockfile
+RUN pnpm prune --prod
 
-COPY --from=builder /app/apps/server/dist /app/dist
+# Run migration inside @packages/db
+RUN pnpm --filter @packages/db run drizzle:migrate
+RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
