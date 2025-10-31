@@ -17,6 +17,11 @@ COPY packages/db packages/db
 COPY packages/schema packages/schema
 COPY apps/server apps/server
 
+RUN ls -alh .
+RUN ls -alh packages
+RUN ls -alh tooling
+RUN ls -alh tooling/tsconfig
+
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
 RUN pnpm run build:server
