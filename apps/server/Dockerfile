@@ -12,7 +12,7 @@ COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
 COPY package.json ./
 COPY pnpm-lock.yaml ./
-COPY tooling /tooling
+COPY tooling/tsconfig /tooling/tsconfig
 COPY packages/db packages/db
 COPY packages/schema packages/schema
 COPY apps/server apps/server
