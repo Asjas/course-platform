@@ -27,7 +27,7 @@ RUN apk --no-cache add bash curl dumb-init
 
 EXPOSE 3000
 
-COPY --from=builder /app/apps/server/node_modules /app/node_modules
+COPY --from=builder /app/apps/server/node_modules /app/dist/node_modules
 COPY --from=builder /app/apps/server/dist /app/dist
 
 WORKDIR /app
