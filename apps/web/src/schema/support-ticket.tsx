@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 export const supportTicketFormSchema = z.object({
+  id: z.ulid(),
   title: z.string().min(5).max(100),
   description: z.string().max(1000),
   repo: z.httpUrl(),
