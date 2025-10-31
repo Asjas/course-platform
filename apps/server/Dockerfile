@@ -15,7 +15,8 @@ COPY packages/schema ./packages/schema
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile --filter "./apps/server" --filter "./packages/schema"
 RUN pnpm run build --filter "./apps/server"
-RUN pnpm run drizzle:migrate:prod --filter "./apps/server"
+RUN cd apps/server
+RUN pnpm run drizzle:migrate:prod
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 FROM node:24.11.0-alpine3.22
