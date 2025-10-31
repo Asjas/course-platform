@@ -68,12 +68,6 @@ async function createServer(config: Config) {
     encapsulate: false,
   });
 
-  await server.register(fastifyAutoload, {
-    dir: join(import.meta.dirname, "routes"),
-    dirNameRoutePrefix: false,
-    matchFilter: /index\.(?:ts|js)$/,
-  });
-
   await server.register(fastifyTRPCPlugin, {
     prefix: "/trpc",
     trpcOptions: {

@@ -1,6 +1,4 @@
-import { eq } from "drizzle-orm";
-import { ulid } from "ulid";
-import { db } from "~/db/index.js";
+import { db, eq } from "@packages/db";
 import {
   type NewSupportTicket,
   type NewSupportTicketComment,
@@ -8,7 +6,8 @@ import {
   type SupportTicketComment,
   supportTicket,
   supportTicketComment,
-} from "~/db/schema/support-tickets.js";
+} from "@packages/db/schema";
+import { ulid } from "ulid";
 
 export async function insertSupportTicket({
   newSupportTicket,

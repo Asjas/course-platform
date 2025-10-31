@@ -1,5 +1,4 @@
 import { AsyncLocalStorage } from "async_hooks";
-import type { Logger } from "drizzle-orm/logger";
 import pino from "pino";
 import config from "~/config.js";
 
@@ -17,23 +16,6 @@ export function withRequestContext<T>(
 export const pinoLogger = pino({
   level: config.LOG_LEVEL,
 });
-
-export class DrizzleLogger implements Logger {
-  logQuery(query: string, params: unknown[]): void {
-    const store = asyncLocalStorage.getStore();
-
-    // Clean the query string by replacing escaped quotes with regular quotes
-    const cleanedQuery = query.replace(/\\"/g, '"');
-
-    pinoLogger.info({
-      reqId: store?.reqId,
-      event: "drizzle_query",
-      sql: cleanedQuery,
-      params,
-      timestamp: new Date().toISOString(),
-    });
-  }
-}
 
 export const betterAuthLogger = {
   level: "error" as const,

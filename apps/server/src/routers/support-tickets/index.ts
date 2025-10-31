@@ -1,12 +1,9 @@
+import type { NewSupportTicket, SupportTicket } from "@packages/db/schema";
 import { createSupportTicketSchema } from "@packages/schema/trpc/create-support-ticket.js";
 import { TRPCError } from "@trpc/server";
 import config from "~/config.js";
-import type {
-  NewSupportTicket,
-  SupportTicket,
-} from "~/db/schema/support-tickets.js";
 import { publicProcedure, router } from "~/router.js";
-import { insertSupportTicket } from "~/routes/support-tickets/mutations.js";
+import { insertSupportTicket } from "~/routers/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   createSupportTicket: publicProcedure

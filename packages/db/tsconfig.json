@@ -1,11 +1,11 @@
 {
   "extends": "../../tooling/tsconfig/tsconfig.base.json",
-  "exclude": ["node_modules", "dist", ".turbo"],
+  "include": ["src", "drizzle.config.ts"],
+  "references": [{ "path": "../../packages/schema" }],
   "compilerOptions": {
     "allowImportingTsExtensions": false,
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "outDir": "./dist",
     "rootDir": "."
   }
 }

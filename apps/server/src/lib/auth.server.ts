@@ -1,3 +1,4 @@
+import { db } from "@packages/db";
 import { checkout, polar, portal } from "@polar-sh/better-auth";
 import { Polar } from "@polar-sh/sdk";
 import argon2 from "argon2";
@@ -11,7 +12,6 @@ import {
 } from "better-auth/plugins";
 import { ulid } from "ulid";
 import config from "~/config.js";
-import { db } from "~/db/index.js";
 import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
 import mailer from "~/lib/mailer.js";

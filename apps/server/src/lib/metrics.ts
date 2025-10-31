@@ -1,6 +1,6 @@
+import { pool } from "@packages/db";
 import os from "node:os";
 import prometheus, { Counter } from "prom-client";
-import { pool } from "~/db/index.js";
 import { pinoLogger } from "~/lib/logging.js";
 
 export const registry = new prometheus.Registry();

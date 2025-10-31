@@ -25,9 +25,9 @@
     "useUnknownInCatchVariables": true,
     "verbatimModuleSyntax": true,
     "paths": {
-      "~/*": ["./src/*"],
       "@packages/*": ["packages/*"],
-      "@apps/*": ["apps/*"]
+      "@apps/*": ["apps/*"],
+      "~/*": ["./src/*"]
     }
   }
 }

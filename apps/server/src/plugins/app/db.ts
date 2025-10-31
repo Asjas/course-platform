@@ -1,9 +1,9 @@
+import { db } from "@packages/db";
 import type {
   FastifyInstance,
   FastifyPluginOptions,
   HookHandlerDoneFunction,
 } from "fastify";
-import { db } from "~/db/index.js";
 
 export default function dbPlugin(
   fastify: FastifyInstance,

@@ -1,5 +1,4 @@
-import { eq, sql } from "drizzle-orm";
-import { db } from "~/db/index.js";
+import { db, eq, sql } from "@packages/db";
 
 const preparedGetAllCoursesAsAdminStatement = db.query.course
   .findMany({

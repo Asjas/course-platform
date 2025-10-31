@@ -1,6 +1,6 @@
+import { db } from "@packages/db";
 import prometheus from "prom-client";
 import type { Config } from "~/config.js";
-import { db } from "~/db/index.js";
 import { cache } from "~/lib/cache.js";
 import mailer from "~/lib/mailer.js";
 import { registry } from "~/lib/metrics.js";

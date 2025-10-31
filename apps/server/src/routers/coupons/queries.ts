@@ -1,5 +1,4 @@
-import { eq, sql } from "drizzle-orm";
-import { db } from "~/db/index.js";
+import { db, eq, sql } from "@packages/db";
 
 export type CouponsReturnType = Awaited<ReturnType<typeof getAllCoupons>>;
 export type CouponByIdReturnType = Awaited<ReturnType<typeof getCouponById>>;

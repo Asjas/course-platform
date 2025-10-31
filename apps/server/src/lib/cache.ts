@@ -17,7 +17,7 @@ import { getModulesAndLessonsByCourseId } from "~/routers/courses/queries.js";
 import {
   getAllSupportTickets,
   getSupportTicketById,
-} from "~/routes/support-tickets/queries.js";
+} from "~/routers/support-tickets/queries.js";
 
 export const cache = createCache({
   storage: {

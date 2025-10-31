@@ -1,12 +1,11 @@
-import { eq } from "drizzle-orm";
-import { ulid } from "ulid";
-import { db } from "~/db/index.js";
+import { db, eq } from "@packages/db";
 import {
   type Coupon,
   type NewCoupon,
   coupon,
   couponRedemption,
-} from "~/db/schema/coupon.js";
+} from "@packages/db/schema";
+import { ulid } from "ulid";
 import { preparedGetCouponByCode } from "~/routers/coupons/queries.js";
 
 export async function insertCoupon({ newCoupon }: { newCoupon: NewCoupon }) {

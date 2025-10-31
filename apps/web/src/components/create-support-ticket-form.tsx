@@ -33,6 +33,7 @@ export default function NewSupportTicketForm() {
       onSubmit: supportTicketFormSchema,
     },
     onSubmit: async ({ value }) => {
+      console.log("Submitting support ticket:", value);
       const newSupportTicket =
         await createSupportTicketMutation.mutateAsync(value);
 
@@ -57,6 +58,7 @@ export default function NewSupportTicketForm() {
         event.preventDefault();
         event.stopPropagation();
         form.handleSubmit();
+        console.log("Form submitted");
       }}
       noValidate
     >

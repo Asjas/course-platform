@@ -39,7 +39,9 @@ export default defineConfig(
   ...eslintPluginYml.configs["flat/recommended"],
   [
     {
-      plugins: { "unused-imports": unusedImports },
+      plugins: {
+        "unused-imports": unusedImports,
+      },
     },
     {
       files: ["**/*.html"],
@@ -174,6 +176,7 @@ export default defineConfig(
         ),
       ),
       rules: {
+        "n/no-missing-import": 0,
         "n/no-unpublished-import": "off",
         "n/exports-style": ["error", "module.exports"],
       },
