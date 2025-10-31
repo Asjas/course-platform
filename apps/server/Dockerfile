@@ -12,7 +12,7 @@ COPY . .
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
-RUN pnpm run build
+RUN pnpm run build:server
 
 # Run migration inside @packages/db
 RUN pnpm --filter @packages/db run drizzle:migrate
@@ -31,6 +31,10 @@ COPY --from=builder /app/apps/server/node_modules /app/dist/node_modules
 COPY --from=builder /app/apps/server/dist /app/dist
 
 WORKDIR /app
+
+RUN ls -alh
+RUN ls -alh dist
+RUN ls -alh dist/node_modules
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]

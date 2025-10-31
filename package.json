@@ -4,7 +4,8 @@
   "packageManager": "pnpm@10.20.0",
   "scripts": {
     "dev": "pnpm run -parallel -filter \"./apps/**\" dev",
-    "build": "turbo build --filter \"./apps/**\" build",
+    "build:web": "turbo build --filter \"./apps/web\" build",
+    "build:server": "turbo build --filter \"./apps/server\" build",
     "test": "turbo test --filter \"./apps/**\" test",
     "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
