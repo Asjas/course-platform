@@ -1,35 +1,16 @@
 {
+  "extends": "../../tooling/tsconfig/tsconfig.base.json",
+  "references": [{ "path": "../../packages/schema" }],
+  "include": ["src/**/*", "tests/**/*", "./types/"],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
     "target": "esnext",
     "module": "node16",
     "moduleResolution": "node16",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"]
-    },
-    "allowSyntheticDefaultImports": true,
-    "alwaysStrict": true,
     "allowImportingTsExtensions": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "strictFunctionTypes": true,
-    "verbatimModuleSyntax": true,
-    "strictNullChecks": true,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": ".",
     "typeRoots": ["./node_modules/@types", "./types/"]
-  },
-  "include": ["src/**/*", "tests/**/*", "./types/"],
-  "exclude": ["node_modules", "dist"]
+  }
 }

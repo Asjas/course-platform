@@ -1,26 +1,11 @@
 {
+  "extends": "../../tooling/tsconfig/tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ES2022"],
+    "allowImportingTsExtensions": false,
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "outDir": "./dist",
-    "rootDir": ".",
-    "paths": {
-      "~/*": ["./*"]
-    }
+    "rootDir": "."
   },
-
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", ".turbo"]
 }

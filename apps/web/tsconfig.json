@@ -1,25 +1,15 @@
 {
-  "references": [{ "path": "../server" }],
+  "extends": "../../tooling/tsconfig/tsconfig.base.json",
+  "references": [{ "path": "../server" }, { "path": "../../packages/schema" }],
+  "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "target": "ES2022",
+    "composite": false,
+    "declarationMap": false,
     "jsx": "react-jsx",
-    "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["vite/client"],
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "forceConsistentCasingInFileNames": true,
-    "verbatimModuleSyntax": true,
     "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./src/*"]
-    }
+    "baseUrl": "."
   }
 }

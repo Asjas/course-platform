@@ -8,13 +8,11 @@ ENV PYTHON=/usr/bin/python3
 RUN mkdir /app
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
-COPY apps/server ./apps/server
-COPY packages/schema ./packages/schema
+COPY . .
 
 RUN npm i -g pnpm@10.20.0
-RUN pnpm i --frozen-lockfile --filter "./apps/server" --filter "./packages/schema"
-RUN pnpm run build --filter "./apps/server"
+RUN pnpm i --frozen-lockfile
+RUN pnpm run build
 RUN cd apps/server && ls -alh
 RUN pnpm run drizzle:migrate:prod
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
