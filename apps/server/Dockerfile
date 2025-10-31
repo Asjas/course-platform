@@ -13,9 +13,9 @@ COPY turbo.json ./
 COPY package.json ./
 COPY pnpm-lock.yaml ./
 COPY tooling /tooling
-COPY apps/server apps/server
 COPY packages/db packages/db
 COPY packages/schema packages/schema
+COPY apps/server apps/server
 
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
