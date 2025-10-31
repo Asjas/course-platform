@@ -5,7 +5,7 @@ ENV VITE_BETTER_AUTH_URL=$VITE_BETTER_AUTH_URL
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc turbo.json ./
+COPY . .
 COPY apps/web ./apps/web
 COPY packages/schema ./packages/schema
 
