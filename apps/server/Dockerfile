@@ -33,10 +33,6 @@ WORKDIR /app
 COPY .npmrc ./
 COPY --from=builder /prod/server ./
 
-RUN npm i -g pnpm@10.20.0
-RUN pnpm i --prod --frozen-lockfile
-RUN pnpm prune --prod
-
 # Run migration inside @packages/db
 RUN pnpm --filter @packages/db run drizzle:migrate
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
