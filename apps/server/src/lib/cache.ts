@@ -14,7 +14,6 @@ import {
   getCouponById,
 } from "~/routers/coupons/queries.js";
 import { getModulesAndLessonsByCourseId } from "~/routers/courses/queries.js";
-import { getAllUsers, getUserById } from "~/routers/users/queries.js";
 import {
   getAllSupportTickets,
   getSupportTicketById,
@@ -43,28 +42,6 @@ export const cache = createCache({
     cacheErrorCounter.inc({ err: 1 });
   },
 })
-  .define(
-    "getAllUsers",
-    {
-      ttl: ONE_HOUR,
-      serialize: () => "all",
-      references() {
-        return ["user~all"];
-      },
-    },
-    getAllUsers,
-  )
-  .define(
-    "getUserById",
-    {
-      ttl: ONE_HOUR,
-      serialize: (args) => args.userId,
-      references(args) {
-        return [args.userId];
-      },
-    },
-    getUserById,
-  )
   .define(
     "getAllSupportTickets",
     {

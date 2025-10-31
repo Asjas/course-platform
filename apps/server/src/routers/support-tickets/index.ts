@@ -17,8 +17,8 @@ export const supportTicketsRouter = router({
         repo: z.url(),
         priority: z.enum(["low", "medium", "high", "urgent"]),
         status: z.enum(["open", "in_progress", "resolved", "closed"]),
-        moduleId: z.string().optional(),
-        lessonId: z.string().optional(),
+        moduleId: z.ulid().optional(),
+        lessonId: z.ulid().optional(),
       }),
     )
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {

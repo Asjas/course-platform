@@ -33,7 +33,7 @@ export const couponsRouter = router({
       return coupons;
     }),
   getCouponById: publicProcedure
-    .input(z.object({ couponId: z.string() }))
+    .input(z.object({ couponId: z.ulid() }))
     .use(isAdmin)
     .query(
       async ({ ctx, input: { couponId } }): Promise<CouponByIdReturnType> => {
@@ -72,7 +72,7 @@ export const couponsRouter = router({
       },
     ),
   getCouponByCode: publicProcedure
-    .input(z.object({ couponCode: z.string() }))
+    .input(z.object({ couponCode: z.ulid() }))
     .use(isAdmin)
     .query(
       async ({
@@ -117,7 +117,7 @@ export const couponsRouter = router({
       z.object({
         active: z.boolean(),
         code: z.string(),
-        courseId: z.string().nullable(),
+        courseId: z.ulid().nullable(),
         currentRedemptions: z.number().optional(),
         description: z.string().nullable(),
         discountType: z.enum(["percentage", "fixed"]),
@@ -153,7 +153,7 @@ export const couponsRouter = router({
   updateCouponById: publicProcedure
     .input(
       z.object({
-        id: z.string(),
+        id: z.ulid(),
         active: z.boolean().optional(),
         code: z.string(),
         courseId: z.string().nullable(),
@@ -194,7 +194,7 @@ export const couponsRouter = router({
       return coupon;
     }),
   deleteCouponById: publicProcedure
-    .input(z.object({ couponId: z.string() }))
+    .input(z.object({ couponId: z.ulid() }))
     .use(isAdmin)
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
@@ -223,8 +223,8 @@ export const couponsRouter = router({
     .input(
       z.object({
         couponCode: z.string(),
-        paymentId: z.string(),
-        courseId: z.string(),
+        paymentId: z.ulid(),
+        courseId: z.ulid(),
       }),
     )
     .mutation(async ({ ctx, input }) => {

@@ -2,7 +2,7 @@ import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async ({ context, location }) => {
-    const { auth, queryClient } = context;
+    const { auth } = context;
 
     if (!auth.isAuthenticated || !auth.session) {
       throw redirect({
@@ -13,21 +13,13 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
 
-    // Fetch the current user's data to check for bans
-    const user = await queryClient.ensureQueryData(
-      context.trpc.users.getUserById.queryOptions({
-        userId: auth.session.user.id,
-      }),
-    );
-
-    if (user?.banned) {
+    if (auth.session.user?.banned) {
       throw new Error(
-        `Your account has been banned. The ban expires on ${user.banExpires}`,
+        `Your account has been banned. The ban expires on ${auth.session.user.banExpires}`,
       );
     }
 
-    // Return the user data to cache it for child routes
-    return user;
+    return auth.session.user;
   },
   component: AuthenticatedPageLayout,
 });
