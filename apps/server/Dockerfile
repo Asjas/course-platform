@@ -12,6 +12,7 @@ COPY pnpm-workspace.yaml ./
 COPY turbo.json ./
 COPY package.json ./
 COPY pnpm-lock.yaml ./
+COPY tooling /tooling
 COPY apps/server apps/server
 COPY packages/db packages/db
 COPY packages/schema packages/schema
