@@ -6,7 +6,7 @@ const schema = z.object({
     .string()
     .transform((val) => parseInt(val, 10))
     .pipe(z.number().positive()),
-  HOST: z.string(),
+  HOST: z.hostname(),
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
@@ -34,7 +34,7 @@ const schema = z.object({
   PEPPER_SECRET: z.string().min(32),
 
   // Email variables
-  SMTP_HOST: z.string().nonempty(),
+  SMTP_HOST: z.hostname().nonempty(),
   SMTP_PORT: z
     .string()
     .transform((val) => parseInt(val, 10))
@@ -48,7 +48,7 @@ const schema = z.object({
 
   // Database variables
   DATABASE_URL: z.url().regex(/^postgres:/, "Must be a PostgreSQL URL"),
-  REDIS_HOST: z.string().default("localhost"),
+  REDIS_HOST: z.hostname().default("localhost"),
   REDIS_PORT: z
     .string()
     .transform((val) => parseInt(val, 10))
@@ -62,7 +62,7 @@ const schema = z.object({
   LEARN_FASTIFY_POLAR_PRODUCT_ID: z.string().uuid(),
 
   // Prometheus variables
-  PROMETHEUS_HOST: z.string().default("localhost"),
+  PROMETHEUS_HOST: z.hostname().default("localhost"),
   PROMETHEUS_PORT: z
     .string()
     .transform((val) => parseInt(val, 10))
