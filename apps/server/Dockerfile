@@ -27,9 +27,10 @@ RUN apk --no-cache add bash curl dumb-init
 
 EXPOSE 3000
 
-COPY --from=builder /app/apps/server/dist /app
+COPY --from=builder /app/apps/server/node_modules /app/node_modules
+COPY --from=builder /app/apps/server/dist /app/dist
 
 WORKDIR /app
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "index.js"]
+CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
