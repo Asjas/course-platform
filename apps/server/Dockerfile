@@ -31,5 +31,7 @@ COPY --from=builder /app/apps/server/dist /app
 
 WORKDIR /app
 
+RUN ls -alh
+
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
