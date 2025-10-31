@@ -29,7 +29,7 @@ EXPOSE 3000
 
 COPY --from=builder /app/apps/server/dist/ /app
 
-WORKDIR /app/apps/server
+WORKDIR /app
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
