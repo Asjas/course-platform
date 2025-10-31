@@ -27,7 +27,7 @@ RUN apk --no-cache add bash curl dumb-init
 
 EXPOSE 3000
 
-COPY --from=builder /app/apps/server/dist/ /app
+COPY --from=builder /app/apps/server/dist /app
 
 WORKDIR /app
 
