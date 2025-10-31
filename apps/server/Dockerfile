@@ -22,19 +22,20 @@ RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 FROM node:24.11.0-alpine3.22
 
-RUN mkdir /app
 RUN apk --no-cache add bash curl dumb-init
 
 EXPOSE 3000
 
-COPY --from=builder /app/apps/server/node_modules /app/dist/node_modules
-COPY --from=builder /app/apps/server/dist /app/dist
-
+RUN mkdir /app
 WORKDIR /app
 
-RUN ls -alh
-RUN ls -alh dist
-RUN ls -alh dist/node_modules
+COPY --from=builder /app/apps/server/package.json /app
+COPY --from=builder /app/apps/server/pnpm-lock.yaml /app
+
+RUN npm i -g pnpm@10.20.0
+RUN pnpm i --frozen-lockfile
+
+COPY --from=builder /app/apps/server/dist /app/dist
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
