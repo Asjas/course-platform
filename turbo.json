@@ -25,7 +25,14 @@
       "dependsOn": ["drizzle:generate"]
     }
   },
-  "globalDependencies": ["package.json", "tsconfig.json", "turbo.json"],
+  "globalDependencies": [
+    "package.json",
+    "tsconfig.base.json",
+    "tsconfig.json",
+    "turbo.json",
+    ".prettierrc",
+    "eslint.config.js"
+  ],
   "remoteCache": {
     "teamSlug": "codewizard",
     "enabled": true,
