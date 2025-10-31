@@ -1,4 +1,4 @@
-import { changePasswordFormSchema } from "@packages/schema/forms/change-password";
+import { changePasswordFormSchema } from "@packages/schema/forms";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";

@@ -16,10 +16,9 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "drizzle:migrate": "drizzle-kit migrate --config=../../packages/db/drizzle.config.ts",
-    "drizzle:generate": "drizzle-kit generate --config=../../packages/db/drizzle.config.ts",
-    "drizzle:drop": "drizzle-kit drop",
-    "drizzle:migrate:prod": "drizzle-kit migrate --config=../../packages/db/drizzle.config.js"
+    "drizzle:generate": "tsx node_modules/drizzle-kit/bin.cjs generate",
+    "drizzle:migrate": "tsx node_modules/drizzle-kit/bin.cjs migrate",
+    "drizzle:drop": "tsx node_modules/drizzle-kit/bin.cjs drop"
   },
   "dependencies": {
     "@packages/schema": "workspace:*",
@@ -29,7 +28,9 @@
   "devDependencies": {
     "@types/pg": "8.15.6",
     "drizzle-kit": "0.31.6",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "tsx": "4.20.6",
+    "tsconfig-paths": "4.2.0"
   },
   "optionalDependencies": {
     "pg-native": "3.5.2"

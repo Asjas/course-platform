@@ -1,4 +1,4 @@
-import { requestPasswordResetFormSchema } from "@packages/schema/forms/request-password-reset";
+import { requestPasswordResetFormSchema } from "@packages/schema/forms";
 import { useForm, useStore } from "@tanstack/react-form";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";

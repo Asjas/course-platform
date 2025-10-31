@@ -1,4 +1,4 @@
-import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.js";
+import { prefixedUlid } from "@packages/schema/base";
 import * as z from "zod";
 
 const schema = z.object({
@@ -47,8 +47,7 @@ const schema = z.object({
     .transform((val) => Boolean(val))
     .default(false),
 
-  // Database variables
-  DATABASE_URL: z.url().regex(/^postgres:/, "Must be a PostgreSQL URL"),
+  // Redis variables
   REDIS_HOST: z.hostname().default("localhost"),
   REDIS_PORT: z
     .string()

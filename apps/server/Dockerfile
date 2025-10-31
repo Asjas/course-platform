@@ -6,6 +6,7 @@ RUN apk --no-cache add python3 py3-pip make g++ postgresql-dev postgresql-client
 ENV PYTHON=/usr/bin/python3
 
 RUN mkdir /app
+WORKDIR /app
 
 COPY . .
 
@@ -14,8 +15,7 @@ RUN pnpm i --frozen-lockfile
 RUN pnpm run build
 
 # Run migration inside @packages/db
-WORKDIR /app/packages/db
-RUN pnpm run drizzle:migrate:prod
+RUN pnpm --filter @packages/db run drizzle:migrate
 
 WORKDIR /app
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql

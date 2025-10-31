@@ -1,4 +1,4 @@
-import { signInFormSchema } from "@packages/schema/forms/sign-in";
+import { signInFormSchema } from "@packages/schema/forms";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";

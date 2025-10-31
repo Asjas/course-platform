@@ -1,6 +1,6 @@
-import { mySchema } from "./my-schema.js";
+import { mySchema } from "./my-schema";
 import * as schemas from "./schema";
-import config from "@packages/schema/config.js";
+import config from "@packages/schema/db-config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client, Pool } from "pg";
 

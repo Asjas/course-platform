@@ -3,6 +3,9 @@
   "type": "module",
   "author": "A-J Roos <asjasroos@proton.me>",
   "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "rm -rf dist && tsc"
   },
