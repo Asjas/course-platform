@@ -7,9 +7,10 @@ ENV PYTHON=/usr/bin/python3
 
 WORKDIR /app
 
-COPY pnpm-lock.yaml ./
-COPY package.json ./
+COPY .npmrc ./
 COPY pnpm-workspace.yaml ./
+COPY package.json ./
+COPY pnpm-lock.yaml ./
 COPY apps/server apps/server
 COPY packages/db packages/db
 COPY packages/schema packages/schema
