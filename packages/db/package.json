@@ -6,12 +6,12 @@
   "main": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     },
     "./schema": {
-      "types": "./dist/schema/index.ts",
-      "default": "./dist/schema/index.js"
+      "types": "./dist/schema/index.d.ts",
+      "import": "./dist/schema/index.js"
     }
   },
   "scripts": {
