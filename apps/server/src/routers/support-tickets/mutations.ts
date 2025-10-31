@@ -6,7 +6,7 @@ import {
   type SupportTicketComment,
   supportTicket,
   supportTicketComment,
-} from "@packages/db/schema";
+} from "@packages/db/schema/support-ticket";
 import { ulid } from "ulid";
 
 export async function insertSupportTicket({

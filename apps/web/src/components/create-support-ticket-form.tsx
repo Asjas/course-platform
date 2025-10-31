@@ -1,4 +1,4 @@
-import { supportTicketFormSchema } from "@packages/schema/forms";
+import { supportTicketFormSchema } from "@packages/schema/forms/support-ticket";
 import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";

@@ -9,9 +9,41 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./schema": {
-      "types": "./dist/schema/index.d.ts",
-      "import": "./dist/schema/index.js"
+    "./schema/user": {
+      "types": "./dist/schema/user.d.ts",
+      "import": "./dist/schema/user.js"
+    },
+    "./schema/coupon": {
+      "types": "./dist/schema/coupon.d.ts",
+      "import": "./dist/schema/coupon.js"
+    },
+    "./schema/course": {
+      "types": "./dist/schema/course.d.ts",
+      "import": "./dist/schema/course.js"
+    },
+    "./schema/enrollment": {
+      "types": "./dist/schema/enrollment.d.ts",
+      "import": "./dist/schema/enrollment.js"
+    },
+    "./schema/purchase": {
+      "types": "./dist/schema/purchase.d.ts",
+      "import": "./dist/schema/purchase.js"
+    },
+    "./schema/support-ticket": {
+      "types": "./dist/schema/support-ticket.d.ts",
+      "import": "./dist/schema/support-ticket.js"
+    },
+    "./schema/team-license": {
+      "types": "./dist/schema/team-license.d.ts",
+      "import": "./dist/schema/team-license.js"
+    },
+    "./schema/progress": {
+      "types": "./dist/schema/progress.d.ts",
+      "import": "./dist/schema/progress.js"
+    },
+    "./schema/platform-announcement": {
+      "types": "./dist/schema/platform-announcement.d.ts",
+      "import": "./dist/schema/platform-announcement.js"
     }
   },
   "scripts": {

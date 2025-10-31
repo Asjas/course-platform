@@ -3,10 +3,10 @@ import { mySchema } from "../my-schema";
 import { timestamps } from "../schema/columns.helpers";
 import { courseWishlist } from "../schema/course";
 import { enrollment } from "../schema/enrollment";
-import { platformAnnouncement } from "../schema/platformAnnouncements";
 import { courseProgress } from "../schema/progress";
-import { supportTicket } from "../schema/support-tickets";
-import { teamLicense } from "../schema/teamLicense";
+import { platformAnnouncement } from "./platform-announcement";
+import { supportTicket } from "./support-ticket";
+import { teamLicense } from "./team-license";
 import { relations } from "drizzle-orm";
 import { boolean, index, text, timestamp } from "drizzle-orm/pg-core";
 

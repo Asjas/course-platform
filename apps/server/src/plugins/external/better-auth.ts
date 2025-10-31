@@ -1,4 +1,4 @@
-import type { User } from "@packages/db/schema";
+import type { User } from "@packages/db/schema/user";
 import { fromNodeHeaders } from "better-auth/node";
 import type {
   FastifyInstance,

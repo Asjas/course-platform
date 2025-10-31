@@ -2,8 +2,8 @@ import { mySchema } from "../my-schema";
 import { timestamps } from "../schema/columns.helpers";
 import { course } from "../schema/course";
 import { invoice, payment } from "../schema/purchase";
-import { teamLicense, teamLicenseInvite } from "../schema/teamLicense";
 import { user } from "../schema/user";
+import { teamLicense, teamLicenseInvite } from "./team-license";
 import { relations, sql } from "drizzle-orm";
 import {
   check,

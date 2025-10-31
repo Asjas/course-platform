@@ -1,4 +1,7 @@
-import type { NewSupportTicket, SupportTicket } from "@packages/db/schema";
+import type {
+  NewSupportTicket,
+  SupportTicket,
+} from "@packages/db/schema/support-ticket";
 import { createSupportTicketSchema } from "@packages/schema/trpc/create-support-ticket.js";
 import { TRPCError } from "@trpc/server";
 import config from "~/config.js";

@@ -3,6 +3,7 @@
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "alwaysStrict": true,
+    "baseUrl": ".",
     "composite": true,
     "declarationMap": true,
     "esModuleInterop": true,

@@ -4,7 +4,7 @@ import {
   type NewCoupon,
   coupon,
   couponRedemption,
-} from "@packages/db/schema";
+} from "@packages/db/schema/coupon";
 import { ulid } from "ulid";
 import { preparedGetCouponByCode } from "~/routers/coupons/queries.js";
 

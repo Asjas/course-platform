@@ -1,4 +1,4 @@
-import { changeEmailFormSchema } from "@packages/schema/forms";
+import { changeEmailFormSchema } from "@packages/schema/forms/change-email";
 import { useForm, useStore } from "@tanstack/react-form";
 import { toast } from "sonner";
 import BlockerComponent from "~/components/blocker.tsx";

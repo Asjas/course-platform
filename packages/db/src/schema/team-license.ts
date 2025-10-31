@@ -1,8 +1,8 @@
 import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { invoice, payment } from "../schema/purchase";
-import { organization, user } from "../schema/user";
+import { timestamps } from "./columns.helpers";
 import { course } from "./course";
+import { invoice, payment } from "./purchase";
+import { organization, user } from "./user";
 import { relations, sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
 

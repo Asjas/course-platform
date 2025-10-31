@@ -1,7 +1,7 @@
 import { mySchema } from "../my-schema";
-import { timestamps } from "../schema/columns.helpers";
-import { course, courseLesson, courseModule } from "../schema/course";
-import { user } from "../schema/user";
+import { timestamps } from "./columns.helpers";
+import { course, courseLesson, courseModule } from "./course";
+import { user } from "./user";
 import { relations, sql } from "drizzle-orm";
 import { check, index, text, timestamp } from "drizzle-orm/pg-core";
 
