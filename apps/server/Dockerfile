@@ -11,8 +11,8 @@ WORKDIR /app
 COPY . .
 
 RUN npm i -g pnpm@10.20.0
-RUN pnpm i --frozen-lockfile --filter "@packages/db" "@packages/schema" "@apps/server"
-RUN pnpm run build --filter "@packages/db" "@packages/schema" "@apps/server"
+RUN pnpm i --frozen-lockfile
+RUN pnpm run build
 
 # Run migration inside @packages/db
 RUN pnpm --filter @packages/db run drizzle:migrate
