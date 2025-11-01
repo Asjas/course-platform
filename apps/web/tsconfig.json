@@ -3,13 +3,12 @@
   "references": [{ "path": "../../packages/schema/tsconfig.build.json" }],
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "composite": false,
-    "declarationMap": false,
+    "baseUrl": ".",
     "jsx": "react-jsx",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client"],
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "es2022",
     "moduleResolution": "bundler",
-    "noEmit": true,
-    "baseUrl": "."
+    "target": "es2022",
+    "types": ["vite/client"]
   }
 }

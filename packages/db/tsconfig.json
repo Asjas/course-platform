@@ -1,10 +1,9 @@
 {
-  "extends": "../../tooling/tsconfig/tsconfig.base.json",
+  "extends": "../../tooling/tsconfig/tsconfig.lib.json",
   "include": ["src", "drizzle.config.ts"],
   "references": [{ "path": "../../packages/schema/tsconfig.build.json" }],
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "moduleResolution": "bundler",
     "baseUrl": ".",
     "rootDir": ".",
     "noEmit": true

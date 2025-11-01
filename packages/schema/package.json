@@ -3,6 +3,7 @@
   "type": "module",
   "author": "A-J Roos <asjasroos@proton.me>",
   "license": "MIT",
+  "sideEffects": false,
   "files": [
     "dist"
   ],

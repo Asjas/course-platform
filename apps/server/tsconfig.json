@@ -7,13 +7,11 @@
   "include": ["src/**/*", "tests/**/*", "./types/"],
   "exclude": ["node_modules", "dist", ".turbo"],
   "compilerOptions": {
-    "target": "esnext",
-    "module": "node16",
-    "moduleResolution": "node16",
     "allowImportingTsExtensions": true,
-    "rootDir": "./src",
-    "noEmit": true,
     "baseUrl": ".",
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
+    "rootDir": "./src",
     "typeRoots": ["./node_modules/@types", "./types/"]
   }
 }
