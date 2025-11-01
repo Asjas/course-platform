@@ -3,12 +3,12 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import BlockerComponent from "~/components/blocker.tsx";
+import BlockerComponent from "~/components/blocker";
 import { Button } from "~/components/ui/button";
 import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
-import { authClient } from "~/lib/auth.client.ts";
-import { useAuth } from "~/lib/auth.context.ts";
+import { authClient } from "~/lib/auth.client";
+import { useAuth } from "~/lib/auth.context";
 
 export default function SignInForm() {
   const navigate = useNavigate();

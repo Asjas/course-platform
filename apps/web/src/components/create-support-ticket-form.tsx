@@ -4,18 +4,16 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import * as z from "zod";
-import BlockerComponent from "~/components/blocker.tsx";
+import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/editor";
-import FieldInfo from "~/components/field-info.tsx";
-import { trpc } from "~/lib/trpc.client.ts";
-import { cn } from "~/lib/utils.ts";
+import FieldInfo from "~/components/field-info";
+import { trpc } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils";
 
 export default function NewSupportTicketForm() {
   const navigate = useNavigate();
   const createSupportTicketMutation = useMutation(
-    trpc.supportTickets.createSupportTicket.mutationOptions({
-      keyPrefix: undefined,
-    }),
+    trpc.supportTickets.createSupportTicket.mutationOptions(),
   );
 
   const form = useForm({

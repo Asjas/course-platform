@@ -11,8 +11,8 @@ import {
 } from "react-aria-components";
 import { toast } from "sonner";
 import { NavLink } from "~/components/ui/nav-link";
-import { authClient } from "~/lib/auth.client.ts";
-import type { AuthState } from "~/lib/auth.context.ts";
+import { authClient } from "~/lib/auth.client";
+import type { AuthState } from "~/lib/auth.context";
 
 export default function Header({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();

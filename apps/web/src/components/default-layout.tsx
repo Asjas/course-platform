@@ -1,11 +1,11 @@
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 import { useState } from "react";
-import Footer from "~/components/footer.tsx";
-import Header from "~/components/header.tsx";
-import { Toaster } from "~/components/ui/sonner.tsx";
-import { authClient } from "~/lib/auth.client.ts";
-import { useAuth } from "~/lib/auth.context.ts";
+import Footer from "~/components/footer";
+import Header from "~/components/header";
+import { Toaster } from "~/components/ui/sonner";
+import { authClient } from "~/lib/auth.client";
+import { useAuth } from "~/lib/auth.context";
 
 export default function DefaultLayoutComponent({
   children,

@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { renderMarkdown } from "~/lib/markdown";
-import { trpc } from "~/lib/trpc.client.ts";
+import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 interface GitHubMessageEditorProps {
