@@ -26,4 +26,4 @@ RUN pnpm --filter @packages/db run drizzle:migrate
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "--experimental-transform-types", "src/index.ts"]
+CMD ["node", "--max-semi-space-size=512", "--max-old-space-size-percentage=90", "--permission", "--allow-fs-read=/app", "--allow-net", "--allow-addons", "src/index.ts"]

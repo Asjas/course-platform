@@ -5,7 +5,8 @@
     "node": ">=22.16.0"
   },
   "scripts": {
-    "dev": "tsc -b --watch && node --experimental-transform-types --env-file=.env src/index.ts",
+    "build": "tsc -b",
+    "dev": "tsx watch --trace-deprecation --env-file=.env src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "clean": "rimraf dist/ node_modules/",
