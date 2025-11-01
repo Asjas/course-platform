@@ -51,10 +51,10 @@
   "devDependencies": {
     "@types/node": "24.9.2",
     "@types/nodemailer": "7.0.3",
-    "@vitest/coverage-v8": "4.0.5",
+    "@vitest/coverage-v8": "4.0.6",
     "rimraf": "6.1.0",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
-    "vitest": "4.0.5"
+    "vitest": "4.0.6"
   }
 }
