@@ -26,7 +26,7 @@
     "@packages/db": "workspace:*",
     "@packages/schema": "workspace:*",
     "@polar-sh/better-auth": "1.2.1",
-    "@polar-sh/sdk": "0.40.1",
+    "@polar-sh/sdk": "0.40.3",
     "@trpc/server": "11.7.1",
     "argon2": "0.44.0",
     "async-cache-dedupe": "3.3.0",
