@@ -1,5 +1,5 @@
 import { signUpFormSchema } from "@packages/schema/forms/sign-up";
-import { useForm, useStore } from "@tanstack/react-form";
+import { revalidateLogic, useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -21,9 +21,14 @@ export default function SignUpForm() {
       password: "",
       confirmPassword: "",
     },
+    validationLogic: revalidateLogic({
+      mode: "submit",
+      modeAfterSubmission: "blur",
+    }),
     validators: {
       onBlur: signUpFormSchema,
       onSubmit: signUpFormSchema,
+      onDynamic: signUpFormSchema,
     },
     onSubmit: async ({ value: { name, email, password } }) => {
       const { error } = await authClient.signUp.email({

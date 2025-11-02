@@ -22,8 +22,8 @@ COPY apps/server apps/server
 RUN npm i -g pnpm@10.20.0
 RUN pnpm i --frozen-lockfile
 
-RUN pnpm --filter @packages/db run drizzle:migrate
+RUN pnpm --filter @packages/db run drizzle:migrate:prod
 RUN psql $DATABASE_URL -f apps/server/scripts/createDefaultDatabaseUsers.sql
 
 ENTRYPOINT ["dumb-init"]
-CMD ["node", "--max-semi-space-size=512", "--max-old-space-size-percentage=90", "--permission", "--allow-fs-read=/app", "--allow-net", "--allow-addons", "src/index.ts"]
+CMD ["node", "--max-semi-space-size=512", "--max-old-space-size-percentage=90", "--permission", "--allow-fs-read=/app", "--allow-net", "--allow-addons", "dist/index.js"]

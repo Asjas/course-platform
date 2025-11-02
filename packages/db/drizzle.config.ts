@@ -1,4 +1,4 @@
-import config from "@packages/schema/db-config";
+import config from "@packages/schema/db-config.js";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({

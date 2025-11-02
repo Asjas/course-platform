@@ -3,7 +3,6 @@
   "compilerOptions": {
     "composite": true,
     "declaration": true,
-    "declarationDir": "./types",
     "declarationMap": true,
     "sourceMap": true,
     "target": "es2022"

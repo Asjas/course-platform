@@ -1,23 +1,23 @@
-import {
-  getAllCoupons,
-  getCouponByCode,
-  getCouponById,
-} from "../routers/coupons/queries.ts";
-import { getModulesAndLessonsByCourseId } from "../routers/courses/queries.ts";
-import {
-  getAllSupportTickets,
-  getSupportTicketById,
-} from "../routers/support-tickets/queries.ts";
-import { ONE_HOUR } from "./constants.ts";
-import { pinoLogger } from "./logging.ts";
+import { createCache } from "async-cache-dedupe";
+import { deserialize, serialize } from "superjson";
+import { ONE_HOUR } from "~/lib/constants.js";
+import { pinoLogger } from "~/lib/logging.js";
 import {
   cacheErrorCounter,
   cacheHitCounter,
   cacheMissCounter,
-} from "./metrics.ts";
-import { redis } from "./redis.ts";
-import { createCache } from "async-cache-dedupe";
-import { deserialize, serialize } from "superjson";
+} from "~/lib/metrics.js";
+import { redis } from "~/lib/redis.js";
+import {
+  getAllCoupons,
+  getCouponByCode,
+  getCouponById,
+} from "~/routers/coupons/queries.js";
+import { getModulesAndLessonsByCourseId } from "~/routers/courses/queries.js";
+import {
+  getAllSupportTickets,
+  getSupportTicketById,
+} from "~/routers/support-tickets/queries.js";
 
 export const cache = createCache({
   storage: {

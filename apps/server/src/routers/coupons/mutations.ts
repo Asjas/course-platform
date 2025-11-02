@@ -1,4 +1,3 @@
-import { preparedGetCouponByCode } from "../../routers/coupons/queries.ts";
 import { db, eq } from "@packages/db";
 import {
   type Coupon,
@@ -7,6 +6,7 @@ import {
   couponRedemption,
 } from "@packages/db/schema/coupon";
 import { ulid } from "ulid";
+import { preparedGetCouponByCode } from "~/routers/coupons/queries.js";
 
 export async function insertCoupon({ newCoupon }: { newCoupon: NewCoupon }) {
   const id = `coup:${ulid()}`;

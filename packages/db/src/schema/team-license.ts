@@ -1,10 +1,10 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { course } from "./course.ts";
-import { invoice, payment } from "./purchase.ts";
-import { organization, user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { course } from "~/schema/course.js";
+import { invoice, payment } from "~/schema/purchase.js";
+import { organization, user } from "~/schema/user.js";
 
 export const seatStatus = mySchema.enum("seat_status", [
   "pending",

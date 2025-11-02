@@ -1,9 +1,6 @@
-import {
-  deleteR2Object,
-  generatePresignedUploadUrl,
-} from "../../lib/r2-upload.ts";
-import { isAuthenticated, publicProcedure, router } from "../../router.ts";
 import * as z from "zod";
+import { deleteR2Object, generatePresignedUploadUrl } from "~/lib/r2-upload.js";
+import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
 export const imagesRouter = router({
   getPresignedUrl: publicProcedure

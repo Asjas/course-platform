@@ -1,9 +1,3 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { course } from "./course.ts";
-import { invoice, payment } from "./purchase.ts";
-import { teamLicense, teamLicenseInvite } from "./team-license.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   check,
@@ -12,6 +6,12 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { course } from "~/schema/course.js";
+import { invoice, payment } from "~/schema/purchase.js";
+import { teamLicense, teamLicenseInvite } from "~/schema/team-license.js";
+import { user } from "~/schema/user.js";
 
 // Enums
 export const enrollmentType = mySchema.enum("course_enrollment_type", [

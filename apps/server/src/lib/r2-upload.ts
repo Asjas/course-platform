@@ -1,11 +1,11 @@
-import config from "../config.ts";
-import { ONE_HOUR } from "./constants.ts";
 import {
   DeleteObjectCommand,
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import config from "~/config.js";
+import { ONE_HOUR } from "~/lib/constants.js";
 
 const s3Client = new S3Client({
   region: "auto",

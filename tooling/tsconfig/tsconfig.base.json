@@ -6,7 +6,6 @@
     "allowUnusedLabels": false,
     "alwaysStrict": true,
     "esModuleInterop": true,
-    "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
     "isolatedModules": true,

@@ -1,14 +1,14 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { courseWishlist } from "./course.ts";
-import { enrollment } from "./enrollment.ts";
-import { platformAnnouncement } from "./platform-announcement.ts";
-import { courseProgress } from "./progress.ts";
-import { payment } from "./purchase.ts";
-import { supportTicket } from "./support-ticket.ts";
-import { teamLicense } from "./team-license.ts";
 import { relations } from "drizzle-orm";
 import { boolean, index, text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { courseWishlist } from "~/schema/course.js";
+import { enrollment } from "~/schema/enrollment.js";
+import { platformAnnouncement } from "~/schema/platform-announcement.js";
+import { courseProgress } from "~/schema/progress.js";
+import { payment } from "~/schema/purchase.js";
+import { supportTicket } from "~/schema/support-ticket.js";
+import { teamLicense } from "~/schema/team-license.js";
 
 // Types
 export type User = typeof user.$inferSelect;

@@ -1,5 +1,5 @@
-import config from "../config.ts";
 import { Redis, type RedisOptions } from "ioredis";
+import config from "~/config.js";
 
 const redisOptions: RedisOptions = {
   host: config.REDIS_HOST,

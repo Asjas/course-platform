@@ -1,8 +1,3 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { coupon } from "./coupon.ts";
-import { course } from "./course.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
@@ -14,6 +9,11 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { coupon } from "~/schema/coupon.js";
+import { course } from "~/schema/course.js";
+import { user } from "~/schema/user.js";
 
 // Enums
 export const paidStatus = mySchema.enum("paid_status", ["paid", "refunded"]);

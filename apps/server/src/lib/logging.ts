@@ -1,6 +1,6 @@
-import config from "../config.ts";
 import { AsyncLocalStorage } from "async_hooks";
 import pino from "pino";
+import config from "~/config.js";
 
 // Create AsyncLocalStorage instance to store request context
 const asyncLocalStorage = new AsyncLocalStorage<{ reqId?: string }>();

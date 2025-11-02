@@ -1,9 +1,9 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { course, courseLesson, courseModule } from "./course.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import { check, index, text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { course, courseLesson, courseModule } from "~/schema/course.js";
+import { user } from "~/schema/user.js";
 
 export type SupportTicket = typeof supportTicket.$inferSelect;
 export type NewSupportTicket = Omit<typeof supportTicket.$inferInsert, "id">;

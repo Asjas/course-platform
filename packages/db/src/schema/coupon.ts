@@ -1,8 +1,3 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { course } from "./course.ts";
-import { payment } from "./purchase.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
@@ -13,6 +8,11 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { course } from "~/schema/course.js";
+import { payment } from "~/schema/purchase.js";
+import { user } from "~/schema/user.js";
 
 export type Coupon = typeof coupon.$inferSelect;
 export type NewCoupon = Omit<typeof coupon.$inferInsert, "id">;

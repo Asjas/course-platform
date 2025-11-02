@@ -43,6 +43,7 @@
   "scripts": {
     "drizzle:generate": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs generate",
     "drizzle:migrate": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs migrate",
+    "drizzle:migrate:prod": "node node_modules/drizzle-kit/bin.cjs migrate",
     "drizzle:drop": "tsx --env-file=.env node_modules/drizzle-kit/bin.cjs drop"
   },
   "dependencies": {

@@ -1,8 +1,3 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { enrollment } from "./enrollment.ts";
-import { courseProgress, lessonProgress } from "./progress.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
@@ -16,6 +11,11 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { enrollment } from "~/schema/enrollment.js";
+import { courseProgress, lessonProgress } from "~/schema/progress.js";
+import { user } from "~/schema/user.js";
 
 export const courseLevel = mySchema.enum("course_level", [
   "All levels",

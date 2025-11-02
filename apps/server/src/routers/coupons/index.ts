@@ -1,21 +1,21 @@
-import { isAdmin, publicProcedure, router } from "../../router.ts";
-import {
-  deleteCouponById,
-  insertCoupon,
-  redeemCouponByCode,
-  updateCouponById,
-} from "../../routers/coupons/mutations.ts";
-import {
-  type CouponByCodeReturnType,
-  type CouponByIdReturnType,
-  type CouponsReturnType,
-} from "../../routers/coupons/queries.ts";
 import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.ts";
 import { newCouponSchema } from "@packages/schema/trpc/new-coupon.ts";
 import { redeemCouponSchema } from "@packages/schema/trpc/redeem-coupon.ts";
 import { updateCouponSchema } from "@packages/schema/trpc/update-coupon.ts";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import { isAdmin, publicProcedure, router } from "~/router.js";
+import {
+  deleteCouponById,
+  insertCoupon,
+  redeemCouponByCode,
+  updateCouponById,
+} from "~/routers/coupons/mutations.js";
+import {
+  type CouponByCodeReturnType,
+  type CouponByIdReturnType,
+  type CouponsReturnType,
+} from "~/routers/coupons/queries.js";
 
 export const couponsRouter = router({
   getAllCoupons: publicProcedure
@@ -135,6 +135,15 @@ export const couponsRouter = router({
         });
       }
 
+      if (!coupon) {
+        ctx.request.log.debug("Coupon insertion returned no result");
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Coupon insertion failed",
+        });
+      }
+
       ctx.request.log.debug(
         `Inserted coupon with id ${coupon.id} successfully`,
       );
@@ -166,6 +175,17 @@ export const couponsRouter = router({
         });
       }
 
+      if (!coupon) {
+        ctx.request.log.debug(
+          `Coupon with id ${input.id} not found for update`,
+        );
+
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Coupon not found",
+        });
+      }
+
       ctx.request.log.debug(`Updated coupon with id ${coupon.id} successfully`);
 
       return coupon;
@@ -189,6 +209,17 @@ export const couponsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
+        });
+      }
+
+      if (!coupon) {
+        ctx.request.log.debug(
+          `Coupon with id ${input.couponId} not found for deletion`,
+        );
+
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Coupon not found",
         });
       }
 
@@ -218,6 +249,17 @@ export const couponsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
+        });
+      }
+
+      if (!redemption) {
+        ctx.request.log.debug(
+          `Failed to redeem coupon with code ${input.couponCode}: Redemption not found`,
+        );
+
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Redemption not found",
         });
       }
 

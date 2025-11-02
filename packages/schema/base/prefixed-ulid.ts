@@ -12,6 +12,11 @@ export const prefixedUlid = z.string().transform((string, ctx) => {
 
   const id = string.split(":", 2)[1];
 
+  if (!id) {
+    ctx.addIssue({ code: "custom", message: "Missing ULID prefix" });
+    return z.NEVER;
+  }
+
   if (!isValid(id)) {
     ctx.addIssue({ code: "custom", message: "Invalid ULID" });
     return z.NEVER;

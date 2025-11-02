@@ -1,6 +1,3 @@
-import { mySchema } from "../my-schema.ts";
-import { timestamps } from "./columns.helpers.ts";
-import { user } from "./user.ts";
 import { relations, sql } from "drizzle-orm";
 import {
   check,
@@ -9,6 +6,9 @@ import {
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/my-schema.js";
+import { timestamps } from "~/schema/columns.helpers.js";
+import { user } from "~/schema/user.js";
 
 // Enums
 export const announcementIdType = mySchema.enum("announcement_id_type", [

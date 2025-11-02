@@ -1,7 +1,7 @@
-import { publicProcedure, router } from "../../router.ts";
 import { prefixedUlid } from "@packages/schema/base/prefixed-ulid.ts";
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import { publicProcedure, router } from "~/router.js";
 
 export const coursesRouter = router({
   getModulesAndLessonsByCourseId: publicProcedure
