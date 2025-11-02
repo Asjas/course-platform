@@ -5,6 +5,7 @@
     "dev": "vite --port 4173",
     "start": "vite --port 4173",
     "build": "vite build && tsc",
+    "prebuild": "tsc -b",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest watch",

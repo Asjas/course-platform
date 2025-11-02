@@ -1,5 +1,5 @@
 import React from "react";
-import { authClient } from "~/lib/auth.client.ts";
+import { authClient } from "~/lib/auth.client";
 import { AuthContext } from "~/lib/auth.context";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
