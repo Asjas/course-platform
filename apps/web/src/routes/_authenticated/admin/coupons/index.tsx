@@ -46,26 +46,42 @@ function AdminCouponsPage() {
   // }[] | undefined
 
   return (
-    <div>
+    <div className="flex flex-col gap-8 py-2">
       <div className="mb-4 flex items-center justify-between">
-        <h1>Coupons</h1>
+        <h1 className="text-3xl">Coupons</h1>
         <Link
-          className="button"
+          className="underline hover:no-underline"
           to="/admin/coupons/create"
         >
           Create New Coupon
         </Link>
       </div>
-      <ul>
+      <div className="flex flex-col gap-4">
         {coupons?.map((coupon) => (
-          <li key={coupon.id}>
-            <strong>Code:</strong> {coupon.code} | <strong>Type:</strong>{" "}
-            {coupon.discountType} | <strong>Value:</strong>{" "}
-            {coupon.discountValue} | <strong>Redemptions:</strong>{" "}
-            {coupon.redemptions.length}
-          </li>
+          <div
+            className="flex rounded-md border border-gray-200 px-2 py-2"
+            key={coupon.id}
+          >
+            <div className="flex-1">
+              <p>
+                <strong>Code:</strong>{" "}
+                <span className="bg-green-600 text-white">{coupon.code}</span>
+              </p>
+              <p>Type: {coupon.discountType}</p>
+              <p>
+                Value:{" "}
+                {coupon.discountType === "percentage"
+                  ? `${coupon.discountValue}%`
+                  : `$${coupon.discountValue}`}
+              </p>
+            </div>
+            <div>
+              <strong>Redemptions:</strong> {coupon.redemptions.length}
+              <p>Redemption Limit: {coupon.redemptionLimit}</p>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

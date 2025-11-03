@@ -36,11 +36,6 @@ export const coupon = mySchema.table(
     validFrom: timestamp({ withTimezone: true }).defaultNow().notNull(),
     validUntil: timestamp({ withTimezone: true }),
     active: boolean().default(true).notNull(),
-    createdBy: text()
-      .references(() => user.id, {
-        onDelete: "set default",
-      })
-      .default("ghost"),
     courseId: text().references(() => course.id, { onDelete: "cascade" }),
     ...timestamps,
   },

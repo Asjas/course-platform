@@ -10,7 +10,7 @@ function AdminCouponsCreatePage() {
     <div className="py-2">
       <Link
         className="underline hover:no-underline"
-        to="/_authenticated/admin/coupons"
+        to="/admin/coupons"
       >
         Back to Coupons
       </Link>

@@ -3,6 +3,7 @@ import type { AppRouter } from "@apps/server/src/routers";
 import { invariant } from "@epic-web/invariant";
 import { createTRPCClient, httpBatchStreamLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
+import superjson from "superjson";
 
 const VITE_TRPC_URL = import.meta.env.VITE_TRPC_URL;
 
@@ -18,6 +19,7 @@ const trpcClient = createTRPCClient<AppRouter>({
       fetch: (url, options) => {
         return fetch(url, { ...options, credentials: "include" });
       },
+      transformer: superjson,
     }),
   ],
 });

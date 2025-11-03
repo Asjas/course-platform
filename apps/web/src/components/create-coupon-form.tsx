@@ -30,10 +30,17 @@ export default function CreateCouponForm() {
       onBlur: createCouponSchema,
     },
     onSubmit: async ({ value }) => {
-      const newCoupon = await createCouponMutation.mutateAsync(value);
-
-      toast.success(`Coupon ${newCoupon.code} created successfully!`);
-      form.reset();
+      createCouponMutation.mutate(value, {
+        onSuccess: (data) => {
+          console.log("newCoupon", data);
+          toast.success(`Coupon ${data.code} created successfully!`);
+          form.reset();
+        },
+        onError: (error) => {
+          console.log("createCoupon error", error.shape?.data);
+          toast.error("Failed to create coupon. Please try again.");
+        },
+      });
     },
   });
 
