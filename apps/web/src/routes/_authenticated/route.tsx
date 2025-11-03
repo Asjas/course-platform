@@ -18,8 +18,6 @@ export const Route = createFileRoute("/_authenticated")({
         `Your account has been banned. The ban expires on ${auth.session.user.banExpires}`,
       );
     }
-
-    return auth.session.user;
   },
   component: AuthenticatedPageLayout,
 });

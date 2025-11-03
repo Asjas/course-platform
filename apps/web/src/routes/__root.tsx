@@ -2,12 +2,10 @@ import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import DefaultLayoutComponent from "~/components/default-layout.tsx";
 import { type AuthState } from "~/lib/auth.context";
-import { trpc } from "~/lib/trpc.client.ts";
 
 interface MyRouterContext {
   auth: AuthState;
   queryClient: QueryClient;
-  trpc: typeof trpc;
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({

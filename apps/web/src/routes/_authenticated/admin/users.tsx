@@ -1,5 +1,6 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
+import Loading from "~/components/loading.tsx";
 import { authClient } from "~/lib/auth.client.ts";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
     return users;
   },
   component: AdminUsersPage,
+  staleTime: 1000 * 60, // 1 minute
 });
 
 function AdminUsersPage() {
@@ -18,7 +20,7 @@ function AdminUsersPage() {
   const data = Route.useLoaderData();
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (

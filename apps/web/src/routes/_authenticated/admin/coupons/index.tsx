@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon } from "lucide-react";
+import Loading from "~/components/loading.tsx";
 import { trpc } from "~/lib/trpc.client.ts";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
@@ -18,7 +19,7 @@ function AdminCouponsPage() {
   );
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
