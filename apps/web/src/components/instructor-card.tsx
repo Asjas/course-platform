@@ -12,14 +12,14 @@ export default function InstructorCard({
           Your Instructor
         </h3>
         <div className="flex items-start gap-4">
-          <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full">
+          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full">
             <img
               className="h-full w-full object-cover"
               alt="Codewizard"
               src="/codewizard.jpg"
             />
           </div>
-          <div className="flex-grow">
+          <div className="grow">
             <h4 className="text-lg font-semibold text-white">
               Codewizard (A-J Roos)
             </h4>

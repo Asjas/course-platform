@@ -27,7 +27,7 @@ export function CardPrice({ children }: { children: ReactNode }) {
 }
 
 export function CardContentList({ children }: { children: ReactNode }) {
-  return <ul className="mb-8 flex-grow space-y-3">{children}</ul>;
+  return <ul className="mb-8 grow space-y-3">{children}</ul>;
 }
 
 export function CardContentListItem({
@@ -41,7 +41,7 @@ export function CardContentListItem({
     <li className="flex items-start">
       <svg
         className={cn(
-          "mt-0.5 mr-3 h-5 w-5 flex-shrink-0 text-green-400",
+          "mt-0.5 mr-3 h-5 w-5 shrink-0 text-green-400",
           customClasses,
         )}
         fill="currentColor"
@@ -67,7 +67,7 @@ export function CardAction({
 }) {
   return (
     <Link
-      className="block w-full rounded-lg bg-gradient-to-r from-yellow-500 to-green-600 px-6 py-3 text-center font-semibold text-white shadow-lg transition-all hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"
+      className="block w-full rounded-lg bg-linear-to-r from-yellow-500 to-green-600 px-6 py-3 text-center font-semibold text-white shadow-lg transition-all hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"
       to={to}
     >
       {children}

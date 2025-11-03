@@ -9,7 +9,7 @@ export default function FormStatusMessage({
 }: IFormStatusMessage) {
   return (
     <div
-      className="min-h-[1.25rem] text-sm"
+      className="min-h-5 text-sm"
       role="status"
       aria-live="polite"
     >

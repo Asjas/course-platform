@@ -17,7 +17,7 @@ export default function CTASection() {
         </p>
         <div className="flex justify-center">
           <Link
-            className="inline-flex transform items-center justify-center rounded-lg bg-gradient-to-r from-yellow-600 to-green-600 px-16 py-5 text-xl font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"
+            className="inline-flex transform items-center justify-center rounded-lg bg-linear-to-r from-yellow-600 to-green-600 px-16 py-5 text-xl font-bold text-white shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-700 hover:to-green-700 hover:shadow-xl"
             to="/signup"
           >
             Try it free
