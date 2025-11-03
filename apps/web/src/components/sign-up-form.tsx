@@ -32,6 +32,8 @@ export default function SignUpForm() {
         password,
       });
 
+      console.log("error", error);
+
       if (error) {
         form.setFieldMeta("email", (oldMeta) => ({
           ...oldMeta,

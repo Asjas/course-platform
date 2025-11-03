@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { trpc } from "~/lib/trpc.client.ts";
 
-export const Route = createFileRoute("/_authenticated/admin/coupons")({
+export const Route = createFileRoute("/_authenticated/admin/coupons/")({
   loader: async ({ context }) => {
     const { queryClient } = context;
 

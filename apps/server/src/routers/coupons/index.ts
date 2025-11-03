@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import type { NewCoupon } from "~/db/schema/coupon.js";
 import { isAdmin, publicProcedure, router } from "~/router.js";
 import {
   deleteCouponById,
@@ -128,10 +129,10 @@ export const couponsRouter = router({
       }),
     )
     .use(isAdmin)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }): Promise<NewCoupon> => {
       const fastify = ctx.reply.server;
 
-      const [err, coupon] = await fastify.to(
+      const [err, newCoupon] = await fastify.to(
         insertCoupon({ newCoupon: input }),
       );
 
@@ -145,10 +146,10 @@ export const couponsRouter = router({
       }
 
       ctx.request.log.debug(
-        `Inserted coupon with id ${coupon.id} successfully`,
+        `Inserted coupon with id ${newCoupon.id} successfully`,
       );
 
-      return coupon;
+      return newCoupon;
     }),
   updateCouponById: publicProcedure
     .input(

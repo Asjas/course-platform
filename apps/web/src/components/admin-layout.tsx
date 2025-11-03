@@ -29,6 +29,14 @@ export default function AdminLayout({
             <li>
               <Link
                 className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
+                to="/admin/courses"
+              >
+                Courses
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
                 to="/admin/purchases"
               >
                 Purchases
