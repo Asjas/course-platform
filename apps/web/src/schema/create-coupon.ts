@@ -9,5 +9,5 @@ export const createCouponSchema = z.object({
   discountValue: z.number(),
   redemptionLimit: z.number(),
   validFrom: z.date(),
-  validTo: z.date().nullable(),
+  validUntil: z.date().nullable(),
 });

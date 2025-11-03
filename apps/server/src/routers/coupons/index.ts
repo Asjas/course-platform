@@ -125,7 +125,7 @@ export const couponsRouter = router({
         discountValue: z.number(),
         redemptionLimit: z.number(),
         validFrom: z.date(),
-        validTo: z.date().nullable(),
+        validUntil: z.date().nullable(),
       }),
     )
     .use(isAdmin)
@@ -144,6 +144,8 @@ export const couponsRouter = router({
           message: "Internal server error",
         });
       }
+
+      await fastify.cache.invalidateAll(["coupon~all"]);
 
       ctx.request.log.debug(
         `Inserted coupon with id ${newCoupon.id} successfully`,

@@ -12,7 +12,6 @@ import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { payment } from "~/db/schema/purchase.js";
-import { user } from "~/db/schema/user.js";
 
 export type Coupon = typeof coupon.$inferSelect;
 export type NewCoupon = Omit<typeof coupon.$inferInsert, "id">;

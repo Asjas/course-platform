@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { PencilIcon } from "lucide-react";
 import { trpc } from "~/lib/trpc.client.ts";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
@@ -20,31 +21,6 @@ function AdminCouponsPage() {
     return <div>Loading...</div>;
   }
 
-  //   const coupons: {
-  //     id: string;
-  //     createdAt: string;
-  //     updatedAt: string;
-  //     description: string | null;
-  //     active: boolean;
-  //     courseId: string | null;
-  //     code: string;
-  //     discountType: "fixed" | "percentage";
-  //     discountValue: number;
-  //     redemptionLimit: number;
-  //     validFrom: string;
-  //     validUntil: string | null;
-  //     createdBy: string | null;
-  //     redemptions: {
-  //         id: string;
-  //         userId: string;
-  //         createdAt: string;
-  //         updatedAt: string;
-  //         courseId: string;
-  //         couponId: string;
-  //         redeemedAt: string;
-  //     }[];
-  // }[] | undefined
-
   return (
     <div className="flex flex-col gap-8 py-2">
       <div className="mb-4 flex items-center justify-between">
@@ -56,28 +32,58 @@ function AdminCouponsPage() {
           Create New Coupon
         </Link>
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {coupons?.map((coupon) => (
           <div
-            className="flex rounded-md border border-gray-200 px-2 py-2"
+            className="rounded-lg border border-gray-200 p-6 shadow-md transition-shadow hover:shadow-lg"
             key={coupon.id}
           >
-            <div className="flex-1">
-              <p>
-                <strong>Code:</strong>{" "}
-                <span className="bg-green-600 text-white">{coupon.code}</span>
-              </p>
-              <p>Type: {coupon.discountType}</p>
-              <p>
-                Value:{" "}
-                {coupon.discountType === "percentage"
-                  ? `${coupon.discountValue}%`
-                  : `$${coupon.discountValue}`}
-              </p>
-            </div>
-            <div>
-              <strong>Redemptions:</strong> {coupon.redemptions.length}
-              <p>Redemption Limit: {coupon.redemptionLimit}</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <span className="rounded-full bg-green-600 px-3 py-1 text-sm font-semibold text-white">
+                  {coupon.code}
+                  <Link
+                    to="/admin/coupons/edit/index/$couponId"
+                    params={{ couponId: coupon.id }}
+                  >
+                    <PencilIcon className="ml-2 inline-block h-4 w-4 hover:text-gray-400" />
+                  </Link>
+                </span>
+                <span
+                  className={`rounded px-2 py-1 text-xs font-medium ${
+                    coupon.active
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {coupon.active ? "Active" : "Inactive"}
+                </span>
+              </div>
+              <div className="space-y-2">
+                <p className="text-white">
+                  <strong>Type:</strong> {coupon.discountType}
+                </p>
+                <p className="text-white">
+                  <strong>Value:</strong>{" "}
+                  {coupon.discountType === "percentage"
+                    ? `${coupon.discountValue}%`
+                    : `$${coupon.discountValue}`}
+                </p>
+                <p className="text-white">
+                  <strong>Redemptions:</strong> {coupon.redemptions.length} /{" "}
+                  {coupon.redemptionLimit}
+                </p>
+                <p className="text-white">
+                  <strong>Valid From:</strong>{" "}
+                  {new Date(coupon.validFrom).toLocaleDateString()}
+                </p>
+                <p className="text-white">
+                  <strong>Valid To:</strong>{" "}
+                  {coupon.validUntil
+                    ? new Date(coupon.validUntil).toLocaleDateString()
+                    : "No Expiry"}
+                </p>
+              </div>
             </div>
           </div>
         ))}

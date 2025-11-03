@@ -21,7 +21,7 @@ export default function CreateCouponForm() {
       discountValue: 0,
       redemptionLimit: 0,
       validFrom: new Date(),
-      validTo: null,
+      validUntil: null,
       active: true,
       courseId: null,
     } as z.infer<typeof createCouponSchema>,
@@ -30,17 +30,15 @@ export default function CreateCouponForm() {
       onBlur: createCouponSchema,
     },
     onSubmit: async ({ value }) => {
-      createCouponMutation.mutate(value, {
-        onSuccess: (data) => {
-          console.log("newCoupon", data);
-          toast.success(`Coupon ${data.code} created successfully!`);
-          form.reset();
-        },
-        onError: (error) => {
-          console.log("createCoupon error", error.shape?.data);
-          toast.error("Failed to create coupon. Please try again.");
-        },
-      });
+      try {
+        const newCoupon = await createCouponMutation.mutateAsync(value);
+
+        toast.success(`Coupon ${newCoupon.code} created successfully!`);
+        form.reset();
+      } catch (error) {
+        console.error("createCoupon error", error);
+        toast.error("Failed to create coupon. Please try again.");
+      }
     },
   });
 
@@ -288,14 +286,14 @@ export default function CreateCouponForm() {
 
             {/* Valid until Field */}
             <form.Field
-              name="validTo"
+              name="validUntil"
               children={(field) => (
                 <div className="sm:col-span-4">
                   <label
                     className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                     htmlFor={field.name}
                   >
-                    Valid To
+                    Valid Until
                   </label>
                   <div className="mt-2">
                     <input
