@@ -1,10 +1,10 @@
 import prometheus from "prom-client";
 import type { Config } from "~/config.js";
 import { db } from "~/db/index.js";
+import type { User } from "~/db/schema/user.ts";
 import { cache } from "~/lib/cache.js";
 import mailer from "~/lib/mailer.js";
 import { registry } from "~/lib/metrics.js";
-import type { User } from "~/routers/users/mutations.ts";
 
 declare module "fastify" {
   interface FastifyServerOptions {
