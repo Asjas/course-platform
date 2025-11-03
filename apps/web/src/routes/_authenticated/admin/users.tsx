@@ -15,13 +15,17 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 
 function AdminUsersPage() {
   const router = useRouter();
-  const users = Route.useLoaderData();
+  const data = Route.useLoaderData();
+
+  if (!data) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="mb-20">
       <h1 className="mb-10 text-3xl font-bold">Users</h1>
       <div className="flex flex-col gap-4">
-        {users?.users.map((user) => (
+        {data.users.map((user) => (
           <div
             className="rounded-md border border-gray-400 px-4 py-6"
             key={user.id}
