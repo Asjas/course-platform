@@ -4,8 +4,8 @@ import {
   useSuspenseQuery,
 } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { authClient } from "~/lib/auth.client.ts";
-import { AUTH_QUERY_KEY } from "~/lib/query.client.ts";
+import { authClient } from "~/lib/auth.client";
+import { AUTH_QUERY_KEY } from "~/lib/query.client";
 
 async function fetchUser() {
   const session = await authClient.getSession();

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import ProfileForm from "~/components/profile-form.tsx";
+import ProfileForm from "~/components/profile-form";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   component: ProfilePage,

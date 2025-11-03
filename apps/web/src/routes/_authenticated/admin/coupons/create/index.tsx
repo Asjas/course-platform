@@ -1,5 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import CreateCouponForm from "~/components/create-coupon-form.tsx";
+import CreateCouponForm from "~/components/create-coupon-form";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/create/")({
   component: AdminCouponsCreatePage,

@@ -1,7 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
-import Loading from "~/components/loading.tsx";
-import { authClient } from "~/lib/auth.client.ts";
+import Loading from "~/components/loading";
+import { authClient } from "~/lib/auth.client";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   loader: async () => {

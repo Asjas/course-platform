@@ -1,11 +1,11 @@
 import { useForm, useStore } from "@tanstack/react-form";
 import { toast } from "sonner";
-import BlockerComponent from "~/components/blocker.tsx";
-import FieldInfo from "~/components/field-info.tsx";
-import { authClient } from "~/lib/auth.client.ts";
-import { useAuth } from "~/lib/auth.context.ts";
-import { cn } from "~/lib/utils.ts";
-import { changeEmailFormSchema } from "~/schema/change-email.tsx";
+import BlockerComponent from "~/components/blocker";
+import FieldInfo from "~/components/field-info";
+import { authClient } from "~/lib/auth.client";
+import { useAuth } from "~/lib/auth.context";
+import { cn } from "~/lib/utils";
+import { changeEmailFormSchema } from "~/schema/change-email";
 
 export default function ChangeEmailForm() {
   const form = useForm({

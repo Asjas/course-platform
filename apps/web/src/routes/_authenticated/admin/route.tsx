@@ -1,5 +1,5 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
-import AdminLayout from "~/components/admin-layout.tsx";
+import AdminLayout from "~/components/admin-layout";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   beforeLoad: async ({ context, location }) => {

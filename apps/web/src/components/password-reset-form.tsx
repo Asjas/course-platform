@@ -2,12 +2,12 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import BlockerComponent from "~/components/blocker.tsx";
+import BlockerComponent from "~/components/blocker";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-import { passwordResetFormSchema } from "~/schema/password-reset.tsx";
+import { passwordResetFormSchema } from "~/schema/password-reset";
 
 export default function PasswordResetForm({ token }: { token: string }) {
   const navigate = useNavigate();

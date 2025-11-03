@@ -4,7 +4,7 @@ export const Route = createFileRoute("/_authenticated/purchases")({
   component: AuthenticatedPurchasesPage,
 });
 
-async function AuthenticatedPurchasesPage() {
+function AuthenticatedPurchasesPage() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4">
       <p>Redirecting you to the Polar.sh purchases portal.</p>

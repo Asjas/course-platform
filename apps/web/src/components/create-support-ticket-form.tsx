@@ -3,12 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import * as z from "zod";
-import BlockerComponent from "~/components/blocker.tsx";
+import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/editor";
-import FieldInfo from "~/components/field-info.tsx";
-import { trpc } from "~/lib/trpc.client.ts";
-import { cn } from "~/lib/utils.ts";
-import { supportTicketFormSchema } from "~/schema/support-ticket.tsx";
+import FieldInfo from "~/components/field-info";
+import { trpc } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils";
+import { supportTicketFormSchema } from "~/schema/support-ticket";
 
 export default function NewSupportTicketForm() {
   const navigate = useNavigate();

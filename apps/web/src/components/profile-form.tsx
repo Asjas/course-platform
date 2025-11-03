@@ -4,13 +4,13 @@ import { UserCircleIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
-import BlockerComponent from "~/components/blocker.tsx";
-import FieldInfo from "~/components/field-info.tsx";
-import { authClient } from "~/lib/auth.client.ts";
-import { useAuth } from "~/lib/auth.context.ts";
-import { trpc } from "~/lib/trpc.client.ts";
-import { cn } from "~/lib/utils.ts";
-import { profileFormSchema } from "~/schema/profile-form.tsx";
+import BlockerComponent from "~/components/blocker";
+import FieldInfo from "~/components/field-info";
+import { authClient } from "~/lib/auth.client";
+import { useAuth } from "~/lib/auth.context";
+import { trpc } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils";
+import { profileFormSchema } from "~/schema/profile-form";
 
 export default function ProfileForm() {
   const auth = useAuth();

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { AuthSession } from "~/lib/auth.client.ts";
+import type { AuthSession } from "~/lib/auth.client";
 
 export interface AuthState {
   isAuthenticated: boolean;

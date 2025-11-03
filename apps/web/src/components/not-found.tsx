@@ -1,4 +1,4 @@
-import { Link } from "~/components/ui/nav-link.tsx";
+import { Link } from "~/components/ui/nav-link";
 
 export default function NotFoundComponent() {
   return (

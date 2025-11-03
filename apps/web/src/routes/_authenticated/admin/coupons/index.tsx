@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon } from "lucide-react";
-import Loading from "~/components/loading.tsx";
-import { trpc } from "~/lib/trpc.client.ts";
+import Loading from "~/components/loading";
+import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
   loader: async ({ context }) => {
