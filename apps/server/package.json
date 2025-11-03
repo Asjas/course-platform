@@ -50,7 +50,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
-    "@types/node": "24.9.2",
+    "@types/node": "24.10.0",
     "@types/nodemailer": "7.0.3",
     "@vitest/coverage-v8": "4.0.6",
     "rimraf": "6.1.0",
