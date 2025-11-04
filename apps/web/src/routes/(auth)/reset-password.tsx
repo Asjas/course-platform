@@ -1,7 +1,7 @@
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
-import PasswordResetForm from "~/components/password-reset-form.tsx";
-import RequestPasswordResetForm from "~/components/request-password-reset-form";
+import PasswordResetForm from "~/components/forms/password-reset-form";
+import RequestPasswordResetForm from "~/components/forms/request-password-reset-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/reset-password")({

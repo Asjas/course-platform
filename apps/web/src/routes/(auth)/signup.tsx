@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import AuthLinks from "~/components/auth-links";
-import SignUpForm from "~/components/sign-up-form";
+import SignUpForm from "~/components/forms/sign-up-form";
 import { Card, CardFooter, CardHeader } from "~/components/ui/card";
 
 export const Route = createFileRoute("/(auth)/signup")({
