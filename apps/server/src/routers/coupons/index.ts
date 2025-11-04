@@ -31,6 +31,10 @@ export const couponsRouter = router({
         });
       }
 
+      ctx.request.log.debug(
+        `Retrieved ${coupons.length} coupons from cache/db`,
+      );
+
       return coupons;
     }),
   getCouponById: publicProcedure
@@ -192,6 +196,12 @@ export const couponsRouter = router({
         });
       }
 
+      await fastify.cache.invalidateAll([
+        "coupon~all",
+        `coupon~code~${coupon.code}`,
+        `coupon~id~${coupon.id}`,
+      ]);
+
       ctx.request.log.debug(`Updated coupon with id ${coupon.id} successfully`);
 
       return coupon;
@@ -217,6 +227,12 @@ export const couponsRouter = router({
           message: "Internal server error",
         });
       }
+
+      await fastify.cache.invalidateAll([
+        "coupon~all",
+        `coupon~code~${coupon.code}`,
+        `coupon~id~${coupon.id}`,
+      ]);
 
       ctx.request.log.debug(`Deleted coupon with id ${coupon.id} successfully`);
 
@@ -252,6 +268,28 @@ export const couponsRouter = router({
           message: "Internal server error",
         });
       }
+
+      const [couponErr, coupon] = await fastify.to(
+        fastify.cache.getCouponByCode({ couponCode: input.couponCode }),
+      );
+
+      if (couponErr || !coupon) {
+        ctx.request.log.error(
+          couponErr,
+          `Failed to fetch coupon with code ${input.couponCode} after redemption`,
+        );
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      await fastify.cache.invalidateAll([
+        "coupon~all",
+        `coupon~code~${coupon.code}`,
+        `coupon~id~${coupon.id}`,
+      ]);
 
       ctx.request.log.debug(
         `Redeemed coupon with redemption ${redemption.id} successfully`,

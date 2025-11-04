@@ -6,6 +6,7 @@ import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/editor";
 import FieldInfo from "~/components/field-info";
+import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
@@ -35,6 +36,10 @@ export default function NewSupportTicketForm() {
     onSubmit: async ({ value }) => {
       const newSupportTicket =
         await createSupportTicketMutation.mutateAsync(value);
+
+      queryClient.invalidateQueries({
+        queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+      });
 
       form.reset();
       toast.success("Support ticket created successfully!");

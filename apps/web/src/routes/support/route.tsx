@@ -5,9 +5,5 @@ export const Route = createFileRoute("/support")({
 });
 
 function SupportLayoutPage() {
-  return (
-    <div className="mx-auto max-w-7xl">
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }

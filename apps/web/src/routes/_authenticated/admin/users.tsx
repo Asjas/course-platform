@@ -1,7 +1,13 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
+import type { UserWithRole } from "better-auth/plugins/admin";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
 import Loading from "~/components/loading";
 import { authClient } from "~/lib/auth.client";
+
+interface ExtendedUserWithRole extends UserWithRole {
+  username?: string;
+  displayUsername?: string;
+}
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   loader: async () => {
@@ -23,11 +29,14 @@ function AdminUsersPage() {
     return <Loading />;
   }
 
+  // https://github.com/better-auth/better-auth/issues/3033
+  const usersWithUsername = data.users as ExtendedUserWithRole[];
+
   return (
     <div className="mb-20">
       <h1 className="mb-10 text-3xl font-bold">Users</h1>
       <div className="flex flex-col gap-4">
-        {data.users.map((user) => (
+        {usersWithUsername.map((user) => (
           <div
             className="rounded-md border border-gray-400 px-4 py-6"
             key={user.id}
@@ -40,7 +49,7 @@ function AdminUsersPage() {
               <p className="flex items-center gap-2">
                 <MailIcon /> {user.email}
               </p>
-              <p>Verified: {user?.verified ? "Yes" : "No"}</p>
+              <p>Verified: {user?.emailVerified ? "Yes" : "No"}</p>
             </div>
             <div className="mb-4 flex justify-between">
               <p className="flex items-center gap-2">

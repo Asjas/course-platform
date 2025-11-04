@@ -59,7 +59,7 @@ export const cache = createCache({
       ttl: ONE_HOUR,
       serialize: (args) => args.ticketId,
       references(args) {
-        return [args.ticketId];
+        return [`support-ticket~id~${args.ticketId}`];
       },
     },
     getSupportTicketById,
@@ -81,7 +81,7 @@ export const cache = createCache({
       ttl: ONE_HOUR,
       serialize: (args) => args.couponId,
       references(args) {
-        return [args.couponId];
+        return [`coupon~id~${args.couponId}`];
       },
     },
     getCouponById,
