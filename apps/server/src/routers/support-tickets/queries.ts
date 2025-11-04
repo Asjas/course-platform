@@ -7,6 +7,9 @@ export type AllSupportTickets = Awaited<
 export type SupportTicketById = Awaited<
   ReturnType<typeof getSupportTicketById>
 >;
+export type SupportTicketCommentById = Awaited<
+  ReturnType<typeof getSupportTicketCommentById>
+>;
 
 const preparedGetAllSupportTickets = db.query.supportTicket
   .findMany({
@@ -60,10 +63,6 @@ export async function getSupportTicketById({ ticketId }: { ticketId: string }) {
     ticketId,
   });
 
-  if (!supportTicket) {
-    return null;
-  }
-
   return supportTicket;
 }
 
@@ -75,10 +74,6 @@ export async function getSupportTicketCommentById({
   const supportTicketComment = await preparedSupportTicketComment.execute({
     commentId,
   });
-
-  if (!supportTicketComment) {
-    return null;
-  }
 
   return supportTicketComment;
 }

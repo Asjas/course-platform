@@ -6,11 +6,15 @@ import type {
   SupportTicket,
 } from "~/db/schema/support-tickets.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+import type {
+  AllSupportTickets,
+  SupportTicketById,
+} from "~/routers/support-tickets/queries.js";
 import { insertSupportTicket } from "~/routes/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   getAllSupportTickets: publicProcedure.query(
-    async ({ ctx }): Promise<SupportTicket[]> => {
+    async ({ ctx }): Promise<AllSupportTickets> => {
       const fastify = ctx.reply.server;
 
       const [err, tickets] = await fastify.to(
@@ -33,6 +37,38 @@ export const supportTicketsRouter = router({
       return tickets;
     },
   ),
+  getSupportTicketById: publicProcedure
+    .input(z.object({ ticketId: z.string() }))
+    .query(
+      async ({
+        ctx,
+        input: { ticketId },
+      }): Promise<SupportTicketById | null> => {
+        const fastify = ctx.reply.server;
+
+        const [err, ticket] = await fastify.to(
+          fastify.cache.getSupportTicketById({ ticketId }),
+        );
+
+        if (err) {
+          ctx.request.log.error(
+            err,
+            `Failed to get support ticket with id ${ticketId}`,
+          );
+
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Internal server error",
+          });
+        }
+
+        ctx.request.log.debug(
+          `Retrieved support ticket with ID ${ticketId} from cache/db`,
+        );
+
+        return ticket;
+      },
+    ),
   createSupportTicket: publicProcedure
     .input(
       z.object({

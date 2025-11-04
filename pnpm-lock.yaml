@@ -283,6 +283,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: 1.2.3
         version: 1.2.3(@types/react@19.2.2)(react@19.2.0)
+      '@shikijs/rehype':
+        specifier: 3.14.0
+        version: 3.14.0
       '@tanstack/query-core':
         specifier: 5.90.5
         version: 5.90.5
@@ -313,6 +316,12 @@ importers:
       clsx:
         specifier: 2.1.1
         version: 2.1.1
+      date-fns:
+        specifier: 4.1.0
+        version: 4.1.0
+      dompurify:
+        specifier: 3.3.0
+        version: 3.3.0
       lucide-react:
         specifier: 0.548.0
         version: 0.548.0(react@19.2.0)
@@ -337,6 +346,9 @@ importers:
       remark-rehype:
         specifier: 11.1.2
         version: 11.1.2
+      shiki:
+        specifier: 3.14.0
+        version: 3.14.0
       sonner:
         specifier: 2.0.7
         version: 2.0.7(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -3568,6 +3580,9 @@ packages:
   '@shikijs/langs@3.14.0':
     resolution: {integrity: sha512-DIB2EQY7yPX1/ZH7lMcwrK5pl+ZkP/xoSpUzg9YC8R+evRCCiSQ7yyrvEyBsMnfZq4eBzLzBlugMyTAf13+pzg==}
 
+  '@shikijs/rehype@3.14.0':
+    resolution: {integrity: sha512-In2G6yvT0ZFDqNGbJumd7gEAwtxuaXuchCc0O3qOytIUTlpzs8/D0CQF3wktdfOB6B869eab6Z6EIJr4Td4hQQ==}
+
   '@shikijs/themes@3.14.0':
     resolution: {integrity: sha512-fAo/OnfWckNmv4uBoUu6dSlkcBc+SA1xzj5oUSaz5z3KqHtEbUypg/9xxgJARtM6+7RVm0Q6Xnty41xA1ma1IA==}
 
@@ -5360,6 +5375,9 @@ packages:
   domhandler@5.0.3:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
+
+  dompurify@3.3.0:
+    resolution: {integrity: sha512-r+f6MYR1gGN1eJv0TVQbhA7if/U7P87cdPl3HN5rikqaBSBxLiCb/b9O+2eG0cxz0ghyU+mU1QkbsOwERMYlWQ==}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
@@ -13429,6 +13447,15 @@ snapshots:
     dependencies:
       '@shikijs/types': 3.14.0
 
+  '@shikijs/rehype@3.14.0':
+    dependencies:
+      '@shikijs/types': 3.14.0
+      '@types/hast': 3.0.4
+      hast-util-to-string: 3.0.1
+      shiki: 3.14.0
+      unified: 11.0.5
+      unist-util-visit: 5.0.0
+
   '@shikijs/themes@3.14.0':
     dependencies:
       '@shikijs/types': 3.14.0
@@ -15629,6 +15656,10 @@ snapshots:
   domhandler@5.0.3:
     dependencies:
       domelementtype: 2.3.0
+
+  dompurify@3.3.0:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
 
   domutils@3.2.2:
     dependencies:

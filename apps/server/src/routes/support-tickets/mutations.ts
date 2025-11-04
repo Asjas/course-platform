@@ -19,7 +19,7 @@ export async function insertSupportTicket({
 }: {
   newSupportTicket: NewSupportTicket;
 }) {
-  const id = `suptik:${ulid()}`;
+  const id = `suptick:${ulid()}`;
   const newSupportTicketWithId = { id, ...newSupportTicket };
 
   const [ticket] = await db
@@ -64,7 +64,7 @@ export async function insertSupportTicketComment({
 }: {
   newSupportTicketComment: NewSupportTicketComment;
 }) {
-  const id = `suptikcom:${ulid()}`;
+  const id = `suptickcom:${ulid()}`;
   const newSupportTicketCommentWithId = { id, ...newSupportTicketComment };
 
   const [comment] = await db

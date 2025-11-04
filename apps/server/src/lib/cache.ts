@@ -17,7 +17,8 @@ import { getModulesAndLessonsByCourseId } from "~/routers/courses/queries.js";
 import {
   getAllSupportTickets,
   getSupportTicketById,
-} from "~/routes/support-tickets/queries.js";
+  getSupportTicketCommentById,
+} from "~/routers/support-tickets/queries.js";
 
 export const cache = createCache({
   storage: {
@@ -63,6 +64,17 @@ export const cache = createCache({
       },
     },
     getSupportTicketById,
+  )
+  .define(
+    "getSupportTicketCommentById",
+    {
+      ttl: ONE_HOUR,
+      serialize: (args) => args.commentId,
+      references(args) {
+        return [`support-ticket-comment~id~${args.commentId}`];
+      },
+    },
+    getSupportTicketCommentById,
   )
   .define(
     "getAllCoupons",
