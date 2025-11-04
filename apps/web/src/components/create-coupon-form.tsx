@@ -1,14 +1,17 @@
 import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import FieldInfo from "~/components/field-info";
+import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";
 
 export default function CreateCouponForm() {
+  const navigate = useNavigate();
   const createCouponMutation = useMutation(
     trpc.coupons.insertCoupon.mutationOptions(),
   );
@@ -33,8 +36,16 @@ export default function CreateCouponForm() {
       try {
         const newCoupon = await createCouponMutation.mutateAsync(value);
 
-        toast.success(`Coupon ${newCoupon.code} created successfully!`);
+        queryClient.invalidateQueries({
+          queryKey: trpc.coupons.getAllCoupons.queryKey(),
+        });
+
         form.reset();
+        toast.success(`Coupon ${newCoupon.code} created successfully!`);
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        navigate({ to: "/admin/coupons" });
       } catch (error) {
         console.error("createCoupon error", error);
         toast.error("Failed to create coupon. Please try again.");

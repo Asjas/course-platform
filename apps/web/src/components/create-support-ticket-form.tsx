@@ -34,21 +34,28 @@ export default function NewSupportTicketForm() {
       onSubmit: supportTicketFormSchema,
     },
     onSubmit: async ({ value }) => {
-      const newSupportTicket =
-        await createSupportTicketMutation.mutateAsync(value);
+      try {
+        const newSupportTicket =
+          await createSupportTicketMutation.mutateAsync(value);
 
-      queryClient.invalidateQueries({
-        queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
-      });
+        queryClient.invalidateQueries({
+          queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+        });
 
-      form.reset();
-      toast.success("Support ticket created successfully!");
-      await new Promise((resolve) => setTimeout(resolve, 300));
+        form.reset();
+        toast.success("Support ticket created successfully!");
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
-      navigate({
-        to: "/support/$supportTicket",
-        params: { supportTicket: newSupportTicket.id },
-      });
+        navigate({
+          to: "/support/$supportTicket",
+          params: { supportTicket: newSupportTicket.id },
+        });
+      } catch (error) {
+        console.error("Error creating support ticket:", error);
+        toast.error(
+          "An error occurred while creating the support ticket. Please try again.",
+        );
+      }
     },
   });
 
