@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Loading from "~/components/loading.tsx";
 import { renderMarkdown } from "~/lib/markdown.ts";
+import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/support/$supportTicket/")({
@@ -22,9 +23,12 @@ export const Route = createFileRoute("/support/$supportTicket/")({
 });
 
 function SupportTicketIndexPage() {
+  const params = useParams({ from: "/support/$supportTicket/" });
+
   const [ticketContent, setTicketContent] = useState("");
   const [copied, setCopied] = useState(false);
-  const params = useParams({ from: "/support/$supportTicket/" });
+  const [refreshing, setRefreshing] = useState(false);
+
   const { data: ticket, isLoading } = useSuspenseQuery(
     trpc.supportTickets.getSupportTicketById.queryOptions({
       ticketId: params.supportTicket,
@@ -79,16 +83,31 @@ function SupportTicketIndexPage() {
           </h1>
           <p className="mt-2 text-sm text-gray-300">{ticket.id}</p>
         </div>
-        <div className="mt-4 flex gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <button className="mt-4 flex gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <button
+            className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+            onClick={() => {
+              queryClient.invalidateQueries({
+                queryKey: trpc.supportTickets.getSupportTicketById.queryKey({
+                  ticketId: ticket.id,
+                }),
+              });
+
+              setRefreshing(true);
+              setTimeout(() => setRefreshing(false), 1000);
+            }}
+          >
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </button>
           <Link
-            className="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+            className="inline-flex items-center rounded-md bg-green-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
             to="/support"
           >
             Back to all tickets
           </Link>
           {copied ? (
             <button
-              className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               title="Copied"
             >
               <CheckIcon
@@ -98,7 +117,7 @@ function SupportTicketIndexPage() {
             </button>
           ) : (
             <button
-              className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
               title="Copy link"
               onClick={() => {
                 const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
@@ -112,7 +131,7 @@ function SupportTicketIndexPage() {
               <CopyIcon size={18} />
             </button>
           )}
-        </div>
+        </button>
       </div>
       <div className="mt-10 rounded-md border border-white/10 bg-gray-800 shadow-sm">
         <div className="flex h-full items-center rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">
