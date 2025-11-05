@@ -41,7 +41,7 @@ function SupportIndexPage() {
         {auth.session ? (
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <Link
-              className="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+              className="block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
               to="/support/create-ticket"
             >
               Create new ticket
@@ -134,24 +134,41 @@ function SupportIndexPage() {
                         {ticket.lesson?.order || "N/A"}
                       </td>
                       <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
-                        {ticket.priority}
+                        {ticket.priority === "low" ? (
+                          <span className="inline-flex items-center rounded-md bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-blue-500/50 ring-inset">
+                            Low
+                          </span>
+                        ) : ticket.priority === "medium" ? (
+                          <span className="inline-flex items-center rounded-md bg-yellow-900/30 px-2 py-1 text-xs font-medium text-yellow-400 ring-1 ring-yellow-500/50 ring-inset">
+                            Medium
+                          </span>
+                        ) : ticket.priority === "high" ? (
+                          <span className="inline-flex items-center rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
+                            High
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-purple-900/30 px-2 py-1 text-xs font-medium text-purple-400 ring-1 ring-purple-500/50 ring-inset">
+                            Urgent
+                          </span>
+                        )}
                       </td>
                       <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.status === "open" ? (
-                          <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-semibold text-green-800">
+                          <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
                             Open
                           </span>
                         ) : (
-                          <span className="rounded-full bg-red-100 px-2 py-1 text-xs font-semibold text-red-800">
+                          <span className="inline-flex items-center rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
                             Closed
                           </span>
                         )}
                       </td>
                       <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
-                        {auth.hasRole("admin") ? (
+                        {auth.hasRole("admin") ||
+                        auth.session?.user.id === ticket.userId ? (
                           <div className="flex justify-end gap-4">
                             <Link
-                              className="text-green-600 hover:text-green-500"
+                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
                               to="/support/$supportTicket/edit"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -159,7 +176,7 @@ function SupportIndexPage() {
                               <span className="sr-only">, {ticket.title}</span>
                             </Link>
                             <Link
-                              className="text-green-600 hover:text-green-500"
+                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
                               to="/support/$supportTicket"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -169,7 +186,7 @@ function SupportIndexPage() {
                           </div>
                         ) : (
                           <Link
-                            className="text-green-600 hover:text-green-500"
+                            className="text-green-600 no-underline hover:text-green-500 hover:underline"
                             to="/support/$supportTicket/edit"
                             params={{ supportTicket: ticket.id }}
                           >

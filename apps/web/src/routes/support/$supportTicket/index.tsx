@@ -1,7 +1,9 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
 import { formatRelative } from "date-fns";
+import { CheckIcon, CopyIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import Loading from "~/components/loading.tsx";
 import { renderMarkdown } from "~/lib/markdown.ts";
 import { trpc } from "~/lib/trpc.client";
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/support/$supportTicket/")({
 
 function SupportTicketIndexPage() {
   const [ticketContent, setTicketContent] = useState("");
+  const [copied, setCopied] = useState(false);
   const params = useParams({ from: "/support/$supportTicket/" });
   const { data: ticket, isLoading } = useSuspenseQuery(
     trpc.supportTickets.getSupportTicketById.queryOptions({
@@ -57,7 +60,7 @@ function SupportTicketIndexPage() {
           The support ticket you are looking for does not exist.
         </p>
         <Link
-          className="mt-4 block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+          className="mt-4 block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
           to="/support"
         >
           Go back to all tickets
@@ -69,7 +72,7 @@ function SupportTicketIndexPage() {
   console.log("Rendering ticket:", ticket);
 
   return (
-    <div className="mx-auto mt-20 w-full max-w-4xl">
+    <div className="mx-auto mt-20 w-full max-w-7xl">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-white md:text-3xl">
@@ -77,13 +80,39 @@ function SupportTicketIndexPage() {
           </h1>
           <p className="mt-2 text-sm text-gray-300">{ticket.id}</p>
         </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <div className="mt-4 flex gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <Link
             className="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
             to="/support"
           >
             Back to all tickets
           </Link>
+          {copied ? (
+            <button
+              className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              title="Copied"
+            >
+              <CheckIcon
+                size={18}
+                color="green"
+              />
+            </button>
+          ) : (
+            <button
+              className="block rounded-md px-3 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              title="Copy link"
+              onClick={() => {
+                const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
+                navigator.clipboard.writeText(ticketUrl);
+                toast.success("Ticket link copied to clipboard");
+
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+            >
+              <CopyIcon size={18} />
+            </button>
+          )}
         </div>
       </div>
       <div className="mt-10 rounded-md border border-white/10 bg-gray-800 shadow-sm">
