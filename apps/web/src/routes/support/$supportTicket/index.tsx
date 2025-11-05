@@ -4,11 +4,11 @@ import { formatDistance, formatRelative } from "date-fns";
 import { CheckIcon, CircleDotIcon, CopyIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import Loading from "~/components/loading.tsx";
-import { renderMarkdown } from "~/lib/markdown.ts";
-import { queryClient } from "~/lib/query.client.ts";
+import Loading from "~/components/loading";
+import { renderMarkdown } from "~/lib/markdown";
+import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
-import { cn } from "~/lib/utils.ts";
+import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/support/$supportTicket/")({
   loader: async ({ context, params }) => {
