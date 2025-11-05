@@ -1,13 +1,14 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
-import { formatRelative } from "date-fns";
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { formatDistance, formatRelative } from "date-fns";
+import { CheckIcon, CircleDotIcon, CopyIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import Loading from "~/components/loading.tsx";
 import { renderMarkdown } from "~/lib/markdown.ts";
 import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils.ts";
 
 export const Route = createFileRoute("/support/$supportTicket/")({
   loader: async ({ context, params }) => {
@@ -131,13 +132,48 @@ function SupportTicketIndexPage() {
             {ticket.title}
           </h1>
           <p className="mt-2 text-sm text-gray-400">{ticket.id}</p>
+          <div className="mt-2 flex items-center gap-2 border-b border-gray-600 pb-2 text-white">
+            <div
+              className={cn(
+                "flex items-center rounded-2xl px-2.5 py-1.5",
+                ticket.status === "open" ? "bg-green-700" : "bg-red-700",
+              )}
+            >
+              <CircleDotIcon size={20} />
+              {ticket.status === "open" ? (
+                <span className="ml-2 text-sm font-medium">Open</span>
+              ) : (
+                <span className="ml-2 text-sm font-medium">Closed</span>
+              )}
+            </div>
+            <p className="text-sm font-extralight text-gray-200">
+              <span className="font-semibold">{ticket.user.name}</span> opened
+              this ticket{" "}
+              {formatRelative(new Date(ticket.createdAt), new Date())}
+              <span> · </span>
+              <span>{ticket.comments.length} comments</span>
+            </p>
+          </div>
         </div>
       </div>
-      <div className="mt-10 rounded-md border border-white/10 bg-gray-800 shadow-sm">
-        <div className="flex h-full items-center rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">
-          <p className="text-sm text-gray-300">
-            {ticket.user.name} opened this ticket on{" "}
-            {formatRelative(new Date(ticket.createdAt), new Date())}
+      <div className="mt-4 rounded-md border border-white/10 bg-gray-800">
+        <div className="flex h-full items-center gap-2 rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">
+          {ticket.user.image && (
+            <img
+              className="h-6 w-6 rounded-full"
+              src={ticket.user.image}
+              alt={ticket.user.name}
+            />
+          )}{" "}
+          <p className="text-sm text-gray-400">
+            <span className="font-semibold text-white">{ticket.user.name}</span>{" "}
+            commented{" "}
+            <span
+              className="cursor-default hover:text-green-600"
+              title={formatRelative(new Date(ticket.createdAt), new Date())}
+            >
+              {formatDistance(new Date(ticket.createdAt), new Date())} ago
+            </span>
           </p>
         </div>
         <div className="px-4 py-2">
