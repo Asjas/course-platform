@@ -36,6 +36,7 @@ function SupportTicketIndexPage() {
 
     (async () => {
       const html = await renderMarkdown(ticket?.description);
+
       if (isMounted) {
         setTicketContent(html);
       }
