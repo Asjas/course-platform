@@ -70,8 +70,6 @@ function SupportTicketIndexPage() {
     );
   }
 
-  console.log("Rendering ticket:", ticket);
-
   return (
     <div className="mx-auto mt-20 w-full max-w-7xl">
       <div className="sm:flex sm:items-center">
