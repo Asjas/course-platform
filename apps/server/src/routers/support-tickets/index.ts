@@ -3,14 +3,19 @@ import * as z from "zod";
 import config from "~/config.js";
 import type {
   NewSupportTicket,
+  NewSupportTicketComment,
   SupportTicket,
+  SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 import type {
   AllSupportTickets,
   SupportTicketById,
 } from "~/routers/support-tickets/queries.js";
-import { insertSupportTicket } from "~/routes/support-tickets/mutations.js";
+import {
+  insertSupportTicket,
+  insertSupportTicketComment,
+} from "~/routes/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   getAllSupportTickets: publicProcedure.query(
@@ -111,5 +116,46 @@ export const supportTicketsRouter = router({
       );
 
       return newTicket;
+    }),
+  createSupportTicketComment: publicProcedure
+    .input(
+      z.object({
+        ticketId: z.string(),
+        comment: z.string().min(2).max(1000),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }): Promise<SupportTicketComment> => {
+      const fastify = ctx.reply.server;
+
+      const newSupportTicketComment: NewSupportTicketComment = {
+        ticketId: input.ticketId,
+        userId: ctx.user.id,
+        comment: input.comment,
+      };
+
+      const [err, newComment] = await fastify.to(
+        insertSupportTicketComment({ newSupportTicketComment }),
+      );
+
+      if (err) {
+        ctx.request.log.error(err, "Failed to create support comment");
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      await fastify.cache.invalidateAll([
+        `support-ticket~id~${input.ticketId}`,
+        "support-ticket~all",
+      ]);
+
+      ctx.request.log.debug(
+        `Created new support comment with ID ${newComment.id} for ticket ID ${input.ticketId}`,
+      );
+
+      return newComment;
     }),
 });

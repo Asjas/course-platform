@@ -159,33 +159,46 @@ export default function GitHubMessageEditor({
   };
 
   return (
-    <div className="overflow-hidden rounded-md border border-gray-300 dark:border-gray-700">
-      <div className="flex border-b border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
-        <button
-          className={cn(
-            "flex-1 border-b-2 px-4 py-2 text-sm font-medium",
-            activeTab === "write"
-              ? "border-gray-500 bg-white text-white dark:bg-gray-800"
-              : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400",
-          )}
-          type="button"
-          onClick={() => setActiveTab("write")}
+    <div className="overflow-hidden rounded-md border border-gray-700">
+      {/* Editor Header */}
+      <div
+        className="-mb-px flex justify-between border-b-[1px] border-gray-700 bg-gray-800 pt-2.5"
+        style={{
+          marginBottom: "calc(var(--borderWidth-thin) * -1)",
+        }}
+      >
+        <div
+          className=""
+          style={{
+            marginBottom: "calc(var(--borderWidth-thin) * -1)",
+          }}
         >
-          Write
-        </button>
-        <button
-          className={cn(
-            "flex-1 border-b-2 px-4 py-2 text-sm font-medium",
-            activeTab === "preview"
-              ? "border-gray-500 bg-white text-white dark:bg-gray-800"
-              : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400",
-          )}
-          type="button"
-          onClick={() => setActiveTab("preview")}
-        >
-          Preview
-          {isPreviewLoading && <span className="ml-1">⟳</span>}
-        </button>
+          <button
+            className={cn(
+              "ml-2 flex-1 cursor-pointer px-4 py-2 text-sm font-medium",
+              activeTab === "write"
+                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-700 bg-gray-900 text-white"
+                : "border-gray-700 bg-gray-800 text-gray-400",
+            )}
+            type="button"
+            onClick={() => setActiveTab("write")}
+          >
+            Write
+          </button>
+          <button
+            className={cn(
+              "flex-1 cursor-pointer px-4 py-2 text-sm font-medium",
+              activeTab === "preview"
+                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-700 bg-gray-900 text-white"
+                : "border-gray-700 bg-gray-800 text-gray-400",
+            )}
+            type="button"
+            onClick={() => setActiveTab("preview")}
+          >
+            Preview
+            {isPreviewLoading && <span className="ml-1">⟳</span>}
+          </button>
+        </div>
       </div>
 
       {activeTab === "write" ? (
@@ -197,61 +210,36 @@ export default function GitHubMessageEditor({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <textarea
-            className={cn(
-              "block h-[300px] w-full resize-none bg-white p-4 text-sm text-gray-900",
-              "focus:ring-1 focus:ring-indigo-500 focus:outline-none",
-              "dark:bg-gray-900 dark:text-white",
-              "placeholder-gray-500 dark:placeholder-gray-400",
-              "box-border leading-normal", // Critical
-              uploadingCount > 0 && "opacity-75",
-            )}
-            id={id}
-            placeholder={placeholder}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            spellCheck
-            wrap="soft"
-            disabled={uploadingCount > 0}
-          />
+          {/* Comment Box */}
+          <div className="bg-gray-900 p-2">
+            <textarea
+              className={cn(
+                "block min-h-[180px] w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
+                "focus:ring-1 focus:ring-green-500 focus:outline-none",
+                "dark:bg-gray-900 dark:text-white",
+                "placeholder-gray-500 dark:placeholder-gray-400",
+                "box-border border border-gray-600 leading-normal",
+                "custom-scrollbar",
+                uploadingCount > 0 && "opacity-75",
+              )}
+              id={id}
+              placeholder={placeholder}
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
+              spellCheck
+              wrap="soft"
+              disabled={uploadingCount > 0}
+            />
+          </div>
 
           {/* Upload Button & Drag Hint */}
-          <div className="absolute top-2 right-2">
-            <label className="relative inline-block cursor-pointer">
-              {/* Hidden native file input */}
-              <input
-                className="absolute inset-0 z-10 cursor-pointer opacity-0"
-                type="file"
-                accept="image/*"
-                multiple
-                disabled={uploadingCount > 0}
-                onChange={handleFileSelect}
-              />
-
-              {/* Custom button — looks like GitHub */}
-              <span
-                className={cn(
-                  "inline-flex cursor-pointer items-center rounded px-3 py-1 text-xs font-medium text-white transition",
-                  uploadingCount > 0
-                    ? "cursor-not-allowed bg-gray-500"
-                    : "bg-green-600 hover:bg-green-700",
-                )}
-              >
-                {uploadingCount > 0
-                  ? `Uploading... (${uploadingCount})`
-                  : "Upload Images"}
-              </span>
-            </label>
-          </div>
-
-          <div className="absolute bottom-2 left-2 text-xs text-gray-500 dark:text-gray-400">
-            Drag images here or click upload
-          </div>
+          <div className="absolute top-2 right-2"></div>
         </div>
       ) : (
         <div
           className={cn(
-            "relative h-[300px] overflow-auto bg-gray-50 p-4 text-sm dark:bg-gray-900",
+            "relative max-h-[800px] min-h-[196px] overflow-auto bg-gray-50 p-6 text-sm dark:bg-gray-900",
+            "custom-scrollbar",
             activeTab !== "preview" && "hidden md:block md:opacity-50",
           )}
           dangerouslySetInnerHTML={{ __html: preview }}
@@ -259,15 +247,42 @@ export default function GitHubMessageEditor({
       )}
 
       {/* Markdown Help (GitHub-style) */}
-      <div className="col-span-full border-t border-gray-200 bg-gray-50 px-3 py-2 text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
-        <a
-          className="font-medium hover:underline"
-          href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Styling with Markdown is supported
-        </a>
+      <div className="col-span-full flex justify-between gap-4 border-t border-gray-700 bg-gray-800 px-3 py-2 text-xs text-white">
+        <label className="relative inline-block w-full cursor-pointer hover:underline">
+          {/* Hidden native file input */}
+          <input
+            className="absolute inset-0 z-10 cursor-pointer opacity-0"
+            type="file"
+            accept=".gif,.jpeg,.jpg,.mov,.mp4,.png,.gz,.log,.md,.txt,.yaml,.yml,.zip"
+            multiple
+            disabled={uploadingCount > 0}
+            onChange={handleFileSelect}
+          />
+
+          {/* Custom button — looks like GitHub */}
+          <span>
+            {uploadingCount > 0
+              ? `Uploading... (${uploadingCount})`
+              : "Paste, drop, or click to add files."}
+          </span>
+        </label>
+        <span>
+          <a
+            className="text-white hover:text-green-600"
+            href="https://docs.github.com/en/get-started/writing-on-github/basic-writing-and-formatting-syntax"
+          >
+            <svg
+              fill="currentColor"
+              aria-hidden="true"
+              height="18"
+              viewBox="0 0 16 16"
+              version="1.1"
+              width="18"
+            >
+              <path d="M14.85 3c.63 0 1.15.52 1.14 1.15v7.7c0 .63-.51 1.15-1.15 1.15H1.15C.52 13 0 12.48 0 11.84V4.15C0 3.52.52 3 1.15 3ZM9 11V5H7L5.5 7 4 5H2v6h2V8l1.5 1.92L7 8v3Zm2.99.5L14.5 8H13V5h-2v3H9.5Z"></path>
+            </svg>
+          </a>
+        </span>
       </div>
     </div>
   );

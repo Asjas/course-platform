@@ -1,11 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
-import { formatDistance, formatRelative } from "date-fns";
+import { formatRelative } from "date-fns";
 import { CheckIcon, CircleDotIcon, CopyIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
+import SupportCommentForm from "~/components/forms/create-support-comment-form.tsx";
 import Loading from "~/components/loading";
-import { renderMarkdown } from "~/lib/markdown";
+import SupportComment from "~/components/support-comment.tsx";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
@@ -26,7 +27,6 @@ export const Route = createFileRoute("/support/$supportTicket/")({
 function SupportTicketIndexPage() {
   const params = useParams({ from: "/support/$supportTicket/" });
 
-  const [ticketContent, setTicketContent] = useState("");
   const [copied, setCopied] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -35,22 +35,6 @@ function SupportTicketIndexPage() {
       ticketId: params.supportTicket,
     }),
   );
-
-  useEffect(() => {
-    let isMounted = true;
-
-    (async () => {
-      const html = await renderMarkdown(ticket?.description);
-
-      if (isMounted) {
-        setTicketContent(html);
-      }
-    })();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [ticket]);
 
   if (isLoading) {
     return <Loading />;
@@ -76,7 +60,7 @@ function SupportTicketIndexPage() {
   }
 
   return (
-    <div className="mx-auto mt-10 w-full max-w-7xl">
+    <div className="mx-auto mt-10 mb-20 w-full max-w-7xl">
       <div className="mt-4 flex justify-end gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
         <button
           className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
@@ -126,64 +110,66 @@ function SupportTicketIndexPage() {
           </button>
         )}
       </div>
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-white md:text-3xl">
-            {ticket.title}
-          </h1>
-          <p className="mt-2 text-sm text-gray-400">{ticket.id}</p>
-          <div className="mt-2 flex items-center gap-2 border-b border-gray-600 pb-2 text-white">
-            <div
-              className={cn(
-                "flex items-center rounded-2xl px-2.5 py-1.5",
-                ticket.status === "open" ? "bg-green-700" : "bg-red-700",
-              )}
-            >
-              <CircleDotIcon size={20} />
-              {ticket.status === "open" ? (
-                <span className="ml-2 text-sm font-medium">Open</span>
-              ) : (
-                <span className="ml-2 text-sm font-medium">Closed</span>
-              )}
+
+      {/* Ticket status */}
+      <div className="mt-4 flex flex-col gap-4">
+        <div className="sm:flex sm:items-center">
+          <div className="sm:flex-auto">
+            <h1 className="text-lg font-semibold text-white md:text-3xl">
+              {ticket.title}
+            </h1>
+            <p className="mt-2 text-[16px] text-gray-400">#{ticket.id}</p>
+            <div className="mt-4 flex items-center gap-2 border-b border-gray-600 pb-4 text-white">
+              <div
+                className={cn(
+                  "flex items-center rounded-2xl px-2.5 py-1.5",
+                  ticket.status === "open" ? "bg-green-700" : "bg-red-700",
+                )}
+              >
+                <CircleDotIcon size={20} />
+                {ticket.status === "open" ? (
+                  <span className="ml-2 text-sm font-medium">Open</span>
+                ) : (
+                  <span className="ml-2 text-sm font-medium">Closed</span>
+                )}
+              </div>
+              <p className="text-sm font-[300] text-gray-200">
+                <span className="font-semibold">{ticket.user.name}</span> opened
+                this ticket{" "}
+                {formatRelative(new Date(ticket.createdAt), new Date())}
+                <span> · </span>
+                <span>{ticket.comments.length} comments</span>
+              </p>
             </div>
-            <p className="text-sm font-extralight text-gray-200">
-              <span className="font-semibold">{ticket.user.name}</span> opened
-              this ticket{" "}
-              {formatRelative(new Date(ticket.createdAt), new Date())}
-              <span> · </span>
-              <span>{ticket.comments.length} comments</span>
-            </p>
           </div>
         </div>
-      </div>
-      <div className="mt-4 rounded-md border border-white/10 bg-gray-800">
-        <div className="flex h-full items-center gap-2 rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">
-          {ticket.user.image && (
-            <img
-              className="h-6 w-6 rounded-full"
-              src={ticket.user.image}
-              alt={ticket.user.name}
-            />
-          )}{" "}
-          <p className="text-sm text-gray-400">
-            <span className="font-semibold text-white">{ticket.user.name}</span>{" "}
-            commented{" "}
-            <span
-              className="cursor-default hover:text-green-600"
-              title={formatRelative(new Date(ticket.createdAt), new Date())}
-            >
-              {formatDistance(new Date(ticket.createdAt), new Date())} ago
-            </span>
-          </p>
-        </div>
-        <div className="px-4 py-2">
-          <pre
-            className="mt-2 text-sm text-gray-300"
-            key={ticket.id}
-            dangerouslySetInnerHTML={{
-              __html: ticketContent,
-            }}
-          ></pre>
+
+        {/* Ticket comments */}
+        <SupportComment
+          ticket={ticket}
+          content={ticket.description}
+        />
+
+        {/* Comments go here */}
+        {ticket.comments.length > 0 ? (
+          <div className="text-center">
+            {ticket.comments.map((comment) => (
+              <SupportComment
+                key={comment.id}
+                ticket={ticket}
+                content={comment.comment}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 text-center">
+            <p>No comments yet.</p>
+          </div>
+        )}
+
+        {/* Comment box goes here */}
+        <div className="mt-15">
+          <SupportCommentForm ticketId={ticket.id} />
         </div>
       </div>
     </div>
