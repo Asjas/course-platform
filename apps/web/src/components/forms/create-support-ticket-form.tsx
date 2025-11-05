@@ -64,7 +64,7 @@ export default function NewSupportTicketForm() {
 
   return (
     <form
-      className="flex flex-col"
+      className="mt-10 flex flex-col"
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();

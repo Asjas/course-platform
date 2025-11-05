@@ -75,63 +75,63 @@ function SupportTicketIndexPage() {
   }
 
   return (
-    <div className="mx-auto mt-20 w-full max-w-7xl">
+    <div className="mx-auto mt-10 w-full max-w-7xl">
+      <div className="mt-4 flex justify-end gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
+        <button
+          className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+          onClick={() => {
+            queryClient.invalidateQueries({
+              queryKey: trpc.supportTickets.getSupportTicketById.queryKey({
+                ticketId: ticket.id,
+              }),
+            });
+
+            setRefreshing(true);
+            setTimeout(() => setRefreshing(false), 1000);
+          }}
+        >
+          {refreshing ? "Refreshing..." : "Refresh"}
+        </button>
+        <Link
+          className="inline-flex items-center rounded-md bg-green-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+          to="/support"
+        >
+          Back to all tickets
+        </Link>
+        {copied ? (
+          <button
+            className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            title="Copied"
+          >
+            <CheckIcon
+              size={18}
+              color="green"
+            />
+          </button>
+        ) : (
+          <button
+            className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            title="Copy link"
+            onClick={() => {
+              const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
+              navigator.clipboard.writeText(ticketUrl);
+              toast.success("Ticket link copied to clipboard");
+
+              setCopied(true);
+              setTimeout(() => setCopied(false), 2000);
+            }}
+          >
+            <CopyIcon size={18} />
+          </button>
+        )}
+      </div>
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-white md:text-3xl">
-            Support Ticket
+            {ticket.title}
           </h1>
-          <p className="mt-2 text-sm text-gray-300">{ticket.id}</p>
+          <p className="mt-2 text-sm text-gray-400">{ticket.id}</p>
         </div>
-        <button className="mt-4 flex gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <button
-            className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
-            onClick={() => {
-              queryClient.invalidateQueries({
-                queryKey: trpc.supportTickets.getSupportTicketById.queryKey({
-                  ticketId: ticket.id,
-                }),
-              });
-
-              setRefreshing(true);
-              setTimeout(() => setRefreshing(false), 1000);
-            }}
-          >
-            {refreshing ? "Refreshing..." : "Refresh"}
-          </button>
-          <Link
-            className="inline-flex items-center rounded-md bg-green-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
-            to="/support"
-          >
-            Back to all tickets
-          </Link>
-          {copied ? (
-            <button
-              className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              title="Copied"
-            >
-              <CheckIcon
-                size={18}
-                color="green"
-              />
-            </button>
-          ) : (
-            <button
-              className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
-              title="Copy link"
-              onClick={() => {
-                const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
-                navigator.clipboard.writeText(ticketUrl);
-                toast.success("Ticket link copied to clipboard");
-
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-              }}
-            >
-              <CopyIcon size={18} />
-            </button>
-          )}
-        </button>
       </div>
       <div className="mt-10 rounded-md border border-white/10 bg-gray-800 shadow-sm">
         <div className="flex h-full items-center rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">

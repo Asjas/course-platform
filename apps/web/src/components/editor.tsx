@@ -231,7 +231,7 @@ export default function GitHubMessageEditor({
               {/* Custom button — looks like GitHub */}
               <span
                 className={cn(
-                  "inline-flex items-center rounded px-3 py-1 text-xs font-medium text-white transition",
+                  "inline-flex cursor-pointer items-center rounded px-3 py-1 text-xs font-medium text-white transition",
                   uploadingCount > 0
                     ? "cursor-not-allowed bg-gray-500"
                     : "bg-green-600 hover:bg-green-700",
