@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import FieldInfo from "~/components/field-info";
-import { queryClient } from "~/lib/query.client.ts";
+import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";

@@ -6,7 +6,7 @@ import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/editor";
 import FieldInfo from "~/components/field-info";
-import { queryClient } from "~/lib/query.client.ts";
+import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";

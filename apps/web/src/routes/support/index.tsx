@@ -2,7 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import Loading from "~/components/loading";
-import { useAuth } from "~/lib/auth.context.ts";
+import { useAuth } from "~/lib/auth.context";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/support/")({
