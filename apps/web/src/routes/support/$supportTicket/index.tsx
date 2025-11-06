@@ -119,7 +119,7 @@ function SupportTicketIndexPage() {
       </div>
 
       {/* Ticket status */}
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="mt-4 flex flex-col gap-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
             <h1 className="text-lg font-semibold text-white md:text-3xl">
@@ -160,7 +160,7 @@ function SupportTicketIndexPage() {
 
         {/* Comments go here */}
         {ticket.comments.length > 0 ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-8">
             {ticket.comments.map((comment) => (
               <SupportComment
                 key={comment.id}
