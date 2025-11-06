@@ -87,12 +87,12 @@ h6 {
 
 /* Inline code – exactly like GitHub */
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply rounded bg-gray-500/70 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
+  @apply rounded bg-gray-600/50 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
 }
 
 /* Make sure inline code inside paragraphs also gets styled */
 .prose p code {
-  @apply rounded bg-gray-500/70 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
+  @apply rounded bg-gray-600/50 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
 }
 
 /* Code blocks – container */
