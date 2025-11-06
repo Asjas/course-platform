@@ -2,6 +2,7 @@ import type { SupportTicketById } from "@apps/server/src/routers/support-tickets
 import { formatDistance, formatRelative } from "date-fns";
 import { useEffect, useState } from "react";
 import { renderMarkdown } from "~/lib/markdown.ts";
+import { cn } from "~/lib/utils.ts";
 
 export default function SupportComment({
   ticket,
@@ -51,15 +52,18 @@ export default function SupportComment({
           </span>
         </p>
       </div>
-      <div className="rounded-b-md bg-gray-900/65 px-4 py-2">
-        <pre
-          className="mt-2 text-sm text-white"
-          key={ticket.id}
-          dangerouslySetInnerHTML={{
-            __html: ticketContent,
-          }}
-        ></pre>
-      </div>
+      <div
+        className={cn(
+          "max-h-[800px] text-base",
+          "prose prose-sm prose-invert max-w-none p-6",
+          "rounded-b-md bg-gray-900 text-white",
+          "custom-scrollbar overflow-auto",
+        )}
+        key={ticket.id}
+        dangerouslySetInnerHTML={{
+          __html: ticketContent,
+        }}
+      ></div>
     </div>
   );
 }

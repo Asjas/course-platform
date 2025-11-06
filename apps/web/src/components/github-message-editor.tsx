@@ -845,7 +845,7 @@ export default function GitHubMessageEditor({
           <div className="bg-gray-900 p-2">
             <textarea
               className={cn(
-                "block min-h-[180px] w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
+                "size-to-fit block min-h-[180px] w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
                 "focus:ring-1 focus:ring-green-500 focus:outline-none",
                 "dark:bg-gray-900 dark:text-white",
                 "placeholder-gray-500 dark:placeholder-gray-400",
@@ -868,15 +868,17 @@ export default function GitHubMessageEditor({
           <div className="absolute top-2 right-2"></div>
         </div>
       ) : (
-        <div
-          className={cn(
-            "prose prose-sm prose-invert max-w-none p-6",
-            "bg-gray-900 text-white",
-            "custom-scrollbar overflow-auto",
-            activeTab !== "preview" && "hidden md:block md:opacity-50",
-          )}
-          dangerouslySetInnerHTML={{ __html: preview }}
-        />
+        <div className="custom-scrollbar max-h-[800px] min-h-[180px] overflow-auto bg-gray-900">
+          <div
+            className={cn(
+              "min-w-fit text-base",
+              "prose prose-sm prose-invert p-6",
+              "text-white",
+              "[&_code]:overflow-visible! [&_pre]:overflow-visible!",
+            )}
+            dangerouslySetInnerHTML={{ __html: preview }}
+          />
+        </div>
       )}
 
       {/* Markdown Help (GitHub-style) */}
