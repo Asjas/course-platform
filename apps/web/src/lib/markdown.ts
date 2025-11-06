@@ -16,7 +16,7 @@ export async function renderMarkdown(
     .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypeHighlight)
-    .use(rehypeStringify, { allowDangerousHtml: true });
+    .use(rehypeStringify);
 
   const result = await processor.process(markdown);
   const dirty = result.toString();

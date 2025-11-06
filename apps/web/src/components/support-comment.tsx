@@ -56,7 +56,7 @@ export default function SupportComment({
         className={cn(
           "max-h-[800px] text-base",
           "prose prose-sm prose-invert max-w-none p-6",
-          "rounded-b-md bg-gray-900 text-white",
+          "rounded-b-md bg-gray-900/55 text-white",
           "custom-scrollbar overflow-auto",
         )}
         key={ticket.id}
