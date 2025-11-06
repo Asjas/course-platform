@@ -121,7 +121,7 @@ export const supportTicketsRouter = router({
     .input(
       z.object({
         ticketId: z.string(),
-        comment: z.string().min(2).max(1000),
+        comment: z.string().min(2),
       }),
     )
     .use(isAuthenticated)

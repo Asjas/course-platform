@@ -868,7 +868,7 @@ export default function GitHubMessageEditor({
           <div className="absolute top-2 right-2"></div>
         </div>
       ) : (
-        <div className="custom-scrollbar max-h-[800px] min-h-[180px] overflow-auto bg-gray-900">
+        <div className="custom-scrollbar min-h-[180px] overflow-auto bg-gray-900">
           <div
             className={cn(
               "min-w-fit text-base",

@@ -9,7 +9,7 @@ import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils.ts";
 
 const formSchema = z.object({
-  comment: z.string().min(2).max(1000),
+  comment: z.string().min(2),
 });
 
 export default function SupportCommentForm({ ticketId }: { ticketId: string }) {

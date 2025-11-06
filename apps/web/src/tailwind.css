@@ -87,22 +87,22 @@ h6 {
 
 /* Inline code – exactly like GitHub */
 .prose :where(code):not(:where([class~="not-prose"] *)) {
-  @apply rounded bg-gray-800 font-['Berkeley_Mono'] text-sm font-bold text-white;
+  @apply rounded bg-gray-800/35 font-['Berkeley_Mono'] text-sm font-bold text-white;
 }
 
 /* Code blocks – container */
 .prose pre {
-  @apply relative my-4 rounded-lg bg-gray-800 p-0;
+  @apply relative my-4 rounded-lg bg-gray-800/35 p-0;
 }
 
 /* <pre><code> inside */
 .prose pre code {
-  @apply block p-4 leading-relaxed tracking-wider;
+  @apply block p-4 text-sm leading-relaxed font-bold tracking-wider;
   counter-reset: line;
 }
 
 .prose pre code * {
-  @apply font-['Berkeley_Mono'] text-sm font-bold tracking-wider;
+  @apply font-['Berkeley_Mono'] text-sm leading-relaxed font-bold tracking-wider;
 }
 
 @theme inline {
