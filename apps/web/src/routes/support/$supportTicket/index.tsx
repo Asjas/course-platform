@@ -1,12 +1,18 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
 import { formatRelative } from "date-fns";
-import { CheckIcon, CircleDotIcon, CopyIcon } from "lucide-react";
+import {
+  CheckIcon,
+  CircleDotIcon,
+  CopyIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import SupportCommentForm from "~/components/forms/create-support-comment-form.tsx";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment.tsx";
+import { useAuth } from "~/lib/auth.context.ts";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
@@ -26,6 +32,7 @@ export const Route = createFileRoute("/support/$supportTicket/")({
 
 function SupportTicketIndexPage() {
   const params = useParams({ from: "/support/$supportTicket/" });
+  const auth = useAuth();
 
   const [copied, setCopied] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -60,7 +67,7 @@ function SupportTicketIndexPage() {
   }
 
   return (
-    <div className="mx-auto mt-10 mb-20 w-full max-w-7xl">
+    <div className="mx-auto mt-20 mb-20 w-full max-w-7xl md:mt-10">
       <div className="mt-4 flex justify-end gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
         <button
           className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
@@ -148,16 +155,18 @@ function SupportTicketIndexPage() {
         <SupportComment
           ticket={ticket}
           content={ticket.description}
+          date={ticket.createdAt}
         />
 
         {/* Comments go here */}
         {ticket.comments.length > 0 ? (
-          <div className="text-center">
+          <div className="flex flex-col gap-4">
             {ticket.comments.map((comment) => (
               <SupportComment
                 key={comment.id}
                 ticket={ticket}
                 content={comment.comment}
+                date={comment.createdAt}
               />
             ))}
           </div>
@@ -168,9 +177,21 @@ function SupportTicketIndexPage() {
         )}
 
         {/* Comment box goes here */}
-        <div className="mt-15">
-          <SupportCommentForm ticketId={ticket.id} />
-        </div>
+        {auth.session ? (
+          <div className="mt-15">
+            <SupportCommentForm ticketId={ticket.id} />
+          </div>
+        ) : (
+          <div className="mt-10 flex w-full flex-col items-center">
+            <p className="mt-4 flex items-center gap-2 text-sm text-gray-300">
+              <TriangleAlertIcon
+                size={22}
+                color="orange"
+              />
+              Sign in to add a comment.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

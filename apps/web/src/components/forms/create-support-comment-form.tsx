@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/github-message-editor";
+import { queryClient } from "~/lib/query.client.ts";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils.ts";
 
@@ -32,6 +33,17 @@ export default function SupportCommentForm({ ticketId }: { ticketId: string }) {
           comment,
           ticketId,
         });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.supportTickets.getSupportTicketById.queryKey({
+            ticketId: ticketId,
+          }),
+        });
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+        });
+
         form.reset();
         toast.success("Comment added successfully!");
       } catch (error) {
@@ -81,7 +93,7 @@ export default function SupportCommentForm({ ticketId }: { ticketId: string }) {
             type="submit"
             disabled={!isDirty}
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting ? "Adding comment..." : "Add comment"}
           </button>
           <button
             className={cn(

@@ -101,6 +101,12 @@ function SupportIndexPage() {
                       Status
                     </th>
                     <th
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
+                      scope="col"
+                    >
+                      Comments
+                    </th>
+                    <th
                       className="py-3.5 pr-4 pl-3 sm:pr-3"
                       scope="col"
                     >
@@ -163,6 +169,11 @@ function SupportIndexPage() {
                           </span>
                         )}
                       </td>
+                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-white">
+                          {ticket.comments.length}
+                        </span>
+                      </td>
                       <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         {auth.hasRole("admin") ||
                         auth.session?.user.id === ticket.userId ? (
@@ -187,7 +198,7 @@ function SupportIndexPage() {
                         ) : (
                           <Link
                             className="text-green-600 no-underline hover:text-green-500 hover:underline"
-                            to="/support/$supportTicket/edit"
+                            to="/support/$supportTicket"
                             params={{ supportTicket: ticket.id }}
                           >
                             View

@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 
 export type AllSupportTickets = Awaited<
@@ -15,7 +15,10 @@ const preparedGetAllSupportTickets = db.query.supportTicket
   .findMany({
     with: {
       user: true,
-      comments: true,
+      comments: {
+        orderBy: (comment) => [asc(comment.createdAt)],
+        with: { user: true },
+      },
       assignedToUser: true,
       course: true,
       module: true,
@@ -26,14 +29,12 @@ const preparedGetAllSupportTickets = db.query.supportTicket
 
 const preparedGetSupportTicketById = db.query.supportTicket
   .findFirst({
-    where: (supportTicket) => eq(supportTicket.id, sql.placeholder("ticketId")),
+    where: (t) => eq(t.id, sql.placeholder("ticketId")),
     with: {
       user: true,
       comments: {
-        orderBy: (comment) => [sql`${comment.createdAt} DESC`],
-        with: {
-          user: true,
-        },
+        orderBy: (comment) => [asc(comment.createdAt)],
+        with: { user: true },
       },
       assignedToUser: true,
       course: true,

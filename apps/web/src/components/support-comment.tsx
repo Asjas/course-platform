@@ -6,9 +6,11 @@ import { renderMarkdown } from "~/lib/markdown.ts";
 export default function SupportComment({
   ticket,
   content,
+  date,
 }: {
   ticket: NonNullable<SupportTicketById>;
   content: string;
+  date: Date;
 }) {
   const [ticketContent, setTicketContent] = useState("");
 
@@ -43,9 +45,9 @@ export default function SupportComment({
           commented{" "}
           <span
             className="cursor-default hover:text-green-600"
-            title={formatRelative(new Date(ticket.createdAt), new Date())}
+            title={formatRelative(new Date(date), new Date())}
           >
-            {formatDistance(new Date(ticket.createdAt), new Date())} ago
+            {formatDistance(new Date(date), new Date())} ago
           </span>
         </p>
       </div>
