@@ -9,7 +9,7 @@ import { unified } from "unified";
 export async function renderMarkdown(
   markdown: string | undefined,
 ): Promise<string> {
-  if (!markdown) return "";
+  if (!markdown) return "<p>Nothing to preview</p>";
 
   const processor = unified()
     .use(remarkParse)

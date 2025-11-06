@@ -200,614 +200,636 @@ export default function GitHubMessageEditor({
           </button>
         </div>
 
-        {/* Action Bar */}
-        <div className="mt-1 mr-3 flex items-center text-xs text-white">
-          <button
-            className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add header text"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
+        {activeTab === "write" ? (
+          <div className="mt-1 mr-3 flex items-center text-xs text-white">
+            {/* Action Bar */}
+            <button
+              className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add header text"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-              const cursorPos = textarea.selectionStart;
-              const headerMarkdown = "### ";
+                const cursorPos = textarea.selectionStart;
+                const headerMarkdown = "### ";
 
-              onChange(
-                (prev) =>
-                  prev.slice(0, cursorPos) +
-                  headerMarkdown +
-                  prev.slice(cursorPos),
-              );
+                onChange(
+                  (prev) =>
+                    prev.slice(0, cursorPos) +
+                    headerMarkdown +
+                    prev.slice(cursorPos),
+                );
 
-              // Restore cursor
-              requestAnimationFrame(() => {
-                textarea.focus();
-                const newPos = cursorPos + headerMarkdown.length;
-                textarea.setSelectionRange(newPos, newPos);
-              });
-            }}
-          >
-            <HeadingIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add bold text"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
+                // Restore cursor
+                requestAnimationFrame(() => {
+                  textarea.focus();
+                  const newPos = cursorPos + headerMarkdown.length;
+                  textarea.setSelectionRange(newPos, newPos);
+                });
+              }}
+            >
+              <HeadingIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add bold text"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
 
-              // Function to find the nearest ** markers around the cursor/selection
-              const findBoldMarkers = () => {
-                let startIndex = start;
-                let endIndex = end;
+                // Function to find the nearest ** markers around the cursor/selection
+                const findBoldMarkers = () => {
+                  let startIndex = start;
+                  let endIndex = end;
 
-                // Look backward for opening **
-                while (
-                  startIndex >= 2 &&
-                  value.slice(startIndex - 2, startIndex) !== "**"
-                ) {
-                  startIndex--;
-                }
+                  // Look backward for opening **
+                  while (
+                    startIndex >= 2 &&
+                    value.slice(startIndex - 2, startIndex) !== "**"
+                  ) {
+                    startIndex--;
+                  }
 
-                // Look forward for closing **
-                while (
-                  endIndex <= value.length - 2 &&
-                  value.slice(endIndex, endIndex + 2) !== "**"
-                ) {
-                  endIndex++;
-                }
+                  // Look forward for closing **
+                  while (
+                    endIndex <= value.length - 2 &&
+                    value.slice(endIndex, endIndex + 2) !== "**"
+                  ) {
+                    endIndex++;
+                  }
 
-                // Verify we found valid ** markers
+                  // Verify we found valid ** markers
+                  if (
+                    startIndex >= 2 &&
+                    value.slice(startIndex - 2, startIndex) === "**" &&
+                    endIndex <= value.length - 2 &&
+                    value.slice(endIndex, endIndex + 2) === "**"
+                  ) {
+                    return {
+                      isBold: true,
+                      boldStart: startIndex - 2,
+                      boldEnd: endIndex + 2,
+                      innerText: value.slice(startIndex, endIndex),
+                    };
+                  }
+
+                  return { isBold: false };
+                };
+
+                const { isBold, boldStart, boldEnd, innerText } =
+                  findBoldMarkers();
+
                 if (
-                  startIndex >= 2 &&
-                  value.slice(startIndex - 2, startIndex) === "**" &&
-                  endIndex <= value.length - 2 &&
-                  value.slice(endIndex, endIndex + 2) === "**"
+                  isBold &&
+                  boldStart !== undefined &&
+                  boldEnd !== undefined
                 ) {
-                  return {
-                    isBold: true,
-                    boldStart: startIndex - 2,
-                    boldEnd: endIndex + 2,
-                    innerText: value.slice(startIndex, endIndex),
-                  };
+                  // Remove bold markdown, keep the inner text
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, boldStart) +
+                      innerText +
+                      prev.slice(boldEnd),
+                  );
+
+                  // Set cursor position after the inner text
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const newPos = boldStart + innerText.length;
+                    textarea.setSelectionRange(newPos, newPos);
+                  });
+                } else {
+                  // Add bold markdown
+                  const boldMarkdown = `**${selectedText}**`;
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + boldMarkdown + prev.slice(end),
+                  );
+
+                  // Place cursor after the first **
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const newPos = start + 2;
+                    textarea.setSelectionRange(newPos, newPos);
+                  });
                 }
+              }}
+            >
+              <BoldIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add italic text"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-                return { isBold: false };
-              };
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
 
-              const { isBold, boldStart, boldEnd, innerText } =
-                findBoldMarkers();
+                // Function to find the nearest _ markers around the cursor/selection
+                const findItalicMarkers = () => {
+                  let startIndex = start;
+                  let endIndex = end;
 
-              if (isBold && boldStart !== undefined && boldEnd !== undefined) {
-                // Remove bold markdown, keep the inner text
-                onChange(
-                  (prev) =>
-                    prev.slice(0, boldStart) + innerText + prev.slice(boldEnd),
-                );
+                  // Look backward for opening _
+                  while (startIndex >= 1 && value[startIndex - 1] !== "_") {
+                    startIndex--;
+                  }
 
-                // Set cursor position after the inner text
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const newPos = boldStart + innerText.length;
-                  textarea.setSelectionRange(newPos, newPos);
-                });
-              } else {
-                // Add bold markdown
-                const boldMarkdown = `**${selectedText}**`;
-                onChange(
-                  (prev) =>
-                    prev.slice(0, start) + boldMarkdown + prev.slice(end),
-                );
+                  // Look forward for closing _
+                  while (
+                    endIndex <= value.length - 1 &&
+                    value[endIndex] !== "_"
+                  ) {
+                    endIndex++;
+                  }
 
-                // Place cursor after the first **
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const newPos = start + 2;
-                  textarea.setSelectionRange(newPos, newPos);
-                });
-              }
-            }}
-          >
-            <BoldIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add italic text"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
+                  // Verify we found valid _ markers
+                  if (
+                    startIndex >= 1 &&
+                    value[startIndex - 1] === "_" &&
+                    endIndex <= value.length - 1 &&
+                    value[endIndex] === "_" &&
+                    // Ensure the _ markers are not part of a larger markdown (e.g., __bold__)
+                    (startIndex - 2 < 0 || value[startIndex - 2] !== "_") &&
+                    (endIndex + 1 >= value.length ||
+                      value[endIndex + 1] !== "_")
+                  ) {
+                    return {
+                      isItalic: true,
+                      italicStart: startIndex - 1,
+                      italicEnd: endIndex + 1,
+                      innerText: value.slice(startIndex, endIndex),
+                    };
+                  }
 
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
+                  return { isItalic: false };
+                };
 
-              // Function to find the nearest _ markers around the cursor/selection
-              const findItalicMarkers = () => {
-                let startIndex = start;
-                let endIndex = end;
+                const { isItalic, italicStart, italicEnd, innerText } =
+                  findItalicMarkers();
 
-                // Look backward for opening _
-                while (startIndex >= 1 && value[startIndex - 1] !== "_") {
-                  startIndex--;
-                }
-
-                // Look forward for closing _
-                while (
-                  endIndex <= value.length - 1 &&
-                  value[endIndex] !== "_"
-                ) {
-                  endIndex++;
-                }
-
-                // Verify we found valid _ markers
                 if (
-                  startIndex >= 1 &&
-                  value[startIndex - 1] === "_" &&
-                  endIndex <= value.length - 1 &&
-                  value[endIndex] === "_" &&
-                  // Ensure the _ markers are not part of a larger markdown (e.g., __bold__)
-                  (startIndex - 2 < 0 || value[startIndex - 2] !== "_") &&
-                  (endIndex + 1 >= value.length || value[endIndex + 1] !== "_")
+                  isItalic &&
+                  italicStart !== undefined &&
+                  italicEnd !== undefined
                 ) {
-                  return {
-                    isItalic: true,
-                    italicStart: startIndex - 1,
-                    italicEnd: endIndex + 1,
-                    innerText: value.slice(startIndex, endIndex),
-                  };
-                }
-
-                return { isItalic: false };
-              };
-
-              const { isItalic, italicStart, italicEnd, innerText } =
-                findItalicMarkers();
-
-              if (
-                isItalic &&
-                italicStart !== undefined &&
-                italicEnd !== undefined
-              ) {
-                // Remove italic markdown, keep the inner text
-                onChange(
-                  (prev) =>
-                    prev.slice(0, italicStart) +
-                    innerText +
-                    prev.slice(italicEnd),
-                );
-
-                // Set cursor position after the inner text
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const newPos = italicStart + innerText.length;
-                  textarea.setSelectionRange(newPos, newPos);
-                });
-              } else {
-                // Add italic markdown
-                const italicMarkdown = `_${selectedText}_`;
-                onChange(
-                  (prev) =>
-                    prev.slice(0, start) + italicMarkdown + prev.slice(end),
-                );
-
-                // Place cursor after the first _
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const newPos = start + 1;
-                  textarea.setSelectionRange(newPos, newPos);
-                });
-              }
-            }}
-          >
-            <ItalicIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Insert a quote"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
-
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
-
-              // Helper: Check if cursor is at start of line
-              const isAtStartOfLine = start === 0 || value[start - 1] === "\n";
-
-              // Helper: Get the previous line (if any)
-              const getPreviousLine = () => {
-                if (start === 0) return null;
-                const before = value.slice(0, start);
-                const lines = before.split("\n");
-                const prevLine = lines[lines.length - 1];
-                return prevLine.trim() === "" ? null : prevLine; // ignore blank lines
-              };
-
-              const prevLine = getPreviousLine();
-
-              if (selectedText) {
-                // === CASE 1: Selected text → wrap in blockquote ===
-                const quotedText = selectedText
-                  .split("\n")
-                  .map((line) => `> ${line}`)
-                  .join("\n");
-
-                const before = isAtStartOfLine ? "" : "\n";
-                const after =
-                  end < value.length && value[end] !== "\n" ? "\n\n" : "\n";
-
-                const insertText = before + quotedText + after;
-
-                onChange(
-                  (prev) => prev.slice(0, start) + insertText + prev.slice(end),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  textarea.setSelectionRange(
-                    start + insertText.length,
-                    start + insertText.length,
+                  // Remove italic markdown, keep the inner text
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, italicStart) +
+                      innerText +
+                      prev.slice(italicEnd),
                   );
-                });
-              } else {
-                // === CASE 2: No selection → insert new blockquote ===
-                let insertText = "> ";
 
-                // If previous line is a blockquote, add blank line
-                if (prevLine && prevLine.startsWith(">")) {
-                  insertText = "\n\n> ";
-                } else if (!isAtStartOfLine) {
-                  insertText = "\n> ";
+                  // Set cursor position after the inner text
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const newPos = italicStart + innerText.length;
+                    textarea.setSelectionRange(newPos, newPos);
+                  });
+                } else {
+                  // Add italic markdown
+                  const italicMarkdown = `_${selectedText}_`;
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + italicMarkdown + prev.slice(end),
+                  );
+
+                  // Place cursor after the first _
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const newPos = start + 1;
+                    textarea.setSelectionRange(newPos, newPos);
+                  });
                 }
+              }}
+            >
+              <ItalicIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Insert a quote"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-                onChange(
-                  (prev) => prev.slice(0, start) + insertText + prev.slice(end),
-                );
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
 
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const cursorPos = start + insertText.indexOf("> ") + 2;
-                  textarea.setSelectionRange(cursorPos, cursorPos);
-                });
-              }
-            }}
-          >
-            <TextQuoteIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add inline code"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
+                // Helper: Check if cursor is at start of line
+                const isAtStartOfLine =
+                  start === 0 || value[start - 1] === "\n";
 
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
+                // Helper: Get the previous line (if any)
+                const getPreviousLine = () => {
+                  if (start === 0) return null;
+                  const before = value.slice(0, start);
+                  const lines = before.split("\n");
+                  const prevLine = lines[lines.length - 1];
+                  return prevLine.trim() === "" ? null : prevLine; // ignore blank lines
+                };
 
-              // Find nearest ` markers around the cursor/selection
-              const findCodeMarkers = () => {
-                let startIndex = start;
-                let endIndex = end;
+                const prevLine = getPreviousLine();
 
-                // Look backward for opening `
-                while (startIndex > 0 && value[startIndex - 1] !== "`") {
-                  startIndex--;
+                if (selectedText) {
+                  // === CASE 1: Selected text → wrap in blockquote ===
+                  const quotedText = selectedText
+                    .split("\n")
+                    .map((line) => `> ${line}`)
+                    .join("\n");
+
+                  const before = isAtStartOfLine ? "" : "\n";
+                  const after =
+                    end < value.length && value[end] !== "\n" ? "\n\n" : "\n";
+
+                  const insertText = before + quotedText + after;
+
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + insertText + prev.slice(end),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(
+                      start + insertText.length,
+                      start + insertText.length,
+                    );
+                  });
+                } else {
+                  // === CASE 2: No selection → insert new blockquote ===
+                  let insertText = "> ";
+
+                  // If previous line is a blockquote, add blank line
+                  if (prevLine && prevLine.startsWith(">")) {
+                    insertText = "\n\n> ";
+                  } else if (!isAtStartOfLine) {
+                    insertText = "\n> ";
+                  }
+
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + insertText + prev.slice(end),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const cursorPos = start + insertText.indexOf("> ") + 2;
+                    textarea.setSelectionRange(cursorPos, cursorPos);
+                  });
                 }
+              }}
+            >
+              <TextQuoteIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add inline code"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-                // Look forward for closing `
-                while (endIndex < value.length && value[endIndex] !== "`") {
-                  endIndex++;
-                }
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
 
-                // Verify we found valid ` markers and they are not part of larger ```
+                // Find nearest ` markers around the cursor/selection
+                const findCodeMarkers = () => {
+                  let startIndex = start;
+                  let endIndex = end;
+
+                  // Look backward for opening `
+                  while (startIndex > 0 && value[startIndex - 1] !== "`") {
+                    startIndex--;
+                  }
+
+                  // Look forward for closing `
+                  while (endIndex < value.length && value[endIndex] !== "`") {
+                    endIndex++;
+                  }
+
+                  // Verify we found valid ` markers and they are not part of larger ```
+                  if (
+                    startIndex > 0 &&
+                    value[startIndex - 1] === "`" &&
+                    endIndex < value.length &&
+                    value[endIndex] === "`" &&
+                    // Ensure not part of code block (```)
+                    (startIndex - 2 < 0 ||
+                      value.slice(startIndex - 2, startIndex) !== "``") &&
+                    (endIndex + 1 >= value.length ||
+                      value.slice(endIndex, endIndex + 2) !== "``")
+                  ) {
+                    return {
+                      isCode: true,
+                      codeStart: startIndex - 1,
+                      codeEnd: endIndex + 1,
+                      innerText: value.slice(startIndex, endIndex),
+                    };
+                  }
+
+                  return { isCode: false };
+                };
+
+                const { isCode, codeStart, codeEnd, innerText } =
+                  findCodeMarkers();
+
                 if (
-                  startIndex > 0 &&
-                  value[startIndex - 1] === "`" &&
-                  endIndex < value.length &&
-                  value[endIndex] === "`" &&
-                  // Ensure not part of code block (```)
-                  (startIndex - 2 < 0 ||
-                    value.slice(startIndex - 2, startIndex) !== "``") &&
-                  (endIndex + 1 >= value.length ||
-                    value.slice(endIndex, endIndex + 2) !== "``")
+                  isCode &&
+                  codeStart !== undefined &&
+                  codeEnd !== undefined
                 ) {
-                  return {
-                    isCode: true,
-                    codeStart: startIndex - 1,
-                    codeEnd: endIndex + 1,
-                    innerText: value.slice(startIndex, endIndex),
-                  };
+                  // Remove code markdown
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, codeStart) +
+                      innerText +
+                      prev.slice(codeEnd),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const newPos = codeStart + innerText.length;
+                    textarea.setSelectionRange(newPos, newPos);
+                  });
+                } else {
+                  // Add code markdown
+                  const codeMarkdown = selectedText
+                    ? `\`${selectedText}\``
+                    : `\`\``;
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + codeMarkdown + prev.slice(end),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const cursorPos = start + (selectedText ? 1 : 1);
+                    textarea.setSelectionRange(
+                      cursorPos,
+                      cursorPos + (selectedText ? selectedText.length : 0),
+                    );
+                  });
+                }
+              }}
+            >
+              <CodeIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add a link"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
+
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
+
+                // Find nearest [text](url) that fully contains the selection
+                const findLink = () => {
+                  let openIdx = start;
+                  while (openIdx > 0 && value[openIdx - 1] !== "[") openIdx--;
+                  if (openIdx === 0 || value[openIdx - 1] !== "[") return null;
+
+                  const bracketClose = value.indexOf("]", openIdx);
+                  if (bracketClose === -1) return null;
+                  if (value[bracketClose + 1] !== "(") return null;
+
+                  const parenClose = value.indexOf(")", bracketClose + 2);
+                  if (parenClose === -1) return null;
+
+                  const innerText = value.slice(openIdx, bracketClose);
+                  const url = value.slice(bracketClose + 2, parenClose);
+
+                  const linkStart = openIdx - 1;
+                  const linkEnd = parenClose + 1;
+
+                  // Only consider it "default" if text is empty AND URL is exactly "url"
+                  const isDefault = innerText === "" && url === "url";
+
+                  // Only return if selection is fully inside
+                  if (start >= linkStart && end <= linkEnd && isDefault) {
+                    return { linkStart, linkEnd, isDefault: true };
+                  }
+
+                  return null;
+                };
+
+                const link = findLink();
+
+                // Only remove if it's the exact default `[](url)`
+                if (link) {
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, link.linkStart) + prev.slice(link.linkEnd),
+                  );
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(link.linkStart, link.linkStart);
+                  });
+                  return;
                 }
 
-                return { isCode: false };
-              };
-
-              const { isCode, codeStart, codeEnd, innerText } =
-                findCodeMarkers();
-
-              if (isCode && codeStart !== undefined && codeEnd !== undefined) {
-                // Remove code markdown
+                // Otherwise: insert fresh link (even if inside a modified link)
+                const markdown = selectedText
+                  ? `[${selectedText}](url)`
+                  : `[](url)`;
                 onChange(
-                  (prev) =>
-                    prev.slice(0, codeStart) + innerText + prev.slice(codeEnd),
+                  (prev) => prev.slice(0, start) + markdown + prev.slice(end),
                 );
 
                 requestAnimationFrame(() => {
                   textarea.focus();
-                  const newPos = codeStart + innerText.length;
-                  textarea.setSelectionRange(newPos, newPos);
+                  textarea.setSelectionRange(start + 1, start + 1); // cursor in []
                 });
-              } else {
-                // Add code markdown
-                const codeMarkdown = selectedText
-                  ? `\`${selectedText}\``
-                  : `\`\``;
-                onChange(
-                  (prev) =>
-                    prev.slice(0, start) + codeMarkdown + prev.slice(end),
-                );
+              }}
+            >
+              <LinkIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add a bulleted list"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const cursorPos = start + (selectedText ? 1 : 1);
-                  textarea.setSelectionRange(
-                    cursorPos,
-                    cursorPos + (selectedText ? selectedText.length : 0),
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selectedText = value.slice(start, end);
+
+                // Helper: Check if cursor is at start of line
+                const isAtStartOfLine =
+                  start === 0 || value[start - 1] === "\n";
+
+                // Helper: Get the previous line (if any)
+                const getPreviousLine = () => {
+                  if (start === 0) return null;
+                  const before = value.slice(0, start);
+                  const lines = before.split("\n");
+                  const prevLine = lines[lines.length - 1];
+                  return prevLine.trim() === "" ? null : prevLine; // ignore blank lines
+                };
+
+                const prevLine = getPreviousLine();
+
+                if (selectedText) {
+                  // === CASE 1: Selected text → wrap in bulleted list ===
+                  const quotedText = selectedText
+                    .split("\n")
+                    .map((line) => `- ${line}`)
+                    .join("\n");
+
+                  const before = isAtStartOfLine ? "" : "\n";
+                  const after =
+                    end < value.length && value[end] !== "\n" ? "\n\n" : "\n";
+
+                  const insertText = before + quotedText + after;
+
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + insertText + prev.slice(end),
                   );
-                });
-              }
-            }}
-          >
-            <CodeIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add a link"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
 
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(
+                      start + insertText.length,
+                      start + insertText.length,
+                    );
+                  });
+                } else {
+                  // === CASE 2: No selection → insert new bullet ===
+                  let insertText = "- ";
 
-              // Find nearest [text](url) that fully contains the selection
-              const findLink = () => {
-                let openIdx = start;
-                while (openIdx > 0 && value[openIdx - 1] !== "[") openIdx--;
-                if (openIdx === 0 || value[openIdx - 1] !== "[") return null;
+                  // If previous line is a bullet, add blank line
+                  if (prevLine && prevLine.startsWith("-")) {
+                    insertText = "\n\n- ";
+                  } else if (!isAtStartOfLine) {
+                    insertText = "\n- ";
+                  }
 
-                const bracketClose = value.indexOf("]", openIdx);
-                if (bracketClose === -1) return null;
-                if (value[bracketClose + 1] !== "(") return null;
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + insertText + prev.slice(end),
+                  );
 
-                const parenClose = value.indexOf(")", bracketClose + 2);
-                if (parenClose === -1) return null;
-
-                const innerText = value.slice(openIdx, bracketClose);
-                const url = value.slice(bracketClose + 2, parenClose);
-
-                const linkStart = openIdx - 1;
-                const linkEnd = parenClose + 1;
-
-                // Only consider it "default" if text is empty AND URL is exactly "url"
-                const isDefault = innerText === "" && url === "url";
-
-                // Only return if selection is fully inside
-                if (start >= linkStart && end <= linkEnd && isDefault) {
-                  return { linkStart, linkEnd, isDefault: true };
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const cursorPos = start + insertText.indexOf("- ") + 2;
+                    textarea.setSelectionRange(cursorPos, cursorPos);
+                  });
                 }
+              }}
+            >
+              <ListIcon size={16} />
+            </button>
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              title="Add a numbered list"
+              onClick={() => {
+                const textarea = textareaRef.current;
+                if (!textarea) return;
 
-                return null;
-              };
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const value = textarea.value;
+                const selected = value.slice(start, end);
 
-              const link = findLink();
+                // ---------- 1. Helper: line-range of the cursor ----------
+                const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+                const lineEnd = value.indexOf("\n", start);
+                const currentLine =
+                  lineEnd === -1
+                    ? value.slice(lineStart)
+                    : value.slice(lineStart, lineEnd);
 
-              // Only remove if it's the exact default `[](url)`
-              if (link) {
-                onChange(
-                  (prev) =>
-                    prev.slice(0, link.linkStart) + prev.slice(link.linkEnd),
-                );
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  textarea.setSelectionRange(link.linkStart, link.linkStart);
-                });
-                return;
-              }
+                // ---------- 2. Detect if the current line is already a numbered item ----------
+                const numberMatch = currentLine.match(/^\d+\.\s/);
+                const isNumbered = !!numberMatch;
 
-              // Otherwise: insert fresh link (even if inside a modified link)
-              const markdown = selectedText
-                ? `[${selectedText}](url)`
-                : `[](url)`;
-              onChange(
-                (prev) => prev.slice(0, start) + markdown + prev.slice(end),
-              );
+                // ---------- 3. Toggle logic ----------
+                if (selected) {
+                  // ---- selection spans multiple lines → wrap each line ----
+                  const lines = selected.split("\n");
+                  const toggled = lines
+                    .map((l, i) =>
+                      l.match(/^\d+\.\s/)
+                        ? l.replace(/^\d+\.\s/, "")
+                        : `${i + 1}. ${l}`,
+                    )
+                    .join("\n");
 
-              requestAnimationFrame(() => {
-                textarea.focus();
-                textarea.setSelectionRange(start + 1, start + 1); // cursor in []
-              });
-            }}
-          >
-            <LinkIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add a bulleted list"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
+                  const before =
+                    start === 0 || value[start - 1] === "\n" ? "" : "\n";
+                  const after =
+                    end === value.length || value[end] === "\n" ? "" : "\n";
 
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selectedText = value.slice(start, end);
+                  const insert = before + toggled + after;
 
-              // Helper: Check if cursor is at start of line
-              const isAtStartOfLine = start === 0 || value[start - 1] === "\n";
-
-              // Helper: Get the previous line (if any)
-              const getPreviousLine = () => {
-                if (start === 0) return null;
-                const before = value.slice(0, start);
-                const lines = before.split("\n");
-                const prevLine = lines[lines.length - 1];
-                return prevLine.trim() === "" ? null : prevLine; // ignore blank lines
-              };
-
-              const prevLine = getPreviousLine();
-
-              if (selectedText) {
-                // === CASE 1: Selected text → wrap in bulleted list ===
-                const quotedText = selectedText
-                  .split("\n")
-                  .map((line) => `- ${line}`)
-                  .join("\n");
-
-                const before = isAtStartOfLine ? "" : "\n";
-                const after =
-                  end < value.length && value[end] !== "\n" ? "\n\n" : "\n";
-
-                const insertText = before + quotedText + after;
-
-                onChange(
-                  (prev) => prev.slice(0, start) + insertText + prev.slice(end),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  textarea.setSelectionRange(
-                    start + insertText.length,
-                    start + insertText.length,
+                  onChange(
+                    (prev) => prev.slice(0, start) + insert + prev.slice(end),
                   );
-                });
-              } else {
-                // === CASE 2: No selection → insert new bullet ===
-                let insertText = "- ";
 
-                // If previous line is a bullet, add blank line
-                if (prevLine && prevLine.startsWith("-")) {
-                  insertText = "\n\n- ";
-                } else if (!isAtStartOfLine) {
-                  insertText = "\n- ";
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(
+                      start + before.length,
+                      start + before.length + toggled.length,
+                    );
+                  });
+                } else if (isNumbered) {
+                  // ---- cursor on a numbered item → remove it ----
+                  const removeStart = lineStart;
+                  const removeEnd = lineStart + numberMatch[0].length; // "1. "
+
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, removeStart) +
+                      prev.slice(removeEnd) +
+                      prev.slice(lineEnd),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    textarea.setSelectionRange(removeStart, removeStart);
+                  });
+                } else {
+                  // ---- no selection & not numbered → insert "1. " ----
+                  const insertText =
+                    start === 0 || value[start - 1] === "\n" ? "1. " : "\n1. ";
+
+                  onChange(
+                    (prev) =>
+                      prev.slice(0, start) + insertText + prev.slice(end),
+                  );
+
+                  requestAnimationFrame(() => {
+                    textarea.focus();
+                    const cursor = start + insertText.length;
+                    textarea.setSelectionRange(cursor, cursor);
+                  });
                 }
-
-                onChange(
-                  (prev) => prev.slice(0, start) + insertText + prev.slice(end),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const cursorPos = start + insertText.indexOf("- ") + 2;
-                  textarea.setSelectionRange(cursorPos, cursorPos);
-                });
-              }
-            }}
-          >
-            <ListIcon size={16} />
-          </button>
-          <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-            title="Add a numbered list"
-            onClick={() => {
-              const textarea = textareaRef.current;
-              if (!textarea) return;
-
-              const start = textarea.selectionStart;
-              const end = textarea.selectionEnd;
-              const value = textarea.value;
-              const selected = value.slice(start, end);
-
-              // ---------- 1. Helper: line-range of the cursor ----------
-              const lineStart = value.lastIndexOf("\n", start - 1) + 1;
-              const lineEnd = value.indexOf("\n", start);
-              const currentLine =
-                lineEnd === -1
-                  ? value.slice(lineStart)
-                  : value.slice(lineStart, lineEnd);
-
-              // ---------- 2. Detect if the current line is already a numbered item ----------
-              const numberMatch = currentLine.match(/^\d+\.\s/);
-              const isNumbered = !!numberMatch;
-
-              // ---------- 3. Toggle logic ----------
-              if (selected) {
-                // ---- selection spans multiple lines → wrap each line ----
-                const lines = selected.split("\n");
-                const toggled = lines
-                  .map((l, i) =>
-                    l.match(/^\d+\.\s/)
-                      ? l.replace(/^\d+\.\s/, "")
-                      : `${i + 1}. ${l}`,
-                  )
-                  .join("\n");
-
-                const before =
-                  start === 0 || value[start - 1] === "\n" ? "" : "\n";
-                const after =
-                  end === value.length || value[end] === "\n" ? "" : "\n";
-
-                const insert = before + toggled + after;
-
-                onChange(
-                  (prev) => prev.slice(0, start) + insert + prev.slice(end),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  textarea.setSelectionRange(
-                    start + before.length,
-                    start + before.length + toggled.length,
-                  );
-                });
-              } else if (isNumbered) {
-                // ---- cursor on a numbered item → remove it ----
-                const removeStart = lineStart;
-                const removeEnd = lineStart + numberMatch[0].length; // "1. "
-
-                onChange(
-                  (prev) =>
-                    prev.slice(0, removeStart) +
-                    prev.slice(removeEnd) +
-                    prev.slice(lineEnd),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  textarea.setSelectionRange(removeStart, removeStart);
-                });
-              } else {
-                // ---- no selection & not numbered → insert "1. " ----
-                const insertText =
-                  start === 0 || value[start - 1] === "\n" ? "1. " : "\n1. ";
-
-                onChange(
-                  (prev) => prev.slice(0, start) + insertText + prev.slice(end),
-                );
-
-                requestAnimationFrame(() => {
-                  textarea.focus();
-                  const cursor = start + insertText.length;
-                  textarea.setSelectionRange(cursor, cursor);
-                });
-              }
-            }}
-          >
-            <ListOrderedIcon size={16} />
-          </button>
-        </div>
+              }}
+            >
+              <ListOrderedIcon size={16} />
+            </button>
+          </div>
+        ) : null}
       </div>
 
       {activeTab === "write" ? (
@@ -848,8 +870,9 @@ export default function GitHubMessageEditor({
       ) : (
         <div
           className={cn(
-            "relative max-h-[800px] min-h-[196px] overflow-auto bg-gray-50 p-6 text-sm dark:bg-gray-900",
-            "custom-scrollbar",
+            "prose prose-sm prose-invert max-w-none p-6",
+            "bg-gray-900 text-white",
+            "custom-scrollbar overflow-auto",
             activeTab !== "preview" && "hidden md:block md:opacity-50",
           )}
           dangerouslySetInnerHTML={{ __html: preview }}

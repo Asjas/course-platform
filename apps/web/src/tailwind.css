@@ -67,6 +67,22 @@ h6 {
   font-style: normal;
 }
 
+/* Inline code – exactly like GitHub */
+.prose :where(code):not(:where([class~="not-prose"] *)) {
+  @apply rounded bg-gray-700 font-mono text-xs text-white;
+}
+
+/* Code blocks – container */
+.prose pre {
+  @apply relative my-4 overflow-x-auto rounded-lg p-0;
+}
+
+/* <pre><code> inside */
+.prose pre code {
+  @apply block p-4 font-mono text-sm leading-relaxed;
+  counter-reset: line;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
