@@ -414,7 +414,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>Polar</strong> – Processes payments securely as
+                      <strong>Polar</strong> - Processes payments securely as
                       Merchant of Record. They handle your payment details
                       directly and act as a GDPR-compliant processor. Their{" "}
                       <a
@@ -435,7 +435,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>Netcup</strong> – Hosts our servers. They process
+                      <strong>Netcup</strong> - Hosts our servers. They process
                       data but do not access personal information.
                     </div>
                   </li>
@@ -466,7 +466,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>Self-hosted Ackee (Analytics)</strong> – Tracks
+                      <strong>Self-hosted Ackee (Analytics)</strong> - Tracks
                       anonymized usage data to improve our platform. No personal
                       data is shared externally.
                     </div>
@@ -479,7 +479,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>YouTube</strong> – Hosts course videos. May
+                      <strong>YouTube</strong> - Hosts course videos. May
                       collect analytics on video interactions. See their{" "}
                       <a
                         className="text-green-500 underline"
@@ -498,7 +498,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>Self-hosted Bugsink</strong> – Monitors errors to
+                      <strong>Self-hosted Bugsink</strong> - Monitors errors to
                       enhance platform reliability. May include limited user
                       context. No external sharing.
                     </div>
