@@ -47,13 +47,108 @@ function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Last Updated: September 1, 2025 • Version 1.0
+              Effective Date: November 7, 2025 • Version 1.2
             </p>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              We comply with South Africa&apos;s POPIA, the EU&apos;s GDPR, the
-              UK-GDPR, California&apos;s CCPA/CPRA, Brazil&apos;s LGPD,
-              Australia&apos;s APPs, and other applicable data protection laws.
+              We comply with South Africa&apos;s <strong>POPIA</strong>, the
+              EU&apos;s <strong>GDPR</strong>, the UK-GDPR, California&apos;s{" "}
+              <strong>CCPA/CPRA</strong>, Brazil&apos;s <strong>LGPD</strong>,
+              Australia&apos;s <strong>APPs</strong>, and other applicable data
+              protection laws.
             </p>
+          </div>
+
+          {/* Version History */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <HistoryIcon
+                className="mr-2"
+                size={40}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+              />
+              Policy Version History
+            </h2>
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+              We maintain a transparent change log.
+            </p>
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr>
+                    <th className="p-2 text-left font-semibold">Version</th>
+                    <th className="p-2 text-left font-semibold">
+                      Effective Date
+                    </th>
+                    <th className="p-2 text-left font-semibold">
+                      Summary of Changes
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-700 dark:text-gray-300">
+                  {/* Latest Version */}
+                  <tr className="border-t bg-green-50 dark:border-gray-600 dark:bg-green-900/20">
+                    <td className="p-2 font-medium">1.2</td>
+                    <td className="p-2">November 7, 2025</td>
+                    <td className="p-2">
+                      <ul className="list-inside list-disc space-y-1 text-xs">
+                        <li>
+                          Added <strong>POPIA compliance section</strong> with
+                          Section 34 (children)
+                        </li>
+                        <li>
+                          Introduced <strong>sub-processors table</strong> with
+                          DPA status
+                        </li>
+                        <li>
+                          Updated <strong>data retention</strong>: backups now
+                          30 days
+                        </li>
+                        <li>
+                          Clarified <strong>Netcup DPA + SCCs signed</strong>
+                        </li>
+                        <li>
+                          Added <strong>EU Data Act</strong> portability &
+                          switching rights
+                        </li>
+                        <li>
+                          Enhanced <strong>children&apos;s privacy</strong> (age
+                          16+ per POPIA)
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+
+                  {/* Previous Version */}
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">1.1</td>
+                    <td className="p-2">November 7, 2025</td>
+                    <td className="p-2">
+                      <ul className="list-inside list-disc space-y-1 text-xs">
+                        <li>
+                          Added <strong>sub-processors table</strong>
+                        </li>
+                        <li>
+                          Updated <strong>retention for backups</strong>
+                        </li>
+                        <li>
+                          Added <strong>Netcup privacy link</strong>
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+
+                  {/* Initial Version */}
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">1.0</td>
+                    <td className="p-2">September 1, 2025</td>
+                    <td className="p-2">
+                      Initial policy release. Established baseline for GDPR,
+                      POPIA, CCPA compliance.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Introduction Card */}
@@ -74,7 +169,6 @@ function PrivacyPage() {
               the measures we take to secure it.
             </p>
           </div>
-
           {/* Scope & Compliance */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -92,8 +186,17 @@ function PrivacyPage() {
               have additional CCPA rights. South African users may lodge
               complaints with the Information Regulator.
             </p>
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>POPIA Compliance:</strong> As responsible party, we
+              process data lawfully under Sections 11-12. Students under 18
+              require parental consent (Section 34).
+            </p>
+            <p className="mt-4 text-gray-700 dark:text-gray-300">
+              <strong>Data Minimization:</strong> We collect only what's
+              necessary for the purposes described, and anonymize where
+              possible.
+            </p>
           </div>
-
           {/* What We Collect */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -143,7 +246,6 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
-
           {/* How We Use It */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -225,7 +327,6 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
-
           {/* Data Sharing */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -372,7 +473,6 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
-
           {/* Data Security */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -417,9 +517,17 @@ function PrivacyPage() {
                 />
                 Payments processed by Polar (Merchant of Record)
               </li>
+              <li className="flex items-start">
+                <CheckIcon
+                  className="mr-2"
+                  size={20}
+                  color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+                />
+                In case of a data breach, we notify affected users and
+                regulators within 72 hours (GDPR) or as required by law.
+              </li>
             </ul>
           </div>
-
           {/* Your Rights Over Your Data */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -433,45 +541,70 @@ function PrivacyPage() {
 
             <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
               <li>
-                <strong>Access</strong> - Request a copy of your personal data.
+                <strong>Access</strong> - Get a copy of your data in a
+                structured format (CSV/JSON).
               </li>
               <li>
-                <strong>Rectification</strong> - Ask us to correct inaccurate
-                information.
+                <strong>Rectification</strong> - Correct inaccurate or
+                incomplete data.
               </li>
               <li>
-                <strong>Erasure</strong> (“Right to be forgotten”) - Request
-                deletion of your data.
+                <strong>Erasure</strong> - Delete your account and data (except
+                tax records).
               </li>
               <li>
-                <strong>Restriction</strong> - Limit how we process your data.
+                <strong>Restriction</strong> - Pause processing during disputes.
               </li>
               <li>
-                <strong>Portability</strong> - Receive your data in a
-                transferable format.
+                <strong>Portability & Switching (EU Data Act)</strong> - Export
+                your data in JSON or migrate to another platform.
               </li>
               <li>
-                <strong>Objection</strong> - Opt-out of processing based on
-                legitimate interests.
+                <strong>Objection & Complaint (POPIA Section 23)</strong> -
+                Object to processing; complain to Information Regulator within
+                20 days.
               </li>
               <li>
-                <strong>Withdraw Consent</strong> - Withdraw any consents
-                you&apos;ve given.
+                <strong>Withdraw Consent</strong> - Revoke any consent given.
               </li>
               <li>
-                <strong>CCPA/CPRA:</strong> Right to know, delete, opt-out of
-                sale, and non-discrimination.
+                <strong>CCPA/CPRA & US States</strong> - Know, delete, opt-out
+                of sale/sharing, non-discrimination (includes 2025 laws in MN,
+                NE).
               </li>
               <li>
-                <strong>POPIA:</strong> Correct/erase your data and lodge
-                complaints with the Information Regulator.
+                <strong>POPIA</strong> - Correct, erase, complain to Information
+                Regulator.
               </li>
             </ul>
+
+            <div className="mt-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
+              <p className="text-sm text-blue-900 dark:text-blue-200">
+                <strong>Response Time:</strong> We respond within{" "}
+                <strong>30 days</strong> (POPIA/GDPR). Extensions up to{" "}
+                <strong>90 days</strong> with notice. Appeal refusals to our DPO
+                or regulator.
+              </p>
+            </div>
+
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-              To exercise any right, contact our Data Protection Officer below.
+              Submit via{" "}
+              <a
+                className="text-green-500 underline"
+                href="mailto:privacy@codewizard.training"
+              >
+                privacy@codewizard.training
+              </a>{" "}
+              or our{" "}
+              <a
+                className="text-green-500 underline"
+                href="/dsr"
+              >
+                Data Request Form
+              </a>
+              .
             </p>
           </div>
-
           {/* Cookies */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -484,33 +617,53 @@ function PrivacyPage() {
             </h2>
 
             <p className="mb-4 text-gray-700 dark:text-gray-300">
-              We use essential cookies to maintain your login session and save
-              preferences. We avoid third-party tracking cookies.
+              We use minimal, privacy-first cookies. No third-party trackers.
             </p>
 
-            <div className="space-y-4">
-              <div>
-                <h3 className="mb-2 font-semibold text-gray-900 dark:text-white">
-                  Essential Cookies:
-                </h3>
-                <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
-                  <li>
-                    <strong>Essential:</strong> Session, CSRF, preferences.
-                  </li>
-                  <li>
-                    <strong>Analytics:</strong> Ackee (anonymized). Opt-out via
-                    settings.
-                  </li>
-                </ul>
-              </div>
-
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                You can manage or withdraw consent anytime via the cookie banner
-                or in your account settings.
-              </p>
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr>
+                    <th className="p-2 text-left">Cookie</th>
+                    <th className="p-2 text-left">Purpose</th>
+                    <th className="p-2 text-left">Duration</th>
+                    <th className="p-2 text-left">Type</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-700 dark:text-gray-300">
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">session_id</td>
+                    <td className="p-2">Maintain login</td>
+                    <td className="p-2">Session</td>
+                    <td className="p-2">Essential</td>
+                  </tr>
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">csrf_token</td>
+                    <td className="p-2">Prevent attacks</td>
+                    <td className="p-2">Session</td>
+                    <td className="p-2">Essential</td>
+                  </tr>
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">ackee_optout</td>
+                    <td className="p-2">Respect analytics opt-out</td>
+                    <td className="p-2">2 years</td>
+                    <td className="p-2">Functional</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          </div>
 
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <strong>Opt-out:</strong> Disable in{" "}
+              <a
+                className="text-green-500 underline"
+                href="/settings/privacy"
+              >
+                Settings → Privacy
+              </a>
+              .
+            </p>
+          </div>
           {/* Data Retention */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -522,27 +675,44 @@ function PrivacyPage() {
               Data Retention Period
             </h2>
 
-            {/* ...existing intro... */}
+            {/* Data Retention */}
             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
               Retention by Category
             </h3>
-            <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
+            <ul className="ml-4 flex list-inside list-disc flex-col gap-2 space-y-1 text-gray-700 dark:text-gray-300">
               <li>
-                <strong>Account Data:</strong> Until deletion request + 7 years
-                for legal.
+                <strong className="text-white">Account Data:</strong> Deleted
+                from active systems with immediate effect upon account closure;
+                backups purged within 30 days (POPIA/GDPR/CCPA compliant).
               </li>
               <li>
-                <strong>Usage &amp; Analytics:</strong> 2 years (anonymized).
+                <strong className="text-white">
+                  Invoicing and Purchase Records:
+                </strong>{" "}
+                Retained <strong>7 years</strong> minimum from tax year-end per{" "}
+                <em>SARS Tax Administration Act</em> and VAT Act.
               </li>
               <li>
-                <strong>Support Requests:</strong> Personal identifiers removed
-                on account deletion; anonymized support transcripts retained
-                indefinitely so other users can publicly access and benefit from
-                common solutions.
+                <strong className="text-white">Usage &amp; Analytics:</strong>{" "}
+                Anonymized and kept up to <strong>2 years</strong> for service
+                improvement.
+              </li>
+              <li>
+                <strong className="text-white">Support Requests:</strong>{" "}
+                Personal data removed on deletion; anonymized transcripts
+                retained indefinitely for public knowledge base (legitimate
+                interest).
               </li>
             </ul>
-          </div>
 
+            <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
+              We retain personal data only as long as necessary for the purposes
+              stated in this policy or as required by law (GDPR Art. 5(1)(e)).
+              Where legal obligations apply (e.g., 7-year tax retention under
+              South African law), we restrict processing and securely isolate
+              data until deletion is permitted.
+            </p>
+          </div>
           {/* Children's Privacy */}
           <div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-8 dark:border-yellow-800 dark:bg-yellow-900/20">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -554,12 +724,12 @@ function PrivacyPage() {
               Protecting Children&apos;s Privacy
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              Our platform is not intended for users under 16. If we discover
-              data from a user under 16 without parental consent, we will delete
-              it promptly. Contact us for assistance.
+              Our platform is not intended for users under <strong>16</strong>{" "}
+              (POPIA) or <strong>13</strong> (COPPA, USA). We do not knowingly
+              collect data from children. If discovered without verifiable
+              parental consent, we delete it immediately.
             </p>
           </div>
-
           {/* International Data Transfers */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -571,12 +741,99 @@ function PrivacyPage() {
               Cross-Border Data Transfers
             </h2>
             <p className="text-gray-700 dark:text-gray-300">
-              We use Standard Contractual Clauses (SCCs) and Binding Corporate
-              Rules to protect transfers between South Africa, the EU/UK, and
-              other regions. Where adequacy decisions exist, we rely on them.
+              Data may be transferred to the EU, Switzerland, and the US. We
+              rely on:
+              <ul className="mt-2 ml-6 list-disc space-y-1">
+                <li>
+                  <strong>Standard Contractual Clauses (SCCs)</strong> – Legally
+                  binding agreements with our providers (e.g., Netcup, Polar)
+                </li>
+                <li>
+                  <strong>Adequacy Decisions</strong> – For countries like
+                  Switzerland with EU-recognized privacy laws
+                </li>
+              </ul>
             </p>
           </div>
-
+          {/* Sub-Processors */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
+              Sub-Processors
+            </h2>
+            <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">
+              We only use sub-processors under strict Data Processing Agreements
+              (DPAs).
+            </p>
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse text-sm">
+                <thead className="bg-gray-100 dark:bg-gray-700">
+                  <tr>
+                    <th className="p-2 text-left">Provider</th>
+                    <th className="p-2 text-left">Purpose</th>
+                    <th className="p-2 text-left">Data</th>
+                    <th className="p-2 text-left">Location</th>
+                    <th className="p-2 text-left">Safeguard</th>
+                  </tr>
+                </thead>
+                <tbody className="text-gray-700 dark:text-gray-300">
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">
+                      <a
+                        className="text-green-500 underline hover:no-underline"
+                        href="https://polar.sh/legal/privacy"
+                      >
+                        Polar
+                      </a>
+                    </td>
+                    <td className="p-2">Payments</td>
+                    <td className="p-2">Name, email, transaction</td>
+                    <td className="p-2">EU</td>
+                    <td className="p-2">DPA + SCCs</td>
+                  </tr>
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">
+                      <a
+                        className="text-green-500 underline hover:no-underline"
+                        href="https://proton.me/legal/privacy"
+                      >
+                        Proton Mail
+                      </a>
+                    </td>
+                    <td className="p-2">Email delivery</td>
+                    <td className="p-2">Email, name</td>
+                    <td className="p-2">Switzerland</td>
+                    <td className="p-2">DPA + Adequacy</td>
+                  </tr>
+                  <tr className="border-t dark:border-gray-600">
+                    <td className="p-2">
+                      <a
+                        className="text-green-500 underline hover:no-underline"
+                        href="https://www.netcup.com/en/contact/data-privacy"
+                      >
+                        Netcup
+                      </a>
+                    </td>
+                    <td className="p-2">Hosting</td>
+                    <td className="p-2">All (encrypted)</td>
+                    <td className="p-2">Germany</td>
+                    <td className="p-2">DPA + SCCs (Signed: Nov 2025)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p className="mt-2 text-sm text-gray-600 italic dark:text-gray-400">
+              Self-hosted tools (Ackee, Bugsink) are under our full control and
+              not shared with third parties.
+            </p>
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              <strong>GDPR Compliance:</strong> We act as{" "}
+              <em>data controller</em>. All processors operate under signed DPAs
+              with SCCs. EU users have full rights under Articles 15-22.
+            </p>
+            <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
+              Last reviewed: November 07, 2025
+            </p>
+          </div>
           {/* Supervisory Authorities */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
@@ -615,7 +872,6 @@ function PrivacyPage() {
               </li>
             </ul>
           </div>
-
           {/* Changes to Policy */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -632,7 +888,6 @@ function PrivacyPage() {
               use indicates acceptance of the updated policy.
             </p>
           </div>
-
           {/* Additional Terms */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -664,7 +919,6 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
-
           {/* Contact Section */}
           <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ChangeEmailForm from "~/components/forms/change-email-form";
 import ChangePasswordForm from "~/components/forms/change-password-form";
+import DeleteAccountForm from "~/components/forms/delete-account-form.tsx";
 
 export const Route = createFileRoute("/_authenticated/account")({
   component: AuthenticatedAccountPage,
@@ -18,6 +19,10 @@ function AuthenticatedAccountPage() {
       <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-8">
         <ChangePasswordForm />
         <ChangeEmailForm />
+      </div>
+      <hr />
+      <div className="mt-10">
+        <DeleteAccountForm />
       </div>
     </div>
   );
