@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   BabyIcon,
+  BotIcon,
   BugIcon,
   ChartBarIncreasingIcon,
   ChartNoAxesColumnIcon,
@@ -47,7 +48,7 @@ function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Effective Date: November 7, 2025 • Version 1.3
+              Effective Date: November 7, 2025 • Version 1.4
             </p>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               We comply with South Africa&apos;s <strong>POPIA</strong>, the
@@ -87,6 +88,30 @@ function PrivacyPage() {
                 <tbody className="text-gray-700 dark:text-gray-300">
                   {/* Latest Version */}
                   <tr className="border-t bg-green-50 dark:border-gray-600 dark:bg-green-900/20">
+                    <td className="p-2 font-medium">1.4</td>
+                    <td className="p-2">November 7, 2025</td>
+                    <td className="p-2">
+                      <ul className="list-inside list-disc space-y-1 text-xs">
+                        <li>
+                          Added <strong>AI and Automated Decisions</strong>{" "}
+                          section (GDPR Art. 22 compliance).
+                        </li>
+                        <li>
+                          Clarified <strong>data storage locations</strong> in
+                          Cross-Border Transfers.
+                        </li>
+                        <li>
+                          Introduced <strong>Glossary</strong> for key terms.
+                        </li>
+                        <li>
+                          Updated Polar.sh DPA language for clarity (automatic
+                          via ToS).
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  {/* Previous Version */}
+                  <tr className="border-t dark:border-gray-600">
                     <td className="p-2 font-medium">1.3</td>
                     <td className="p-2">November 7, 2025</td>
                     <td className="p-2">
@@ -422,7 +447,7 @@ function PrivacyPage() {
                       size={24}
                     />
                     <div>
-                      <strong>Proton Email</strong> – Delivers course updates,
+                      <strong>Proton Email</strong> - Delivers course updates,
                       authentication emails, and newsletters. See their{" "}
                       <a
                         className="text-green-500 underline"
@@ -554,10 +579,12 @@ function PrivacyPage() {
                   color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                 />
                 In case of a data breach, we notify affected users and
-                regulators within 72 hours (GDPR) or as required by law.
+                regulators within 72 hours (GDPR) or without unreasonable delay
+                (CCPA).
               </li>
             </ul>
           </div>
+
           {/* Your Rights Over Your Data */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -689,6 +716,24 @@ function PrivacyPage() {
               .
             </p>
           </div>
+
+          {/* AI and Automated Decisions */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <BotIcon
+                className="mr-2"
+                size={40}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+              />
+              AI and Automated Decisions
+            </h2>
+            <p className="text-gray-700 dark:text-gray-300">
+              We do not currently use AI for automated decisions affecting
+              users. If introduced, we will notify you and provide opt-out
+              options per GDPR Art. 22.
+            </p>
+          </div>
+
           {/* Data Retention */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -738,6 +783,7 @@ function PrivacyPage() {
               data until deletion is permitted.
             </p>
           </div>
+
           {/* Children's Privacy */}
           <div className="mb-8 rounded-lg border border-yellow-200 bg-yellow-50 p-8 dark:border-yellow-800 dark:bg-yellow-900/20">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -755,6 +801,7 @@ function PrivacyPage() {
               parental consent, we delete it immediately.
             </p>
           </div>
+
           {/* International Data Transfers */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -770,14 +817,20 @@ function PrivacyPage() {
               rely on:
               <ul className="mt-2 ml-6 list-disc space-y-1">
                 <li>
-                  <strong>Standard Contractual Clauses (SCCs)</strong> – Legally
-                  binding agreements with our providers (e.g., Netcup, Polar)
+                  <strong>Standard Contractual Clauses (SCCs)</strong> - Legally
+                  binding agreements with our providers (e.g., Netcup)
                 </li>
                 <li>
-                  <strong>Adequacy Decisions</strong> – For countries like
+                  <strong>Adequacy Decisions</strong> - For countries like
                   Switzerland with EU-recognized privacy laws
                 </li>
               </ul>
+            </p>
+            <p className="mt-4 text-gray-700 dark:text-gray-300">
+              Data is stored in secure facilities in the EU (Germany via Netcup)
+              and Switzerland (Proton Mail). Transfers to the US (if any) use
+              SCCs. We do not store data in non-adequate jurisdictions without
+              safeguards.
             </p>
           </div>
 
@@ -926,6 +979,7 @@ function PrivacyPage() {
               </li>
             </ul>
           </div>
+
           {/* Changes to Policy */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -942,6 +996,7 @@ function PrivacyPage() {
               use indicates acceptance of the updated policy.
             </p>
           </div>
+
           {/* Additional Terms */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -973,6 +1028,33 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
+
+          {/* Glossary Section */}
+          <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
+            <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
+              <InfoIcon
+                className="mr-2"
+                size={40}
+                color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
+              />
+              Glossary
+            </h2>
+            <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
+              <li>
+                <strong>Personal Data:</strong> Any info identifying you (e.g.,
+                name, email).
+              </li>
+              <li>
+                <strong>Processor:</strong> Third-party handling data on our
+                behalf (e.g., Polar, Netcup, Proton Mail).
+              </li>
+              <li>
+                <strong>SCCs:</strong> Standard Contractual Clauses for secure
+                data transfers.
+              </li>
+            </ul>
+          </div>
+
           {/* Contact Section */}
           <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
