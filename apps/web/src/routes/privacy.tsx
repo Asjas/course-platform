@@ -47,7 +47,7 @@ function PrivacyPage() {
               Privacy Policy
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Effective Date: November 7, 2025 • Version 1.2
+              Effective Date: November 7, 2025 • Version 1.3
             </p>
             <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               We comply with South Africa&apos;s <strong>POPIA</strong>, the
@@ -87,6 +87,19 @@ function PrivacyPage() {
                 <tbody className="text-gray-700 dark:text-gray-300">
                   {/* Latest Version */}
                   <tr className="border-t bg-green-50 dark:border-gray-600 dark:bg-green-900/20">
+                    <td className="p-2 font-medium">1.3</td>
+                    <td className="p-2">November 7, 2025</td>
+                    <td className="p-2">
+                      <ul className="list-inside list-disc space-y-1 text-xs">
+                        <li>
+                          Updated Data Sharing Practices for Polar.sh GDPR
+                          compliance via Terms of Service (no explicit
+                          contract).
+                        </li>
+                      </ul>
+                    </td>
+                  </tr>
+                  <tr className="border-t dark:border-gray-600">
                     <td className="p-2 font-medium">1.2</td>
                     <td className="p-2">November 7, 2025</td>
                     <td className="p-2">
@@ -142,8 +155,12 @@ function PrivacyPage() {
                     <td className="p-2">1.0</td>
                     <td className="p-2">September 1, 2025</td>
                     <td className="p-2">
-                      Initial policy release. Established baseline for GDPR,
-                      POPIA, CCPA compliance.
+                      <ul className="list-inside list-disc space-y-1 text-xs">
+                        <li>
+                          Initial policy release. Established baseline for GDPR,
+                          POPIA, CCPA compliance.
+                        </li>
+                      </ul>
                     </td>
                   </tr>
                 </tbody>
@@ -169,6 +186,7 @@ function PrivacyPage() {
               the measures we take to secure it.
             </p>
           </div>
+
           {/* Scope & Compliance */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -186,7 +204,7 @@ function PrivacyPage() {
               have additional CCPA rights. South African users may lodge
               complaints with the Information Regulator.
             </p>
-            <p className="text-gray-700 dark:text-gray-300">
+            <p className="mt-2 text-gray-700 dark:text-gray-300">
               <strong>POPIA Compliance:</strong> As responsible party, we
               process data lawfully under Sections 11-12. Students under 18
               require parental consent (Section 34).
@@ -197,6 +215,7 @@ function PrivacyPage() {
               possible.
             </p>
           </div>
+
           {/* What We Collect */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -228,7 +247,7 @@ function PrivacyPage() {
                 <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
                   <li>Pages visited on our platform</li>
                   <li>Courses and lessons completed</li>
-                  <li>Time spent on various features</li>
+
                   <li>Interaction patterns with platform tools</li>
                 </ul>
               </div>
@@ -246,6 +265,7 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
+
           {/* How We Use It */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -327,6 +347,7 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
+
           {/* Data Sharing */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -358,44 +379,50 @@ function PrivacyPage() {
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Third-Party Service Providers
                 </h3>
-                <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                  <li className="flex items-start">
+
+                {/* ----  Grid layout – icon fixed, text flexible  ---- */}
+                <ul className="grid gap-3 text-gray-700 dark:text-gray-300">
+                  {/* Polar */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <CreditCardIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>Polar</strong> - Processes payments securely. They
-                      handle your payment details directly. See their{" "}
+                      <strong>Polar</strong> – Processes payments securely as
+                      Merchant of Record. They handle your payment details
+                      directly and act as a GDPR-compliant processor. Their{" "}
                       <a
                         className="text-green-500 underline"
                         href="https://polar.sh/legal/privacy"
                       >
                         Privacy Policy
-                      </a>
-                      .
+                      </a>{" "}
+                      includes a built-in DPA with SCCs, automatically applied
+                      when you use their service.
                     </div>
                   </li>
-                  <li className="flex items-start">
+
+                  {/* Netcup */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <ServerIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>Netcup</strong> - Hosts our servers. They process
+                      <strong>Netcup</strong> – Hosts our servers. They process
                       data but do not access personal information.
                     </div>
                   </li>
-                  <li className="flex items-start">
+
+                  {/* Proton Email */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <MailIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>Proton Email</strong> - Delivers course updates,
+                      <strong>Proton Email</strong> – Delivers course updates,
                       authentication emails, and newsletters. See their{" "}
                       <a
                         className="text-green-500 underline"
@@ -406,26 +433,28 @@ function PrivacyPage() {
                       .
                     </div>
                   </li>
-                  <li className="flex items-start">
+
+                  {/* Ackee */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <ChartBarIncreasingIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>Self-hosted Ackee (Analytics)</strong> - Tracks
+                      <strong>Self-hosted Ackee (Analytics)</strong> – Tracks
                       anonymized usage data to improve our platform. No personal
-                      data is shared externally..
+                      data is shared externally.
                     </div>
                   </li>
-                  <li className="flex items-start">
+
+                  {/* YouTube */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <YoutubeIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>YouTube</strong> - Hosts course videos. May
+                      <strong>YouTube</strong> – Hosts course videos. May
                       collect analytics on video interactions. See their{" "}
                       <a
                         className="text-green-500 underline"
@@ -436,14 +465,15 @@ function PrivacyPage() {
                       .
                     </div>
                   </li>
-                  <li className="flex items-start">
+
+                  {/* Bugsink */}
+                  <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <BugIcon
-                      className="mr-2"
+                      className="shrink-0 text-green-600"
                       size={24}
-                      color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                     />
                     <div>
-                      <strong>Self-hosted Bugsink</strong> - Monitors errors to
+                      <strong>Self-hosted Bugsink</strong> – Monitors errors to
                       enhance platform reliability. May include limited user
                       context. No external sharing.
                     </div>
@@ -605,6 +635,7 @@ function PrivacyPage() {
               .
             </p>
           </div>
+
           {/* Cookies */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -632,14 +663,8 @@ function PrivacyPage() {
                 </thead>
                 <tbody className="text-gray-700 dark:text-gray-300">
                   <tr className="border-t dark:border-gray-600">
-                    <td className="p-2">session_id</td>
+                    <td className="p-2">cw.session_token</td>
                     <td className="p-2">Maintain login</td>
-                    <td className="p-2">Session</td>
-                    <td className="p-2">Essential</td>
-                  </tr>
-                  <tr className="border-t dark:border-gray-600">
-                    <td className="p-2">csrf_token</td>
-                    <td className="p-2">Prevent attacks</td>
                     <td className="p-2">Session</td>
                     <td className="p-2">Essential</td>
                   </tr>
@@ -755,6 +780,7 @@ function PrivacyPage() {
               </ul>
             </p>
           </div>
+
           {/* Sub-Processors */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
@@ -788,7 +814,13 @@ function PrivacyPage() {
                     <td className="p-2">Payments</td>
                     <td className="p-2">Name, email, transaction</td>
                     <td className="p-2">EU</td>
-                    <td className="p-2">DPA + SCCs</td>
+                    <td className="p-2">
+                      DPA + SCCs
+                      <br />
+                      <span className="text-xs text-gray-500">
+                        (via Polar's Terms of Service)
+                      </span>
+                    </td>
                   </tr>
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">
@@ -825,15 +857,37 @@ function PrivacyPage() {
               Self-hosted tools (Ackee, Bugsink) are under our full control and
               not shared with third parties.
             </p>
+            <p className="mt-2 text-xs text-gray-500 italic dark:text-gray-400">
+              * Polar's DPA is automatically applied when you use their service
+              - no separate signature required.
+            </p>
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-              <strong>GDPR Compliance:</strong> We act as{" "}
-              <em>data controller</em>. All processors operate under signed DPAs
-              with SCCs. EU users have full rights under Articles 15-22.
+              <strong className="text-white">GDPR Compliance:</strong> We act as{" "}
+              <em>data controller</em>. All processors operate under
+              GDPR-compliant terms:
+            </p>
+            <ul className="mt-2 ml-6 list-disc space-y-1 text-sm text-gray-400">
+              <li>
+                <strong className="text-white">Netcup:</strong> Explicit DPA +
+                SCCs signed (November 2025)
+              </li>
+              <li>
+                <strong className="text-white">Polar:</strong> DPA + SCCs
+                automatically applied via their Terms of Service
+              </li>
+              <li>
+                <strong className="text-white">Proton Mail:</strong> Adequacy
+                decision (Switzerland)
+              </li>
+            </ul>
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+              EU users have full rights under Articles 15-22.
             </p>
             <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
               Last reviewed: November 07, 2025
             </p>
           </div>
+
           {/* Supervisory Authorities */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
