@@ -155,7 +155,6 @@ function PrivacyPage() {
                       </ul>
                     </td>
                   </tr>
-
                   {/* Previous Version */}
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">1.1</td>
@@ -174,7 +173,6 @@ function PrivacyPage() {
                       </ul>
                     </td>
                   </tr>
-
                   {/* Initial Version */}
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">1.0</td>
@@ -251,7 +249,6 @@ function PrivacyPage() {
               />
               Information We Collect
             </h2>
-
             <div className="space-y-6">
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
@@ -264,7 +261,6 @@ function PrivacyPage() {
                   <li>Payment details (securely processed via Polar)</li>
                 </ul>
               </div>
-
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Platform Usage Data
@@ -272,11 +268,9 @@ function PrivacyPage() {
                 <ul className="ml-4 list-inside list-disc space-y-1 text-gray-700 dark:text-gray-300">
                   <li>Pages visited on our platform</li>
                   <li>Courses and lessons completed</li>
-
                   <li>Interaction patterns with platform tools</li>
                 </ul>
               </div>
-
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Technical Information
@@ -301,7 +295,6 @@ function PrivacyPage() {
               />
               How We Use Your Information
             </h2>
-
             <div className="grid gap-6 md:grid-cols-2">
               <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
                 <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
@@ -319,7 +312,6 @@ function PrivacyPage() {
                   <li>• Store your user preferences</li>
                 </ul>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
                 <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
                   <ChartNoAxesColumnIcon
@@ -336,7 +328,6 @@ function PrivacyPage() {
                   <li>• Develop new platform features</li>
                 </ul>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
                 <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
                   <MailIcon
@@ -353,7 +344,6 @@ function PrivacyPage() {
                   <li>• Respond to support inquiries</li>
                 </ul>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-6 dark:bg-gray-700">
                 <h3 className="mb-3 flex items-center text-lg font-semibold text-gray-900 dark:text-white">
                   <ShieldCheckIcon
@@ -383,7 +373,6 @@ function PrivacyPage() {
               />
               Data Sharing Practices
             </h2>
-
             <div className="space-y-6">
               <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-800 dark:bg-green-900/20">
                 <p className="mb-2 flex items-center font-semibold text-green-800 dark:text-green-300">
@@ -399,13 +388,10 @@ function PrivacyPage() {
                   profit with third parties.
                 </p>
               </div>
-
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Third-Party Service Providers
                 </h3>
-
-                {/* ----  Grid layout – icon fixed, text flexible  ---- */}
                 <ul className="grid gap-3 text-gray-700 dark:text-gray-300">
                   {/* Polar */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
@@ -427,7 +413,6 @@ function PrivacyPage() {
                       when you use their service.
                     </div>
                   </li>
-
                   {/* Netcup */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <ServerIcon
@@ -439,7 +424,6 @@ function PrivacyPage() {
                       data but do not access personal information.
                     </div>
                   </li>
-
                   {/* Proton Email */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <MailIcon
@@ -458,7 +442,6 @@ function PrivacyPage() {
                       .
                     </div>
                   </li>
-
                   {/* Ackee */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <ChartBarIncreasingIcon
@@ -471,7 +454,6 @@ function PrivacyPage() {
                       data is shared externally.
                     </div>
                   </li>
-
                   {/* YouTube */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <YoutubeIcon
@@ -490,7 +472,6 @@ function PrivacyPage() {
                       .
                     </div>
                   </li>
-
                   {/* Bugsink */}
                   <li className="grid grid-cols-[24px_1fr] items-start gap-2">
                     <BugIcon
@@ -505,7 +486,6 @@ function PrivacyPage() {
                   </li>
                 </ul>
               </div>
-
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Anonymized Data
@@ -516,7 +496,6 @@ function PrivacyPage() {
                   individuals.
                 </p>
               </div>
-
               <div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                   Legal Obligations
@@ -528,6 +507,7 @@ function PrivacyPage() {
               </div>
             </div>
           </div>
+
           {/* Data Security */}
           <div className="mb-8 rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
             <h2 className="mb-6 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
@@ -538,7 +518,6 @@ function PrivacyPage() {
               />
               Data Protection Measures
             </h2>
-
             <ul className="space-y-3 text-gray-700 dark:text-gray-300">
               <li className="flex items-center">
                 <CheckIcon
@@ -595,7 +574,6 @@ function PrivacyPage() {
               />
               Your Rights Over Your Data
             </h2>
-
             <ul className="list-inside list-disc space-y-2 text-gray-700 dark:text-gray-300">
               <li>
                 <strong>Access</strong> - Get a copy of your data in a
@@ -634,7 +612,6 @@ function PrivacyPage() {
                 Regulator.
               </li>
             </ul>
-
             <div className="mt-6 rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
               <p className="text-sm text-blue-900 dark:text-blue-200">
                 <strong>Response Time:</strong> We respond within{" "}
@@ -643,7 +620,6 @@ function PrivacyPage() {
                 or regulator.
               </p>
             </div>
-
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
               Submit via{" "}
               <a
@@ -673,11 +649,9 @@ function PrivacyPage() {
               />
               Cookies and Tracking
             </h2>
-
             <p className="mb-4 text-gray-700 dark:text-gray-300">
               We use minimal, privacy-first cookies. No third-party trackers.
             </p>
-
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto border-collapse text-sm">
                 <thead className="bg-gray-100 dark:bg-gray-700">
@@ -704,7 +678,6 @@ function PrivacyPage() {
                 </tbody>
               </table>
             </div>
-
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
               <strong>Opt-out:</strong> Disable in{" "}
               <a
@@ -744,8 +717,6 @@ function PrivacyPage() {
               />
               Data Retention Period
             </h2>
-
-            {/* Data Retention */}
             <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
               Retention by Category
             </h3>
@@ -774,7 +745,6 @@ function PrivacyPage() {
                 interest).
               </li>
             </ul>
-
             <p className="mt-6 text-sm text-gray-600 dark:text-gray-400">
               We retain personal data only as long as necessary for the purposes
               stated in this policy or as required by law (GDPR Art. 5(1)(e)).
@@ -1007,7 +977,6 @@ function PrivacyPage() {
               />
               Other Terms
             </h2>
-
             <div className="space-y-6">
               <div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
@@ -1078,7 +1047,6 @@ function PrivacyPage() {
                 privacy@codewizard.training
               </a>
             </p>
-
             <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
               <p className="text-gray-300 italic dark:text-gray-200">
                 As developers, we value your privacy. Let us know if you have
