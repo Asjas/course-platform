@@ -1,16 +1,16 @@
-function SubmitButton({ label }: { label: string }) {
-  const form = useFormContext();
+// function SubmitButton({ label }: { label: string }) {
+//   const form = useFormContext();
 
-  return (
-    <form.Subscribe selector={(state) => state.isSubmitting}>
-      {(isSubmitting) => (
-        <button
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {label}
-        </button>
-      )}
-    </form.Subscribe>
-  );
-}
+//   return (
+//     <form.Subscribe selector={(state) => state.isSubmitting}>
+//       {(isSubmitting) => (
+//         <button
+//           type="submit"
+//           disabled={isSubmitting}
+//         >
+//           {label}
+//         </button>
+//       )}
+//     </form.Subscribe>
+//   );
+// }
