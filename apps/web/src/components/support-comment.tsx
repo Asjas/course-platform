@@ -45,8 +45,10 @@ export default function SupportComment({
               alt={ticket.user.name}
             />
           )}
-          <p className="text-sm text-gray-400">
-            <span className="font-semibold text-white">{ticket.user.name}</span>{" "}
+          <p className="text-[12px] text-gray-400">
+            <span className="text-sm font-semibold text-white">
+              {ticket.user.name}
+            </span>{" "}
             commented{" "}
             <span
               className="cursor-default hover:text-green-600"
@@ -59,7 +61,7 @@ export default function SupportComment({
         <div className="flex items-center gap-2">
           {auth.session?.user.id === ticket.user.id && (
             <span
-              className="rounded-lg border border-gray-500 px-2 py-0.5 text-sm text-gray-400"
+              className="rounded-lg border px-2 py-0.5 text-[12px] text-gray-400"
               title="This user is the author of this issue"
             >
               Author
@@ -67,7 +69,7 @@ export default function SupportComment({
           )}
           {auth.session?.user.id === ticket.user.id || auth.hasRole("admin") ? (
             <button
-              className="cursor-pointer rounded-md p-1 hover:bg-gray-700"
+              className="cursor-pointer rounded-md p-1.5 hover:bg-gray-700 active:bg-gray-700/80"
               title="More options"
             >
               <EllipsisIcon
@@ -78,12 +80,12 @@ export default function SupportComment({
           ) : null}
         </div>
       </div>
-      <div className="custom-scrollbar min-h-[180px] max-w-screen overflow-auto bg-gray-900">
+      <div className="custom-scrollbar min-h-[180px] max-w-screen overflow-auto rounded-b-md bg-gray-900">
         <div
           className={cn(
             "min-w-fit text-base",
             "prose prose-sm prose-invert p-6",
-            "rounded-b-md text-white",
+            "text-white",
             "[&_code]:overflow-visible! [&_pre]:overflow-visible!",
           )}
           key={ticket.id}
