@@ -151,7 +151,7 @@ function SupportTicketIndexPage() {
           </div>
         </div>
 
-        {/* Ticket comments */}
+        {/* Ticket Description */}
         <SupportComment
           ticket={ticket}
           content={ticket.description}
@@ -178,7 +178,17 @@ function SupportTicketIndexPage() {
 
         {/* Comment box goes here */}
         {auth.session ? (
-          <div className="mt-15">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 px-2">
+              {auth.session.user.image ? (
+                <img
+                  className="h-10 w-10 rounded-full"
+                  src={auth.session.user.image}
+                  alt={auth.session.user.name}
+                />
+              ) : null}
+              <h2>Add a comment</h2>
+            </div>
             <SupportCommentForm ticketId={ticket.id} />
           </div>
         ) : (

@@ -857,7 +857,7 @@ export default function GitHubMessageEditor({
                 "focus:ring-1 focus:ring-green-500 focus:outline-none",
                 "dark:bg-gray-900 dark:text-white",
                 "placeholder-gray-500 dark:placeholder-gray-400",
-                "box-border border border-gray-600 leading-normal",
+                "box-border leading-normal",
                 "custom-scrollbar",
                 uploadingCount > 0 && "opacity-75",
               )}
