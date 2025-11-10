@@ -201,7 +201,11 @@ export default function GitHubMessageEditor({
         </div>
 
         {activeTab === "write" ? (
-          <div className="mt-1 mr-3 flex items-center text-xs text-white">
+          <div
+            className="mr-3 flex items-center text-xs text-white"
+            role="toolbar"
+            aria-label="Formatting tools"
+          >
             {/* Action Bar */}
             <button
               className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
@@ -912,7 +916,9 @@ export default function GitHubMessageEditor({
         <span>
           <a
             className="text-white hover:text-green-600"
-            href="https://docs.github.com/en/get-started/writing-on-github/basic-writing-and-formatting-syntax"
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"
           >
             <svg
               fill="currentColor"
