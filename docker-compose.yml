@@ -16,6 +16,9 @@ services:
     image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.34.2
     volumes:
       - cw-dragonfly-data:/data
+    environment:
+      - DFLY_cache_mode=true
+      - DFLY_snapshot_cron=0 */5 * * *
     ports:
       - "6379:6379"
     ulimits:
