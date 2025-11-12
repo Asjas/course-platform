@@ -36,6 +36,13 @@
       "when": 1762172495800,
       "tag": "0004_small_deathbird",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1762947539496,
+      "tag": "0005_abandoned_dark_beast",
+      "breakpoints": true
     }
   ]
 }

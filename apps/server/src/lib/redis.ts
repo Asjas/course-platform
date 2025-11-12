@@ -9,3 +9,4 @@ const redisOptions: RedisOptions = {
 };
 
 export const redis = new Redis(redisOptions);
+export const subscriptionRedis = new Redis(redisOptions);

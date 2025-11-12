@@ -43,7 +43,9 @@ const schema = z.object({
   SMTP_PASS: z.string().nonempty(),
   SMTP_SECURE: z
     .string()
-    .transform((val) => Boolean(val))
+    .toLowerCase()
+    .transform((val) => val === "true" || val === "1")
+    .pipe(z.boolean())
     .default(false),
 
   // Database variables

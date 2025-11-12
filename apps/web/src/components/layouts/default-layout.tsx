@@ -27,7 +27,7 @@ export default function DefaultLayoutComponent({
       <Toaster />
       <div className="grid min-h-screen grid-rows-[1fr_auto]">
         <Header auth={auth} />
-        <main className="mt-10 flex w-full flex-col px-6 md:mt-20">
+        <div className="mt-10 flex w-full flex-col md:mt-20">
           {user && !user?.emailVerified ? (
             <div className="-mx-6 flex items-center justify-between bg-green-400 p-4 text-sm text-black">
               Your email is not verified. Please check your inbox for a
@@ -49,7 +49,7 @@ export default function DefaultLayoutComponent({
             </div>
           ) : null}
           {children}
-        </main>
+        </div>
         <Footer />
       </div>
       <ReactQueryDevtools

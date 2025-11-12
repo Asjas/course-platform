@@ -70,7 +70,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                     activeProps={{
                       className: "bg-gray-700 text-white dark:bg-gray-700",
                     }}
-                    to="/dashboard"
+                    to="/chat"
                   >
                     Chat
                   </NavLink>

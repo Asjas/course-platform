@@ -25,6 +25,7 @@ import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
+import { Route as AuthenticatedChatRouteImport } from "./routes/_authenticated/chat"
 import { Route as AuthenticatedAccountRouteImport } from "./routes/_authenticated/account"
 import { Route as authSignupRouteImport } from "./routes/(auth)/signup"
 import { Route as authSigninRouteImport } from "./routes/(auth)/signin"
@@ -33,6 +34,7 @@ import { Route as EducationCoursesRouteRouteImport } from "./routes/education/co
 import { Route as AuthenticatedAdminRouteRouteImport } from "./routes/_authenticated/admin/route"
 import { Route as SupportSupportTicketIndexRouteImport } from "./routes/support/$supportTicket/index"
 import { Route as EducationCoursesIndexRouteImport } from "./routes/education/courses/index"
+import { Route as AuthenticatedChatChannelIdRouteImport } from "./routes/_authenticated/chat.$channelId"
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
 import { Route as AuthenticatedAdminCoursesRouteImport } from "./routes/_authenticated/admin/courses"
@@ -124,6 +126,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: "/dashboard",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedChatRoute = AuthenticatedChatRouteImport.update({
+  id: "/chat",
+  path: "/chat",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   id: "/account",
   path: "/account",
@@ -165,6 +172,12 @@ const EducationCoursesIndexRoute = EducationCoursesIndexRouteImport.update({
   path: "/",
   getParentRoute: () => EducationCoursesRouteRoute,
 } as any)
+const AuthenticatedChatChannelIdRoute =
+  AuthenticatedChatChannelIdRouteImport.update({
+    id: "/$channelId",
+    path: "/$channelId",
+    getParentRoute: () => AuthenticatedChatRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: "/users",
   path: "/users",
@@ -250,6 +263,7 @@ export interface FileRoutesByFullPath {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/account": typeof AuthenticatedAccountRoute
+  "/chat": typeof AuthenticatedChatRouteWithChildren
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
@@ -263,6 +277,7 @@ export interface FileRoutesByFullPath {
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
@@ -284,6 +299,7 @@ export interface FileRoutesByTo {
   "/signin": typeof authSigninRoute
   "/signup": typeof authSignupRoute
   "/account": typeof AuthenticatedAccountRoute
+  "/chat": typeof AuthenticatedChatRouteWithChildren
   "/dashboard": typeof AuthenticatedDashboardRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
@@ -295,6 +311,7 @@ export interface FileRoutesByTo {
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/education/courses": typeof EducationCoursesIndexRoute
   "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
   "/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
@@ -321,6 +338,7 @@ export interface FileRoutesById {
   "/(auth)/signin": typeof authSigninRoute
   "/(auth)/signup": typeof authSignupRoute
   "/_authenticated/account": typeof AuthenticatedAccountRoute
+  "/_authenticated/chat": typeof AuthenticatedChatRouteWithChildren
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
@@ -334,6 +352,7 @@ export interface FileRoutesById {
   "/_authenticated/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
+  "/_authenticated/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/education/courses/": typeof EducationCoursesIndexRoute
   "/support/$supportTicket/": typeof SupportSupportTicketIndexRoute
   "/_authenticated/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
@@ -359,6 +378,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/account"
+    | "/chat"
     | "/dashboard"
     | "/profile"
     | "/purchases"
@@ -372,6 +392,7 @@ export interface FileRouteTypes {
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
+    | "/chat/$channelId"
     | "/education/courses/"
     | "/support/$supportTicket"
     | "/admin/courses/faq"
@@ -393,6 +414,7 @@ export interface FileRouteTypes {
     | "/signin"
     | "/signup"
     | "/account"
+    | "/chat"
     | "/dashboard"
     | "/profile"
     | "/purchases"
@@ -404,6 +426,7 @@ export interface FileRouteTypes {
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
+    | "/chat/$channelId"
     | "/education/courses"
     | "/support/$supportTicket"
     | "/admin/courses/faq"
@@ -429,6 +452,7 @@ export interface FileRouteTypes {
     | "/(auth)/signin"
     | "/(auth)/signup"
     | "/_authenticated/account"
+    | "/_authenticated/chat"
     | "/_authenticated/dashboard"
     | "/_authenticated/profile"
     | "/_authenticated/purchases"
@@ -442,6 +466,7 @@ export interface FileRouteTypes {
     | "/_authenticated/admin/courses"
     | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/users"
+    | "/_authenticated/chat/$channelId"
     | "/education/courses/"
     | "/support/$supportTicket/"
     | "/_authenticated/admin/courses/faq"
@@ -582,6 +607,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    "/_authenticated/chat": {
+      id: "/_authenticated/chat"
+      path: "/chat"
+      fullPath: "/chat"
+      preLoaderRoute: typeof AuthenticatedChatRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     "/_authenticated/account": {
       id: "/_authenticated/account"
       path: "/account"
@@ -637,6 +669,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/education/courses/"
       preLoaderRoute: typeof EducationCoursesIndexRouteImport
       parentRoute: typeof EducationCoursesRouteRoute
+    }
+    "/_authenticated/chat/$channelId": {
+      id: "/_authenticated/chat/$channelId"
+      path: "/$channelId"
+      fullPath: "/chat/$channelId"
+      preLoaderRoute: typeof AuthenticatedChatChannelIdRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
     }
     "/_authenticated/admin/users": {
       id: "/_authenticated/admin/users"
@@ -784,9 +823,21 @@ const AuthenticatedAdminRouteRouteWithChildren =
     AuthenticatedAdminRouteRouteChildren,
   )
 
+interface AuthenticatedChatRouteChildren {
+  AuthenticatedChatChannelIdRoute: typeof AuthenticatedChatChannelIdRoute
+}
+
+const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
+  AuthenticatedChatChannelIdRoute: AuthenticatedChatChannelIdRoute,
+}
+
+const AuthenticatedChatRouteWithChildren =
+  AuthenticatedChatRoute._addFileChildren(AuthenticatedChatRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+  AuthenticatedChatRoute: typeof AuthenticatedChatRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
@@ -795,6 +846,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+  AuthenticatedChatRoute: AuthenticatedChatRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,

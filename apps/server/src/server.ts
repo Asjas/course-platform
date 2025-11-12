@@ -20,7 +20,6 @@ import {
   ONE_MINUTE,
   TEN_MB,
   TEN_SECONDS,
-  TWO_MINUTES,
 } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { type AppRouter, appRouter } from "~/routers/index.js";
@@ -35,7 +34,6 @@ async function createServer(config: Config) {
     trustProxy: true,
     disableRequestLogging: true,
     loggerInstance: pinoLogger,
-    connectionTimeout: TWO_MINUTES,
     requestTimeout: ONE_MINUTE,
     keepAliveTimeout: TEN_SECONDS,
     bodyLimit: TEN_MB,

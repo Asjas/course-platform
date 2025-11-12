@@ -24,6 +24,7 @@ export const user = mySchema.table(
     name: text().notNull(),
     username: text(),
     displayUsername: text(),
+    color: text(),
     email: text().notNull().unique(),
     emailVerified: boolean().default(false).notNull(),
     image: text(),

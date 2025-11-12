@@ -11,4 +11,5 @@ export const queryClient = new QueryClient({
   },
 });
 
-export const AUTH_QUERY_KEY = ["auth"];
+export const getChannelCacheKey = (channelId: string) =>
+  ["chat", "messages", channelId] as const;

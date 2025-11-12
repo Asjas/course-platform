@@ -1,8 +1,17 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import type { Context } from "~/context.js";
+import { FIVE_MINUTES, THIRTY_SECONDS, TWO_MINUTES } from "~/lib/constants.js";
 
-export const t = initTRPC.context<Context>().create({ transformer: superjson });
+export const t = initTRPC.context<Context>().create({
+  transformer: superjson,
+  sse: {
+    enabled: true,
+    maxDurationMs: FIVE_MINUTES,
+    ping: { enabled: true, intervalMs: THIRTY_SECONDS },
+    client: { reconnectAfterInactivityMs: TWO_MINUTES },
+  },
+});
 
 export const router = t.router;
 export const publicProcedure = t.procedure;

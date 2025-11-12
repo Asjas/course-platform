@@ -97,6 +97,15 @@ export const auth = betterAuth({
     },
   },
   user: {
+    additionalFields: {
+      color: {
+        type: "string",
+        defaultValue: Math.floor(Math.random() * 0xffffff)
+          .toString(16)
+          .padStart(6, "0")
+          .toUpperCase(),
+      },
+    },
     changeEmail: {
       enabled: true,
       async sendChangeEmailVerification(data) {
