@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ChangeEmailForm from "~/components/forms/change-email-form";
 import ChangePasswordForm from "~/components/forms/change-password-form";
-import DeleteAccountForm from "~/components/forms/delete-account-form.tsx";
+import DeleteAccountForm from "~/components/forms/delete-account-form";
 
 export const Route = createFileRoute("/_authenticated/account")({
   component: AuthenticatedAccountPage,

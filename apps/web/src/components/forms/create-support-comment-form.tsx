@@ -4,9 +4,9 @@ import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/github-message-editor";
-import { queryClient } from "~/lib/query.client.ts";
+import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
-import { cn } from "~/lib/utils.ts";
+import { cn } from "~/lib/utils";
 
 const formSchema = z.object({
   comment: z.string().min(2),

@@ -1,10 +1,10 @@
-import type { SupportTicketById } from "@apps/server/src/routers/support-tickets/queries.ts";
+import type { SupportTicketById } from "@apps/server/src/routers/support-tickets/queries";
 import { formatDistance, formatRelative } from "date-fns";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAuth } from "~/lib/auth.context.ts";
-import { renderMarkdown } from "~/lib/markdown.ts";
-import { cn } from "~/lib/utils.ts";
+import { useAuth } from "~/lib/auth.context";
+import { renderMarkdown } from "~/lib/markdown";
+import { cn } from "~/lib/utils";
 
 export default function SupportComment({
   ticket,

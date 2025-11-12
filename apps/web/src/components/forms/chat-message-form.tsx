@@ -7,9 +7,9 @@ import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import ChatMessageEditor from "~/components/chat-message-editor";
 import { useAppForm } from "~/lib/form.context";
-import { getChannelCacheKey, queryClient } from "~/lib/query.client.ts";
-import { trpc } from "~/lib/trpc.client.ts";
-import { cn } from "~/lib/utils.ts";
+import { getChannelCacheKey, queryClient } from "~/lib/query.client";
+import { trpc } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils";
 
 const formSchema = z.object({
   message: z.string(),

@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import SupportCommentForm from "~/components/forms/create-support-comment-form.tsx";
+import SupportCommentForm from "~/components/forms/create-support-comment-form";
 import Loading from "~/components/loading";
-import SupportComment from "~/components/support-comment.tsx";
-import { useAuth } from "~/lib/auth.context.ts";
+import SupportComment from "~/components/support-comment";
+import { useAuth } from "~/lib/auth.context";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
