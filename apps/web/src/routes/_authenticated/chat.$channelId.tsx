@@ -4,7 +4,7 @@ import { useSubscription } from "@trpc/tanstack-react-query";
 import { formatDate } from "date-fns";
 import { useEffect, useRef } from "react";
 import ChatMessageForm from "~/components/forms/chat-message-form";
-import { renderMarkdown } from "~/lib/markdown.ts";
+import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -106,7 +106,7 @@ function RouteComponent() {
                 key={msg.id}
               >
                 <div className="p-4 wrap-break-word">
-                  <div className="flex">
+                  <div className="flex gap-2">
                     <div className="flex w-14 justify-end">
                       <p
                         className="text-[14px] text-gray-300/75"
