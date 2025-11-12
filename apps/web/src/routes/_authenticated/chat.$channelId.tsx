@@ -17,15 +17,17 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
       channelId,
     });
 
-    queryClient.setQueryData<ChatMessage[]>(
-      getChannelCacheKey(channelId),
-      (prev = []) => {
-        const map = new Map(prev.map((message) => [message.id, message]));
-        history.forEach((message) => map.set(message.id, message));
+    queryClient.prefetchQuery<ChatMessage[]>({
+      queryKey: getChannelCacheKey(channelId),
+      initialData: () => {
+        const map = new Map<string, ChatMessage>();
+        history.forEach((msg) => {
+          map.set(msg.id, msg);
+        });
 
         return Array.from(map.values());
       },
-    );
+    });
   },
   component: RouteComponent,
 });
@@ -42,7 +44,7 @@ function RouteComponent() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
   const cacheKey = getChannelCacheKey(channelId);
 
-  const { status } = useSubscription(
+  useSubscription(
     trpc.chat.getChannelMessages.subscriptionOptions(
       { channelId },
       {
@@ -66,6 +68,8 @@ function RouteComponent() {
     queryKey: cacheKey,
   });
 
+  console.log("Rendered messages:", cachedMessages);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const isNearBottom = () => {
@@ -84,61 +88,62 @@ function RouteComponent() {
     }
   }, [cachedMessages]);
 
-  console.log("status", status);
-
   return (
-    <div className="grid h-full grid-rows-[auto_1fr_auto]">
-      <header className="bg-gray-900/85 px-2 py-1">
-        <h1 className="text-xl font-bold"># {channelId}</h1>
-      </header>
+    <div>
+      <div className="grid h-screen grid-rows-[auto_1fr_auto]">
+        <header className="bg-gray-900/85 px-2 py-1">
+          <h1 className="text-xl font-bold"># {channelId}</h1>
+        </header>
 
-      <section
-        className="flex flex-col justify-end space-y-2 overflow-y-auto"
-        ref={scrollRef}
-      >
-        {cachedMessages ? (
-          cachedMessages.map(async (msg) => {
-            const html = await renderMarkdown(msg.message);
+        <section
+          className="flex h-full max-h-screen min-h-0 flex-col justify-end overflow-y-auto pb-4"
+          ref={scrollRef}
+        >
+          {cachedMessages ? (
+            cachedMessages.map(async (msg) => {
+              const html = await renderMarkdown(msg.message);
 
-            return (
-              <div
-                className="custom-scrollbar w-full overflow-y-auto"
-                key={msg.id}
-              >
-                <div className="p-4 wrap-break-word">
-                  <div className="flex gap-2">
-                    <div className="flex w-14 justify-end">
-                      <p
-                        className="text-[14px] text-gray-300/75"
-                        title={formatDate(new Date(msg.timestamp), "PPpp")}
-                      >
-                        {formatDate(new Date(msg.timestamp), "HH:mm")}
-                      </p>
-                    </div>
-                    <div className="flex flex-1">
-                      <span className="text-[14px] font-medium text-green-600">
-                        {msg.username || msg.name}
-                      </span>
-                      <div
-                        className="inline text-sm text-white"
-                        dangerouslySetInnerHTML={{
-                          __html: html,
-                        }}
-                      ></div>
+              return (
+                <div
+                  className="w-full"
+                  key={msg.id}
+                >
+                  <div className="p-4 wrap-break-word">
+                    <div className="flex gap-2">
+                      {/* Timestamp */}
+                      <div className="flex w-14 justify-end">
+                        <p
+                          className="text-[14px] text-gray-300/75"
+                          title={formatDate(new Date(msg.timestamp), "PPpp")}
+                        >
+                          {formatDate(new Date(msg.timestamp), "HH:mm")}
+                        </p>
+                      </div>
+
+                      {/* Username + Message */}
+                      <div className="flex flex-1 items-baseline gap-1">
+                        <span className="shrink-0 text-sm font-medium text-green-600">
+                          {msg.username || msg.name}
+                        </span>
+                        <div
+                          className="text-sm text-white"
+                          dangerouslySetInnerHTML={{ __html: html }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })
-        ) : (
-          <p className="p-4 text-sm">No messages in channel</p>
-        )}
-      </section>
+              );
+            })
+          ) : (
+            <p className="p-4 text-sm">No messages in channel</p>
+          )}
+        </section>
 
-      <footer>
-        <ChatMessageForm />
-      </footer>
+        <footer>
+          <ChatMessageForm />
+        </footer>
+      </div>
     </div>
   );
 }

@@ -38,6 +38,11 @@ export default function ChatMessageForm() {
           message,
         });
 
+        console.log(
+          "getChannelCacheKey(channelId)",
+          getChannelCacheKey(channelId),
+        );
+
         queryClient.invalidateQueries({
           queryKey: getChannelCacheKey(channelId),
         });

@@ -21,7 +21,7 @@ const channels = ["general", "random"];
 
 function RouteComponent() {
   return (
-    <div className="sidebar h-full max-h-screen">
+    <div className="sidebar h-full">
       <div className="flex flex-col gap-1 bg-gray-900 px-2">
         <span className="mt-2 flex px-2 py-2 text-lg md:text-xl">Channels</span>
         {channels.map((channel) => (
