@@ -80,7 +80,7 @@ export default function SupportComment({
           ) : null}
         </div>
       </div>
-      <div className="custom-scrollbar min-h-[180px] max-w-screen overflow-auto rounded-b-md bg-gray-900">
+      <div className="custom-scrollbar min-h-0 max-w-screen overflow-auto rounded-b-md bg-gray-900">
         <div
           className={cn(
             "min-w-fit text-base",
