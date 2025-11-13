@@ -2,6 +2,7 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { EllipsisIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Menu,
@@ -48,14 +49,15 @@ export default function ChatMessage({
       {
         onSuccess() {
           const cacheKey = getChannelCacheKey(channelId);
+
           queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
             return prev.filter((message) => message.id !== msg.id);
           });
+
+          toast.success("Message deleted successfully.");
         },
       },
     );
-
-    toast.success("Message deleted successfully.");
   };
 
   const handleEdit = () => {
@@ -67,17 +69,18 @@ export default function ChatMessage({
         {
           onSuccess(updatedMessage) {
             const cacheKey = getChannelCacheKey(channelId);
+
             queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
               return prev.map((message) =>
                 message.id === msg.id ? updatedMessage : message,
               );
             });
+
+            toast.info("Message edited successfully.");
           },
         },
       );
     }
-
-    toast.info("Message edited successfully.");
   };
 
   // --------------------------------------------------------------
@@ -107,14 +110,10 @@ export default function ChatMessage({
             className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-700"
             aria-label="Message actions"
           >
-            <svg
-              className="h-5 w-5 text-gray-400"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
-            </svg>
+            <EllipsisIcon
+              size={18}
+              color="var(--color-gray-400)"
+            />
           </MenuButton>
 
           <Popover className="z-50">
