@@ -139,6 +139,20 @@ h6 {
   min-width: var(--sidebar-content-min-width, 50%);
 }
 
+/* Grid container */
+.grid-container {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: calc(100vh - 100px);
+  width: 100%;
+}
+
+/* Scrollable section */
+.scrollable-section {
+  overflow-y: auto;
+  padding: 1rem;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);

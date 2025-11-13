@@ -67,7 +67,7 @@ function SupportTicketIndexPage() {
   }
 
   return (
-    <div className="mx-auto mt-20 mb-20 w-full max-w-7xl md:mt-10">
+    <main className="mx-auto mt-20 mb-20 w-full max-w-7xl px-8 md:mt-10">
       <div className="mt-4 flex justify-end gap-4 sm:mt-0 sm:ml-16 sm:flex-none">
         <button
           className="block cursor-pointer rounded-md bg-gray-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
@@ -203,6 +203,6 @@ function SupportTicketIndexPage() {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }
