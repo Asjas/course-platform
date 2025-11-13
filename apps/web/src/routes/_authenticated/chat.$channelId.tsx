@@ -106,12 +106,15 @@ function RouteComponent() {
         ref={scrollRef}
       >
         {!cachedMessages || cachedMessages.length === 0 ? (
-          <p className="text-sm text-gray-400">No messages yet.</p>
+          <div className="flex h-full items-end">
+            <p className="text-sm text-gray-400">No messages yet.</p>
+          </div>
         ) : (
           <div className="flex flex-col gap-1">
             {cachedMessages.map((msg) => (
               <ChatMessage
                 key={msg.id}
+                channelId={channelId}
                 msg={msg}
               />
             ))}
