@@ -1,4 +1,3 @@
-// ~/components/chat-message.tsx
 import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -12,7 +11,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
-import { useAuth } from "~/lib/auth.context.ts";
+import { useAuth } from "~/lib/auth.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
@@ -56,6 +55,10 @@ export default function ChatMessage({
 
           toast.success("Message deleted successfully.");
         },
+        onError(error) {
+          console.error("Error deleting message:", error);
+          toast.error("Failed to delete message.");
+        },
       },
     );
   };
@@ -78,12 +81,15 @@ export default function ChatMessage({
 
             toast.info("Message edited successfully.");
           },
+          onError(error) {
+            console.error("Error editing message:", error);
+            toast.error("Failed to edit message.");
+          },
         },
       );
     }
   };
 
-  // --------------------------------------------------------------
   return (
     <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-900/55">
       {/* timestamp */}
