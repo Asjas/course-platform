@@ -50,7 +50,7 @@ export const chatRouter = router({
             // Skip if not newer
             if (lastId !== "$" && !isIdAfter(streamId, lastId)) continue;
 
-            const payload: ChatMessage = JSON.parse(fields[1]);
+            const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
             const messageId = payload.id; // ULID
 
             // Update lastId to Redis stream ID
@@ -87,7 +87,8 @@ export const chatRouter = router({
       );
 
       return entries.reverse().map(([, fields]) => {
-        const payload = JSON.parse(fields[1]);
+        const payload = JSON.parse(fields[1]) as ChatMessage;
+
         return { ...payload, id: payload.id };
       });
     }),
@@ -129,7 +130,7 @@ export const chatRouter = router({
       for (const key of streams) {
         const entries = await redis.xrange(key, "-", "+");
         for (const [, fields] of entries) {
-          const payload: ChatMessage = JSON.parse(fields[1]);
+          const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
 
           if (payload.id === input.id) {
             const updated = { ...payload, message: input.message };
@@ -159,7 +160,7 @@ export const chatRouter = router({
 
         for (const [streamId, fields] of entries) {
           const messageJson = fields[1];
-          const message: ChatMessage = JSON.parse(messageJson);
+          const message: ChatMessage = JSON.parse(messageJson) as ChatMessage;
 
           if (message.id === input.id) {
             await redis.xdel(key, streamId);
