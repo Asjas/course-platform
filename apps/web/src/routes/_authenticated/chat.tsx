@@ -14,12 +14,12 @@ export const Route = createFileRoute("/_authenticated/chat")({
       });
     }
   },
-  component: RouteComponent,
+  component: AuthenticatedChatPage,
 });
 
 const channels = ["general", "random"];
 
-function RouteComponent() {
+function AuthenticatedChatPage() {
   return (
     <div className="sidebar h-full">
       <div className="flex flex-col gap-1 bg-gray-900 px-2">

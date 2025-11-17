@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
       return Array.from(map.values());
     });
   },
-  component: RouteComponent,
+  component: AuthenticatedChatChannelPage,
 });
 
 interface ChatMessage {
@@ -34,7 +34,7 @@ interface ChatMessage {
   timestamp: number;
 }
 
-function RouteComponent() {
+function AuthenticatedChatChannelPage() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
   const cacheKey = getChannelCacheKey(channelId);
 
