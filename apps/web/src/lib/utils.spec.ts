@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { capitalizeFirstLetter, cn } from "~/lib/utils";
+import { capitalizeFirstLetter, cn, listWithAnd } from "~/lib/utils";
 
 describe("utils", () => {
   describe("cn", () => {
@@ -88,6 +88,48 @@ describe("utils", () => {
     it("should only affect the first character", () => {
       const result = capitalizeFirstLetter("hello world test");
       expect(result).toBe("Hello world test");
+    });
+  });
+
+  describe("listWithAnd", () => {
+    it("should return empty string for empty array", () => {
+      const result = listWithAnd([]);
+      expect(result).toBe("");
+    });
+
+    it("should return single item without modification", () => {
+      const result = listWithAnd(["apple"]);
+      expect(result).toBe("apple");
+    });
+
+    it("should join two items with 'and'", () => {
+      const result = listWithAnd(["apple", "banana"]);
+      expect(result).toBe("apple and banana");
+    });
+
+    it("should join three items with commas and 'and'", () => {
+      const result = listWithAnd(["apple", "banana", "orange"]);
+      expect(result).toBe("apple, banana, and orange");
+    });
+
+    it("should join four items with commas and 'and'", () => {
+      const result = listWithAnd(["apple", "banana", "orange", "grape"]);
+      expect(result).toBe("apple, banana, orange, and grape");
+    });
+
+    it("should handle items with special characters", () => {
+      const result = listWithAnd(["C++", "C#", "JavaScript"]);
+      expect(result).toBe("C++, C#, and JavaScript");
+    });
+
+    it("should handle items with spaces", () => {
+      const result = listWithAnd(["red apple", "green banana", "yellow lemon"]);
+      expect(result).toBe("red apple, green banana, and yellow lemon");
+    });
+
+    it("should handle many items correctly", () => {
+      const result = listWithAnd(["one", "two", "three", "four", "five"]);
+      expect(result).toBe("one, two, three, four, and five");
     });
   });
 });
