@@ -18,7 +18,7 @@ import { cn } from "~/lib/utils";
 interface GitHubMessageEditorProps {
   id: string;
   value: string;
-  onChange: (value: string | ((prev: string) => string)) => void; // ← FUNCTIONAL UPDATE
+  onChange: (value: string | ((prev: string) => string)) => void;
   placeholder?: string;
 }
 
@@ -26,7 +26,7 @@ export default function GitHubMessageEditor({
   id,
   value,
   onChange,
-  placeholder = "Add your comment…",
+  placeholder = "Add your comment...",
 }: GitHubMessageEditorProps) {
   const [preview, setPreview] = useState<string>("");
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
