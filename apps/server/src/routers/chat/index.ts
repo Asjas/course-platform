@@ -27,8 +27,6 @@ export const chatRouter = router({
       let lastId =
         input.lastEventId ?? (input.lastEventId === undefined ? "0" : "$");
 
-      console.log("[SSE] Subscribed to", streamKey, "from", lastId);
-
       while (true) {
         try {
           const result = await subscriptionRedis.xread(
@@ -55,7 +53,6 @@ export const chatRouter = router({
             // Update lastId to Redis stream ID
             lastId = streamId;
 
-            console.log("[SSE] →", messageId, `(stream: ${streamId})`);
             yield tracked(messageId, payload); // tRPC tracks by ULID
           }
         } catch (err) {
@@ -63,11 +60,9 @@ export const chatRouter = router({
             err instanceof Error &&
             err.message.includes("Invalid stream ID")
           ) {
-            console.warn("[SSE] Invalid lastEventId, resetting to $");
             lastId = "$"; // fallback
             continue;
           }
-          console.error("[SSE] Redis error:", err);
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }
@@ -124,8 +119,6 @@ export const chatRouter = router({
       const streamKey = `chat:channel:*:messages`;
       const streams = await redis.keys(streamKey);
 
-      console.log("Editing message", input.id);
-
       for (const key of streams) {
         const entries = await redis.xrange(key, "-", "+");
         for (const [, fields] of entries) {
@@ -151,8 +144,6 @@ export const chatRouter = router({
     .mutation(async ({ ctx, input }) => {
       const streamKeyPattern = `chat:channel:*:messages`;
       const streamKeys = await redis.keys(streamKeyPattern);
-
-      console.log("Deleting message", input.id);
 
       for (const key of streamKeys) {
         const entries = await redis.xrange(key, "-", "+");
