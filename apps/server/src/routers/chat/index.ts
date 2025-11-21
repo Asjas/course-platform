@@ -98,8 +98,7 @@ export const chatRouter = router({
     .use(isAuthenticated)
     .input(z.object({ channelId: z.string(), message: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const ulidVal = ulid();
-      const id = `msg:${ulidVal}`;
+      const id = `msg:${ulid()}`;
 
       const payload: ChatMessage = {
         id,
