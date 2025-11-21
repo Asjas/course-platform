@@ -19,6 +19,12 @@ export const Route = createFileRoute("/_authenticated/admin")({
         to: "/dashboard",
       });
     }
+
+    if (location.pathname === "/admin" || location.pathname === "/admin/") {
+      throw redirect({
+        to: "/admin/users",
+      });
+    }
   },
   component: AdminPageLayout,
 });
