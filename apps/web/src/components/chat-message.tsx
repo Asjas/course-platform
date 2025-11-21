@@ -42,28 +42,7 @@ export default function ChatMessage({
       });
   }, [msg.message]);
 
-  const handleDelete = () => {
-    deleteMessageMutation.mutate(
-      { id: msg.id },
-      {
-        onSuccess() {
-          const cacheKey = getChannelCacheKey(channelId);
-
-          queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-            return prev.filter((message) => message.id !== msg.id);
-          });
-
-          toast.success("Message deleted successfully.");
-        },
-        onError(error) {
-          console.error("Error deleting message:", error);
-          toast.error("Failed to delete message.");
-        },
-      },
-    );
-  };
-
-  const handleEdit = () => {
+  function handleEdit() {
     const newText = prompt("Edit message:", msg.message);
 
     if (newText !== null && newText !== msg.message) {
@@ -88,7 +67,28 @@ export default function ChatMessage({
         },
       );
     }
-  };
+  }
+
+  function handleDelete() {
+    deleteMessageMutation.mutate(
+      { id: msg.id },
+      {
+        onSuccess() {
+          const cacheKey = getChannelCacheKey(channelId);
+
+          queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
+            return prev.filter((message) => message.id !== msg.id);
+          });
+
+          toast.success("Message deleted successfully.");
+        },
+        onError(error) {
+          console.error("Error deleting message:", error);
+          toast.error("Failed to delete message.");
+        },
+      },
+    );
+  }
 
   return (
     <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-900/55">
