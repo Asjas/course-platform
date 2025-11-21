@@ -2,6 +2,13 @@ import type { SupportTicketById } from "@apps/server/src/routers/support-tickets
 import { formatDistance, formatRelative } from "date-fns";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  Menu,
+  Button as MenuButton,
+  MenuItem,
+  MenuTrigger,
+  Popover,
+} from "react-aria-components";
 import { useAuth } from "~/lib/auth.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { cn } from "~/lib/utils";
@@ -33,6 +40,16 @@ export default function SupportComment({
       isMounted = false;
     };
   }, [ticket, content]);
+
+  function handleEdit() {
+    // Edit functionality can be implemented here
+    alert("Edit functionality is not implemented yet.");
+  }
+
+  function handleDelete() {
+    // Delete functionality can be implemented here
+    alert("Delete functionality is not implemented yet.");
+  }
 
   return (
     <div className="rounded-md border border-white/10 bg-gray-800">
@@ -68,15 +85,35 @@ export default function SupportComment({
             </span>
           )}
           {auth.session?.user.id === ticket.user.id || auth.hasRole("admin") ? (
-            <button
-              className="cursor-pointer rounded-md p-1.5 hover:bg-gray-700 active:bg-gray-700/80"
-              title="More options"
-            >
-              <EllipsisIcon
-                size={18}
-                color="var(--color-gray-400)"
-              />
-            </button>
+            <MenuTrigger>
+              <MenuButton
+                className="mr-2 cursor-pointer rounded p-1 hover:bg-gray-700"
+                aria-label="Message actions"
+              >
+                <EllipsisIcon
+                  size={18}
+                  color="var(--color-gray-400)"
+                />
+              </MenuButton>
+
+              <Popover className="z-50">
+                <Menu className="min-w-[120px] rounded-md border border-gray-700 bg-gray-800 p-1 text-sm shadow-lg">
+                  <MenuItem
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-gray-700"
+                    onAction={handleEdit}
+                  >
+                    Edit
+                  </MenuItem>
+
+                  <MenuItem
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 hover:bg-gray-700"
+                    onAction={handleDelete}
+                  >
+                    Delete
+                  </MenuItem>
+                </Menu>
+              </Popover>
+            </MenuTrigger>
           ) : null}
         </div>
       </div>
