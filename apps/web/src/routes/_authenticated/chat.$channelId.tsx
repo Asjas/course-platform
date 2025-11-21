@@ -25,8 +25,10 @@ interface ChatMessage {
   id: string;
   message: string;
   name: string;
-  username: string | undefined;
+  username: string | null;
   timestamp: number;
+  createdAt: number;
+  editedAt?: number;
 }
 
 function AuthenticatedChatChannelPage() {

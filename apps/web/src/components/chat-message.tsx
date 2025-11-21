@@ -110,6 +110,10 @@ export default function ChatMessage({
           dangerouslySetInnerHTML={{ __html: html }}
         />
 
+        {msg.editedAt ? (
+          <span className="text-xs text-gray-400 italic">(edited)</span>
+        ) : null}
+
         {/* three-dot button – visible only on hover */}
         <MenuTrigger>
           <MenuButton

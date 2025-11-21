@@ -8,8 +8,10 @@ export interface ChatMessage {
   id: string;
   message: string;
   name: string;
-  username: string | undefined;
+  username: string | null;
   timestamp: number;
+  createdAt: number;
+  editedAt?: number;
 }
 
 export const chatRouter = router({
@@ -80,62 +82,79 @@ export const chatRouter = router({
         input.limit,
       );
 
-      return entries.reverse().map(([, fields]) => {
-        const payload = JSON.parse(fields[1]) as ChatMessage;
+      const messages = entries.map(
+        ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
+      );
 
-        return { ...payload, id: payload.id };
+      // Sort by creation time (ULID or createdAt field)
+      return messages.sort((a, b) => {
+        if ("createdAt" in a && "createdAt" in b) {
+          return (a.createdAt ?? 0) - (b.createdAt ?? 0);
+        }
+        return a.id.localeCompare(b.id);
       });
     }),
   postMessage: publicProcedure
     .use(isAuthenticated)
     .input(z.object({ channelId: z.string(), message: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const id = `msg:${ulid()}`;
-      const payload = {
+      const ulidVal = ulid();
+      const id = `msg:${ulidVal}`;
+
+      const payload: ChatMessage = {
         id,
         name: ctx.user.name,
         username: ctx.user.username,
         message: input.message,
         timestamp: Date.now(),
+        // This is the key: store the sortable creation time
+        createdAt: Date.now(),
       };
 
-      await redis.xadd(
+      // Use * → always valid, always increasing
+      const streamId = await redis.xadd(
         `chat:channel:${input.channelId}:messages`,
-        "*",
+        "*", // ← safe & correct
         "message",
         JSON.stringify(payload),
       );
 
-      ctx.request.log.debug(
-        `User ${ctx.user.id} posted ${id} → ${input.channelId}`,
-      );
-
-      return payload;
+      return { ...payload, streamId };
     }),
   editMessage: publicProcedure
     .use(isAuthenticated)
     .input(z.object({ id: z.string(), message: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const streamKey = `chat:channel:*:messages`;
-      const streams = await redis.keys(streamKey);
+    .mutation(async ({ input }) => {
+      const pattern = `chat:channel:*:messages`;
+      const keys = await redis.keys(pattern);
 
-      for (const key of streams) {
-        const entries = await redis.xrange(key, "-", "+");
-        for (const [, fields] of entries) {
+      for (const streamKey of keys) {
+        const entries = await redis.xrange(streamKey, "-", "+");
+
+        for (const [streamId, fields] of entries) {
           const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
 
           if (payload.id === input.id) {
-            const updated = { ...payload, message: input.message };
-            await redis.xadd(key, "*", "message", JSON.stringify(updated));
+            await redis.xdel(streamKey, streamId);
 
-            ctx.request.log.debug(
-              `User ${ctx.user.id} edited ${input.id} in ${key}`,
+            const updated: ChatMessage = {
+              ...payload,
+              message: input.message,
+              editedAt: Date.now(),
+              // createdAt remains unchanged → preserves order!
+            };
+
+            await redis.xadd(
+              streamKey,
+              "*", // ← always use "*"
+              "message",
+              JSON.stringify(updated),
             );
+
             return updated;
           }
         }
       }
-
       throw new Error("Message not found");
     }),
   deleteMessage: publicProcedure
