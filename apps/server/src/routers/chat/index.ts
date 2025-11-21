@@ -17,14 +17,13 @@ export const chatRouter = router({
     .input(
       z.object({
         channelId: z.string(),
-        lastEventId: z.string().nullish(), // this is the Redis stream ID
+        lastEventId: z.string().nullish(),
       }),
     )
     .use(isAuthenticated)
     .subscription(async function* ({ input }) {
       const streamKey = `chat:channel:${input.channelId}:messages`;
 
-      // Start from Redis stream ID: lastEventId, "0", or "$"
       let lastId =
         input.lastEventId ?? (input.lastEventId === undefined ? "0" : "$");
 

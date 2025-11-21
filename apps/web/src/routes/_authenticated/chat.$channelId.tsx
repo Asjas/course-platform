@@ -60,6 +60,7 @@ function AuthenticatedChatChannelPage() {
 
   const { data: cachedMessages } = useQuery<ChatMessage[]>({
     queryKey: cacheKey,
+    queryFn: () => trpcClient.chat.getChannelHistory.query({ channelId }),
   });
 
   const scrollRef = useRef<HTMLDivElement>(null);

@@ -38,11 +38,6 @@ export default function ChatMessageForm() {
           message,
         });
 
-        console.log(
-          "getChannelCacheKey(channelId)",
-          getChannelCacheKey(channelId),
-        );
-
         queryClient.invalidateQueries({
           queryKey: getChannelCacheKey(channelId),
         });
@@ -64,7 +59,6 @@ export default function ChatMessageForm() {
   return (
     <form
       onSubmit={(event) => {
-        console.log("Submitting chat message form");
         event.preventDefault();
         event.stopPropagation();
         form.handleSubmit();
