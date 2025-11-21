@@ -107,14 +107,12 @@ export const chatRouter = router({
         username: ctx.user.username,
         message: input.message,
         timestamp: Date.now(),
-        // This is the key: store the sortable creation time
         createdAt: Date.now(),
       };
 
-      // Use * → always valid, always increasing
       const streamId = await redis.xadd(
         `chat:channel:${input.channelId}:messages`,
-        "*", // ← safe & correct
+        "*",
         "message",
         JSON.stringify(payload),
       );
@@ -141,12 +139,11 @@ export const chatRouter = router({
               ...payload,
               message: input.message,
               editedAt: Date.now(),
-              // createdAt remains unchanged → preserves order!
             };
 
             await redis.xadd(
               streamKey,
-              "*", // ← always use "*"
+              "*",
               "message",
               JSON.stringify(updated),
             );
