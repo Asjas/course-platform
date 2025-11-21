@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { authClient } from "~/lib/auth.client";
 
-export const Route = createFileRoute("/verify-email/$token")({
+export const Route = createFileRoute("/(auth)/verify-email/$token")({
   loader: async ({ params }) => {
     const token = params.token;
 

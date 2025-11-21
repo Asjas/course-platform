@@ -19,7 +19,6 @@ import { Route as authRouteRouteImport } from "./routes/(auth)/route"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
-import { Route as VerifyEmailTokenRouteImport } from "./routes/verify-email.$token"
 import { Route as SupportCreateTicketRouteImport } from "./routes/support/create-ticket"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
@@ -38,6 +37,7 @@ import { Route as AuthenticatedChatChannelIdRouteImport } from "./routes/_authen
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
 import { Route as AuthenticatedAdminCoursesRouteImport } from "./routes/_authenticated/admin/courses"
+import { Route as authVerifyEmailTokenRouteImport } from "./routes/(auth)/verify-email.$token"
 import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as SupportSupportTicketEditIndexRouteImport } from "./routes/support/$supportTicket/edit/index"
@@ -94,11 +94,6 @@ const SupportIndexRoute = SupportIndexRouteImport.update({
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: "/blog/",
   path: "/blog/",
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VerifyEmailTokenRoute = VerifyEmailTokenRouteImport.update({
-  id: "/verify-email/$token",
-  path: "/verify-email/$token",
   getParentRoute: () => rootRouteImport,
 } as any)
 const SupportCreateTicketRoute = SupportCreateTicketRouteImport.update({
@@ -195,6 +190,11 @@ const AuthenticatedAdminCoursesRoute =
     path: "/courses",
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const authVerifyEmailTokenRoute = authVerifyEmailTokenRouteImport.update({
+  id: "/verify-email/$token",
+  path: "/verify-email/$token",
+  getParentRoute: () => authRouteRoute,
+} as any)
 const SupportSupportTicketEditRouteRoute =
   SupportSupportTicketEditRouteRouteImport.update({
     id: "/$supportTicket/edit",
@@ -269,11 +269,11 @@ export interface FileRoutesByFullPath {
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
-  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
@@ -305,9 +305,9 @@ export interface FileRoutesByTo {
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
-  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog": typeof BlogIndexRoute
   "/support": typeof SupportIndexRoute
+  "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
@@ -344,11 +344,11 @@ export interface FileRoutesById {
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
-  "/verify-email/$token": typeof VerifyEmailTokenRoute
   "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
+  "/(auth)/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/_authenticated/admin/courses": typeof AuthenticatedAdminCoursesRouteWithChildren
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
@@ -384,11 +384,11 @@ export interface FileRouteTypes {
     | "/purchases"
     | "/blog/$slug"
     | "/support/create-ticket"
-    | "/verify-email/$token"
     | "/blog"
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/verify-email/$token"
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
@@ -420,9 +420,9 @@ export interface FileRouteTypes {
     | "/purchases"
     | "/blog/$slug"
     | "/support/create-ticket"
-    | "/verify-email/$token"
     | "/blog"
     | "/support"
+    | "/verify-email/$token"
     | "/admin/courses"
     | "/admin/purchases"
     | "/admin/users"
@@ -458,11 +458,11 @@ export interface FileRouteTypes {
     | "/_authenticated/purchases"
     | "/blog/$slug"
     | "/support/create-ticket"
-    | "/verify-email/$token"
     | "/blog/"
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
+    | "/(auth)/verify-email/$token"
     | "/_authenticated/admin/courses"
     | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/users"
@@ -489,7 +489,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   EducationCoursesRouteRoute: typeof EducationCoursesRouteRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
-  VerifyEmailTokenRoute: typeof VerifyEmailTokenRoute
   BlogIndexRoute: typeof BlogIndexRoute
 }
 
@@ -563,13 +562,6 @@ declare module "@tanstack/react-router" {
       path: "/blog"
       fullPath: "/blog"
       preLoaderRoute: typeof BlogIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    "/verify-email/$token": {
-      id: "/verify-email/$token"
-      path: "/verify-email/$token"
-      fullPath: "/verify-email/$token"
-      preLoaderRoute: typeof VerifyEmailTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     "/support/create-ticket": {
@@ -698,6 +690,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/(auth)/verify-email/$token": {
+      id: "/(auth)/verify-email/$token"
+      path: "/verify-email/$token"
+      fullPath: "/verify-email/$token"
+      preLoaderRoute: typeof authVerifyEmailTokenRouteImport
+      parentRoute: typeof authRouteRoute
+    }
     "/support/$supportTicket/edit": {
       id: "/support/$supportTicket/edit"
       path: "/$supportTicket/edit"
@@ -768,12 +767,14 @@ interface authRouteRouteChildren {
   authResetPasswordRoute: typeof authResetPasswordRoute
   authSigninRoute: typeof authSigninRoute
   authSignupRoute: typeof authSignupRoute
+  authVerifyEmailTokenRoute: typeof authVerifyEmailTokenRoute
 }
 
 const authRouteRouteChildren: authRouteRouteChildren = {
   authResetPasswordRoute: authResetPasswordRoute,
   authSigninRoute: authSigninRoute,
   authSignupRoute: authSignupRoute,
+  authVerifyEmailTokenRoute: authVerifyEmailTokenRoute,
 }
 
 const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
@@ -929,7 +930,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   EducationCoursesRouteRoute: EducationCoursesRouteRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
-  VerifyEmailTokenRoute: VerifyEmailTokenRoute,
   BlogIndexRoute: BlogIndexRoute,
 }
 export const routeTree = rootRouteImport
