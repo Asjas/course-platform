@@ -11,16 +11,11 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
   loader: async ({ context, params }) => {
     const { queryClient } = context;
     const { channelId } = params;
-
     const cacheKey = getChannelCacheKey(channelId);
-    const history = await trpcClient.chat.getChannelHistory.query({
-      channelId,
-    });
 
-    queryClient.setQueryData<ChatMessage[]>(cacheKey, () => {
-      const map = new Map<string, ChatMessage>();
-      history.forEach((msg) => map.set(msg.id, msg));
-      return Array.from(map.values());
+    await queryClient.fetchQuery({
+      queryKey: cacheKey,
+      queryFn: () => trpcClient.chat.getChannelHistory.query({ channelId }),
     });
   },
   component: AuthenticatedChatChannelPage,
