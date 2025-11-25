@@ -31,6 +31,7 @@ export default function NewSupportTicketForm() {
       try {
         const id = `suptick:${ulid()}`;
         const newSupportTicketWithId = { id, ...value };
+        // @ts-expect-error must use any to satisfy the type system
         const tx = SupportTicketsCollection.insert(newSupportTicketWithId);
 
         await tx.isPersisted.promise;
