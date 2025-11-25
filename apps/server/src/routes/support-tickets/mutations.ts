@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { ulid } from "ulid";
 import { db } from "~/db/index.js";
 import {
   supportTicket,
@@ -7,24 +6,18 @@ import {
 } from "~/db/schema/support-tickets.js";
 
 export type SupportTicket = typeof supportTicket.$inferSelect;
-export type NewSupportTicket = Omit<typeof supportTicket.$inferInsert, "id">;
+export type NewSupportTicket = typeof supportTicket.$inferInsert;
 export type SupportTicketComment = typeof supportTicketComment.$inferSelect;
-export type NewSupportTicketComment = Omit<
-  typeof supportTicketComment.$inferInsert,
-  "id"
->;
+export type NewSupportTicketComment = typeof supportTicketComment.$inferInsert;
 
 export async function insertSupportTicket({
   newSupportTicket,
 }: {
   newSupportTicket: NewSupportTicket;
 }) {
-  const id = `suptick:${ulid()}`;
-  const newSupportTicketWithId = { id, ...newSupportTicket };
-
   const [ticket] = await db
     .insert(supportTicket)
-    .values(newSupportTicketWithId)
+    .values(newSupportTicket)
     .returning();
 
   return ticket;
@@ -64,12 +57,9 @@ export async function insertSupportTicketComment({
 }: {
   newSupportTicketComment: NewSupportTicketComment;
 }) {
-  const id = `suptickcom:${ulid()}`;
-  const newSupportTicketCommentWithId = { id, ...newSupportTicketComment };
-
   const [comment] = await db
     .insert(supportTicketComment)
-    .values(newSupportTicketCommentWithId)
+    .values(newSupportTicketComment)
     .returning();
 
   return comment;

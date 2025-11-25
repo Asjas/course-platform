@@ -6,12 +6,9 @@ import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
 
 export type SupportTicket = typeof supportTicket.$inferSelect;
-export type NewSupportTicket = Omit<typeof supportTicket.$inferInsert, "id">;
+export type NewSupportTicket = typeof supportTicket.$inferInsert;
 export type SupportTicketComment = typeof supportTicketComment.$inferSelect;
-export type NewSupportTicketComment = Omit<
-  typeof supportTicketComment.$inferInsert,
-  "id"
->;
+export type NewSupportTicketComment = typeof supportTicketComment.$inferInsert;
 
 export const supportTicketStatus = mySchema.enum("support_ticket_status", [
   "open",

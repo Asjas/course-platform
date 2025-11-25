@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
 import { formatRelative } from "date-fns";
 import {
@@ -13,6 +12,7 @@ import SupportCommentForm from "~/components/forms/create-support-comment-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import { useAuth } from "~/lib/auth.context";
+import { useSupportTicketById } from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
@@ -37,15 +37,17 @@ function SupportTicketIndexPage() {
   const [copied, setCopied] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data: ticket, isLoading } = useSuspenseQuery(
-    trpc.supportTickets.getSupportTicketById.queryOptions({
-      ticketId: params.supportTicket,
-    }),
-  );
+  const { data: ticket, isLoading } = useSupportTicketById({
+    ticketId: params.supportTicket,
+  });
+
+  console.log("Loading state:", isLoading);
 
   if (isLoading) {
     return <Loading />;
   }
+
+  console.log("Ticket data:", ticket);
 
   if (!ticket) {
     return (
@@ -57,7 +59,7 @@ function SupportTicketIndexPage() {
           The support ticket you are looking for does not exist.
         </p>
         <Link
-          className="mt-4 block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+          className="mt-4 block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-700"
           to="/support"
         >
           Go back to all tickets

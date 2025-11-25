@@ -1,6 +1,7 @@
 import { useForm, useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import GitHubMessageEditor from "~/components/github-message-editor";
@@ -29,10 +30,12 @@ export default function SupportCommentForm({ ticketId }: { ticketId: string }) {
     },
     onSubmit: async ({ value: { comment } }) => {
       try {
-        await createSupportTicketCommentMutation.mutateAsync({
-          comment,
-          ticketId,
-        });
+        const id = `suptickcom:${ulid()}`;
+        const newSupportTicketCommentWithId = { id, comment, ticketId };
+
+        await createSupportTicketCommentMutation.mutateAsync(
+          newSupportTicketCommentWithId,
+        );
 
         queryClient.invalidateQueries({
           queryKey: trpc.supportTickets.getSupportTicketById.queryKey({

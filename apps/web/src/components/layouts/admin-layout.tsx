@@ -6,13 +6,16 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="mt-10 flex h-full md:mt-0">
-      <div className="relative flex w-50 flex-col gap-y-5 overflow-y-auto bg-gray-900 md:w-72">
+    <div className="sidebar mt-10 flex h-full md:mt-0">
+      <div className="relative flex flex-col overflow-y-auto bg-gray-900 px-2">
         <nav className="flex flex-1 flex-col">
-          <ul className="flex flex-1 flex-col gap-y-4 pt-8">
+          <span className="mt-2 flex p-2 text-lg md:text-xl">Admin</span>
+          <ul className="flex flex-1 flex-col gap-y-2 pt-4">
             <li>
               <Link
-                className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                activeProps={{ className: "bg-gray-800" }}
+                activeOptions={{ exact: true }}
                 to="/admin/users"
               >
                 Users
@@ -20,7 +23,9 @@ export default function AdminLayout({
             </li>
             <li>
               <Link
-                className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                activeProps={{ className: "bg-gray-800" }}
+                activeOptions={{ exact: true }}
                 to="/admin/coupons"
               >
                 Coupons
@@ -28,7 +33,9 @@ export default function AdminLayout({
             </li>
             <li>
               <Link
-                className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                activeProps={{ className: "bg-gray-800" }}
+                activeOptions={{ exact: true }}
                 to="/admin/courses"
               >
                 Courses
@@ -36,7 +43,9 @@ export default function AdminLayout({
             </li>
             <li>
               <Link
-                className="flex h-12 w-full items-center px-4 text-center hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                activeProps={{ className: "bg-gray-800" }}
+                activeOptions={{ exact: true }}
                 to="/admin/purchases"
               >
                 Purchases

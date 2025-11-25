@@ -1,5 +1,7 @@
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { TanStackDevtools } from "@tanstack/react-devtools";
+import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useState } from "react";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
@@ -52,11 +54,14 @@ export default function DefaultLayoutComponent({
         </div>
         <Footer />
       </div>
-      <ReactQueryDevtools
-        initialIsOpen={false}
-        buttonPosition="bottom-left"
+      <TanStackDevtools
+        config={{ position: "bottom-right" }}
+        plugins={[
+          { name: "Tanstack Query", render: <ReactQueryDevtoolsPanel /> },
+          { name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> },
+          { name: "Tanstack Form", render: <FormDevtoolsPanel /> },
+        ]}
       />
-      <TanStackRouterDevtools position="bottom-right" />
     </div>
   );
 }

@@ -1,5 +1,4 @@
 import { eq } from "drizzle-orm";
-import { ulid } from "ulid";
 import { db } from "~/db/index.js";
 import {
   type NewSupportTicket,
@@ -15,12 +14,9 @@ export async function insertSupportTicket({
 }: {
   newSupportTicket: NewSupportTicket;
 }) {
-  const id = `suptik:${ulid()}`;
-  const newSupportTicketWithId = { id, ...newSupportTicket };
-
   const [ticket] = await db
     .insert(supportTicket)
-    .values(newSupportTicketWithId)
+    .values(newSupportTicket)
     .returning();
 
   return ticket;
@@ -60,12 +56,9 @@ export async function insertSupportTicketComment({
 }: {
   newSupportTicketComment: NewSupportTicketComment;
 }) {
-  const id = `suptikcom:${ulid()}`;
-  const newSupportTicketCommentWithId = { id, ...newSupportTicketComment };
-
   const [comment] = await db
     .insert(supportTicketComment)
-    .values(newSupportTicketCommentWithId)
+    .values(newSupportTicketComment)
     .returning();
 
   return comment;

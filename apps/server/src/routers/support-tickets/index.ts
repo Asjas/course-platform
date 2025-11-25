@@ -77,18 +77,21 @@ export const supportTicketsRouter = router({
   createSupportTicket: publicProcedure
     .input(
       z.object({
+        id: z.string(),
         title: z.string().min(5).max(100),
         description: z.string().max(1000),
-        repo: z.string(),
+        repo: z.string().nullable().optional(),
         priority: z.enum(["low", "medium", "high", "urgent"]),
         status: z.enum(["open", "in_progress", "resolved", "closed"]),
-        moduleId: z.string().optional(),
-        lessonId: z.string().optional(),
+        moduleId: z.string().nullable().optional(),
+        lessonId: z.string().nullable().optional(),
       }),
     )
     .use(isAuthenticated)
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
       const fastify = ctx.reply.server;
+
+      console.log("Creating support ticket with input:", input);
 
       const newSupportTicket: NewSupportTicket = {
         ...input,
@@ -120,6 +123,7 @@ export const supportTicketsRouter = router({
   createSupportTicketComment: publicProcedure
     .input(
       z.object({
+        id: z.string(),
         ticketId: z.string(),
         comment: z.string().min(2),
       }),
@@ -129,6 +133,7 @@ export const supportTicketsRouter = router({
       const fastify = ctx.reply.server;
 
       const newSupportTicketComment: NewSupportTicketComment = {
+        id: input.id,
         ticketId: input.ticketId,
         userId: ctx.user.id,
         comment: input.comment,

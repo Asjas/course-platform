@@ -1,23 +1,17 @@
 import { useForm, useStore } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import FieldInfo from "~/components/field-info";
 import GitHubMessageEditor from "~/components/github-message-editor";
-import { queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
+import { SupportTicketsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
 
 export default function NewSupportTicketForm() {
   const navigate = useNavigate();
-  const createSupportTicketMutation = useMutation(
-    trpc.supportTickets.createSupportTicket.mutationOptions({
-      keyPrefix: undefined,
-    }),
-  );
 
   const form = useForm({
     defaultValues: {
@@ -35,23 +29,23 @@ export default function NewSupportTicketForm() {
     },
     onSubmit: async ({ value }) => {
       try {
-        const newSupportTicket =
-          await createSupportTicketMutation.mutateAsync(value);
+        const id = `suptick:${ulid()}`;
+        const newSupportTicketWithId = { id, ...value };
+        const tx = SupportTicketsCollection.insert(newSupportTicketWithId);
 
-        queryClient.invalidateQueries({
-          queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
-        });
-
+        await tx.isPersisted.promise;
         form.reset();
         toast.success("Support ticket created successfully!");
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         navigate({
           to: "/support/$supportTicket",
-          params: { supportTicket: newSupportTicket.id },
+          params: { supportTicket: id },
         });
       } catch (error) {
-        console.error("Error creating support ticket:", error);
+        if (error instanceof Error) {
+          console.error("Error creating support ticket:", error);
+        }
         toast.error(
           "An error occurred while creating the support ticket. Please try again.",
         );
@@ -66,6 +60,7 @@ export default function NewSupportTicketForm() {
     <form
       className="mt-10 flex flex-col"
       onSubmit={(event) => {
+        console.log("form submit event:", event);
         event.preventDefault();
         event.stopPropagation();
         form.handleSubmit();
@@ -157,7 +152,7 @@ export default function NewSupportTicketForm() {
                         id={field.name}
                         name={field.name}
                         type="text"
-                        value={field.state.value}
+                        value={field.state.value as string}
                         onChange={(event) =>
                           field.handleChange(event.target.value)
                         }

@@ -22,14 +22,14 @@ export default function BlockerComponent({
               </p>
               <div className="mt-8 flex gap-4">
                 <button
-                  className="rounded-md bg-red-600 px-4 py-1.5 text-white hover:bg-white hover:text-red-600"
+                  className="rounded-md bg-red-600 px-4 py-1.5 text-white hover:bg-white hover:text-red-600 active:bg-red-700"
                   type="button"
                   onClick={proceed}
                 >
                   Yes
                 </button>
                 <button
-                  className="rounded-md bg-green-600 px-4 py-1.5 text-white hover:bg-white hover:text-green-600"
+                  className="rounded-md bg-green-600 px-4 py-1.5 text-white hover:bg-white hover:text-green-600 active:bg-green-700"
                   type="button"
                   onClick={reset}
                 >

@@ -1,33 +1,29 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import Loading from "~/components/loading";
 import { useAuth } from "~/lib/auth.context";
-import { trpc } from "~/lib/trpc.client";
+import {
+  SupportTicketsCollection,
+  useSupportTickets,
+} from "~/lib/db.collections";
 
 export const Route = createFileRoute("/support/")({
-  loader: async ({ context }) => {
-    const { queryClient } = context;
-
-    queryClient.ensureQueryData(
-      trpc.supportTickets.getAllSupportTickets.queryOptions(),
-    );
+  loader: async () => {
+    await SupportTicketsCollection.preload();
   },
   component: SupportIndexPage,
 });
 
 function SupportIndexPage() {
   const auth = useAuth();
-  const { data: tickets, isLoading } = useSuspenseQuery(
-    trpc.supportTickets.getAllSupportTickets.queryOptions(),
-  );
+  const { data: tickets, isLoading } = useSupportTickets();
 
   if (isLoading) {
     return <Loading />;
   }
 
   return (
-    <div className="mt-20 px-4 sm:px-6 lg:px-8">
+    <div className="mt-20 mb-20 px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-white md:text-3xl">
@@ -41,7 +37,7 @@ function SupportIndexPage() {
         {auth.session ? (
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <Link
-              className="block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+              className="block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-700"
               to="/support/create-ticket"
             >
               Create new ticket
