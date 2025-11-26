@@ -44,9 +44,7 @@ export default function NewSupportTicketForm() {
           params: { supportTicket: id },
         });
       } catch (error) {
-        if (error instanceof Error) {
-          console.error("Error creating support ticket:", error);
-        }
+        console.error("Error creating support ticket:", error);
         toast.error(
           "An error occurred while creating the support ticket. Please try again.",
         );
