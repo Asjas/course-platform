@@ -15,7 +15,7 @@ export const SupportTicketsCollection = createCollection(
 
         await trpcClient.supportTickets.createSupportTicket.mutate(modified);
       } catch (error) {
-        console.error("Error inserting support ticket:", error);
+        console.error("Error inserting support ticket: ", error);
 
         throw error;
       }
