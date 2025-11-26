@@ -7,9 +7,9 @@ import { trpc, trpcClient } from "~/lib/trpc.client";
 export const SupportTicketsCollection = createCollection(
   queryCollectionOptions({
     queryClient,
+    getKey: (item) => item.id,
     queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
     queryFn: () => trpcClient.supportTickets.getAllSupportTickets.query(),
-    getKey: (item) => item.id,
     onInsert: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
