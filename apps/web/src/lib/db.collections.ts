@@ -1,5 +1,6 @@
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
+import { toast } from "sonner";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -16,7 +17,9 @@ export const SupportTicketsCollection = createCollection(
         await trpcClient.supportTickets.createSupportTicket.mutate(modified);
       } catch (error) {
         console.error("Error inserting support ticket: ", error);
-
+        toast.error(
+          "An error occurred while creating the support ticket. Please try again.",
+        );
         throw error;
       }
     },
