@@ -59,7 +59,6 @@ export default function NewSupportTicketForm() {
     <form
       className="mt-10 flex flex-col"
       onSubmit={(event) => {
-        console.log("form submit event:", event);
         event.preventDefault();
         event.stopPropagation();
         form.handleSubmit();
@@ -143,12 +142,11 @@ export default function NewSupportTicketForm() {
                       className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
-                      Repostitory URL (Required)
+                      Repository URL (Required)
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-green-500 sm:text-sm/6"
-                        id={field.name}
+                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6"
                         name={field.name}
                         type="text"
                         value={field.state.value as string}
