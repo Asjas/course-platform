@@ -181,7 +181,7 @@ importers:
         version: 2.1.1
       fastify-better-auth:
         specifier: 1.2.0
-        version: 1.2.0(better-auth@1.3.34(react@19.2.0))(fastify@5.6.1)
+        version: 1.2.0(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1)
       fastify-favicon:
         specifier: 5.0.0
         version: 5.0.0
@@ -289,9 +289,6 @@ importers:
       '@shikijs/rehype':
         specifier: 3.14.0
         version: 3.14.0
-      '@tanstack/devtools-vite':
-        specifier: 0.3.11
-        version: 0.3.11(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
       '@tanstack/offline-transactions':
         specifier: 1.0.0
         version: 1.0.0(@tanstack/db@0.5.8(typescript@5.9.3))
@@ -307,15 +304,9 @@ importers:
       '@tanstack/react-db':
         specifier: 0.1.52
         version: 0.1.52(react@19.2.0)(typescript@5.9.3)
-      '@tanstack/react-devtools':
-        specifier: 0.8.2
-        version: 0.8.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(csstype@3.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@tanstack/react-form':
         specifier: 1.26.0
         version: 1.26.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      '@tanstack/react-form-devtools':
-        specifier: 0.2.2
-        version: 0.2.2(@types/react@19.2.2)(csstype@3.1.3)(react@19.2.0)(solid-js@1.9.10)
       '@tanstack/react-query':
         specifier: 5.90.11
         version: 5.90.11(react@19.2.0)
@@ -407,6 +398,15 @@ importers:
       '@tailwindcss/vite':
         specifier: 4.1.15
         version: 4.1.15(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
+      '@tanstack/devtools-vite':
+        specifier: 0.3.11
+        version: 0.3.11(vite@7.1.12(@types/node@24.9.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.20.6)(yaml@2.8.1))
+      '@tanstack/react-devtools':
+        specifier: 0.8.2
+        version: 0.8.2(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(csstype@3.1.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-form-devtools':
+        specifier: 0.2.2
+        version: 0.2.2(@types/react@19.2.2)(csstype@3.1.3)(react@19.2.0)(solid-js@1.9.10)
       '@tanstack/react-query-devtools':
         specifier: 5.90.2
         version: 5.90.2(@tanstack/react-query@5.90.11(react@19.2.0))(react@19.2.0)
@@ -13508,7 +13508,7 @@ snapshots:
       '@react-types/shared': 3.32.1(react@19.2.0)
       react: 19.2.0
 
-  '@reduxjs/toolkit@2.9.2(react-redux@9.2.0(react@19.2.0)(redux@5.0.1))(react@19.2.0)':
+  '@reduxjs/toolkit@2.9.2(react-redux@9.2.0(@types/react@19.2.2)(react@19.2.0)(redux@5.0.1))(react@19.2.0)':
     dependencies:
       '@standard-schema/spec': 1.0.0
       '@standard-schema/utils': 0.3.0
@@ -16799,7 +16799,7 @@ snapshots:
     dependencies:
       fastify-plugin: 4.5.1
 
-  fastify-better-auth@1.2.0(better-auth@1.3.34(react@19.2.0))(fastify@5.6.1):
+  fastify-better-auth@1.2.0(better-auth@1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(fastify@5.6.1):
     dependencies:
       better-auth: 1.3.34(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.10)
       fastify: 5.6.1
@@ -19000,7 +19000,7 @@ snapshots:
 
   recharts@3.3.0(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react-is@17.0.2)(react@19.2.0)(redux@5.0.1):
     dependencies:
-      '@reduxjs/toolkit': 2.9.2(react-redux@9.2.0(react@19.2.0)(redux@5.0.1))(react@19.2.0)
+      '@reduxjs/toolkit': 2.9.2(react-redux@9.2.0(@types/react@19.2.2)(react@19.2.0)(redux@5.0.1))(react@19.2.0)
       clsx: 2.1.1
       decimal.js-light: 2.5.1
       es-toolkit: 1.41.0
