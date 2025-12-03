@@ -3,6 +3,7 @@ import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { useState } from "react";
+import { toast } from "sonner";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner";
@@ -38,10 +39,25 @@ export default function DefaultLayoutComponent({
                 className="rounded-sm border bg-gray-800 px-2 py-1 text-white"
                 type="button"
                 onClick={async () => {
-                  await authClient.sendVerificationEmail({
-                    email: user.email,
-                  });
-                  setEmailResent(true);
+                  await authClient.sendVerificationEmail(
+                    {
+                      email: user.email,
+                    },
+                    {
+                      onSuccess: () => {
+                        setEmailResent(true);
+                        toast.success("Verification email resent!");
+                      },
+                      onError: ({ error }) => {
+                        setEmailResent(false);
+                        toast.error("Failed to resend verification email.");
+                        console.error(
+                          "Failed to resend verification email: ",
+                          error,
+                        );
+                      },
+                    },
+                  );
                 }}
               >
                 {isEmailResent
@@ -54,6 +70,7 @@ export default function DefaultLayoutComponent({
         </div>
         <Footer />
       </div>
+
       <TanStackDevtools
         config={{ position: "bottom-right" }}
         plugins={[
