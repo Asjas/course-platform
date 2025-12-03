@@ -2,7 +2,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { toast } from "sonner";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
@@ -13,7 +13,7 @@ import { useAuth } from "~/lib/auth.context";
 export default function DefaultLayoutComponent({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const auth = useAuth();
   const user = auth.session?.user;

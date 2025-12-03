@@ -1,10 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="sidebar mt-10 flex h-full md:mt-0">
       <div className="relative flex flex-col overflow-y-auto bg-gray-900 px-2">
