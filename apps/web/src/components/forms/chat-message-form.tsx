@@ -1,4 +1,3 @@
-import { useStore } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { CircleArrowRightIcon } from "lucide-react";
@@ -53,9 +52,6 @@ export default function ChatMessageForm() {
     },
   });
 
-  const isDirty = useStore(form.store, (state) => state.isDirty);
-  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
-
   return (
     <form
       onSubmit={(event) => {
@@ -65,14 +61,14 @@ export default function ChatMessageForm() {
       }}
       noValidate
     >
-      <BlockerComponent formIsDirty={isDirty} />
+      <form.Subscribe
+        selector={(state) => [state.isDirty]}
+        children={([isDirty]) => <BlockerComponent formIsDirty={isDirty} />}
+      />
 
       {/* message */}
       <div className="flex flex-col gap-1">
         {/* TODO: typing indicator */}
-        {/* <p className="ml-4 text-sm text-white">
-          codewizard is currently typing...
-        </p> */}
         <form.Field
           name="message"
           children={(field) => (
@@ -81,21 +77,28 @@ export default function ChatMessageForm() {
               onChange={field.handleChange}
               value={field.state.value}
             >
-              <button
-                className={cn(
-                  "cursor-pointer font-semibold text-white shadow-xs hover:text-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-                  isSubmitting ? "cursor-not-allowed opacity-50" : "",
+              <form.Subscribe
+                selector={(state) => [state.isDirty, state.isSubmitting]}
+                children={([isDirty, isSubmitting]) => (
+                  <button
+                    className={cn(
+                      "cursor-pointer font-semibold text-white shadow-xs hover:text-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
+                      isSubmitting || !isDirty
+                        ? "cursor-not-allowed opacity-50"
+                        : "",
+                    )}
+                    aria-label="Send message"
+                    title="Send message"
+                    type="submit"
+                    disabled={isSubmitting || !isDirty}
+                  >
+                    <CircleArrowRightIcon
+                      size={24}
+                      color="currentColor"
+                    />
+                  </button>
                 )}
-                aria-label="Send message"
-                title="Send message"
-                type="submit"
-                disabled={isSubmitting}
-              >
-                <CircleArrowRightIcon
-                  size={24}
-                  color="currentColor"
-                />
-              </button>
+              />
             </ChatMessageEditor>
           )}
         />

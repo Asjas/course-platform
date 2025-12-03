@@ -1,4 +1,4 @@
-import { useForm, useStore } from "@tanstack/react-form";
+import { useForm } from "@tanstack/react-form";
 import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -52,9 +52,6 @@ export default function SignInForm() {
     },
   });
 
-  const isDirty = useStore(form.store, (state) => state.isDirty);
-  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
-
   return (
     <form
       className="space-y-4 md:space-y-6"
@@ -64,7 +61,10 @@ export default function SignInForm() {
       }}
       noValidate
     >
-      <BlockerComponent formIsDirty={isDirty} />
+      <form.Subscribe
+        selector={(state) => [state.isDirty]}
+        children={([isDirty]) => <BlockerComponent formIsDirty={isDirty} />}
+      />
 
       {/* Email Field */}
       <form.Field
@@ -120,16 +120,20 @@ export default function SignInForm() {
         )}
       />
 
-      {/* Submit Button */}
-      <Button
-        className="flex items-center gap-2"
-        type="submit"
-        disabled={!isDirty || isSubmitting}
-        aria-disabled={!isDirty || isSubmitting}
-      >
-        {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-        {isSubmitting ? "Signing in..." : "Sign In"}
-      </Button>
+      <form.Subscribe
+        selector={(state) => [state.isDirty, state.isSubmitting]}
+        children={([isDirty, isSubmitting]) => (
+          <Button
+            className="flex items-center gap-2"
+            type="submit"
+            disabled={!isDirty || isSubmitting}
+            aria-disabled={!isDirty || isSubmitting}
+          >
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting ? "Signing in..." : "Sign In"}
+          </Button>
+        )}
+      />
     </form>
   );
 }
