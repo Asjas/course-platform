@@ -33,8 +33,9 @@ export default function NewSupportTicketForm() {
         const newSupportTicketWithId = { id, ...value };
         // @ts-expect-error must use any to satisfy the type system
         const tx = SupportTicketsCollection.insert(newSupportTicketWithId);
-
         await tx.isPersisted.promise;
+        await SupportTicketsCollection.utils.refetch();
+
         form.reset();
         toast.success("Support ticket created successfully!");
         await new Promise((resolve) => setTimeout(resolve, 300));

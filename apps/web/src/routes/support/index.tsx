@@ -106,7 +106,7 @@ function SupportIndexPage() {
                       className="py-3.5 pr-4 pl-3 sm:pr-3"
                       scope="col"
                     >
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">Actions</span>
                     </th>
                   </tr>
                 </thead>
