@@ -10,7 +10,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <ul className="flex flex-1 flex-col gap-y-2 pt-4">
             <li>
               <Link
-                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-700"
                 activeProps={{ className: "bg-gray-800" }}
                 activeOptions={{ exact: true }}
                 to="/admin/users"
@@ -20,7 +20,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </li>
             <li>
               <Link
-                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-700"
                 activeProps={{ className: "bg-gray-800" }}
                 activeOptions={{ exact: true }}
                 to="/admin/coupons"
@@ -30,7 +30,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </li>
             <li>
               <Link
-                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-700"
                 activeProps={{ className: "bg-gray-800" }}
                 activeOptions={{ exact: true }}
                 to="/admin/courses"
@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </li>
             <li>
               <Link
-                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-800"
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-700"
                 activeProps={{ className: "bg-gray-800" }}
                 activeOptions={{ exact: true }}
                 to="/admin/purchases"
