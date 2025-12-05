@@ -1,6 +1,11 @@
-import { createFileRoute, useRouter } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  useNavigate,
+  useRouter,
+} from "@tanstack/react-router";
 import type { UserWithRole } from "better-auth/plugins/admin";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
+import { toast } from "sonner";
 import Loading from "~/components/loading";
 import { authClient } from "~/lib/auth.client";
 
@@ -23,6 +28,7 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 
 function AdminUsersPage() {
   const router = useRouter();
+  const navigate = useNavigate();
   const data = Route.useLoaderData();
 
   if (!data) {
@@ -65,7 +71,7 @@ function AdminUsersPage() {
               </p>
               {user.banned ? (
                 <button
-                  className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                  className="cursor-pointer rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 active:bg-green-800"
                   onClick={async () => {
                     await authClient.admin.unbanUser({ userId: user.id });
                     router.invalidate();
@@ -75,7 +81,7 @@ function AdminUsersPage() {
                 </button>
               ) : (
                 <button
-                  className="rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700"
+                  className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 active:bg-red-800"
                   onClick={async () => {
                     await authClient.admin.banUser({ userId: user.id });
                     router.invalidate();
@@ -91,10 +97,29 @@ function AdminUsersPage() {
             </div>
             <div>
               <button
-                className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                onClick={() => {
-                  authClient.admin.impersonateUser({ userId: user.id });
-                  router.invalidate();
+                className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 active:bg-blue-800"
+                onClick={async () => {
+                  const { error } = await authClient.admin.impersonateUser({
+                    userId: user.id,
+                  });
+
+                  if (error) {
+                    toast.error(
+                      `Failed to impersonate user: ${user.username || user.name}`,
+                    );
+                    toast.error(
+                      `User status: ${user.banned ? "Banned" : "Active"}`,
+                    );
+                    console.error(error);
+
+                    return;
+                  }
+
+                  toast.success(
+                    `Started impersonating user: ${user.username || user.name}`,
+                  );
+
+                  navigate({ to: "/", reloadDocument: true });
                 }}
               >
                 Impersonate User
