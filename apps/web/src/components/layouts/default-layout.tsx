@@ -32,7 +32,7 @@ export default function DefaultLayoutComponent({
         <Header auth={auth} />
         <div className="mt-10 flex w-full flex-col md:mt-20">
           {user && !user?.emailVerified ? (
-            <div className="-mx-6 flex items-center justify-between bg-green-400 p-4 text-sm text-black">
+            <div className="flex items-center justify-between bg-green-400 p-4 text-sm text-black">
               Your email is not verified. Please check your inbox for a
               verification email.
               <button
