@@ -18,6 +18,7 @@ export default function Header({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const user = auth.session?.user;
+  const isImpersonating = !!auth.session?.session.impersonatedBy;
 
   return (
     <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/2 bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60">
@@ -159,6 +160,35 @@ export default function Header({ auth }: { auth: AuthState }) {
                   >
                     Purchases
                   </MenuItem>
+                  {isImpersonating ? (
+                    <MenuItem
+                      className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                      onAction={async () => {
+                        const { error } =
+                          await authClient.admin.stopImpersonating();
+
+                        if (error) {
+                          toast.error(
+                            `Failed to stop impersonating user: ${user.username || user.name}`,
+                          );
+                          console.error(error);
+
+                          return;
+                        }
+
+                        toast.success(
+                          `Stopped impersonating user: ${user.username || user.name}`,
+                        );
+
+                        navigate({
+                          to: "/admin/users",
+                          reloadDocument: true,
+                        });
+                      }}
+                    >
+                      Stop Impersonating
+                    </MenuItem>
+                  ) : null}
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
@@ -166,6 +196,7 @@ export default function Header({ auth }: { auth: AuthState }) {
 
                       if (error) {
                         toast.error(error.message || "Failed to logout");
+
                         return;
                       }
 
@@ -280,6 +311,35 @@ export default function Header({ auth }: { auth: AuthState }) {
                           >
                             Purchases
                           </MenuItem>
+                          {isImpersonating ? (
+                            <MenuItem
+                              className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
+                              onAction={async () => {
+                                const { error } =
+                                  await authClient.admin.stopImpersonating();
+
+                                if (error) {
+                                  toast.error(
+                                    `Failed to stop impersonating user: ${user.username || user.name}`,
+                                  );
+                                  console.error(error);
+
+                                  return;
+                                }
+
+                                toast.success(
+                                  `Stopped impersonating user: ${user.username || user.name}`,
+                                );
+
+                                navigate({
+                                  to: "/admin/users",
+                                  reloadDocument: true,
+                                });
+                              }}
+                            >
+                              Stop Impersonating
+                            </MenuItem>
+                          ) : null}
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={async () => {
@@ -289,6 +349,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                                 toast.error(
                                   error.message || "Failed to logout",
                                 );
+
                                 return;
                               }
 
