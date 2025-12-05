@@ -1,6 +1,15 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import Loading from "~/components/loading";
+import {
+  Table,
+  TableBody,
+  TableBodyCell,
+  TableBodyRow,
+  TableHeader,
+  TableHeaderCell,
+  TableHeaderRow,
+} from "~/components/ui/table";
 import { useAuth } from "~/lib/auth.context";
 import {
   SupportTicketsCollection,
@@ -57,66 +66,58 @@ function SupportIndexPage() {
         <div className="mt-12 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="relative min-w-full divide-y divide-white/15">
-                <thead>
-                  <tr className="bg-gray-700/50">
-                    <th
-                      className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3"
-                      scope="col"
-                    >
-                      User
-                    </th>
-                    <th
+              <Table>
+                <TableHeader>
+                  <TableHeaderRow>
+                    <TableHeaderCell scope="col">User</TableHeaderCell>
+                    <TableHeaderCell
                       className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3"
                       scope="col"
                     >
                       Title
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                       scope="col"
                     >
                       Module
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                       scope="col"
                     >
                       Lesson
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                       scope="col"
                     >
                       Priority
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                       scope="col"
                     >
                       Status
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="px-3 py-3.5 text-left text-sm font-semibold text-white"
                       scope="col"
                     >
                       Comments
-                    </th>
-                    <th
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       className="py-3.5 pr-4 pl-3 sm:pr-3"
                       scope="col"
                     >
                       <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-gray-900">
+                    </TableHeaderCell>
+                  </TableHeaderRow>
+                </TableHeader>
+                <TableBody>
                   {tickets.map((ticket) => (
-                    <tr
-                      className="even:bg-gray-800/50"
-                      key={ticket.id}
-                    >
-                      <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                    <TableBodyRow key={ticket.id}>
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
                         {ticket.user.image ? (
                           <img
                             className="mr-2 inline-block h-6 w-6 rounded-full object-cover"
@@ -125,17 +126,17 @@ function SupportIndexPage() {
                           />
                         ) : null}
                         {ticket.user.name}
-                      </td>
-                      <td className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                      </TableBodyCell>
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
                         {ticket.title}
-                      </td>
-                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.module?.order || "N/A"}
-                      </td>
-                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.lesson?.order || "N/A"}
-                      </td>
-                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.priority === "low" ? (
                           <span className="inline-flex items-center rounded-md bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-blue-500/50 ring-inset">
                             Low
@@ -153,8 +154,8 @@ function SupportIndexPage() {
                             Urgent
                           </span>
                         )}
-                      </td>
-                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.status === "open" ? (
                           <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
                             Open
@@ -164,13 +165,13 @@ function SupportIndexPage() {
                             Closed
                           </span>
                         )}
-                      </td>
-                      <td className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-white">
                           {ticket.comments.length}
                         </span>
-                      </td>
-                      <td className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
+                      </TableBodyCell>
+                      <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         {auth.hasRole("admin") ||
                         auth.session?.user.id === ticket.userId ? (
                           <div className="flex justify-end gap-4">
@@ -201,11 +202,11 @@ function SupportIndexPage() {
                             <span className="sr-only">, {ticket.title}</span>
                           </Link>
                         )}
-                      </td>
-                    </tr>
+                      </TableBodyCell>
+                    </TableBodyRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           </div>
         </div>
