@@ -4,10 +4,21 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 import type { UserWithRole } from "better-auth/plugins/admin";
+import { intlFormat } from "date-fns";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
 import { toast } from "sonner";
 import Loading from "~/components/loading";
+import {
+  Table,
+  TableBody,
+  TableBodyCell,
+  TableBodyRow,
+  TableHeader,
+  TableHeaderCell,
+  TableHeaderRow,
+} from "~/components/ui/table";
 import { authClient } from "~/lib/auth.client";
+import { cn } from "~/lib/utils";
 
 interface ExtendedUserWithRole extends UserWithRole {
   username?: string;
@@ -39,95 +50,216 @@ function AdminUsersPage() {
   const usersWithUsername = data.users as ExtendedUserWithRole[];
 
   return (
-    <div className="mb-20">
-      <h1 className="mb-10 text-3xl font-bold">Users</h1>
-      <div className="flex flex-col gap-4">
-        {usersWithUsername.map((user) => (
-          <div
-            className="rounded-md border border-gray-400 px-4 py-6"
-            key={user.id}
-          >
-            <div className="mb-4 flex justify-between">
-              <p>User ID: {user.id}</p>
-              <p>Role: {user.role}</p>
-            </div>
-            <div className="mb-4 flex justify-between">
-              <p className="flex items-center gap-2">
-                <MailIcon /> {user.email}
-              </p>
-              <p>Verified: {user?.emailVerified ? "Yes" : "No"}</p>
-            </div>
-            <div className="mb-4 flex justify-between">
-              <p className="flex items-center gap-2">
-                <UserRoundIcon />
-                {user.name}
-              </p>
-              <p>Username: {user?.username ? user.username : "Not set"}</p>
-            </div>
-            <div className="mb-4 flex justify-between">
-              <p className="flex items-center gap-2">
-                <BanIcon color={user.banned ? "red" : "green"} />
-                {user.banned ? "Banned" : "Active"}
-              </p>
-              {user.banned ? (
-                <button
-                  className="cursor-pointer rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700 active:bg-green-800"
-                  onClick={async () => {
-                    await authClient.admin.unbanUser({ userId: user.id });
-                    router.invalidate();
-                  }}
-                >
-                  Unban
-                </button>
-              ) : (
-                <button
-                  className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 active:bg-red-800"
-                  onClick={async () => {
-                    await authClient.admin.banUser({ userId: user.id });
-                    router.invalidate();
-                  }}
-                >
-                  Ban
-                </button>
-              )}
-            </div>
-            <div className="mb-4 flex justify-between">
-              <p>Created At: {new Date(user.createdAt).toLocaleString()}</p>
-              <p>Updated At: {new Date(user.updatedAt).toLocaleString()}</p>
-            </div>
-            <div>
-              <button
-                className="cursor-pointer rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 active:bg-blue-800"
-                onClick={async () => {
-                  const { error } = await authClient.admin.impersonateUser({
-                    userId: user.id,
-                  });
+    <>
+      <div className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="text-lg font-semibold text-white md:text-3xl">
+            Users
+          </h1>
+          <p className="mt-2 text-sm text-gray-300">
+            Manage all users in the system. View user details, ban/unban users,
+            and impersonate users for support purposes.
+          </p>
+        </div>
+      </div>
+      {usersWithUsername.length !== 0 ? (
+        <div className="mt-12 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <Table>
+                <TableHeader>
+                  <TableHeaderRow>
+                    <TableHeaderCell>Name</TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Email
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Username
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Role
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Status
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Verified
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Created At
+                    </TableHeaderCell>
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                      Updated At
+                    </TableHeaderCell>
+                    <TableHeaderCell className="py-3.5 pr-4 pl-3 sm:pr-3">
+                      <span className="sr-only">Actions</span>
+                    </TableHeaderCell>
+                  </TableHeaderRow>
+                </TableHeader>
+                <TableBody>
+                  {usersWithUsername.map((user) => (
+                    <TableBodyRow key={user.id}>
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                        <span className="flex items-center gap-2">
+                          <UserRoundIcon size={16} />
+                          {user.name}
+                        </span>
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        <span className="flex items-center gap-2">
+                          <MailIcon size={16} />
+                          {user.email}
+                        </span>
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        {user?.username || "Not set"}
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+                            user.role === "admin"
+                              ? "bg-purple-900/30 text-purple-400 ring-purple-500/50"
+                              : "bg-blue-900/30 text-blue-400 ring-blue-500/50",
+                          )}
+                        >
+                          {user.role}
+                        </span>
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        {user.banned ? (
+                          <span className="inline-flex items-center gap-1 rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
+                            <BanIcon size={14} />
+                            Banned
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
+                            Active
+                          </span>
+                        )}
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        {user?.emailVerified ? (
+                          <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
+                            Yes
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center rounded-md bg-yellow-900/30 px-2 py-1 text-xs font-medium text-yellow-400 ring-1 ring-yellow-500/50 ring-inset">
+                            No
+                          </span>
+                        )}
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        {intlFormat(new Date(user.createdAt), {
+                          day: "numeric",
+                          year: "numeric",
+                          month: "long",
+                          minute: "numeric",
+                          hour: "numeric",
+                        })}
+                      </TableBodyCell>
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                        {intlFormat(new Date(user.updatedAt), {
+                          day: "numeric",
+                          year: "numeric",
+                          month: "long",
+                          minute: "numeric",
+                          hour: "numeric",
+                        })}
+                      </TableBodyCell>
+                      <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
+                        <div className="flex justify-end gap-4">
+                          {user.banned ? (
+                            <button
+                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
+                              onClick={async () => {
+                                const { error } =
+                                  await authClient.admin.unbanUser({
+                                    userId: user.id,
+                                  });
 
-                  if (error) {
-                    toast.error(
-                      `Failed to impersonate user: ${user.username || user.name}`,
-                    );
-                    toast.error(
-                      `User status: ${user.banned ? "Banned" : "Active"}`,
-                    );
-                    console.error(error);
+                                if (error) {
+                                  toast.error(
+                                    `Failed to unban user: ${user.username || user.name}`,
+                                  );
+                                  console.error(error);
+                                  return;
+                                }
 
-                    return;
-                  }
+                                router.invalidate();
+                              }}
+                            >
+                              Unban
+                              <span className="sr-only">, {user.name}</span>
+                            </button>
+                          ) : (
+                            <button
+                              className="text-red-600 no-underline hover:text-red-500 hover:underline"
+                              onClick={async () => {
+                                const { error } =
+                                  await authClient.admin.banUser({
+                                    userId: user.id,
+                                  });
 
-                  toast.success(
-                    `Started impersonating user: ${user.username || user.name}`,
-                  );
+                                if (error) {
+                                  toast.error(
+                                    `Failed to ban user: ${user.username || user.name}`,
+                                  );
+                                  console.error(error);
+                                  return;
+                                }
 
-                  navigate({ to: "/", reloadDocument: true });
-                }}
-              >
-                Impersonate User
-              </button>
+                                router.invalidate();
+                              }}
+                            >
+                              Ban
+                              <span className="sr-only">, {user.name}</span>
+                            </button>
+                          )}
+                          <button
+                            className="text-blue-600 no-underline hover:text-blue-500 hover:underline"
+                            onClick={async () => {
+                              const { error } =
+                                await authClient.admin.impersonateUser({
+                                  userId: user.id,
+                                });
+
+                              if (error) {
+                                toast.error(
+                                  `Failed to impersonate user: ${user.username || user.name}`,
+                                );
+                                toast.error(
+                                  `User status: ${user.banned ? "Banned" : "Active"}`,
+                                );
+                                console.error(error);
+
+                                return;
+                              }
+
+                              toast.success(
+                                `Started impersonating user: ${user.username || user.name}`,
+                              );
+
+                              navigate({ to: "/", reloadDocument: true });
+                            }}
+                          >
+                            Impersonate
+                            <span className="sr-only">, {user.name}</span>
+                          </button>
+                        </div>
+                      </TableBodyCell>
+                    </TableBodyRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      ) : (
+        <div className="mt-20 flex justify-center">
+          <p className="text-md text-gray-300">No users found.</p>
+        </div>
+      )}
+    </>
   );
 }

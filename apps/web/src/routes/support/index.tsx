@@ -69,47 +69,26 @@ function SupportIndexPage() {
               <Table>
                 <TableHeader>
                   <TableHeaderRow>
-                    <TableHeaderCell scope="col">User</TableHeaderCell>
-                    <TableHeaderCell
-                      className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3"
-                      scope="col"
-                    >
+                    <TableHeaderCell>User</TableHeaderCell>
+                    <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3">
                       Title
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                       Module
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                       Lesson
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                       Priority
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                       Status
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-white"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                       Comments
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      className="py-3.5 pr-4 pl-3 sm:pr-3"
-                      scope="col"
-                    >
+                    <TableHeaderCell className="py-3.5 pr-4 pl-3 sm:pr-3">
                       <span className="sr-only">Actions</span>
                     </TableHeaderCell>
                   </TableHeaderRow>
