@@ -7,10 +7,11 @@ ENV PYTHON=/usr/bin/python3
 
 EXPOSE 3000
 
-RUN mkdir /app
+RUN mkdir /app && chown node:node /app
 WORKDIR /app
+USER node
 
-COPY . .
+COPY --chown=node:node . .
 RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
