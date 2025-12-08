@@ -1,5 +1,5 @@
 import type { SupportTicketById } from "@apps/server/src/routers/support-tickets/queries";
-import { formatDistance, formatRelative } from "date-fns";
+import { formatDistance, intlFormat } from "date-fns";
 import { EllipsisIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
@@ -69,7 +69,13 @@ export default function SupportComment({
             commented{" "}
             <span
               className="cursor-default hover:text-green-600"
-              title={formatRelative(new Date(date), new Date())}
+              title={intlFormat(new Date(date), {
+                day: "numeric",
+                year: "numeric",
+                month: "long",
+                minute: "numeric",
+                hour: "numeric",
+              })}
             >
               {formatDistance(new Date(date), new Date())} ago
             </span>
