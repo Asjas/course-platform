@@ -9,7 +9,6 @@ EXPOSE 3000
 
 RUN mkdir /app && chown node:node /app
 WORKDIR /app
-USER node
 
 COPY --chown=node:node . .
 RUN npm i -g pnpm@9.15.9
@@ -18,6 +17,8 @@ RUN pnpm run build
 RUN npm run drizzle:migrate:prod
 
 RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
+
+USER node
 
 ENTRYPOINT ["dumb-init"]
 CMD ["node", "--max-semi-space-size=512", "--max-old-space-size=15400", "dist/index.js"]
