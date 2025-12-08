@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import rehypeExternalLinks from "rehype-external-links";
 import rehypeHighlight from "rehype-highlight";
 import rehypeStringify from "rehype-stringify";
 import remarkGfm from "remark-gfm";
@@ -15,6 +16,7 @@ export async function renderMarkdown(
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeExternalLinks, { rel: ["nofollow"] })
     .use(rehypeHighlight)
     .use(rehypeStringify);
 
