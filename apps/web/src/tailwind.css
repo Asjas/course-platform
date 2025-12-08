@@ -59,6 +59,14 @@ body {
   margin-block: 1lh;
 }
 
+::selection {
+  @apply bg-green-500/80 text-white;
+}
+
+::-moz-selection {
+  @apply bg-green-500/80 text-white;
+}
+
 p,
 span,
 a {
