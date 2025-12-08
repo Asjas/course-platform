@@ -171,7 +171,7 @@ function AdminUsersPage() {
                         <div className="flex justify-end gap-4">
                           {user.banned ? (
                             <button
-                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
+                              className="cursor-pointer text-green-600 no-underline hover:text-green-500 hover:underline"
                               onClick={async () => {
                                 const { error } =
                                   await authClient.admin.unbanUser({
@@ -194,7 +194,7 @@ function AdminUsersPage() {
                             </button>
                           ) : (
                             <button
-                              className="text-red-600 no-underline hover:text-red-500 hover:underline"
+                              className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
                               onClick={async () => {
                                 const { error } =
                                   await authClient.admin.banUser({
@@ -217,7 +217,7 @@ function AdminUsersPage() {
                             </button>
                           )}
                           <button
-                            className="text-blue-600 no-underline hover:text-blue-500 hover:underline"
+                            className="cursor-pointer text-blue-600 no-underline hover:text-blue-500 hover:underline"
                             onClick={async () => {
                               const { error } =
                                 await authClient.admin.impersonateUser({
