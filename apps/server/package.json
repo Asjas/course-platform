@@ -59,13 +59,13 @@
     "@types/node": "24.9.2",
     "@types/nodemailer": "7.0.3",
     "@types/pg": "8.15.6",
-    "@vitest/coverage-v8": "4.0.5",
+    "@vitest/coverage-v8": "4.0.15",
     "drizzle-kit": "0.31.6",
     "rimraf": "6.0.1",
     "tsx": "4.20.6",
     "typescript": "5.9.3",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "4.0.5"
+    "vitest": "4.0.15"
   },
   "optionalDependencies": {
     "pg-native": "3.5.2"
