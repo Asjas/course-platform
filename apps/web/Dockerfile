@@ -15,12 +15,18 @@ FROM nginx:1.29.3-alpine3.22
 
 RUN apk --no-cache add curl bash
 
-# Create nginx cache directories and set proper ownership/permissions
+# Fix cache directories
 RUN mkdir -p /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} \
     && chown -R nginx:nginx /var/cache/nginx \
-    && chmod -R 700 /var/cache/nginx \
+    && chmod -R 700 /var/cache/nginx
+
+# Fix log directory
+RUN mkdir -p /var/log/nginx \
     && chown nginx:nginx /var/log/nginx \
-    && mkdir -p /run/nginx && chown nginx:nginx /run/nginx
+    && chmod 755 /var/log/nginx
+
+# Fix pid directory
+RUN mkdir -p /run/nginx && chown nginx:nginx /run/nginx
 
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
 COPY --from=vite-builder /app/apps/web/config/nginx.conf /etc/nginx/nginx.conf
