@@ -18,12 +18,9 @@ RUN apk --no-cache add curl bash
 # Create nginx cache directories and set proper ownership/permissions
 RUN mkdir -p /var/cache/nginx/{client_temp,proxy_temp,fastcgi_temp,uwsgi_temp,scgi_temp} \
     && chown -R nginx:nginx /var/cache/nginx \
-    && chmod -R 700 /var/cache/nginx
-
-# Also ensure other required directories exist and are owned by nginx
-RUN chown nginx:nginx /var/log/nginx \
-    && mkdir -p /run/nginx \
-    && chown nginx:nginx /run/nginx
+    && chmod -R 700 /var/cache/nginx \
+    && chown nginx:nginx /var/log/nginx \
+    && mkdir -p /run/nginx && chown nginx:nginx /run/nginx
 
 COPY --from=vite-builder /app/apps/web/dist/ /srv/app
 COPY --from=vite-builder /app/apps/web/config/nginx.conf /etc/nginx/nginx.conf
