@@ -1,5 +1,5 @@
 import { Link, createFileRoute, useParams } from "@tanstack/react-router";
-import { formatRelative } from "date-fns";
+import { intlFormat } from "date-fns";
 import {
   CheckIcon,
   CircleDotIcon,
@@ -145,7 +145,15 @@ function SupportTicketIndexPage() {
               <p className="text-sm font-[300] text-gray-200">
                 <span className="font-semibold">{ticket.user.name}</span> opened
                 this ticket{" "}
-                {formatRelative(new Date(ticket.createdAt), new Date())}
+                <span className="font-[500]">
+                  {intlFormat(new Date(ticket.createdAt), {
+                    day: "numeric",
+                    year: "numeric",
+                    month: "long",
+                    minute: "numeric",
+                    hour: "numeric",
+                  })}
+                </span>
                 <span> · </span>
                 <span>{ticket.comments.length} comments</span>
               </p>
