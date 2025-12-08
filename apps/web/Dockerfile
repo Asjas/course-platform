@@ -1,4 +1,4 @@
-FROM node:24.11.0-alpine3.22 AS vite-builder
+FROM node:24.11.1-alpine3.22 AS vite-builder
 
 RUN apk --no-cache add curl bash
 
