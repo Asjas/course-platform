@@ -23,7 +23,7 @@ export default defineConfig({
     react({
       babel: { plugins: ["babel-plugin-react-compiler"] },
     }),
-    devtools(),
+    devtools({ removeDevtoolsOnBuild: true }),
     tailwindcss(),
     mdx({
       remarkPlugins: [remarkGfm],
