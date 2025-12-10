@@ -10,7 +10,6 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import type { PluginOption } from "vite";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -42,7 +41,7 @@ export default defineConfig({
       ],
       providerImportSource: "@mdx-js/react",
       include: ["**/*.mdx"],
-    }) as PluginOption,
+    }),
   ],
   css: {
     transformer: "lightningcss",
