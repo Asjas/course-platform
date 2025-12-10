@@ -72,7 +72,7 @@ export default function DefaultLayoutComponent({
       </div>
 
       <TanStackDevtools
-        config={{ position: "bottom-right" }}
+        config={{ position: "bottom-left" }}
         plugins={[
           { name: "Tanstack Query", render: <ReactQueryDevtoolsPanel /> },
           { name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> },
