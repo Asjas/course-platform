@@ -11,6 +11,7 @@
     "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
     "check-format": "npm run prettier -- --list-different --cache --cache-location .cache/prettier",
     "typecheck": "turbo --filter \"./apps/**\" typecheck",
+    "clean": "rimraf {apps,packages}/*/node_modules {apps,packages}/*/dist {apps,packages}/*/.turbo {apps,packages}/*/.tanstack {apps,packages}/*/.cache {apps,packages}/*/tsconfig*.tsbuildinfo node_modules/",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -53,6 +54,7 @@
     "prettier": "3.7.4",
     "prettier-plugin-astro": "0.14.1",
     "prettier-plugin-tailwindcss": "0.7.2",
+    "rimraf": "6.1.2",
     "turbo": "2.6.3",
     "typescript-eslint": "8.49.0"
   }
