@@ -44,6 +44,7 @@ export default defineConfig({
     }),
   ],
   css: {
+    devSourcemap: true,
     transformer: "lightningcss",
     lightningcss: {
       targets: browserslistToTargets(browserslist(">= 0.25%")),
@@ -51,6 +52,7 @@ export default defineConfig({
   },
   build: {
     cssMinify: "lightningcss",
+    license: true,
     sourcemap: true,
   },
   resolve: {
