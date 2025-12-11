@@ -57,6 +57,7 @@ env:
   SMTP_PORT: ${{ vars.SMTP_PORT }}
   SMTP_USER: ${{ secrets.SMTP_USER }}
   SMTP_PASS: ${{ secrets.SMTP_PASS }}
+  SUPPORT_ASSIGNED_TO_USER_ID: ${{ vars.SUPPORT_ASSIGNED_TO_USER_ID }}
 
 jobs:
   check-format-lint-and-type-check:
