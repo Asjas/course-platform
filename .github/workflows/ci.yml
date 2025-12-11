@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_dispatch: # allow manual triggering of the workflow
   push:
     branches: [main]
     paths-ignore:
