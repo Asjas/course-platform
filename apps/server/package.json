@@ -13,7 +13,6 @@
     "drizzle:generate": "drizzle-kit generate --config ./src/drizzle.config.ts",
     "drizzle:migrate:prod": "drizzle-kit migrate --config ./dist/drizzle.config.js",
     "drizzle:studio": "drizzle-kit studio",
-    "clean": "rimraf dist/ node_modules/",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -47,7 +46,6 @@
     "isbot": "5.1.32",
     "nodemailer": "7.0.11",
     "pg": "8.16.3",
-    "pg-native": "3.5.2",
     "pino": "10.1.0",
     "prom-client": "15.1.3",
     "resolve-tspaths": "0.8.23",
@@ -62,7 +60,6 @@
     "@types/pg": "8.16.0",
     "@vitest/coverage-v8": "4.0.15",
     "drizzle-kit": "0.31.8",
-    "rimraf": "6.1.2",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "vite-tsconfig-paths": "5.1.4",

@@ -107,6 +107,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: 0.7.2
         version: 0.7.2(@trivago/prettier-plugin-sort-imports@6.0.0(prettier@3.7.4))(prettier-plugin-astro@0.14.1)(prettier@3.7.4)
+      rimraf:
+        specifier: 6.1.2
+        version: 6.1.2
       turbo:
         specifier: 2.6.3
         version: 2.6.3
@@ -243,9 +246,6 @@ importers:
       drizzle-kit:
         specifier: 0.31.8
         version: 0.31.8
-      rimraf:
-        specifier: 6.1.2
-        version: 6.1.2
       tsx:
         specifier: 4.21.0
         version: 4.21.0
