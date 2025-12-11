@@ -1,5 +1,6 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
+import { toast } from "sonner";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -32,7 +33,7 @@ function SupportIndexPage() {
   }
 
   return (
-    <div className="mt-20 mb-20 px-4 sm:px-6 lg:px-8">
+    <div className="mt-20 mb-20 h-full px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-white md:text-3xl">
@@ -93,6 +94,7 @@ function SupportIndexPage() {
                     </TableHeaderCell>
                   </TableHeaderRow>
                 </TableHeader>
+
                 <TableBody>
                   {tickets.map((ticket) => (
                     <TableBodyRow key={ticket.id}>
@@ -154,8 +156,36 @@ function SupportIndexPage() {
                         {auth.hasRole("admin") ||
                         auth.session?.user.id === ticket.userId ? (
                           <div className="flex justify-end gap-4">
+                            <button
+                              className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
+                              onClick={async () => {
+                                if (
+                                  !confirm(
+                                    `Are you sure you want to delete the ticket titled "${ticket.title}"? This action cannot be undone.`,
+                                  )
+                                ) {
+                                  return;
+                                }
+
+                                try {
+                                  SupportTicketsCollection.delete(ticket.id);
+                                  toast.success("Ticket deleted successfully.");
+                                } catch (error) {
+                                  console.error(
+                                    "Error deleting ticket:",
+                                    error,
+                                  );
+                                  toast.error(
+                                    "An error occurred while deleting the ticket. Please try again.",
+                                  );
+                                }
+                              }}
+                            >
+                              Delete
+                              <span className="sr-only">, {ticket.title}</span>
+                            </button>
                             <Link
-                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
+                              className="text-blue-600 no-underline hover:text-blue-500 hover:underline"
                               to="/support/$supportTicket/edit"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -190,7 +220,7 @@ function SupportIndexPage() {
           </div>
         </div>
       ) : (
-        <div className="mt-20 flex justify-center">
+        <div className="flex h-full items-center justify-center">
           <p className="text-md text-gray-300">
             No support tickets created yet.
           </p>

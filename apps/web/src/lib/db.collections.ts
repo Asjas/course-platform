@@ -23,6 +23,21 @@ export const SupportTicketsCollection = createCollection(
         throw error;
       }
     },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.supportTickets.deleteSupportTicket.mutate({
+          ticketId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting support ticket: ", error);
+        toast.error(
+          "An error occurred while deleting the support ticket. Please try again.",
+        );
+        throw error;
+      }
+    },
   }),
 );
 
