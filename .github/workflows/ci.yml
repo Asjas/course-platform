@@ -32,12 +32,35 @@ on:
 permissions:
   contents: read
 
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: codewizard
+  VITE_BETTER_AUTH_URL: ${{ vars.VITE_BETTER_AUTH_URL }}
+  VITE_TRPC_URL: ${{ vars.VITE_TRPC_URL }}
+  PORT: ${{ vars.PORT }}
+  HOST: ${{ vars.HOST }}
+  ORIGIN: ${{ vars.ORIGIN }}
+  COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
+  COOKIE_DOMAIN: ${{ vars.COOKIE_DOMAIN }}
+  R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+  R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+  R2_PUBLIC_URL: ${{ vars.R2_PUBLIC_URL }}
+  R2_ENDPOINT: ${{ vars.R2_ENDPOINT }}
+  R2_BUCKET_NAME: ${{ vars.R2_BUCKET_NAME }}
+  LEARN_FASTIFY_POLAR_PRODUCT_ID: ${{ secrets.LEARN_FASTIFY_POLAR_PRODUCT_ID }}
+  POLAR_SUCCESS_URL: ${{ vars.POLAR_SUCCESS_URL }}
+  POLAR_ACCESS_TOKEN: ${{ secrets.POLAR_ACCESS_TOKEN }}
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+  PEPPER_SECRET: ${{ secrets.PEPPER_SECRET }}
+  SMTP_HOST: ${{ vars.SMTP_HOST }}
+  SMTP_PORT: ${{ vars.SMTP_PORT }}
+  SMTP_USER: ${{ secrets.SMTP_USER }}
+  SMTP_PASS: ${{ secrets.SMTP_PASS }}
+
 jobs:
   check-format-lint-and-type-check:
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: codewizard
 
     strategy:
       matrix:
@@ -84,9 +107,6 @@ jobs:
 
   server-tests:
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: codewizard
 
     strategy:
       matrix:
@@ -118,10 +138,6 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: codewizard
-      VITE_BETTER_AUTH_URL: ${{ secrets.VITE_BETTER_AUTH_URL }}
 
     strategy:
       matrix:
