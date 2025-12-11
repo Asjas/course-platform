@@ -7,8 +7,8 @@
   "scripts": {
     "build": "tsc && resolve-tspaths",
     "dev": "tsx watch --env-file=.env src/index.ts",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
+    "test": "node --env-file=.env ./node_modules/vitest/vitest.mjs run",
+    "test:watch": "node --env-file=.env ./node_modules/vitest/vitest.mjs watch",
     "drizzle:migrate": "drizzle-kit migrate --config ./src/drizzle.config.ts",
     "drizzle:generate": "drizzle-kit generate --config ./src/drizzle.config.ts",
     "drizzle:migrate:prod": "drizzle-kit migrate --config ./dist/drizzle.config.js",
