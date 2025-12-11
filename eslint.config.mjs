@@ -40,6 +40,9 @@ export default defineConfig(
   [
     {
       plugins: { "unused-imports": unusedImports },
+      rules: {
+        "yml/no-empty-mapping-value": "off",
+      },
     },
     {
       files: ["**/*.html"],
@@ -128,6 +131,7 @@ export default defineConfig(
       ],
       rules: {
         "react/no-children-prop": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/only-throw-error": [
           "error",
           {

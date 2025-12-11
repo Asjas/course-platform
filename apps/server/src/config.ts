@@ -1,4 +1,7 @@
+import dotenvx from "@dotenvx/dotenvx";
 import * as z from "zod";
+
+dotenvx.config();
 
 const schema = z.object({
   // Application variables

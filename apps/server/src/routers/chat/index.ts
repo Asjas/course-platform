@@ -1,6 +1,7 @@
 import { tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
@@ -95,8 +96,8 @@ export const chatRouter = router({
       });
     }),
   postMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ channelId: z.string(), message: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const id = `msg:${ulid()}`;
 
@@ -116,11 +117,14 @@ export const chatRouter = router({
         JSON.stringify(payload),
       );
 
+      chatMessageCount.inc({ channel: input.channelId, action: "post" });
+      redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
       return { ...payload, streamId };
     }),
   editMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ id: z.string(), message: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ input }) => {
       const pattern = `chat:channel:*:messages`;
       const keys = await redis.keys(pattern);
@@ -147,6 +151,9 @@ export const chatRouter = router({
               JSON.stringify(updated),
             );
 
+            chatMessageCount.inc({ channel: streamKey, action: "edit" });
+            redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
             return updated;
           }
         }
@@ -154,8 +161,8 @@ export const chatRouter = router({
       throw new Error("Message not found");
     }),
   deleteMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ id: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const streamKeyPattern = `chat:channel:*:messages`;
       const streamKeys = await redis.keys(streamKeyPattern);
@@ -169,6 +176,9 @@ export const chatRouter = router({
 
           if (message.id === input.id) {
             await redis.xdel(key, streamId);
+
+            chatMessageCount.inc({ channel: key, action: "delete" });
+            redisStreamOperations.inc({ operation: "xdel", status: "success" });
 
             ctx.request.log.debug(
               `User ${ctx.user.id} deleted ${input.id} from ${key}`,

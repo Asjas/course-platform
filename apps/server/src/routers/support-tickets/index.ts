@@ -8,14 +8,15 @@ import type {
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+import {
+  deleteSupportTicketById,
+  insertSupportTicket,
+  insertSupportTicketComment,
+} from "~/routers/support-tickets/mutations.js";
 import type {
   AllSupportTickets,
   SupportTicketById,
 } from "~/routers/support-tickets/queries.js";
-import {
-  insertSupportTicket,
-  insertSupportTicketComment,
-} from "~/routes/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   getAllSupportTickets: publicProcedure.query(
@@ -162,5 +163,33 @@ export const supportTicketsRouter = router({
       );
 
       return newComment;
+    }),
+  deleteSupportTicket: publicProcedure
+    .input(z.object({ ticketId: z.string() }))
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
+      const fastify = ctx.reply.server;
+
+      const [err, deletedTicket] = await fastify.to(
+        deleteSupportTicketById({ ticketId: input.ticketId }),
+      );
+
+      if (err) {
+        ctx.request.log.error(err, "Failed to delete support ticket");
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      await fastify.cache.invalidateAll([
+        `support-ticket~id~${input.ticketId}`,
+        "support-ticket~all",
+      ]);
+
+      ctx.request.log.debug(`Deleted support ticket with ID ${input.ticketId}`);
+
+      return deletedTicket;
     }),
 });

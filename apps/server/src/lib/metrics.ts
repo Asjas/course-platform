@@ -10,11 +10,6 @@ registry.setDefaultLabels({
   instance: `${os.hostname()}:${process.pid}`,
 });
 
-prometheus.collectDefaultMetrics({
-  register: registry,
-  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
-});
-
 export const httpRequestCount = new prometheus.Counter({
   name: "course_platform_http_request_total",
   help: "Total number of HTTP requests",

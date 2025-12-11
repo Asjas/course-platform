@@ -6,7 +6,7 @@
   },
   "scripts": {
     "build": "tsc && resolve-tspaths",
-    "dev": "tsx watch --env-file=.env src/index.ts",
+    "dev": "tsx src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "drizzle:migrate": "drizzle-kit migrate --config ./src/drizzle.config.ts",
@@ -54,6 +54,7 @@
     "zod": "4.1.13"
   },
   "devDependencies": {
+    "@dotenvx/dotenvx": "1.51.1",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/node": "24.10.1",
     "@types/nodemailer": "7.0.4",
