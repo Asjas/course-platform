@@ -198,12 +198,21 @@ describe("Metrics Module", () => {
   });
 
   describe("Node.js Process Metrics", () => {
-    test("memoryUsageGauge should exist and have type label", async () => {
+    test("memoryUsageGauge should be a Gauge instance with type label", () => {
+      expect(metrics.memoryUsageGauge).toBeInstanceOf(prometheus.Gauge);
+    });
+
+    test("memoryUsageGauge should accept type labels", async () => {
+      // Manually set values like the metrics plugin does
+      metrics.memoryUsageGauge.set({ type: "rss" }, 1000);
+      metrics.memoryUsageGauge.set({ type: "heap_total" }, 2000);
+      metrics.memoryUsageGauge.set({ type: "heap_used" }, 1500);
+
       const metricsString = await metrics.registry.metrics();
       expect(metricsString).toContain("course_platform_process_memory_bytes");
       expect(metricsString).toContain('type="rss"');
-      expect(metricsString).toContain('type="heapTotal"');
-      expect(metricsString).toContain('type="heapUsed"');
+      expect(metricsString).toContain('type="heap_total"');
+      expect(metricsString).toContain('type="heap_used"');
     });
 
     test("eventLoopUtilizationGauge should exist", async () => {

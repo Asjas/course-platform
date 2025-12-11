@@ -124,18 +124,6 @@ export const memoryUsageGauge = new prometheus.Gauge({
   help: "Node.js process memory usage in bytes",
   labelNames: ["type"],
   registers: [registry],
-  collect: function () {
-    try {
-      const memoryUsage = process.memoryUsage();
-      this.set({ type: "rss" }, memoryUsage.rss);
-      this.set({ type: "heapTotal" }, memoryUsage.heapTotal);
-      this.set({ type: "heapUsed" }, memoryUsage.heapUsed);
-    } catch (error) {
-      if (error instanceof Error) {
-        pinoLogger.error(error.message);
-      }
-    }
-  },
 });
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({

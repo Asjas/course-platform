@@ -1,6 +1,7 @@
 import { tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
@@ -116,6 +117,9 @@ export const chatRouter = router({
         JSON.stringify(payload),
       );
 
+      chatMessageCount.inc({ channel: input.channelId, action: "post" });
+      redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
       return { ...payload, streamId };
     }),
   editMessage: publicProcedure
@@ -147,6 +151,9 @@ export const chatRouter = router({
               JSON.stringify(updated),
             );
 
+            chatMessageCount.inc({ channel: streamKey, action: "edit" });
+            redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
             return updated;
           }
         }
@@ -169,6 +176,9 @@ export const chatRouter = router({
 
           if (message.id === input.id) {
             await redis.xdel(key, streamId);
+
+            chatMessageCount.inc({ channel: key, action: "delete" });
+            redisStreamOperations.inc({ operation: "xdel", status: "success" });
 
             ctx.request.log.debug(
               `User ${ctx.user.id} deleted ${input.id} from ${key}`,
