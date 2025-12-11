@@ -10,11 +10,6 @@ registry.setDefaultLabels({
   instance: `${os.hostname()}:${process.pid}`,
 });
 
-prometheus.collectDefaultMetrics({
-  register: registry,
-  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
-});
-
 export const httpRequestCount = new prometheus.Counter({
   name: "course_platform_http_request_total",
   help: "Total number of HTTP requests",
@@ -129,6 +124,18 @@ export const memoryUsageGauge = new prometheus.Gauge({
   help: "Node.js process memory usage in bytes",
   labelNames: ["type"],
   registers: [registry],
+  collect: function () {
+    try {
+      const memoryUsage = process.memoryUsage();
+      this.set({ type: "rss" }, memoryUsage.rss);
+      this.set({ type: "heapTotal" }, memoryUsage.heapTotal);
+      this.set({ type: "heapUsed" }, memoryUsage.heapUsed);
+    } catch (error) {
+      if (error instanceof Error) {
+        pinoLogger.error(error.message);
+      }
+    }
+  },
 });
 
 export const eventLoopUtilizationGauge = new prometheus.Gauge({
