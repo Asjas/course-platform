@@ -2,11 +2,6 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import type { Context } from "~/context.js";
 import { FIVE_MINUTES, THIRTY_SECONDS, TWO_MINUTES } from "~/lib/constants.js";
-import {
-  trpcErrorCount,
-  trpcProcedureCount,
-  trpcProcedureDuration,
-} from "~/lib/trpc-metrics.js";
 
 export const t = initTRPC.context<Context>().create({
   transformer: superjson,
@@ -18,30 +13,8 @@ export const t = initTRPC.context<Context>().create({
   },
 });
 
-/**
- * Middleware to collect metrics for tRPC procedures.
- * Tracks request count, duration, and errors.
- */
-const metricsMiddleware = t.middleware(async ({ path, type, next }) => {
-  const start = process.hrtime.bigint();
-
-  const result = await next();
-
-  const durationSeconds = Number(process.hrtime.bigint() - start) / 1e9;
-  const status = result.ok ? "success" : "error";
-
-  trpcProcedureCount.inc({ path, type, status });
-  trpcProcedureDuration.observe({ path, type }, durationSeconds);
-
-  if (!result.ok && result.error) {
-    trpcErrorCount.inc({ path, code: result.error.code });
-  }
-
-  return result;
-});
-
 export const router = t.router;
-export const publicProcedure = t.procedure.use(metricsMiddleware);
+export const publicProcedure = t.procedure;
 
 // Middleware section
 export const isAuthenticated = t.middleware(({ ctx, next }) => {

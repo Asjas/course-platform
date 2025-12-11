@@ -22,6 +22,7 @@ import {
   TEN_SECONDS,
 } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
+import { trpcErrorCount } from "~/lib/trpc-metrics.js";
 import { type AppRouter, appRouter } from "~/routers/index.js";
 
 /**
@@ -79,6 +80,7 @@ async function createServer(config: Config) {
       createContext,
       onError({ path, error }) {
         console.error(`Error in tRPC handler on path '${path}':`, error);
+        trpcErrorCount.inc({ path: path ?? "unknown", code: error.code });
       },
       responseMeta: (opts) => {
         const { errors } = opts;
