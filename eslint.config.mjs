@@ -128,6 +128,7 @@ export default defineConfig(
       ],
       rules: {
         "react/no-children-prop": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/only-throw-error": [
           "error",
           {
