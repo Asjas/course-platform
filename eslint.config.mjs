@@ -40,6 +40,9 @@ export default defineConfig(
   [
     {
       plugins: { "unused-imports": unusedImports },
+      rules: {
+        "yml/no-empty-mapping-value": "off",
+      },
     },
     {
       files: ["**/*.html"],
