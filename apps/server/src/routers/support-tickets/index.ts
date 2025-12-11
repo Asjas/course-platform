@@ -8,15 +8,15 @@ import type {
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
-import { deleteSupportTicketById } from "~/routers/support-tickets/mutations.js";
+import {
+  deleteSupportTicketById,
+  insertSupportTicket,
+  insertSupportTicketComment,
+} from "~/routers/support-tickets/mutations.js";
 import type {
   AllSupportTickets,
   SupportTicketById,
 } from "~/routers/support-tickets/queries.js";
-import {
-  insertSupportTicket,
-  insertSupportTicketComment,
-} from "~/routes/support-tickets/mutations.js";
 
 export const supportTicketsRouter = router({
   getAllSupportTickets: publicProcedure.query(
