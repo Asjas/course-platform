@@ -9,13 +9,13 @@ import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
 export const imagesRouter = router({
   getPresignedUrl: publicProcedure
-    .use(isAuthenticated)
     .input(
       z.object({
         contentType: z.string(),
         key: z.string(),
       }),
     )
+    .use(isAuthenticated)
     .mutation(async ({ input }) => {
       const start = process.hrtime.bigint();
 

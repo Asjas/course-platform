@@ -96,8 +96,8 @@ export const chatRouter = router({
       });
     }),
   postMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ channelId: z.string(), message: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const id = `msg:${ulid()}`;
 
@@ -123,8 +123,8 @@ export const chatRouter = router({
       return { ...payload, streamId };
     }),
   editMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ id: z.string(), message: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ input }) => {
       const pattern = `chat:channel:*:messages`;
       const keys = await redis.keys(pattern);
@@ -161,8 +161,8 @@ export const chatRouter = router({
       throw new Error("Message not found");
     }),
   deleteMessage: publicProcedure
-    .use(isAuthenticated)
     .input(z.object({ id: z.string() }))
+    .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const streamKeyPattern = `chat:channel:*:messages`;
       const streamKeys = await redis.keys(streamKeyPattern);
