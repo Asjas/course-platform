@@ -94,6 +94,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build
+        run: pnpm build --cache=remote:rw
+
       - name: Run Prettier check
         run: pnpm check-format
 
@@ -102,9 +105,6 @@ jobs:
 
       - name: Run TypeScript type check
         run: pnpm typecheck
-
-      - name: Build
-        run: pnpm build --cache=remote:rw
 
   server-tests:
     runs-on: ubuntu-latest
