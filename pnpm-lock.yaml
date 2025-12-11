@@ -172,7 +172,7 @@ importers:
         version: 2.3.0
       drizzle-orm:
         specifier: 0.45.0
-        version: 0.45.0(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2))
+        version: 0.45.0(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2))
       fastify:
         specifier: 5.6.2
         version: 5.6.2
@@ -235,8 +235,8 @@ importers:
         specifier: 7.0.4
         version: 7.0.4
       '@types/pg':
-        specifier: 8.15.6
-        version: 8.15.6
+        specifier: 8.16.0
+        version: 8.16.0
       '@vitest/coverage-v8':
         specifier: 4.0.15
         version: 4.0.15(vitest@4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(jiti@2.6.1)(jsdom@27.2.0(postcss@8.5.6))(lightningcss@1.30.2)(terser@5.44.0)(tsx@4.21.0)(yaml@2.8.1))
@@ -4788,8 +4788,8 @@ packages:
   '@types/nodemailer@7.0.4':
     resolution: {integrity: sha512-ee8fxWqOchH+Hv6MDDNNy028kwvVnLplrStm4Zf/3uHWw5zzo8FoYYeffpJtGs2wWysEumMH0ZIdMGMY1eMAow==}
 
-  '@types/pg@8.15.6':
-    resolution: {integrity: sha512-NoaMtzhxOrubeL/7UZuNTrejB4MPAJ0RpxZqXQf2qXuVlTPuG6Y8p4u9dKRaue4yjmC7ZhzVO2/Yyyn25znrPQ==}
+  '@types/pg@8.16.0':
+    resolution: {integrity: sha512-RmhMd/wD+CF8Dfo+cVIy3RR5cl8CyfXQ0tGgW6XBL8L4LM/UTEbNXYRbLwU6w+CgrKBNbrQWt4FUtTfaU5jSYQ==}
 
   '@types/react-dom@19.2.3':
     resolution: {integrity: sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ==}
@@ -15348,7 +15348,7 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  '@types/pg@8.15.6':
+  '@types/pg@8.16.0':
     dependencies:
       '@types/node': 24.10.1
       pg-protocol: 1.10.3
@@ -16598,10 +16598,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.45.0(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2)):
+  drizzle-orm@0.45.0(@opentelemetry/api@1.9.0)(@types/pg@8.16.0)(kysely@0.28.8)(pg@8.16.3(pg-native@3.5.2)):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
-      '@types/pg': 8.15.6
+      '@types/pg': 8.16.0
       kysely: 0.28.8
       pg: 8.16.3(pg-native@3.5.2)
 
