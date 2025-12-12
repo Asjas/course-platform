@@ -127,7 +127,10 @@ export default defineConfig({
           if (id.includes("node_modules/@tanstack/react-router")) {
             return "tanstack-router";
           }
-          if (id.includes("node_modules/@tanstack/react-query")) {
+          if (
+            id.includes("node_modules/@tanstack/react-query") ||
+            id.includes("node_modules/@tanstack/query-core")
+          ) {
             return "tanstack-query";
           }
           if (
@@ -143,9 +146,6 @@ export default defineConfig({
             id.includes("node_modules/@tanstack/history")
           ) {
             return "tanstack-router-core";
-          }
-          if (id.includes("node_modules/@tanstack/query-core")) {
-            return "tanstack-query-core";
           }
           if (id.includes("node_modules/@tanstack/")) {
             return "tanstack-core";
