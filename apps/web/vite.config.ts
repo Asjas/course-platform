@@ -102,11 +102,11 @@ export default defineConfig({
           ) {
             return "forms";
           }
-          if (id.includes("node_modules/@radix-ui/")) {
-            return "radix-ui";
-          }
-          if (id.includes("node_modules/@headlessui/")) {
-            return "headlessui";
+          if (
+            id.includes("node_modules/@radix-ui/") ||
+            id.includes("node_modules/@headlessui/")
+          ) {
+            return "ui-libs";
           }
           if (
             id.includes("node_modules/react-aria-components") ||
