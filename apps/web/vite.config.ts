@@ -115,11 +115,11 @@ export default defineConfig({
           if (id.includes("node_modules/@trpc/")) {
             return "trpc";
           }
-          if (id.includes("node_modules/better-auth")) {
+          if (
+            id.includes("node_modules/better-auth") ||
+            id.includes("node_modules/@better-auth/")
+          ) {
             return "auth";
-          }
-          if (id.includes("node_modules/@better-auth/")) {
-            return "auth-core";
           }
           if (id.includes("node_modules/@tanstack/react-router")) {
             return "tanstack-router";
