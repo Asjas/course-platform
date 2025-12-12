@@ -67,7 +67,7 @@ export default defineConfig({
             return "react";
           }
 
-          // TanStack ecosystem
+          // TanStack ecosystem - split more granularly
           if (id.includes("node_modules/@tanstack/react-router")) {
             return "tanstack-router";
           }
@@ -85,6 +85,15 @@ export default defineConfig({
           ) {
             return "tanstack-db";
           }
+          if (
+            id.includes("node_modules/@tanstack/router-core") ||
+            id.includes("node_modules/@tanstack/history")
+          ) {
+            return "tanstack-router-core";
+          }
+          if (id.includes("node_modules/@tanstack/query-core")) {
+            return "tanstack-query-core";
+          }
           if (id.includes("node_modules/@tanstack/")) {
             return "tanstack-core";
           }
@@ -96,7 +105,11 @@ export default defineConfig({
           if (id.includes("node_modules/@headlessui/")) {
             return "headlessui";
           }
-          if (id.includes("node_modules/react-aria")) {
+          if (
+            id.includes("node_modules/react-aria-components") ||
+            id.includes("node_modules/@react-aria/") ||
+            id.includes("node_modules/@react-stately/")
+          ) {
             return "react-aria";
           }
           if (id.includes("node_modules/lucide-react")) {
@@ -124,20 +137,47 @@ export default defineConfig({
             return "markdown";
           }
 
-          // Auth & API
+          // Auth & API - split better-auth internals
           if (id.includes("node_modules/better-auth")) {
             return "auth";
+          }
+          if (id.includes("node_modules/@better-auth/")) {
+            return "auth-core";
           }
           if (id.includes("node_modules/@trpc/")) {
             return "trpc";
           }
 
-          // Utilities
+          // Form utilities
+          if (id.includes("node_modules/react-hook-form")) {
+            return "react-hook-form";
+          }
+          if (id.includes("node_modules/@hookform/")) {
+            return "hookform-utils";
+          }
+
+          // Utilities - split out more
           if (id.includes("node_modules/date-fns")) {
             return "date-fns";
           }
           if (id.includes("node_modules/zod")) {
             return "zod";
+          }
+          if (id.includes("node_modules/superjson")) {
+            return "superjson";
+          }
+          if (id.includes("node_modules/dompurify")) {
+            return "dompurify";
+          }
+          if (id.includes("node_modules/sonner")) {
+            return "sonner";
+          }
+          if (
+            id.includes("node_modules/clsx") ||
+            id.includes("node_modules/tailwind-merge") ||
+            id.includes("node_modules/class-variance-authority")
+          ) {
+            return "styling-utils";
           }
         },
       },
