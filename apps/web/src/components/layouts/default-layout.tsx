@@ -1,14 +1,42 @@
-import { TanStackDevtools } from "@tanstack/react-devtools";
-import { FormDevtoolsPanel } from "@tanstack/react-form-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, Suspense, lazy, useState } from "react";
 import { toast } from "sonner";
 import Footer from "~/components/footer";
 import Header from "~/components/header";
 import { Toaster } from "~/components/ui/sonner";
 import { authClient } from "~/lib/auth.client";
 import { useAuth } from "~/lib/auth.context";
+
+const TanStackDevtools = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-devtools").then((m) => ({
+        default: m.TanStackDevtools,
+      })),
+    )
+  : () => null;
+
+const ReactQueryDevtoolsPanel = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-query-devtools").then((m) => ({
+        default: m.ReactQueryDevtoolsPanel,
+      })),
+    )
+  : () => null;
+
+const TanStackRouterDevtoolsPanel = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-router-devtools").then((m) => ({
+        default: m.TanStackRouterDevtoolsPanel,
+      })),
+    )
+  : () => null;
+
+const FormDevtoolsPanel = import.meta.env.DEV
+  ? lazy(() =>
+      import("@tanstack/react-form-devtools").then((m) => ({
+        default: m.FormDevtoolsPanel,
+      })),
+    )
+  : () => null;
 
 export default function DefaultLayoutComponent({
   children,
@@ -71,14 +99,39 @@ export default function DefaultLayoutComponent({
         <Footer />
       </div>
 
-      <TanStackDevtools
-        config={{ position: "bottom-left" }}
-        plugins={[
-          { name: "Tanstack Query", render: <ReactQueryDevtoolsPanel /> },
-          { name: "Tanstack Router", render: <TanStackRouterDevtoolsPanel /> },
-          { name: "Tanstack Form", render: <FormDevtoolsPanel /> },
-        ]}
-      />
+      {import.meta.env.DEV && (
+        <Suspense fallback={null}>
+          <TanStackDevtools
+            config={{ position: "bottom-left" }}
+            plugins={[
+              {
+                name: "Tanstack Query",
+                render: (
+                  <Suspense fallback={null}>
+                    <ReactQueryDevtoolsPanel />
+                  </Suspense>
+                ),
+              },
+              {
+                name: "Tanstack Router",
+                render: (
+                  <Suspense fallback={null}>
+                    <TanStackRouterDevtoolsPanel />
+                  </Suspense>
+                ),
+              },
+              {
+                name: "Tanstack Form",
+                render: (
+                  <Suspense fallback={null}>
+                    <FormDevtoolsPanel />
+                  </Suspense>
+                ),
+              },
+            ]}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
