@@ -59,11 +59,12 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // React core
-          if (id.includes("node_modules/react-dom")) {
-            return "react-dom";
-          }
-          if (id.includes("node_modules/react/")) {
+          // React core - MUST be bundled together (React 19 shares internal state)
+          if (
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react-dom") ||
+            id.includes("node_modules/scheduler")
+          ) {
             return "react";
           }
 
