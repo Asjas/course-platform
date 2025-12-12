@@ -56,6 +56,92 @@ export default defineConfig({
     cssMinify: "lightningcss",
     license: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          // React core
+          if (id.includes("node_modules/react-dom")) {
+            return "react-dom";
+          }
+          if (id.includes("node_modules/react/")) {
+            return "react";
+          }
+
+          // TanStack ecosystem
+          if (id.includes("node_modules/@tanstack/react-router")) {
+            return "tanstack-router";
+          }
+          if (id.includes("node_modules/@tanstack/react-query")) {
+            return "tanstack-query";
+          }
+          if (id.includes("node_modules/@tanstack/react-form")) {
+            return "tanstack-form";
+          }
+          if (
+            id.includes("node_modules/@tanstack/react-db") ||
+            id.includes("node_modules/@tanstack/db") ||
+            id.includes("node_modules/@tanstack/query-db") ||
+            id.includes("node_modules/@tanstack/offline")
+          ) {
+            return "tanstack-db";
+          }
+          if (id.includes("node_modules/@tanstack/")) {
+            return "tanstack-core";
+          }
+
+          // UI libraries
+          if (id.includes("node_modules/@radix-ui/")) {
+            return "radix-ui";
+          }
+          if (id.includes("node_modules/@headlessui/")) {
+            return "headlessui";
+          }
+          if (id.includes("node_modules/react-aria")) {
+            return "react-aria";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+
+          // Markdown/syntax highlighting
+          if (
+            id.includes("node_modules/highlight.js") ||
+            id.includes("node_modules/@shikijs/") ||
+            id.includes("node_modules/shiki")
+          ) {
+            return "syntax-highlight";
+          }
+          if (
+            id.includes("node_modules/rehype") ||
+            id.includes("node_modules/remark") ||
+            id.includes("node_modules/unified") ||
+            id.includes("node_modules/mdast") ||
+            id.includes("node_modules/hast") ||
+            id.includes("node_modules/unist") ||
+            id.includes("node_modules/micromark") ||
+            id.includes("node_modules/@mdx-js/")
+          ) {
+            return "markdown";
+          }
+
+          // Auth & API
+          if (id.includes("node_modules/better-auth")) {
+            return "auth";
+          }
+          if (id.includes("node_modules/@trpc/")) {
+            return "trpc";
+          }
+
+          // Utilities
+          if (id.includes("node_modules/date-fns")) {
+            return "date-fns";
+          }
+          if (id.includes("node_modules/zod")) {
+            return "zod";
+          }
+        },
+      },
+    },
   },
   resolve: {
     alias: {
