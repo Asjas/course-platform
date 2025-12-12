@@ -190,6 +190,7 @@ export default defineConfig(
       "apps/server/dist/**",
       "apps/server/vitest.config.ts",
       "apps/web/dist/**",
+      "apps/web/src-tauri/**",
       "marketing/learn-fastify/.astro/**",
     ],
   },

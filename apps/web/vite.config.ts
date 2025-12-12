@@ -12,6 +12,8 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import { defineConfig } from "vite";
 
+const host = process.env.TAURI_DEV_HOST || "localhost";
+
 export default defineConfig({
   plugins: [
     tanstackRouter({
@@ -60,4 +62,13 @@ export default defineConfig({
       "~": resolve(__dirname, "./src"),
     },
   },
+  server: {
+    host,
+    port: 4173,
+    strictPort: true,
+    watch: {
+      ignored: ["**/src-tauri/**"],
+    },
+  },
+  clearScreen: false,
 });

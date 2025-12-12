@@ -141,3 +141,7 @@ dist
 
 # Tanstack router
 .tanstack
+
+# Tauri
+target/
+.tauri/build/
