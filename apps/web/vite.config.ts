@@ -64,7 +64,6 @@ export default defineConfig({
           }
           if (
             id.includes("node_modules/date-fns") ||
-            id.includes("node_modules/dompurify") ||
             id.includes("node_modules/superjson") ||
             id.includes("node_modules/sonner") ||
             id.includes("node_modules/clsx") ||
@@ -90,7 +89,8 @@ export default defineConfig({
             id.includes("node_modules/unist") ||
             id.includes("node_modules/micromark") ||
             id.includes("node_modules/@mdx-js/") ||
-            id.includes("node_modules/@shikijs/")
+            id.includes("node_modules/@shikijs/") ||
+            id.includes("node_modules/dompurify")
           ) {
             return "markdown";
           }
