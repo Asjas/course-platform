@@ -56,6 +56,34 @@ export default defineConfig({
     cssMinify: "lightningcss",
     license: true,
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id: string) => {
+          if (id.includes("node_modules/zod")) {
+            return "zod";
+          }
+          if (id.includes("node_modules/date-fns")) {
+            return "date-fns";
+          }
+          if (id.includes("node_modules/dompurify")) {
+            return "dompurify";
+          }
+          if (id.includes("node_modules/superjson")) {
+            return "superjson";
+          }
+          if (id.includes("node_modules/sonner")) {
+            return "sonner";
+          }
+          if (
+            id.includes("node_modules/clsx") ||
+            id.includes("node_modules/tailwind-merge") ||
+            id.includes("node_modules/class-variance-authority")
+          ) {
+            return "styling-utils";
+          }
+        },
+      },
+    },
   },
   resolve: {
     alias: {
