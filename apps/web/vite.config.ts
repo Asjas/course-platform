@@ -81,6 +81,24 @@ export default defineConfig({
           ) {
             return "styling-utils";
           }
+          if (id.includes("node_modules/highlight.js")) {
+            return "highlight";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+          if (
+            id.includes("node_modules/rehype") ||
+            id.includes("node_modules/remark") ||
+            id.includes("node_modules/unified") ||
+            id.includes("node_modules/mdast") ||
+            id.includes("node_modules/hast") ||
+            id.includes("node_modules/unist") ||
+            id.includes("node_modules/micromark") ||
+            id.includes("node_modules/@mdx-js/")
+          ) {
+            return "markdown";
+          }
         },
       },
     },
