@@ -5,6 +5,11 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "build/**", ".astro/**"]
     },
+    "tauri:build": {
+      "dependsOn": ["build"],
+      "outputs": ["src-tauri/target/**"],
+      "cache": false
+    },
     "test": {
       "dependsOn": ["^test"]
     },
