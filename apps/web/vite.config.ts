@@ -99,6 +99,22 @@ export default defineConfig({
           ) {
             return "markdown";
           }
+          if (id.includes("node_modules/@radix-ui/")) {
+            return "radix-ui";
+          }
+          if (id.includes("node_modules/@headlessui/")) {
+            return "headlessui";
+          }
+          if (
+            id.includes("node_modules/react-aria-components") ||
+            id.includes("node_modules/@react-aria/") ||
+            id.includes("node_modules/@react-stately/")
+          ) {
+            return "react-aria";
+          }
+          if (id.includes("node_modules/@trpc/")) {
+            return "trpc";
+          }
         },
       },
     },
