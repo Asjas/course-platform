@@ -62,24 +62,18 @@ export default defineConfig({
           if (id.includes("node_modules/zod")) {
             return "zod";
           }
-          if (id.includes("node_modules/date-fns")) {
-            return "date-fns";
-          }
-          if (id.includes("node_modules/dompurify")) {
-            return "dompurify";
-          }
-          if (id.includes("node_modules/superjson")) {
-            return "superjson";
-          }
-          if (id.includes("node_modules/sonner")) {
-            return "sonner";
-          }
           if (
+            id.includes("node_modules/date-fns") ||
+            id.includes("node_modules/dompurify") ||
+            id.includes("node_modules/superjson") ||
+            id.includes("node_modules/sonner") ||
             id.includes("node_modules/clsx") ||
             id.includes("node_modules/tailwind-merge") ||
-            id.includes("node_modules/class-variance-authority")
+            id.includes("node_modules/class-variance-authority") ||
+            id.includes("node_modules/@epic-web/") ||
+            id.includes("node_modules/ulid")
           ) {
-            return "styling-utils";
+            return "utils";
           }
           if (id.includes("node_modules/highlight.js")) {
             return "highlight";
