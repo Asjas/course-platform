@@ -115,6 +115,41 @@ export default defineConfig({
           if (id.includes("node_modules/@trpc/")) {
             return "trpc";
           }
+          if (id.includes("node_modules/better-auth")) {
+            return "auth";
+          }
+          if (id.includes("node_modules/@better-auth/")) {
+            return "auth-core";
+          }
+          if (id.includes("node_modules/@tanstack/react-router")) {
+            return "tanstack-router";
+          }
+          if (id.includes("node_modules/@tanstack/react-query")) {
+            return "tanstack-query";
+          }
+          if (id.includes("node_modules/@tanstack/react-form")) {
+            return "tanstack-form";
+          }
+          if (
+            id.includes("node_modules/@tanstack/react-db") ||
+            id.includes("node_modules/@tanstack/db") ||
+            id.includes("node_modules/@tanstack/query-db") ||
+            id.includes("node_modules/@tanstack/offline")
+          ) {
+            return "tanstack-db";
+          }
+          if (
+            id.includes("node_modules/@tanstack/router-core") ||
+            id.includes("node_modules/@tanstack/history")
+          ) {
+            return "tanstack-router-core";
+          }
+          if (id.includes("node_modules/@tanstack/query-core")) {
+            return "tanstack-query-core";
+          }
+          if (id.includes("node_modules/@tanstack/")) {
+            return "tanstack-core";
+          }
         },
       },
     },
