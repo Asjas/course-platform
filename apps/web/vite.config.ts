@@ -95,9 +95,18 @@ export default defineConfig({
             id.includes("node_modules/hast") ||
             id.includes("node_modules/unist") ||
             id.includes("node_modules/micromark") ||
-            id.includes("node_modules/@mdx-js/")
+            id.includes("node_modules/@mdx-js/") ||
+            id.includes("node_modules/@shikijs/")
           ) {
             return "markdown";
+          }
+          if (
+            id.includes("node_modules/react-hook-form") ||
+            id.includes("node_modules/@hookform/") ||
+            id.includes("node_modules/@tanstack/react-form") ||
+            id.includes("node_modules/@tanstack/form-core")
+          ) {
+            return "forms";
           }
           if (id.includes("node_modules/@radix-ui/")) {
             return "radix-ui";
@@ -126,9 +135,6 @@ export default defineConfig({
           }
           if (id.includes("node_modules/@tanstack/react-query")) {
             return "tanstack-query";
-          }
-          if (id.includes("node_modules/@tanstack/react-form")) {
-            return "tanstack-form";
           }
           if (
             id.includes("node_modules/@tanstack/react-db") ||
