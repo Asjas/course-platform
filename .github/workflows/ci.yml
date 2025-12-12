@@ -83,7 +83,7 @@ jobs:
           cache: pnpm
 
       - name: Cache ESLint and Prettier
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .cache
           key: ${{ runner.os }}-lint-cache-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml', 'eslint.config.mjs', '.prettierrc') }}
@@ -170,7 +170,7 @@ jobs:
         working-directory: apps/web
 
       - name: Cache Cypress
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/Cypress
           key: ${{ runner.os }}-cypress-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
