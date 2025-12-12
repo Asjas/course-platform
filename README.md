@@ -6,8 +6,9 @@ and Tauri for web, server, and native applications.
 
 [![CI/CD](https://github.com/Asjas/course-platform/workflows/CI/badge.svg)](https://github.com/Asjas/course-platform/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-green)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-10.25-orange)](https://pnpm.io/)
 
 ## 🚀 Features
 
@@ -27,37 +28,40 @@ and Tauri for web, server, and native applications.
 
 ## 🏗️ Architecture
 
-This is a monorepo containing three main applications and shared packages:
+This is a monorepo containing two main applications, a marketing site, and
+shared packages:
 
 ### `/apps/web/` - Frontend Application
 
 - **Framework**: React 19 with TypeScript
 - **Routing**: TanStack Router with file-based routing
-- **Styling**: Tailwind CSS with custom components and Lucide icons
+- **Styling**: Tailwind CSS 4 with Lightning CSS
 - **State Management**: TanStack Query for server state
-- **Forms**: TanStack Form with validation
+- **Forms**: TanStack Form + React Hook Form with Zod validation
 - **Authentication**: Better Auth client integration
-- **Build Tool**: Vite with PWA support and Lightning CSS
-- **Testing**: Vitest for unit and integration tests
+- **Build Tool**: Vite 7 with MDX support
+- **Testing**: Vitest for unit tests, Cypress for E2E
+- **Desktop**: Tauri 2.x integration for native apps
 
 ### `/apps/server/` - Backend API
 
-- **Framework**: Fastify with TypeScript
-- **Database**: PostgreSQL with Drizzle ORM
+- **Framework**: Fastify 5 with TypeScript
+- **Database**: PostgreSQL 18 with Drizzle ORM
 - **Authentication**: Better Auth with Argon2 password hashing
-- **Caching**: Redis for performance optimization
+- **Caching**: Dragonfly (Redis-compatible) for performance
 - **Payments**: Polar integration for course purchases
-- **Email**: Nodemailer integration for notifications
+- **Email**: Nodemailer with SMTP support
+- **API**: tRPC for type-safe client-server communication
 - **Security**: Rate limiting, CORS, helmet security headers
-- **Observability**: OpenTelemetry integration
 - **Testing**: Vitest for API testing
 
-### `/apps/web/tauri-src/` - Native Desktop Application
+### `/apps/web/src-tauri/` - Native Desktop Application
 
-- **Frontend**: React with TypeScript (shared components from `/apps/web`)
-- **Native Layer**: Tauri (Rust-based)
+- **Framework**: Tauri 2.x (Rust-based)
+- **Frontend**: Shares React frontend from `/apps/web`
 - **Cross-Platform**: Windows, macOS, and Linux support
-- **Features**: Native file system access, system tray integration
+- **Plugins**: Window state persistence, logging
+- **Build**: Cargo-based Rust compilation
 
 ### `/packages/shared-ui/` - Shared Component Library
 
@@ -75,47 +79,49 @@ This is a monorepo containing three main applications and shared packages:
 
 **Frontend:**
 
-- React 19 + TypeScript
-- TanStack Router, Query, Form, and Table
-- Tailwind CSS + Radix UI + Lucide Icons
-- Vite + PWA Plugin + Lightning CSS
+- React 19 + TypeScript 5.9
+- TanStack Router, Query, Form, and DB
+- Tailwind CSS 4 + Radix UI + Lucide Icons
+- Vite 7 + Lightning CSS
 - MDX for content with syntax highlighting
+- React Aria Components for accessibility
 
 **Backend:**
 
-- Fastify + TypeScript
-- Drizzle ORM + PostgreSQL
-- Redis for caching
+- Fastify 5 + TypeScript
+- Drizzle ORM + PostgreSQL 18
+- Dragonfly (Redis-compatible) for caching
 - Better Auth for authentication
 - Argon2 for password hashing
 - Polar for payment processing
-- OpenTelemetry for observability
+- tRPC for type-safe API
+- Zod 4 for validation
 
-**Native:**
+**Native Desktop:**
 
-- Tauri (Rust + React)
-- Cross-platform desktop support
+- Tauri 2.x (Rust + WebView)
+- Cross-platform: Windows, macOS, Linux
+- Window state persistence plugin
 
 **DevOps & Tools:**
 
-- pnpm workspace management (Turborepo enabled)
+- pnpm 10.25 workspace management
+- Turborepo for build caching
 - Vitest for testing
 - Cypress for E2E testing
 - Docker + Docker Compose
-- GitHub Actions CI/CD
-- CodeQL security scanning
-- ESLint + Prettier for code quality
+- GitHub Actions CI/CD (Node 20-24)
+- ESLint 9 + Prettier for code quality
+- Husky + lint-staged for pre-commit hooks
 
 ## 🚦 Getting Started
 
 ### Prerequisites
 
-- Node.js 22+
-- pnpm 10+
-- PostgreSQL database
-- Dragonfly (Redis) server
-- Rust (for native app development)
-- Docker and Docker Compose (optional, for containerized development)
+- Node.js 22.16+ (tested with 20.x-24.x in CI)
+- pnpm 10.25+
+- Docker and Docker Compose (for PostgreSQL and Dragonfly)
+- Rust 1.77+ (for native desktop app development, optional)
 
 ### Installation
 
@@ -146,12 +152,12 @@ This is a monorepo containing three main applications and shared packages:
 4. **Database setup**
 
    ```bash
-   # Generate and run migrations
-   pnpm run -filter "./apps/server" drizzle:generate
-   pnpm run -filter "./apps/server" drizzle:migrate
+   # Start PostgreSQL and Dragonfly via Docker
+   docker-compose up -d
 
-   # (Optional) Seed database with sample data
-   pnpm run -filter "./apps/server" db:seed
+   # Generate and run migrations
+   pnpm run --filter "./apps/server" drizzle:generate
+   pnpm run --filter "./apps/server" drizzle:migrate
    ```
 
 5. **Start development servers**
@@ -161,10 +167,10 @@ This is a monorepo containing three main applications and shared packages:
    pnpm run dev
 
    # Or start individually
-   pnpm run -filter "./apps/web" dev      # Frontend (http://localhost:4137)
-   pnpm run -filter "./apps/server" dev   # Backend API (http://localhost:3000)
-   pnpm run -filter "./apps/web/tauri-src" dev # Native app
-   pnpm run -filter "./marketing/learn-fastify" dev # Marketing site
+   pnpm run --filter "./apps/web" dev      # Frontend (http://localhost:4173)
+   pnpm run --filter "./apps/server" dev   # Backend API (http://localhost:5000)
+   pnpm run --filter "./apps/web" tauri:dev # Native desktop app
+   pnpm run --filter "./marketing/learn-fastify" dev # Marketing site
    ```
 
 ### Using Docker Compose (Alternative)
@@ -193,29 +199,32 @@ docker-compose down
 
 ### Web Application (`apps/web/`)
 
-- `pnpm run dev` - Development server with hot reload
+- `pnpm run dev` - Development server with hot reload (port 4173)
 - `pnpm run build` - Production build
+- `pnpm run preview` - Preview production build
 - `pnpm run test` - Run Vitest tests
 - `pnpm run test:watch` - Run tests in watch mode
-- `pnpm run preview` - Preview production build
+- `pnpm run e2e` - Open Cypress interactive mode
+- `pnpm run e2e:run` - Run Cypress tests headless
 - `pnpm run typecheck` - TypeScript type checking
+- `pnpm run tauri:dev` - Native desktop app development
+- `pnpm run tauri:build` - Build native desktop executable
 
 ### Server Application (`apps/server/`)
 
 - `pnpm run dev` - Development server with hot reload
 - `pnpm run build` - Compile TypeScript
-- `pnpm run start` - Start production server
 - `pnpm run test` - Run API tests
+- `pnpm run test:watch` - Run tests in watch mode
 - `pnpm run drizzle:studio` - Open Drizzle Studio (database GUI)
 - `pnpm run drizzle:generate` - Generate database migrations
 - `pnpm run drizzle:migrate` - Run database migrations
-- `pnpm run db:seed` - Seed database with sample data
+- `pnpm run typecheck` - TypeScript type checking
 
-### Native Application (`apps/tauri-app/`)
+### Native Desktop Application (`apps/web/`)
 
-- `pnpm run dev` - Development with hot reload
-- `pnpm run build` - Build native executable
-- `pnpm run tauri` - Tauri CLI commands
+- `pnpm run tauri:dev` - Development with hot reload
+- `pnpm run tauri:build` - Build native executable
 
 ### Marketing Site (`marketing/learn-fastify/`)
 
@@ -235,6 +244,11 @@ course-platform/
 │   │   │   ├── lib/         # Utilities and helpers
 │   │   │   └── assets/      # Static assets
 │   │   ├── public/          # Public files (favicon, images)
+│   │   ├── src-tauri/       # Tauri native desktop layer (Rust)
+│   │   │   ├── src/         # Rust source code
+│   │   │   ├── icons/       # App icons
+│   │   │   ├── Cargo.toml   # Rust dependencies
+│   │   │   └── tauri.conf.json # Tauri configuration
 │   │   └── index.html       # Entry HTML file
 │   ├── server/              # Fastify backend API
 │   │   ├── src/
@@ -247,9 +261,6 @@ course-platform/
 │   │   │   └── plugins/     # Fastify plugins
 │   │   ├── drizzle/         # Database migrations
 │   │   └── tests/           # API tests
-│   └── tauri-app/           # Native desktop application
-│       ├── src/             # React frontend (shared with web)
-│       └── src-tauri/       # Rust native layer
 ├── packages/
 │   └── shared-ui/           # Shared component library
 │       └── components/      # Reusable UI components (Card, Button, etc.)
@@ -269,47 +280,62 @@ course-platform/
 ### Server (`apps/server/.env`)
 
 ```env
-# Server Configuration
-PORT=8080
+# Application Configuration
 NODE_ENV=development
-HOST=localhost
+PORT=5000
+HOST=127.0.0.1
+ORIGIN=http://localhost:5000
+LOG_LEVEL=info
+COOKIE_SECRET=your-cookie-secret
+COOKIE_DOMAIN=localhost
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/course_platform
+DATABASE_URL=postgresql://cw_user:cw_pass@localhost:5432/cw_db
 
-# Redis
+# Redis/Dragonfly
 REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 
 # Authentication (Better Auth)
 BETTER_AUTH_SECRET=your-auth-secret-min-32-chars
-BETTER_AUTH_URL=http://localhost:8080
 PEPPER_SECRET=your-pepper-secret-min-32-chars
 
-# Email (Nodemailer)
-MAIL_HOST=smtp.example.com
-MAIL_PORT=587
-MAIL_USER=your-email@example.com
-MAIL_PASS=your-email-password
-MAIL_FROM=noreply@codewizard.training
+# Email (SMTP)
+SMTP_HOST=smtp.ethereal.email
+SMTP_PORT=587
+SMTP_USER=your-smtp-user
+SMTP_PASS=your-smtp-password
+SMTP_SECURE=false
 
 # Polar Payment Integration
 POLAR_ACCESS_TOKEN=your-polar-access-token
-POLAR_WEBHOOK_SECRET=your-polar-webhook-secret
+POLAR_SUCCESS_URL=http://localhost:4173/success
+LEARN_FASTIFY_POLAR_PRODUCT_ID=your-product-id
 
-# OpenTelemetry (Optional)
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+# Cloudflare R2 Storage
+R2_ACCESS_KEY_ID=your-r2-access-key
+R2_SECRET_ACCESS_KEY=your-r2-secret-key
+R2_BUCKET_NAME=your-bucket-name
+R2_ENDPOINT=https://your-account-id.r2.cloudflarestorage.com
+R2_PUBLIC_URL=https://your-public-url
+
+# Prometheus (Optional)
+PROMETHEUS_HOST=localhost
+PROMETHEUS_PORT=9090
+
+# Support
+SUPPORT_ASSIGNED_TO_USER_ID=your-user-id
 ```
 
 ### Web (`apps/web/.env`)
 
 ```env
-# Better Auth
-VITE_BETTER_AUTH_URL=http://localhost:8080
+# Better Auth URL
+VITE_BETTER_AUTH_URL=http://localhost:5000
 
-# API URL
-VITE_API_URL=http://localhost:8080
+# tRPC API URL
+VITE_TRPC_URL=http://localhost:5000/trpc
 ```
 
 ## 🧪 Testing
@@ -321,27 +347,24 @@ VITE_API_URL=http://localhost:8080
 pnpm run test
 
 # Run tests for specific app
-pnpm run -filter "./apps/web" test
-pnpm run -filter "./apps/server" test
+pnpm run --filter "./apps/web" test
+pnpm run --filter "./apps/server" test
 
 # Watch mode
-pnpm run -filter "./apps/web" test:watch
-
-# Coverage
-pnpm run -filter "./apps/web" test:coverage
+pnpm run --filter "./apps/web" test:watch
 ```
 
 ### End-to-End Tests (Cypress)
 
 ```bash
-# Install Playwright browsers (first time only)
-pnpx install cypress
+# Install Cypress browsers (first time only)
+pnpx cypress install
 
-# Run E2E tests
-pnpm run -filter "./apps/web" test:e2e:run
+# Run E2E tests headless
+pnpm run --filter "./apps/web" e2e:run
 
-# Run E2E tests in UI mode
-pnpm run -filter "./apps/web" test:e2e
+# Run E2E tests in interactive mode
+pnpm run --filter "./apps/web" e2e
 ```
 
 ### Security Testing
