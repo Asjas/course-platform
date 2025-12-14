@@ -165,8 +165,8 @@ importers:
         specifier: 0.44.0
         version: 0.44.0
       async-cache-dedupe:
-        specifier: 3.3.0
-        version: 3.3.0
+        specifier: 3.4.0
+        version: 3.4.0
       better-auth:
         specifier: 1.4.5
         version: 1.4.5(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(solid-js@1.9.10)
@@ -5260,8 +5260,8 @@ packages:
     peerDependencies:
       '@astrojs/compiler': '>=0.27.0'
 
-  async-cache-dedupe@3.3.0:
-    resolution: {integrity: sha512-SWxhug14IobaInGSk1XaGm+ETRr4mb6huworKeWNtNfNM8rlyAuVlOyMwRu5/Qb9VhlR+rRMScIZk2PgWcLM3Q==}
+  async-cache-dedupe@3.4.0:
+    resolution: {integrity: sha512-RkQr21CpltqMpbYpRaEAmF1BdUO5jnnS/scZkectmLiuWQ81w8u4lYraipbQf8zQ0yYvb3U0N1ozNAYmI4jQ3g==}
 
   async-function@1.0.0:
     resolution: {integrity: sha512-hsU18Ae8CDTR6Kgu9DYf0EbCr/a5iGL0rytQDobUcdpYOKokk8LEjVphnXkDkgpi0wYVsqrXuP0bZxJaTqdgoA==}
@@ -16024,7 +16024,7 @@ snapshots:
       '@astrojs/compiler': 2.13.0
       synckit: 0.11.11
 
-  async-cache-dedupe@3.3.0:
+  async-cache-dedupe@3.4.0:
     dependencies:
       mnemonist: 0.40.3
       safe-stable-stringify: 2.5.0
