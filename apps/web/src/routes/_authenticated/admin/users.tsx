@@ -28,7 +28,7 @@ interface ExtendedUserWithRole extends UserWithRole {
 export const Route = createFileRoute("/_authenticated/admin/users")({
   loader: async () => {
     const { data: users } = await authClient.admin.listUsers({
-      query: { sortBy: "createdAt", sortDirection: "asc" },
+      query: { sortBy: "createdAt", sortDirection: "desc" },
     });
 
     return users;
