@@ -57,8 +57,8 @@ function AdminUsersPage() {
             Users
           </h1>
           <p className="mt-2 text-sm text-gray-300">
-            Manage all users in the system. View user details, ban/unban users,
-            and impersonate users for support purposes.
+            Manage all users registered in your application. You can ban, unban,
+            impersonate, or delete users from this panel.
           </p>
         </div>
       </div>
