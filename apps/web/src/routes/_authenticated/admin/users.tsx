@@ -195,7 +195,7 @@ function AdminUsersPage() {
                             </button>
                           ) : (
                             <button
-                              className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
+                              className="cursor-pointer text-orange-600 no-underline hover:text-orange-500 hover:underline"
                               onClick={async () => {
                                 const { error } =
                                   await authClient.admin.banUser({
@@ -246,6 +246,36 @@ function AdminUsersPage() {
                           >
                             Impersonate
                             <span className="sr-only">, {user.name}</span>
+                          </button>
+                          <button
+                            className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
+                            onClick={async () => {
+                              const toastId = toast.loading(
+                                `Deleting user: ${user.username || user.name}`,
+                              );
+
+                              const { error } =
+                                await authClient.admin.removeUser({
+                                  userId: user.id,
+                                });
+
+                              if (error) {
+                                toast.error(
+                                  `Failed to delete user: ${user.username || user.name}`,
+                                );
+                                console.error(error);
+                                return;
+                              }
+
+                              toast.success(
+                                `Deleted user: ${user.username || user.name}`,
+                                { id: toastId },
+                              );
+
+                              router.invalidate();
+                            }}
+                          >
+                            Delete
                           </button>
                         </div>
                       </TableBodyCell>
