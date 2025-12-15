@@ -13,14 +13,18 @@ function AuthenticatedAccountPage() {
       <h1 className="text-2xl/9 font-semibold text-white">
         Account Management
       </h1>
+
       <p className="mt-1 text-sm/6 text-gray-400">
         Manage your account email and password.
       </p>
+
       <div className="flex flex-col justify-between gap-2 md:flex-row md:gap-8">
         <ChangePasswordForm />
         <ChangeEmailForm />
       </div>
+
       <hr />
+
       <div className="mt-10">
         <DeleteAccountForm />
       </div>
