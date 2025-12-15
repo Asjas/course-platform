@@ -144,6 +144,13 @@ export default defineConfig(
             ],
           },
         ],
+        "react-refresh/only-export-components": [
+          0,
+          {
+            allowConstantExport: true,
+            allowExportNames: ["Route", "loader"],
+          },
+        ],
       },
     },
     {
