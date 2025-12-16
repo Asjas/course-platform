@@ -108,7 +108,7 @@ function AuthenticatedChatChannelPage() {
             <p className="text-sm text-gray-400">No messages yet.</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col">
             {cachedMessages.map((msg) => (
               <ChatMessage
                 key={msg.id}

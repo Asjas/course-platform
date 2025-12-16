@@ -76,6 +76,7 @@ export default function ChatMessageForm() {
               id={field.name}
               onChange={field.handleChange}
               value={field.state.value}
+              onSubmit={() => form.handleSubmit()}
             >
               <form.Subscribe
                 selector={(state) => [state.isDirty, state.isSubmitting]}

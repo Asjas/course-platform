@@ -21,6 +21,7 @@ interface GitHubMessageEditorProps {
   onChange: (value: string | ((prev: string) => string)) => void; // ← FUNCTIONAL UPDATE
   placeholder?: string;
   children: ReactNode;
+  onSubmit?: () => void;
 }
 
 export default function ChatMessageEditor({
@@ -29,6 +30,7 @@ export default function ChatMessageEditor({
   onChange,
   placeholder = "Write your message...",
   children,
+  onSubmit,
 }: GitHubMessageEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -180,6 +182,12 @@ export default function ChatMessageEditor({
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && e.shiftKey && onSubmit) {
+                e.preventDefault();
+                onSubmit();
+              }
+            }}
             spellCheck
             wrap="soft"
             disabled={uploadingCount > 0}
