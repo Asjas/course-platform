@@ -95,9 +95,9 @@ function AuthenticatedChatChannelPage() {
 
   return (
     <div className="grid-container">
-      <header className="bg-gray-900/75 px-4 py-1">
+      <div className="bg-gray-900/75 px-4 py-1">
         <h1 className="text-xl font-bold"># {channelId}</h1>
-      </header>
+      </div>
 
       <section
         className="scrollable-section custom-scrollbar bg-gray-800"
@@ -119,9 +119,10 @@ function AuthenticatedChatChannelPage() {
           </div>
         )}
       </section>
-      <footer>
+
+      <section>
         <ChatMessageForm />
-      </footer>
+      </section>
     </div>
   );
 }
