@@ -684,7 +684,7 @@ function PrivacyPage() {
                 className="text-green-500 underline"
                 href="/settings/privacy"
               >
-                Settings → Privacy
+                Settings ➡️ Privacy
               </a>
               .
             </p>
