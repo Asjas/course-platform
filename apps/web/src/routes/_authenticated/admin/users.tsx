@@ -20,6 +20,7 @@ import {
 import { authClient } from "~/lib/auth.client";
 import { cn } from "~/lib/utils";
 
+// https://github.com/better-auth/better-auth/issues/3033
 interface ExtendedUserWithRole extends UserWithRole {
   username?: string;
   displayUsername?: string;
@@ -219,7 +220,7 @@ function AdminUsersPage() {
                             </button>
                           )}
                           <button
-                            className="cursor-pointer text-blue-600 no-underline hover:text-blue-500 hover:underline"
+                            className="cursor-pointer text-green-600 no-underline hover:text-green-500 hover:underline"
                             onClick={async () => {
                               const { error } =
                                 await authClient.admin.impersonateUser({
@@ -251,6 +252,14 @@ function AdminUsersPage() {
                           <button
                             className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
                             onClick={async () => {
+                              if (
+                                !confirm(
+                                  `Are you sure you want to delete user: ${user.username || user.name}? This action cannot be undone.`,
+                                )
+                              ) {
+                                return;
+                              }
+
                               const toastId = toast.loading(
                                 `Deleting user: ${user.username || user.name}`,
                               );
@@ -263,6 +272,7 @@ function AdminUsersPage() {
                               if (error) {
                                 toast.error(
                                   `Failed to delete user: ${user.username || user.name}`,
+                                  { id: toastId },
                                 );
                                 console.error(error);
                                 return;
