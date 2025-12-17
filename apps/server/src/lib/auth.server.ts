@@ -10,12 +10,28 @@ import {
   username,
 } from "better-auth/plugins";
 import { ulid } from "ulid";
+import { Pool, setGlobalDispatcher } from "undici";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
 import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
 import mailer from "~/lib/mailer.js";
 import { redis } from "~/lib/redis.js";
+
+const baseUrl =
+  config.NODE_ENV === "production"
+    ? "https://api.polar.sh"
+    : "https://api.sandbox.polar.sh";
+
+export const polarPool = new Pool(baseUrl, {
+  connections: 10,
+  pipelining: 10,
+  keepAliveTimeout: 60000,
+  headersTimeout: 30000,
+  bodyTimeout: 30000,
+});
+
+setGlobalDispatcher(polarPool);
 
 const polarClient = new Polar({
   accessToken: config.POLAR_ACCESS_TOKEN,
