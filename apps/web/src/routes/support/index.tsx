@@ -160,7 +160,7 @@ function SupportIndexPage() {
                           <div className="flex justify-end gap-4">
                             <button
                               className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
-                              onClick={async () => {
+                              onClick={() => {
                                 if (
                                   !confirm(
                                     `Are you sure you want to delete the ticket titled "${ticket.title}"? This action cannot be undone.`,
@@ -169,16 +169,26 @@ function SupportIndexPage() {
                                   return;
                                 }
 
+                                const toastId = toast.loading(
+                                  `Deleting ticket "${ticket.title}"...`,
+                                );
+
                                 try {
                                   SupportTicketsCollection.delete(ticket.id);
-                                  toast.success("Ticket deleted successfully.");
+
+                                  toast.success(
+                                    "Ticket deleted successfully.",
+                                    { id: toastId },
+                                  );
                                 } catch (error) {
                                   console.error(
                                     "Error deleting ticket:",
                                     error,
                                   );
+
                                   toast.error(
                                     "An error occurred while deleting the ticket. Please try again.",
+                                    { id: toastId },
                                   );
                                 }
                               }}

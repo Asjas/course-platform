@@ -42,6 +42,43 @@ export const SupportTicketsCollection = createCollection(
   }),
 );
 
+export const CouponsCollection = createCollection(
+  queryCollectionOptions({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.coupons.getAllCoupons.queryKey(),
+    queryFn: () => trpcClient.coupons.getAllCoupons.query(),
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.coupons.insertCoupon.mutate(modified);
+      } catch (error) {
+        console.error("Error inserting coupon: ", error);
+        toast.error(
+          "An error occurred while creating the coupon. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.coupons.deleteCouponById.mutate({
+          couponId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting coupon: ", error);
+        toast.error(
+          "An error occurred while deleting the coupon. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
 export function useSupportTickets() {
   return useLiveQuery(SupportTicketsCollection);
 }
@@ -55,5 +92,21 @@ export function useSupportTicketById({ ticketId }: { ticketId: string }) {
         .findOne();
     },
     [ticketId],
+  );
+}
+
+export function useCoupons() {
+  return useLiveQuery(CouponsCollection);
+}
+
+export function useCouponById({ couponId }: { couponId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ coupon: CouponsCollection })
+        .where(({ coupon }) => eq(coupon.id, couponId))
+        .findOne();
+    },
+    [couponId],
   );
 }

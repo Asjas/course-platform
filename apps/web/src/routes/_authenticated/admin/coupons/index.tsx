@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
-import { PencilIcon, Trash2Icon } from "lucide-react";
+import { ClipboardIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import { toast } from "sonner";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -12,24 +12,18 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { trpc } from "~/lib/trpc.client";
+import { CouponsCollection, useCoupons } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
-  loader: async ({ context }) => {
-    const { queryClient } = context;
-
-    await queryClient.ensureQueryData(
-      trpc.coupons.getAllCoupons.queryOptions(),
-    );
+  loader: async () => {
+    await CouponsCollection.preload();
   },
   component: AdminCouponsPage,
 });
 
 function AdminCouponsPage() {
-  const { data: coupons, isLoading } = useSuspenseQuery(
-    trpc.coupons.getAllCoupons.queryOptions(),
-  );
+  const { data: coupons, isLoading } = useCoupons();
 
   if (isLoading) {
     return <Loading />;
@@ -153,7 +147,21 @@ function AdminCouponsPage() {
                       </TableBodyCell>
 
                       <TableBodyCell>
-                        <div className="flex justify-between gap-2">
+                        <div className="flex justify-around gap-2">
+                          <button
+                            className="cursor-pointer text-gray-400 hover:text-gray-300"
+                            onClick={() => {
+                              navigator.clipboard.writeText(coupon.code);
+                              toast.success(
+                                `Copied coupon code ${coupon.code} to clipboard!`,
+                              );
+                            }}
+                          >
+                            <ClipboardIcon className="h-4 w-4" />
+                            <span className="sr-only">
+                              Copy coupon code {coupon.code}
+                            </span>
+                          </button>
                           <Link
                             className="text-blue-600 hover:text-blue-500"
                             to="/admin/coupons/edit/index/$couponId"
@@ -167,9 +175,33 @@ function AdminCouponsPage() {
                           <button
                             className="cursor-pointer text-red-600 hover:text-red-500"
                             onClick={() => {
-                              alert(
-                                `Delete coupon ${coupon.code} (not implemented)`,
+                              if (
+                                !confirm(
+                                  `Are you sure you want to delete the coupon ${coupon.code}? This action cannot be undone.`,
+                                )
+                              ) {
+                                return;
+                              }
+
+                              const toastId = toast.loading(
+                                `Deleting coupon ${coupon.code}...`,
                               );
+
+                              try {
+                                CouponsCollection.delete(coupon.id);
+
+                                toast.success(
+                                  `Coupon ${coupon.code} deleted successfully.`,
+                                  { id: toastId },
+                                );
+                              } catch (error) {
+                                console.error("Error deleting coupon:", error);
+
+                                toast.error(
+                                  `An error occurred while deleting the coupon ${coupon.code}. Please try again.`,
+                                  { id: toastId },
+                                );
+                              }
                             }}
                           >
                             <Trash2Icon className="h-4 w-4" />
