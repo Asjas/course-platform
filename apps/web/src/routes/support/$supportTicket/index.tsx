@@ -128,6 +128,7 @@ function SupportTicketIndexPage() {
               {ticket.title}
             </h1>
             <p className="mt-2 text-[16px] text-gray-400">#{ticket.id}</p>
+
             <div className="mt-4 flex items-center gap-2 border-b border-gray-600 pb-4 text-white">
               <div
                 className={cn(
@@ -199,6 +200,7 @@ function SupportTicketIndexPage() {
               ) : null}
               <h2>Add a comment</h2>
             </div>
+
             <SupportCommentForm ticketId={ticket.id} />
           </div>
         ) : (

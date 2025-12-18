@@ -31,6 +31,7 @@ function IndexPage() {
               Meet Your Instructor
             </h2>
           </div>
+
           <InstructorCard hideHeading={true} />
         </div>
       </Section>

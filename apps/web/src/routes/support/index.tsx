@@ -110,15 +110,19 @@ function SupportIndexPage() {
                         ) : null}
                         {ticket.user.name}
                       </TableBodyCell>
+
                       <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
                         {ticket.title}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.module?.order || "N/A"}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.lesson?.order || "N/A"}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.priority === "low" ? (
                           <span className="inline-flex items-center rounded-md bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-blue-500/50 ring-inset">
@@ -138,6 +142,7 @@ function SupportIndexPage() {
                           </span>
                         )}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {ticket.status === "open" ? (
                           <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
@@ -149,11 +154,13 @@ function SupportIndexPage() {
                           </span>
                         )}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-white">
                           {ticket.comments.length}
                         </span>
                       </TableBodyCell>
+
                       <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         {auth.hasRole("admin") ||
                         auth.session?.user.id === ticket.userId ? (
