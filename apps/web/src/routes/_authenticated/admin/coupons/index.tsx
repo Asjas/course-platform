@@ -1,6 +1,12 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
-import { ClipboardIcon, PencilIcon, Trash2Icon } from "lucide-react";
+import {
+  ClipboardCheckIcon,
+  ClipboardCopyIcon,
+  PencilIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import Loading from "~/components/loading";
 import {
@@ -24,6 +30,7 @@ export const Route = createFileRoute("/_authenticated/admin/coupons/")({
 
 function AdminCouponsPage() {
   const { data: coupons, isLoading } = useCoupons();
+  const [copiedCouponId, setCopiedCouponId] = useState<string | null>(null);
 
   if (isLoading) {
     return <Loading />;
@@ -152,12 +159,23 @@ function AdminCouponsPage() {
                             className="cursor-pointer text-gray-400 hover:text-gray-300"
                             onClick={() => {
                               navigator.clipboard.writeText(coupon.code);
+                              setCopiedCouponId(coupon.id);
+
+                              setTimeout(() => {
+                                setCopiedCouponId(null);
+                              }, 2000);
+
                               toast.success(
                                 `Copied coupon code ${coupon.code} to clipboard!`,
                               );
                             }}
                           >
-                            <ClipboardIcon className="h-4 w-4" />
+                            {copiedCouponId === coupon.id ? (
+                              <ClipboardCheckIcon className="h-4 w-4" />
+                            ) : (
+                              <ClipboardCopyIcon className="h-4 w-4" />
+                            )}
+
                             <span className="sr-only">
                               Copy coupon code {coupon.code}
                             </span>
