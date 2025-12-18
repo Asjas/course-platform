@@ -90,8 +90,8 @@ function AdminCouponsPage() {
 
                       <TableBodyCell className="text-gray-300">
                         {coupon.discountType === "percentage"
-                          ? `${coupon.discountValue}%`
-                          : `$${coupon.discountValue.toFixed(2)}`}
+                          ? `${coupon.discountValue} %`
+                          : `$ ${coupon.discountValue.toFixed(2)}`}
                       </TableBodyCell>
 
                       <TableBodyCell className="text-gray-300">
