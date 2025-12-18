@@ -7,7 +7,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       <div className="relative flex flex-col overflow-y-auto bg-gray-900 px-2">
         <nav className="flex flex-1 flex-col">
           <span className="mt-2 flex p-2 text-lg md:text-xl">Admin</span>
-          <ul className="flex flex-1 flex-col gap-y-2 pt-4">
+          <ul className="flex flex-1 flex-col gap-y-1 pt-4">
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 hover:bg-gray-700"
