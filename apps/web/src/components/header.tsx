@@ -40,6 +40,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Home
                 </NavLink>
               </li>
+
               <li className="relative inline-flex border-l border-gray-600 pl-2">
                 <NavLink
                   preload="intent"
@@ -51,6 +52,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Support
                 </NavLink>
               </li>
+
               {auth.isAuthenticated ? (
                 <li className="relative inline-flex border-l border-gray-600 pl-2">
                   <NavLink
@@ -64,6 +66,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </NavLink>
                 </li>
               ) : null}
+
               {auth.isAuthenticated ? (
                 <li className="relative inline-flex">
                   <NavLink
@@ -77,6 +80,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </NavLink>
                 </li>
               ) : null}
+
               {auth.isAuthenticated && auth.hasRole("admin") ? (
                 <li className="relative inline-flex border-l border-gray-600 pl-2">
                   <NavLink
@@ -92,6 +96,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               ) : null}
             </ul>
           </div>
+
           <div className="flex lg:hidden">
             <button
               className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
@@ -140,6 +145,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   />
                 )}
               </MenuButton>
+
               <Popover>
                 <Menu className="rounded-md bg-gray-700 px-4 py-4">
                   <MenuItem
@@ -148,18 +154,21 @@ export default function Header({ auth }: { auth: AuthState }) {
                   >
                     Account
                   </MenuItem>
+
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={() => navigate({ to: "/profile" })}
                   >
                     Profile
                   </MenuItem>
+
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={() => navigate({ to: "/purchases" })}
                   >
                     Purchases
                   </MenuItem>
+
                   {isImpersonating ? (
                     <MenuItem
                       className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
@@ -189,6 +198,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                       Stop Impersonating
                     </MenuItem>
                   ) : null}
+
                   <MenuItem
                     className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
@@ -220,6 +230,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Sign In
                 </NavLink>
               </li>
+
               <li className="relative inline-flex">
                 <NavLink
                   className="bg-green-700"
@@ -292,6 +303,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                           />
                         )}
                       </MenuButton>
+
                       <Popover>
                         <Menu className="rounded-md bg-gray-700">
                           <MenuItem
@@ -300,18 +312,21 @@ export default function Header({ auth }: { auth: AuthState }) {
                           >
                             Account
                           </MenuItem>
+
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/profile" })}
                           >
                             Profile
                           </MenuItem>
+
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/purchases" })}
                           >
                             Purchases
                           </MenuItem>
+
                           {isImpersonating ? (
                             <MenuItem
                               className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
@@ -341,6 +356,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                               Stop Impersonating
                             </MenuItem>
                           ) : null}
+
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={async () => {
@@ -402,6 +418,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Home
                 </NavLink>
               </li>
+
               <li>
                 <NavLink
                   className="flex w-full"
@@ -416,6 +433,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   Support
                 </NavLink>
               </li>
+
               {auth.isAuthenticated ? (
                 <li>
                   <NavLink
@@ -431,6 +449,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </NavLink>
                 </li>
               ) : null}
+
               {auth.isAuthenticated ? (
                 <li>
                   <NavLink
@@ -447,6 +466,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   </NavLink>
                 </li>
               ) : null}
+
               {auth.isAuthenticated && auth.hasRole("admin") ? (
                 <li>
                   <NavLink
