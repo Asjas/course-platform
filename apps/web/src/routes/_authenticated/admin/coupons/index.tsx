@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, Trash2Icon } from "lucide-react";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -41,11 +41,13 @@ function AdminCouponsPage() {
           <h1 className="text-lg font-semibold text-white md:text-3xl">
             Coupons
           </h1>
+
           <p className="mt-2 text-sm text-gray-300">
             Manage discount coupons. Create, edit, and track usage of all
             coupons.
           </p>
         </div>
+
         <div className="mt-4 sm:mt-0 sm:ml-16">
           <Link
             className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
@@ -71,10 +73,11 @@ function AdminCouponsPage() {
                     <TableHeaderCell>Valid Until</TableHeaderCell>
                     <TableHeaderCell>Status</TableHeaderCell>
                     <TableHeaderCell>
-                      <span className="sr-only">Edit</span>
+                      <span className="sr-only">Table Actions</span>
                     </TableHeaderCell>
                   </TableHeaderRow>
                 </TableHeader>
+
                 <TableBody>
                   {coupons.map((coupon) => (
                     <TableBodyRow key={coupon.id}>
@@ -148,17 +151,32 @@ function AdminCouponsPage() {
                         </span>
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-right">
-                        <Link
-                          className="text-blue-600 hover:text-blue-500"
-                          to="/admin/coupons/edit/index/$couponId"
-                          params={{ couponId: coupon.id }}
-                        >
-                          <PencilIcon className="h-4 w-4" />
-                          <span className="sr-only">
-                            Edit coupon {coupon.code}
-                          </span>
-                        </Link>
+                      <TableBodyCell>
+                        <div className="flex justify-between gap-2">
+                          <Link
+                            className="text-blue-600 hover:text-blue-500"
+                            to="/admin/coupons/edit/index/$couponId"
+                            params={{ couponId: coupon.id }}
+                          >
+                            <PencilIcon className="h-4 w-4" />
+                            <span className="sr-only">
+                              Edit coupon {coupon.code}
+                            </span>
+                          </Link>
+                          <button
+                            className="cursor-pointer text-red-600 hover:text-red-500"
+                            onClick={() => {
+                              alert(
+                                `Delete coupon ${coupon.code} (not implemented)`,
+                              );
+                            }}
+                          >
+                            <Trash2Icon className="h-4 w-4" />
+                            <span className="sr-only">
+                              Delete coupon {coupon.code}
+                            </span>
+                          </button>
+                        </div>
                       </TableBodyCell>
                     </TableBodyRow>
                   ))}
@@ -184,10 +202,13 @@ function AdminCouponsPage() {
               />
             </svg>
           </div>
-          <p className="mt-4 text-lg text-gray-400">No coupons found</p>
-          <p className="mt-2 text-sm text-gray-500">
-            Get started by creating a new coupon.
-          </p>
+
+          <div>
+            <p className="mt-4 text-lg text-gray-400">No coupons found</p>
+            <p className="mt-2 text-sm text-gray-500">
+              Get started by creating a new coupon.
+            </p>
+          </div>
         </div>
       )}
     </div>
