@@ -18,6 +18,7 @@ import { cn } from "~/lib/utils";
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
   loader: async ({ context }) => {
     const { queryClient } = context;
+
     await queryClient.ensureQueryData(
       trpc.coupons.getAllCoupons.queryOptions(),
     );
