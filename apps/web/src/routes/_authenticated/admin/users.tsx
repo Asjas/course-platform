@@ -108,15 +108,18 @@ function AdminUsersPage() {
                           {user.name}
                         </span>
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         <span className="flex items-center gap-2">
                           <MailIcon size={16} />
                           {user.email}
                         </span>
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {user?.username || "Not set"}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         <span
                           className={cn(
@@ -129,6 +132,7 @@ function AdminUsersPage() {
                           {user.role}
                         </span>
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {user.banned ? (
                           <span className="inline-flex items-center gap-1 rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
@@ -141,6 +145,7 @@ function AdminUsersPage() {
                           </span>
                         )}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {user?.emailVerified ? (
                           <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
@@ -152,6 +157,7 @@ function AdminUsersPage() {
                           </span>
                         )}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {intlFormat(new Date(user.createdAt), {
                           day: "numeric",
@@ -161,6 +167,7 @@ function AdminUsersPage() {
                           hour: "numeric",
                         })}
                       </TableBodyCell>
+
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {intlFormat(new Date(user.updatedAt), {
                           day: "numeric",
@@ -170,6 +177,7 @@ function AdminUsersPage() {
                           hour: "numeric",
                         })}
                       </TableBodyCell>
+
                       <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         <div className="flex justify-end gap-4">
                           {user.banned ? (
