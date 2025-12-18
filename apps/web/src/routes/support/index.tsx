@@ -44,6 +44,7 @@ function SupportIndexPage() {
             tickets submitted by users.
           </p>
         </div>
+
         {auth.session ? (
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <Link
@@ -63,9 +64,10 @@ function SupportIndexPage() {
           </p>
         )}
       </div>
+
       {tickets.length !== 0 ? (
         <div className="mt-12 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="custom-scrollbar -mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
                 <TableHeader>
