@@ -235,12 +235,13 @@ export default function Header({ auth }: { auth: AuthState }) {
         </div>
       </nav>
 
+      {/* Mobile menu */}
       <Dialog
         className="lg:hidden"
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
       >
-        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-6 py-5">
+        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-4 py-5">
           <div className="flex items-center justify-between">
             <div className="flex flex-1">
               <button
@@ -292,7 +293,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                         )}
                       </MenuButton>
                       <Popover>
-                        <Menu className="rounded-md bg-gray-700 px-4 py-4">
+                        <Menu className="rounded-md bg-gray-700">
                           <MenuItem
                             className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/account" })}
@@ -384,8 +385,9 @@ export default function Header({ auth }: { auth: AuthState }) {
               )}
             </div>
           </div>
-          <div className="mt-20">
-            <ul className="flex w-full flex-col space-y-2">
+
+          <div className="mt-10">
+            <ul className="flex w-full flex-col space-y-1">
               <li>
                 <NavLink
                   className="flex w-full"
