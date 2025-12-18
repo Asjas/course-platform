@@ -96,7 +96,7 @@ function AuthenticatedChatChannelPage() {
   return (
     <div className="grid-container">
       <div className="bg-gray-900/75 px-4 py-1">
-        <h1 className="text-xl font-bold"># {channelId}</h1>
+        <h1 className="text-xl font-bold">{`# ${channelId}`}</h1>
       </div>
 
       <section
