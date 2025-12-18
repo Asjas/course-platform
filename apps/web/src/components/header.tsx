@@ -116,7 +116,7 @@ export default function Header({ auth }: { auth: AuthState }) {
             aria-label="Codewizard Training"
           >
             <img
-              className="block h-9 w-[113px] rounded-sm"
+              className="block h-9 w-28.25 rounded-sm"
               src="/codewizard.svg"
               alt="Codewizard Training"
             />
@@ -265,7 +265,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 aria-label="Codewizard Training"
               >
                 <img
-                  className="block h-9 w-[113px] rounded-sm"
+                  className="block h-9 w-28.25 rounded-sm"
                   src="/codewizard.svg"
                   alt="Codewizard Training"
                 />
