@@ -35,7 +35,7 @@ export const cache = createCache({
   onMiss(key) {
     cacheMissCounter.inc({ key });
   },
-  onError(err: unknown) {
+  onError(err) {
     if (err instanceof Error) {
       pinoLogger.error(err, "Cache error");
     }
