@@ -104,7 +104,7 @@ function CourseLayout() {
 
                     <div className="space-y-3">
                       <a
-                        className="block w-full rounded-lg bg-green-500 px-6 py-3 text-center text-base font-semibold text-white transition-colors hover:bg-green-600"
+                        className="block w-full rounded-lg bg-green-600 px-6 py-3 text-center text-base font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
                         href="/education/courses/neovim-for-newbs/chapters/getting-started-with-neovim/lessons/bee12ff5-66d5-4cc0-ad79-a3635a89fdca"
                       >
                         Start Learning →

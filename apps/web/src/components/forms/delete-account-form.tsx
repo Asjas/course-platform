@@ -81,7 +81,7 @@ export default function DeleteAccountForm() {
                   className={cn(
                     "h-10 cursor-pointer rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600",
                     isDirty
-                      ? "hover:bg-red-700"
+                      ? "hover:bg-red-700 active:bg-red-800"
                       : "cursor-not-allowed opacity-50",
                   )}
                   type="submit"
@@ -93,7 +93,7 @@ export default function DeleteAccountForm() {
                   className={cn(
                     "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
                     isDirty
-                      ? "hover:bg-gray-600"
+                      ? "hover:bg-gray-200 dark:hover:bg-gray-700"
                       : "cursor-not-allowed opacity-50",
                   )}
                   type="reset"

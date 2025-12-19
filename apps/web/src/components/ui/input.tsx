@@ -79,7 +79,7 @@ function Input({
         {/* Show Password Button */}
         {type === "password" ? (
           <button
-            className="text-muted-foreground focus-visible:ring-ring hover:text-foreground absolute top-1/2 right-0 -translate-y-1/2 rounded-md p-1 transition-colors hover:bg-gray-400 focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground focus-visible:ring-ring hover:text-foreground absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-400 focus-visible:ring-2 focus-visible:outline-none"
             type="button"
             onClick={() => setShowPassword((s) => !s)}
             aria-label={showPassword ? "Hide password" : "Show password"}

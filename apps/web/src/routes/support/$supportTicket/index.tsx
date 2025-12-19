@@ -94,7 +94,7 @@ function SupportTicketIndexPage() {
         </Link>
         {copied ? (
           <button
-            className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
             title="Copied"
           >
             <CheckIcon
@@ -104,7 +104,7 @@ function SupportTicketIndexPage() {
           </button>
         ) : (
           <button
-            className="block rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:cursor-pointer hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
             title="Copy link"
             onClick={() => {
               const ticketUrl = `${window.location.origin}/support/${ticket.id}`;

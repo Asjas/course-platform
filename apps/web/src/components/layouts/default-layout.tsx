@@ -64,7 +64,7 @@ export default function DefaultLayoutComponent({
               Your email is not verified. Please check your inbox for a
               verification email.
               <button
-                className="rounded-sm border bg-gray-800 px-2 py-1 text-white"
+                className="cursor-pointer rounded-sm border bg-gray-800 px-2 py-1 text-white"
                 type="button"
                 onClick={async () => {
                   await authClient.sendVerificationEmail(

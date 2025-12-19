@@ -99,7 +99,7 @@ export default function Header({ auth }: { auth: AuthState }) {
 
           <div className="flex lg:hidden">
             <button
-              className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+              className="-m-2.5 inline-flex cursor-pointer items-center justify-center rounded-md p-2.5 text-gray-700"
               type="button"
               onClick={() => setMobileMenuOpen(true)}
             >
@@ -256,7 +256,7 @@ export default function Header({ auth }: { auth: AuthState }) {
           <div className="flex items-center justify-between">
             <div className="flex flex-1">
               <button
-                className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                className="-m-2.5 cursor-pointer rounded-md p-2.5 text-gray-700"
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
               >
