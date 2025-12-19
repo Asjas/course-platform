@@ -18,7 +18,7 @@ import { cn } from "~/lib/utils";
 interface GitHubMessageEditorProps {
   id: string;
   value: string;
-  onChange: (value: string | ((prev: string) => string)) => void; // ← FUNCTIONAL UPDATE
+  onChange: (value: string | ((prev: string) => string)) => void;
   placeholder?: string;
   children: ReactNode;
   onSubmit?: () => void;
@@ -50,7 +50,6 @@ export default function ChatMessageEditor({
       const filename = `${crypto.randomUUID()}.${extension}`;
       const key = `support_ticket_attachments/${filename}`;
 
-      // Step 1: Get presigned URL
       const { presignedUrl, publicUrl } = await signedUrlMutation.mutateAsync({
         key,
         contentType: file.type,
@@ -58,7 +57,6 @@ export default function ChatMessageEditor({
 
       if (!presignedUrl) throw new Error("Failed to generate upload URL");
 
-      // Step 2: Upload to R2
       const uploadResponse = await fetch(presignedUrl, {
         method: "PUT",
         body: file,
@@ -69,7 +67,6 @@ export default function ChatMessageEditor({
         throw new Error(`Upload failed: ${uploadResponse.statusText}`);
       }
 
-      // Step 3: Insert Markdown
       const textarea = textareaRef.current;
       const cursorPos = textarea?.selectionStart ?? value.length;
       const alt = file.name.split(".").slice(0, -1).join(".") || "image";
@@ -80,7 +77,6 @@ export default function ChatMessageEditor({
           prev.slice(0, cursorPos) + imageMarkdown + prev.slice(cursorPos),
       );
 
-      // Restore cursor
       requestAnimationFrame(() => {
         if (!textarea) return;
         textarea.focus();
