@@ -46,7 +46,7 @@ function BlogListPage() {
               key={post.slug}
             >
               <Link
-                className="text-xl font-medium hover:text-green-500"
+                className="text-xl font-medium hover:text-green-600"
                 to="/blog/$slug"
                 params={{ slug: post.slug }}
               >

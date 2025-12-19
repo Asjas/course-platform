@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="flex flex-col space-y-2">
               <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 <Link
-                  className="transition-colors hover:text-green-500"
+                  className="transition-colors hover:text-green-600"
                   to="/"
                 >
                   Codewizard Training
@@ -18,7 +18,7 @@ export default function Footer() {
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 <a
-                  className="transition-colors hover:text-green-500"
+                  className="transition-colors hover:text-green-600"
                   href="mailto:contact@codewizard.training"
                 >
                   contact@codewizard.training
@@ -26,7 +26,7 @@ export default function Footer() {
               </div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 <a
-                  className="transition-colors hover:text-green-500"
+                  className="transition-colors hover:text-green-600"
                   href="https://uptimekuma.codewizard.training/status/codewizard-training"
                 >
                   Uptime Status
@@ -38,7 +38,7 @@ export default function Footer() {
               <span>
                 Design inspired by{" "}
                 <a
-                  className="hover:text-green-400"
+                  className="hover:text-green-600"
                   href="https://typecraft.dev"
                 >
                   typecraft
@@ -47,19 +47,19 @@ export default function Footer() {
             </div>
             <div className="flex space-x-6 text-sm text-gray-600 dark:text-gray-400">
               <Link
-                className="transition-colors hover:text-green-500"
+                className="transition-colors hover:text-green-600"
                 to="/terms"
               >
                 Terms of Service
               </Link>
               <Link
-                className="transition-colors hover:text-green-500"
+                className="transition-colors hover:text-green-600"
                 to="/privacy"
               >
                 Privacy Policy
               </Link>
               <Link
-                className="transition-colors hover:text-green-500"
+                className="transition-colors hover:text-green-600"
                 to="/cookies"
               >
                 Cookie Policy

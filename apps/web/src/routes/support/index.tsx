@@ -48,7 +48,7 @@ function SupportIndexPage() {
         {auth.session ? (
           <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
             <Link
-              className="block rounded-md bg-green-700 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-700"
+              className="block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-800"
               to="/support/create-ticket"
             >
               Create new ticket
@@ -166,7 +166,7 @@ function SupportIndexPage() {
                         auth.session?.user.id === ticket.userId ? (
                           <div className="flex justify-end gap-4">
                             <button
-                              className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
+                              className="cursor-pointer text-red-500 no-underline hover:text-red-600 hover:underline"
                               onClick={() => {
                                 if (
                                   !confirm(
@@ -204,7 +204,7 @@ function SupportIndexPage() {
                               <span className="sr-only">, {ticket.title}</span>
                             </button>
                             <Link
-                              className="text-blue-600 no-underline hover:text-blue-500 hover:underline"
+                              className="text-blue-500 no-underline hover:text-blue-600 hover:underline"
                               to="/support/$supportTicket/edit"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -212,7 +212,7 @@ function SupportIndexPage() {
                               <span className="sr-only">, {ticket.title}</span>
                             </Link>
                             <Link
-                              className="text-green-600 no-underline hover:text-green-500 hover:underline"
+                              className="text-green-500 no-underline hover:text-green-600 hover:underline"
                               to="/support/$supportTicket"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -222,7 +222,7 @@ function SupportIndexPage() {
                           </div>
                         ) : (
                           <Link
-                            className="text-green-600 no-underline hover:text-green-500 hover:underline"
+                            className="text-green-500 no-underline hover:text-green-600 hover:underline"
                             to="/support/$supportTicket"
                             params={{ supportTicket: ticket.id }}
                           >

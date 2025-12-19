@@ -181,7 +181,7 @@ function AdminCouponsPage() {
                             </span>
                           </button>
                           <Link
-                            className="text-blue-600 hover:text-blue-500"
+                            className="text-blue-500 hover:text-blue-600"
                             to="/admin/coupons/edit/index/$couponId"
                             params={{ couponId: coupon.id }}
                           >
@@ -191,7 +191,7 @@ function AdminCouponsPage() {
                             </span>
                           </Link>
                           <button
-                            className="cursor-pointer text-red-600 hover:text-red-500"
+                            className="cursor-pointer text-red-500 hover:text-red-600"
                             onClick={() => {
                               if (
                                 !confirm(

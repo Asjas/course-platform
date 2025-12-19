@@ -20,7 +20,7 @@ function SupportCreateTicketPage() {
 
         <div className="flex sm:mt-0 sm:ml-16 sm:flex-none">
           <Link
-            className="inline-flex items-center rounded-md bg-green-700 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-700"
+            className="inline-flex items-center rounded-md bg-green-600 px-2 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-800"
             to="/support"
           >
             Back to all tickets

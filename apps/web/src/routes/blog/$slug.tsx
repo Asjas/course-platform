@@ -48,7 +48,7 @@ function BlogPostPage() {
 
       <div className="mt-12 border-t border-gray-700 pt-6">
         <Link
-          className="flex items-center text-green-500 hover:text-green-400"
+          className="flex items-center text-green-500 hover:text-green-600"
           to="/blog"
         >
           <ArrowLeftIcon

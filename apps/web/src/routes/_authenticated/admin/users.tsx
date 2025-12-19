@@ -182,7 +182,7 @@ function AdminUsersPage() {
                         <div className="flex justify-end gap-4">
                           {user.banned ? (
                             <button
-                              className="cursor-pointer text-green-600 no-underline hover:text-green-500 hover:underline"
+                              className="cursor-pointer text-green-500 no-underline hover:text-green-600 hover:underline"
                               onClick={async () => {
                                 const { error } =
                                   await authClient.admin.unbanUser({
@@ -205,7 +205,7 @@ function AdminUsersPage() {
                             </button>
                           ) : (
                             <button
-                              className="cursor-pointer text-orange-600 no-underline hover:text-orange-500 hover:underline"
+                              className="cursor-pointer text-orange-500 no-underline hover:text-orange-600 hover:underline"
                               onClick={async () => {
                                 const { error } =
                                   await authClient.admin.banUser({
@@ -228,7 +228,7 @@ function AdminUsersPage() {
                             </button>
                           )}
                           <button
-                            className="cursor-pointer text-green-600 no-underline hover:text-green-500 hover:underline"
+                            className="cursor-pointer text-green-500 no-underline hover:text-green-600 hover:underline"
                             onClick={async () => {
                               const { error } =
                                 await authClient.admin.impersonateUser({
@@ -258,7 +258,7 @@ function AdminUsersPage() {
                             <span className="sr-only">, {user.name}</span>
                           </button>
                           <button
-                            className="cursor-pointer text-red-600 no-underline hover:text-red-500 hover:underline"
+                            className="cursor-pointer text-red-500 no-underline hover:text-red-600 hover:underline"
                             onClick={async () => {
                               if (
                                 !confirm(
