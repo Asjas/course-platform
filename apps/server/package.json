@@ -29,7 +29,7 @@
     "@fastify/sensible": "6.0.4",
     "@polar-sh/better-auth": "1.5.0",
     "@polar-sh/sdk": "0.41.5",
-    "@trpc/server": "11.8.0",
+    "@trpc/server": "11.8.1",
     "argon2": "0.44.0",
     "async-cache-dedupe": "3.4.0",
     "better-auth": "1.4.5",
