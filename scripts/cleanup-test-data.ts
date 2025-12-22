@@ -28,6 +28,19 @@ const pool = new Pool({
 async function cleanupDatabase() {
   try {
     if (schemaName !== "public") {
+      // Check if schema exists first
+      const schemaCheck = await pool.query(
+        `SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1`,
+        [schemaName],
+      );
+
+      if (schemaCheck.rows.length === 0) {
+        console.log(
+          `ℹ️  Schema "${schemaName}" does not exist, nothing to clean up`,
+        );
+        return;
+      }
+
       // Drop the entire schema for test schemas
       await pool.query(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
       console.log(`✅ Schema "${schemaName}" dropped successfully`);

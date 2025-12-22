@@ -88,7 +88,7 @@ function generateFakeCourse(authorId: string) {
 function generateFakeModule(courseId: string, order: number) {
   return {
     id: generateId("mod"),
-    title: `Module ${order + 1}: ${faker.hacker.ingverb()} ${faker.hacker.noun()}`,
+    title: `Module ${order + 1}: ${faker.hacker.verb()} ${faker.hacker.noun()}`,
     slug: faker.helpers
       .slugify(`module-${order + 1}-${faker.word.noun()}`)
       .toLowerCase(),
