@@ -2,11 +2,12 @@ import { relations, sql } from "drizzle-orm";
 import {
   check,
   index,
+  pgEnum,
+  pgTable,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { invoice, payment } from "~/db/schema/purchase.js";
@@ -14,19 +15,19 @@ import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
 import { user } from "~/db/schema/user.js";
 
 // Enums
-export const enrollmentType = mySchema.enum("course_enrollment_type", [
+export const enrollmentType = pgEnum("course_enrollment_type", [
   "individual",
   "gift",
   "team",
 ]);
 
-export const enrollmentSource = mySchema.enum("course_enrollment_source", [
+export const enrollmentSource = pgEnum("course_enrollment_source", [
   "direct",
   "gift",
   "team_invite",
 ]);
 
-export const enrollmentStatus = mySchema.enum("course_enrollment_status", [
+export const enrollmentStatus = pgEnum("course_enrollment_status", [
   "active",
   "cancelled",
   "refunded",
@@ -34,7 +35,7 @@ export const enrollmentStatus = mySchema.enum("course_enrollment_status", [
 ]);
 
 // Tables
-export const enrollment = mySchema.table(
+export const enrollment = pgTable(
   "enrollment",
   {
     id: text().primaryKey(),

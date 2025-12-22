@@ -1,18 +1,25 @@
 import { course } from "./course.js";
 import { relations, sql } from "drizzle-orm";
-import { check, index, smallint, text, timestamp } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/my-schema.js";
+import {
+  check,
+  index,
+  pgEnum,
+  pgTable,
+  smallint,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { invoice, payment } from "~/db/schema/purchase.js";
 import { organization, user } from "~/db/schema/user.js";
 
-export const seatStatus = mySchema.enum("seat_status", [
+export const seatStatus = pgEnum("seat_status", [
   "pending",
   "claimed",
   "revoked",
 ]);
 
-export const teamLicense = mySchema.table(
+export const teamLicense = pgTable(
   "team_license",
   {
     id: text().primaryKey(),
@@ -54,7 +61,7 @@ export const teamLicense = mySchema.table(
   ],
 );
 
-export const teamLicenseInvite = mySchema.table(
+export const teamLicenseInvite = pgTable(
   "team_license_invite",
   {
     id: text().primaryKey(),

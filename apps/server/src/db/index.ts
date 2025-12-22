@@ -1,7 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Client, Pool } from "pg";
 import config from "~/config.js";
-import { mySchema } from "~/db/my-schema.js";
 import * as schemas from "~/db/schema/index.js";
 
 const pool = new Pool({
@@ -15,10 +14,7 @@ await pool.connect();
 export { pool };
 
 export const db = drizzle({
-  schema: {
-    mySchema,
-    ...schemas,
-  },
+  schema: schemas,
   client: pool,
   casing: "snake_case",
 });

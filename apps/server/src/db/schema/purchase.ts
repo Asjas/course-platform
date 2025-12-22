@@ -4,26 +4,27 @@ import {
   check,
   index,
   jsonb,
+  pgEnum,
+  pgTable,
   smallint,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { coupon } from "~/db/schema/coupon.js";
 import { course } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
 
 // Enums
-export const paidStatus = mySchema.enum("paid_status", ["paid", "refunded"]);
+export const paidStatus = pgEnum("paid_status", ["paid", "refunded"]);
 
-export const purchaseType = mySchema.enum("purchase_type", [
+export const purchaseType = pgEnum("purchase_type", [
   "individual",
   "team",
 ]);
 
-export const paymentStatus = mySchema.enum("payment_status", [
+export const paymentStatus = pgEnum("payment_status", [
   "pending",
   "completed",
   "failed",
@@ -31,7 +32,7 @@ export const paymentStatus = mySchema.enum("payment_status", [
 ]);
 
 // Tables
-export const invoice = mySchema.table(
+export const invoice = pgTable(
   "invoice",
   {
     id: text().primaryKey(),
@@ -92,7 +93,7 @@ export const invoice = mySchema.table(
   ],
 );
 
-export const payment = mySchema.table(
+export const payment = pgTable(
   "payment",
   {
     id: text().primaryKey(),

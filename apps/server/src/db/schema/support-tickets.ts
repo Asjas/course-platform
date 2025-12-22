@@ -1,6 +1,12 @@
 import { relations, sql } from "drizzle-orm";
-import { check, index, text, timestamp } from "drizzle-orm/pg-core";
-import { mySchema } from "~/db/my-schema.js";
+import {
+  check,
+  index,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
@@ -10,21 +16,21 @@ export type NewSupportTicket = typeof supportTicket.$inferInsert;
 export type SupportTicketComment = typeof supportTicketComment.$inferSelect;
 export type NewSupportTicketComment = typeof supportTicketComment.$inferInsert;
 
-export const supportTicketStatus = mySchema.enum("support_ticket_status", [
+export const supportTicketStatus = pgEnum("support_ticket_status", [
   "open",
   "in_progress",
   "resolved",
   "closed",
 ]);
 
-export const supportTicketPriority = mySchema.enum("support_ticket_priority", [
+export const supportTicketPriority = pgEnum("support_ticket_priority", [
   "low",
   "medium",
   "high",
   "urgent",
 ]);
 
-export const supportTicket = mySchema.table(
+export const supportTicket = pgTable(
   "support_ticket",
   {
     id: text().primaryKey(),
@@ -80,7 +86,7 @@ export const supportTicket = mySchema.table(
   ],
 );
 
-export const supportTicketComment = mySchema.table(
+export const supportTicketComment = pgTable(
   "support_ticket_comment",
   {
     id: text().primaryKey(),
