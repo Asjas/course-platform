@@ -13,7 +13,7 @@ function AuthSignInPage() {
       <Card>
         <CardHeader>Sign In to Your Account</CardHeader>
         <SignInForm />
-        <hr className="mt-4 border-gray-600" />
+        <hr className="mt-4 border-gray-300 dark:border-gray-600" />
         <CardFooter>
           <AuthLinks showSignIn={false} />
         </CardFooter>

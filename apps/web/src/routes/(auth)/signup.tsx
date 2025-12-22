@@ -13,7 +13,7 @@ function AuthSignUpPage() {
       <Card>
         <CardHeader>Account Signup</CardHeader>
         <SignUpForm />
-        <hr className="mt-4 border-gray-600" />
+        <hr className="mt-4 border-gray-300 dark:border-gray-600" />
         <CardFooter>
           <AuthLinks showSignUp={false} />
         </CardFooter>

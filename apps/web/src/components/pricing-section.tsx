@@ -117,7 +117,7 @@ export default function PricingSection() {
               </CardContentListItem>
             </CardContentList>
             <div className="mt-auto mb-6 space-y-3">
-              <div className="flex items-center justify-between text-xs text-gray-500">
+              <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                 <div className="flex items-center gap-1">
                   <svg
                     className="h-4 w-4 text-green-500 dark:text-green-400"

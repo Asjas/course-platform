@@ -79,7 +79,7 @@ function Input({
         {/* Show Password Button */}
         {type === "password" ? (
           <button
-            className="text-muted-foreground focus-visible:ring-ring hover:text-foreground absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-400 focus-visible:ring-2 focus-visible:outline-none"
+            className="text-muted-foreground focus-visible:ring-ring hover:text-foreground absolute top-1/2 right-0 -translate-y-1/2 cursor-pointer rounded-md p-1 transition-colors hover:bg-gray-400 focus-visible:ring-2 focus-visible:outline-none dark:hover:bg-gray-600"
             type="button"
             onClick={() => setShowPassword((s) => !s)}
             aria-label={showPassword ? "Hide password" : "Show password"}
@@ -105,7 +105,7 @@ function Input({
 function CheckboxInput({ id, value, handleChange }: ICheckboxInput) {
   return (
     <input
-      className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300"
+      className="text-primary-600 focus:ring-primary-500 h-4 w-4 rounded border-gray-300 dark:border-gray-600 dark:bg-gray-800"
       id={id}
       type="checkbox"
       checked={value}

@@ -111,7 +111,9 @@ export default function ChatMessage({
         />
 
         {msg.editedAt ? (
-          <span className="text-xs text-gray-400 italic">(edited)</span>
+          <span className="text-xs text-gray-400 italic dark:text-gray-500">
+            (edited)
+          </span>
         ) : null}
 
         {/* three-dot button – visible only on hover */}
