@@ -23,9 +23,17 @@ const databaseUrl =
 
 console.log(`🌱 Seeding database schema: ${schemaName}`);
 
-// Create database connection
+// Create database connection with search_path set to the target schema
+// This ensures all queries use the correct schema
+let connectionString = databaseUrl;
+if (schemaName !== "public") {
+  // Append search_path option to connection string
+  const separator = databaseUrl.includes("?") ? "&" : "?";
+  connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${schemaName}`;
+}
+
 const pool = new Pool({
-  connectionString: databaseUrl,
+  connectionString,
 });
 
 // Helper to generate IDs
@@ -229,8 +237,7 @@ async function seedDatabase() {
       console.log(
         `🔧 Using test schema "${schemaName}" (created by migrations)...`,
       );
-      // Set search path to use test schema for all queries
-      await pool.query(`SET search_path TO "${schemaName}"`);
+      // search_path is already set via connection string options
     }
 
     // Generate Learn Fastify course data
