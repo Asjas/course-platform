@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useRouter } from "@tanstack/react-router";
-import { MailIcon } from "lucide-react";
+import { ChevronDownIcon, MailIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import FieldInfo from "~/components/field-info";
@@ -396,9 +396,9 @@ export default function EditUserSheet({
                 >
                   Role <span className="text-red-500">*</span>
                 </label>
-                <div className="mt-2">
+                <div className="relative mt-2">
                   <select
-                    className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                    className="block w-full appearance-none rounded-md bg-gray-800 py-1.5 pr-10 pl-3 text-base text-white outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -409,19 +409,13 @@ export default function EditUserSheet({
                     }
                     onBlur={field.handleBlur}
                   >
-                    <option
-                      className="bg-gray-800 text-white"
-                      value="member"
-                    >
-                      Member
-                    </option>
-                    <option
-                      className="bg-gray-800 text-white"
-                      value="admin"
-                    >
-                      Admin
-                    </option>
+                    <option value="member">Member</option>
+                    <option value="admin">Admin</option>
                   </select>
+                  <ChevronDownIcon
+                    className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-gray-400"
+                    aria-hidden="true"
+                  />
                 </div>
                 <FieldInfo field={field} />
               </div>
