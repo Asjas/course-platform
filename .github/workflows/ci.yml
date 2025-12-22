@@ -162,13 +162,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build --cache=remote:rw
-
-      - name: Install Cypress
-        run: pnpx cypress install
-        working-directory: apps/web
-
       - name: Cache Cypress
         uses: actions/cache@v5
         with:
@@ -176,6 +169,13 @@ jobs:
           key: ${{ runner.os }}-cypress-${{ matrix.node-version }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-cypress-${{ matrix.node-version }}-
+
+      - name: Build
+        run: pnpm build --cache=remote:rw
+
+      - name: Install Cypress
+        run: pnpx cypress install
+        working-directory: apps/web
 
       - name: Cypress run
         uses: cypress-io/github-action@v6

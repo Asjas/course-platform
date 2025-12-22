@@ -70,10 +70,12 @@ apps/web/               # React frontend (Vite + TanStack Router)
   vite.config.ts       # MDX, Lightning CSS, Tailwind 4, TanStack Router plugin
   vitest.config.ts     # jsdom, tests in src/**/*.{spec,test}.{ts,tsx}
 apps/server/           # Fastify backend
-  src/routes/          # API routes (export default function(fastify, opts))
-  src/db/schema/       # Drizzle schemas (snake_case)
-  src/db/queries/      # Read operations
-  src/db/mutations/    # Write operations
+  src/routes/          # REST API routes (export default function(fastify, opts))
+  src/routers/         # tRPC routers for type-safe API
+  src/db/schema/       # Drizzle schemas (snake_case tables)
+  src/db/queries/      # Read operations (prepared queries)
+  src/db/mutations/    # Write operations (insert/update/delete)
+  src/lib/             # Utilities (auth, logging, redis, email)
   src/drizzle.config.ts
   drizzle/             # Generated migrations
   vitest.config.ts     # node env, tests in tests/**/*.{spec,test}.ts
@@ -145,8 +147,8 @@ pnpm run --filter @apps/web e2e:run  # Terminal 2
 
 ## Dependencies
 
-**Package Manager**: pnpm 10.20.0 (in package.json engines)
-**Node.js**: Server requires >=22.16.0, CI tests 20-24
+**Package Manager**: pnpm 10.26.1 (in package.json packageManager field)
+**Node.js**: Server requires >=22.16.0, CI tests 20.x-24.x
 **Runtime**: PostgreSQL 18, Redis/Dragonfly
 **Build-only deps**: Listed in pnpm-workspace.yaml onlyBuiltDependencies (argon2, esbuild, sharp, etc.)
 
