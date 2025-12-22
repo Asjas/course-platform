@@ -280,9 +280,14 @@ async function seedDatabase() {
           `, [tableName]);
           
           for (const fk of fkResult.rows) {
+            // Replace references to public schema with test schema in constraint definition
+            const constraintDef = fk.constraint_def.replace(
+              /REFERENCES (\w+)/g,
+              `REFERENCES "${schemaName}".$1`,
+            );
             await pool.query(`
               ALTER TABLE "${schemaName}"."${tableName}"
-              ADD CONSTRAINT "${fk.constraint_name}" ${fk.constraint_def}
+              ADD CONSTRAINT "${fk.constraint_name}" ${constraintDef}
             `);
           }
         } catch (error: unknown) {
