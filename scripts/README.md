@@ -66,18 +66,22 @@ tsx scripts/cleanup-test-data.ts test_pr_123
 
 These scripts are automatically used in the GitHub Actions CI pipeline with a **hosted PostgreSQL database** dedicated to CI:
 
-1. **Before Tests**: `seed-test-data.ts` is run to populate the database
-2. **After Tests**: `cleanup-test-data.ts` is run (even on failure) to clean up
+1. **Create Schema**: A unique test schema is created for each CI job
+2. **Run Migrations**: Drizzle migrations are run with `search_path` set to the test schema
+3. **Seed Data**: `seed-test-data.ts` populates the test schema with test data
+4. **Run Tests**: Tests execute against the isolated test schema
+5. **Cleanup**: `cleanup-test-data.ts` drops the test schema (even on failure)
 
 The CI uses:
 - **Hosted Database**: `DATABASE_URL` secret points to a dedicated CI database
+- **PostgreSQL search_path**: Migrations are run with `search_path` parameter to target specific schemas
 - **Unique schema names** based on PR number and Node.js version to allow concurrent test runs:
   ```
   test_pr_<PR_NUMBER>_<NODE_VERSION>
   ```
-  Example: `test_pr_456_20.x`
+  Example: `test_pr_456_20.x` for server tests, `test_pr_456_web_20.x` for web tests
 
-This approach allows multiple CI jobs to run concurrently without conflicts, as each job uses its own isolated schema within the shared hosted database.
+This approach allows multiple CI jobs to run concurrently without conflicts, as each job uses its own fully isolated database schema (including tables, constraints, indexes, and sequences) within the shared hosted database.
 
 ## Development
 
@@ -120,12 +124,22 @@ To add new types of test data:
 
 ## Schema Isolation
 
-The scripts support schema-level isolation, which allows:
+The scripts support schema-level isolation using PostgreSQL's native `search_path` feature, which allows:
 
 - **Concurrent test runs** in CI without conflicts
 - **Parallel testing** across different Node.js versions
 - **Clean separation** between test environments
 - **Fast cleanup** by dropping schemas instead of truncating tables
+- **Native Drizzle migrations** that work seamlessly with schema isolation
 
-Each test run creates its own isolated schema, runs tests, and cleans up automatically.
+### How It Works
+
+1. **Schema Creation**: Each test run creates a unique schema (e.g., `test_pr_123_20.x`)
+2. **Migration with search_path**: Drizzle migrations run with `DATABASE_URL` parameter `?options=-c%20search_path=test_pr_123_20.x`
+3. **Schema Structure**: Migrations create all tables, indexes, constraints, and sequences in the test schema
+4. **Data Seeding**: Seed script sets `search_path` and populates data in the isolated schema
+5. **Test Execution**: Tests run against the isolated schema
+6. **Cleanup**: The entire schema is dropped, removing all data and structures instantly
+
+This approach leverages PostgreSQL's native schema isolation and Drizzle ORM's connection-level configuration, resulting in a robust and efficient CI testing strategy.
 
