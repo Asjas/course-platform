@@ -145,3 +145,4 @@ dist
 # Tauri
 target/
 .tauri/build/
+package-lock.json
