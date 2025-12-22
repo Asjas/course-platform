@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      pg:
+        specifier: 8.16.3
+        version: 8.16.3(pg-native@3.5.2)
+      ulid:
+        specifier: 3.0.2
+        version: 3.0.2
     devDependencies:
       '@eslint/compat':
         specifier: 2.0.0
@@ -113,6 +120,9 @@ importers:
       rimraf:
         specifier: 6.1.2
         version: 6.1.2
+      tsx:
+        specifier: 4.21.0
+        version: 4.21.0
       turbo:
         specifier: 2.7.1
         version: 2.7.1
