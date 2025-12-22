@@ -1,5 +1,5 @@
+import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
-import { ChevronDownIcon } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import FieldInfo from "~/components/field-info";
@@ -251,9 +251,8 @@ export default function EditCouponSheet({
                 >
                   Discount Type <span className="text-red-500">*</span>
                 </label>
-                <div className="relative mt-2">
-                  <select
-                    className="block w-full appearance-none rounded-md bg-gray-800 py-1.5 pr-10 pl-3 text-base text-white outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                <div className="mt-2">
+                  <SelectInput
                     id={field.name}
                     name={field.name}
                     value={field.state.value}
@@ -263,13 +262,10 @@ export default function EditCouponSheet({
                       )
                     }
                     onBlur={field.handleBlur}
-                  >
-                    <option value="percentage">Percentage</option>
-                    <option value="fixed">Fixed Amount</option>
-                  </select>
-                  <ChevronDownIcon
-                    className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-gray-400"
-                    aria-hidden="true"
+                    options={[
+                      { value: "percentage", label: "Percentage" },
+                      { value: "fixed", label: "Fixed Amount" },
+                    ]}
                   />
                 </div>
                 <FieldInfo field={field} />
@@ -442,9 +438,8 @@ export default function EditCouponSheet({
                     (leave empty for all courses)
                   </span>
                 </label>
-                <div className="relative mt-2">
-                  <select
-                    className="block w-full appearance-none rounded-md bg-gray-800 py-1.5 pr-10 pl-3 text-base text-white outline-1 -outline-offset-1 outline-gray-600 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                <div className="mt-2">
+                  <SelectInput
                     id={field.name}
                     name={field.name}
                     value={field.state.value ?? ""}
@@ -452,13 +447,12 @@ export default function EditCouponSheet({
                       field.handleChange(event.target.value || null)
                     }
                     onBlur={field.handleBlur}
-                  >
-                    <option value="">All courses</option>
-                    {/* Add courses here if needed */}
-                  </select>
-                  <ChevronDownIcon
-                    className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-gray-400"
-                    aria-hidden="true"
+                    placeholder="All courses"
+                    options={
+                      [
+                        // Add courses here if needed
+                      ]
+                    }
                   />
                 </div>
                 <FieldInfo field={field} />

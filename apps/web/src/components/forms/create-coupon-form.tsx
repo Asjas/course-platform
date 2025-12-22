@@ -1,3 +1,4 @@
+import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
@@ -186,8 +187,7 @@ export default function CreateCouponForm() {
                     Discount Type (Required)
                   </label>
                   <div className="mt-2">
-                    <select
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                    <SelectInput
                       id={field.name}
                       name={field.name}
                       value={field.state.value}
@@ -197,10 +197,11 @@ export default function CreateCouponForm() {
                         )
                       }
                       onBlur={field.handleBlur}
-                    >
-                      <option value="percentage">Percentage</option>
-                      <option value="fixed">Fixed Amount</option>
-                    </select>
+                      options={[
+                        { value: "percentage", label: "Percentage" },
+                        { value: "fixed", label: "Fixed Amount" },
+                      ]}
+                    />
                     <FieldInfo field={field} />
                   </div>
                 </div>
@@ -250,25 +251,20 @@ export default function CreateCouponForm() {
                     Course
                   </label>
                   <div className="mt-2">
-                    <select
-                      className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                    <SelectInput
                       id={field.name}
                       name={field.name}
                       value={field.state.value ?? ""}
                       onChange={(event) =>
                         field.handleChange(event.target.value || null)
                       }
-                    >
-                      <option value="">Select a course</option>
-                      {/* {courses.map((course) => (
-                        <option
-                          key={course.id}
-                          value={course.id}
-                        >
-                          {course.name}
-                        </option>
-                      ))} */}
-                    </select>
+                      placeholder="Select a course"
+                      options={
+                        [
+                          // Add courses here if needed
+                        ]
+                      }
+                    />
                   </div>
                 </div>
               )}
