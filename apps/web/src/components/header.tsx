@@ -215,7 +215,7 @@ export default function Header({ auth }: { auth: AuthState }) {
             <ul className="flex space-x-2">
               <li className="relative inline-flex">
                 <NavLink
-                  className="bg-green-700"
+                  className="bg-green-700 text-white hover:bg-green-800"
                   preload="intent"
                   to="/signin"
                   onClick={() => setMobileMenuOpen(false)}
@@ -226,7 +226,7 @@ export default function Header({ auth }: { auth: AuthState }) {
 
               <li className="relative inline-flex">
                 <NavLink
-                  className="bg-green-700"
+                  className="bg-green-700 text-white hover:bg-green-800"
                   preload="intent"
                   to="/signup"
                   onClick={() => setMobileMenuOpen(false)}
@@ -372,7 +372,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                     </MenuTrigger>
                   ) : (
                     <NavLink
-                      className="bg-green-700"
+                      className="bg-green-700 text-white hover:bg-green-800"
                       preload="intent"
                       to="/signin"
                       onClick={() => setMobileMenuOpen(false)}
@@ -383,7 +383,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 </div>
               ) : (
                 <NavLink
-                  className="bg-green-700"
+                  className="bg-green-700 text-white hover:bg-green-800"
                   preload="intent"
                   to="/signin"
                   onClick={() => setMobileMenuOpen(false)}
