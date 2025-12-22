@@ -1,5 +1,6 @@
+// Use relative path because drizzle-kit doesn't resolve ~/* aliases
+import config from "./config.js";
 import { defineConfig } from "drizzle-kit";
-import config from "~/config.js";
 
 export default defineConfig({
   out: "./drizzle",
