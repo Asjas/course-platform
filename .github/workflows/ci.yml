@@ -114,9 +114,6 @@ jobs:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
         node-version: [20, 21, 22, 23, 24]
 
-    env:
-      TEST_SCHEMA: test_pr_${{ github.event.pull_request.number || github.run_id }}_node${{ matrix.node-version }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -138,27 +135,18 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
-      - name: Create test schema
-        run: |
-          # Create schema if it doesn't exist
-          echo "CREATE SCHEMA IF NOT EXISTS \"${{ env.TEST_SCHEMA }}\";" | psql "${{ secrets.DATABASE_URL }}"
-
-      - name: Run database migrations in test schema
+      - name: Run database migrations
         run: pnpm --filter @apps/server drizzle:migrate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}?options=-c%20search_path=${{ env.TEST_SCHEMA }}
 
       - name: Seed test database
-        run: pnpm tsx scripts/seed-test-data.ts "${{ env.TEST_SCHEMA }}"
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
 
       - name: Run server tests
         run: pnpm --filter @apps/server test
-        env:
-          TEST_SCHEMA: ${{ env.TEST_SCHEMA }}
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "${{ env.TEST_SCHEMA }}"
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
 
   web-tests:
     runs-on: ubuntu-latest
@@ -168,9 +156,6 @@ jobs:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
         node-version: [20, 21, 22, 23, 24]
 
-    env:
-      TEST_SCHEMA: test_pr_${{ github.event.pull_request.number || github.run_id }}_web_node${{ matrix.node-version }}
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
@@ -192,27 +177,18 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
-      - name: Create test schema
-        run: |
-          # Create schema if it doesn't exist
-          echo "CREATE SCHEMA IF NOT EXISTS \"${{ env.TEST_SCHEMA }}\";" | psql "${{ secrets.DATABASE_URL }}"
-
-      - name: Run database migrations in test schema
+      - name: Run database migrations
         run: pnpm --filter @apps/server drizzle:migrate
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}?options=-c%20search_path=${{ env.TEST_SCHEMA }}
 
       - name: Seed test database
-        run: pnpm tsx scripts/seed-test-data.ts "${{ env.TEST_SCHEMA }}"
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
 
       - name: Run web tests
         run: pnpm --filter @apps/web test
-        env:
-          TEST_SCHEMA: ${{ env.TEST_SCHEMA }}
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "${{ env.TEST_SCHEMA }}"
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
 
   e2e-tests:
     runs-on: ubuntu-latest

@@ -27,27 +27,10 @@ const pool = new Pool({
 
 async function cleanupDatabase() {
   try {
-    if (schemaName !== "public") {
-      // Check if schema exists first
-      const schemaCheck = await pool.query(
-        `SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1`,
-        [schemaName],
-      );
-
-      if (schemaCheck.rows.length === 0) {
-        console.log(
-          `ℹ️  Schema "${schemaName}" does not exist, nothing to clean up`,
-        );
-        return;
-      }
-
-      // Drop the entire schema for test schemas
-      await pool.query(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
-      console.log(`✅ Schema "${schemaName}" dropped successfully`);
-    } else {
-      // For public schema, just truncate tables
+    // For my_schema and public, just truncate tables (don't drop the schema)
+    if (schemaName === "public" || schemaName === "my_schema") {
       console.log(
-        "⚠️  Truncating tables in public schema (not dropping schema)",
+        `⚠️  Truncating tables in ${schemaName} schema (not dropping schema)`,
       );
 
       const tables = [
@@ -60,10 +43,16 @@ async function cleanupDatabase() {
         "course_instructor_note",
         "course_faq",
         "course_wishlist",
+        "coupon_redemption",
+        "coupon",
         "enrollment",
         "course_lesson",
         "course_module",
         "course",
+        "platform_announcement",
+        "team_license_seat",
+        "team_license",
+        "purchase",
         "account",
         "session",
         "verification",
@@ -83,7 +72,25 @@ async function cleanupDatabase() {
         }
       }
 
-      console.log("✅ Public schema tables truncated");
+      console.log(`✅ ${schemaName} schema tables truncated`);
+    } else {
+      // For other test schemas, drop the entire schema
+      // Check if schema exists first
+      const schemaCheck = await pool.query(
+        `SELECT schema_name FROM information_schema.schemata WHERE schema_name = $1`,
+        [schemaName],
+      );
+
+      if (schemaCheck.rows.length === 0) {
+        console.log(
+          `ℹ️  Schema "${schemaName}" does not exist, nothing to clean up`,
+        );
+        return;
+      }
+
+      // Drop the entire schema for test schemas
+      await pool.query(`DROP SCHEMA IF EXISTS "${schemaName}" CASCADE`);
+      console.log(`✅ Schema "${schemaName}" dropped successfully`);
     }
   } catch (error) {
     console.error("❌ Error cleaning up database:", error);
