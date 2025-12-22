@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import {
   ClipboardCheckIcon,
@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import CreateCouponSheet from "~/components/create-coupon-sheet";
 import EditCouponSheet from "~/components/edit-coupon-sheet";
 import Loading from "~/components/loading";
 import {
@@ -36,6 +37,7 @@ function AdminCouponsPage() {
     (typeof coupons)[number] | null
   >(null);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
 
   function handleEditCoupon(coupon: (typeof coupons)[number]) {
     setEditingCoupon(coupon);
@@ -68,12 +70,13 @@ function AdminCouponsPage() {
         </div>
 
         <div className="mt-4 sm:mt-0 sm:ml-16">
-          <Link
-            className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
-            to="/admin/coupons/create"
+          <button
+            className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
+            type="button"
+            onClick={() => setIsCreateSheetOpen(true)}
           >
             Create New Coupon
-          </Link>
+          </button>
         </div>
       </div>
 
@@ -266,6 +269,11 @@ function AdminCouponsPage() {
         coupon={editingCoupon}
         open={isEditSheetOpen}
         onOpenChange={handleEditSheetOpenChange}
+      />
+
+      <CreateCouponSheet
+        open={isCreateSheetOpen}
+        onOpenChange={setIsCreateSheetOpen}
       />
     </div>
   );

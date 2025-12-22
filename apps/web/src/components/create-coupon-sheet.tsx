@@ -1,5 +1,6 @@
 import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import FieldInfo from "~/components/field-info";
@@ -10,110 +11,84 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CouponsCollection } from "~/lib/db.collections";
+import { queryClient } from "~/lib/query.client";
+import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
-import {
-  type EditCouponFormData,
-  editCouponSchema,
-} from "~/schema/edit-coupon";
+import { createCouponSchema } from "~/schema/create-coupon";
 
-interface CouponData {
-  id: string;
-  code: string;
-  description: string | null;
-  discountType: "percentage" | "fixed";
-  discountValue: number;
-  redemptionLimit: number | null;
-  validFrom: Date;
-  validUntil: Date | null;
-  active: boolean;
-  courseId: string | null;
-  redemptions: unknown[];
-}
-
-interface EditCouponSheetProps {
-  coupon: CouponData | null;
+interface CreateCouponSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-export default function EditCouponSheet({
-  coupon,
+export default function CreateCouponSheet({
   open,
   onOpenChange,
-}: EditCouponSheetProps) {
+}: CreateCouponSheetProps) {
+  const createCouponMutation = useMutation(
+    trpc.coupons.insertCoupon.mutationOptions(),
+  );
+
   const form = useForm({
     defaultValues: {
-      id: coupon?.id ?? "",
-      active: coupon?.active ?? true,
-      code: coupon?.code ?? "",
-      courseId: coupon?.courseId ?? null,
-      description: coupon?.description ?? null,
-      discountType: coupon?.discountType ?? "percentage",
-      discountValue: coupon?.discountValue ?? 0,
-      redemptionLimit: coupon?.redemptionLimit ?? null,
-      validFrom: coupon ? new Date(coupon.validFrom) : new Date(),
-      validUntil: coupon?.validUntil ? new Date(coupon.validUntil) : null,
-    } as EditCouponFormData,
+      active: true,
+      code: "",
+      courseId: null as string | null,
+      description: null as string | null,
+      discountType: "percentage" as "percentage" | "fixed",
+      discountValue: 0,
+      redemptionLimit: 0,
+      validFrom: new Date(),
+      validUntil: null as Date | null,
+    },
     validators: {
-      onSubmit: editCouponSchema,
-      onBlur: editCouponSchema,
+      onSubmit: createCouponSchema,
+      onBlur: createCouponSchema,
     },
     onSubmit: async ({ value }) => {
-      const toastId = toast.loading(`Updating coupon ${value.code}...`);
+      const toastId = toast.loading(`Creating coupon ${value.code}...`);
 
       try {
-        CouponsCollection.update(value.id, (draft) => {
-          draft.active = value.active;
-          draft.code = value.code;
-          draft.courseId = value.courseId;
-          draft.description = value.description;
-          draft.discountType = value.discountType;
-          draft.discountValue = value.discountValue;
-          draft.redemptionLimit = value.redemptionLimit ?? 0;
-          draft.validFrom = value.validFrom;
-          draft.validUntil = value.validUntil;
+        const newCoupon = await createCouponMutation.mutateAsync(value);
+
+        queryClient.invalidateQueries({
+          queryKey: trpc.coupons.getAllCoupons.queryKey(),
         });
 
-        toast.success(`Coupon ${value.code} updated successfully!`, {
+        toast.success(`Coupon ${newCoupon.code} created successfully!`, {
           id: toastId,
         });
 
+        form.reset();
         onOpenChange(false);
       } catch (error) {
-        console.error("updateCoupon error", error);
-        toast.error("Failed to update coupon. Please try again.", {
+        console.error("createCoupon error", error);
+        toast.error("Failed to create coupon. Please try again.", {
           id: toastId,
         });
       }
     },
   });
 
-  const resetFormWithCoupon = useCallback(
-    (couponData: CouponData | null) => {
-      form.reset({
-        id: couponData?.id ?? "",
-        active: couponData?.active ?? true,
-        code: couponData?.code ?? "",
-        courseId: couponData?.courseId ?? null,
-        description: couponData?.description ?? null,
-        discountType: couponData?.discountType ?? "percentage",
-        discountValue: couponData?.discountValue ?? 0,
-        redemptionLimit: couponData?.redemptionLimit ?? null,
-        validFrom: couponData ? new Date(couponData.validFrom) : new Date(),
-        validUntil: couponData?.validUntil
-          ? new Date(couponData.validUntil)
-          : null,
-      });
-    },
-    [form],
-  );
+  const resetForm = useCallback(() => {
+    form.reset({
+      active: true,
+      code: "",
+      courseId: null,
+      description: null,
+      discountType: "percentage",
+      discountValue: 0,
+      redemptionLimit: 0,
+      validFrom: new Date(),
+      validUntil: null,
+    });
+  }, [form]);
 
   useEffect(() => {
-    if (coupon && open) {
-      resetFormWithCoupon(coupon);
+    if (open) {
+      resetForm();
     }
-  }, [coupon, open, resetFormWithCoupon]);
+  }, [open, resetForm]);
 
   function handleClose() {
     form.reset();
@@ -136,9 +111,10 @@ export default function EditCouponSheet({
         side="right"
       >
         <SheetHeader>
-          <SheetTitle className="text-xl">Edit Coupon</SheetTitle>
+          <SheetTitle className="text-xl">Create Coupon</SheetTitle>
           <SheetDescription>
-            Update the coupon details below. Click save when you&apos;re done.
+            Fill in the coupon details below. Click create when you&apos;re
+            done.
           </SheetDescription>
         </SheetHeader>
 
@@ -203,6 +179,7 @@ export default function EditCouponSheet({
                         id={field.name}
                         name={field.name}
                         type="text"
+                        placeholder="SUMMER2024"
                         value={field.state.value}
                         onChange={(event) =>
                           field.handleChange(event.target.value)
@@ -232,6 +209,7 @@ export default function EditCouponSheet({
                         id={field.name}
                         name={field.name}
                         type="text"
+                        placeholder="Summer sale discount"
                         value={field.state.value ?? ""}
                         onChange={(event) =>
                           field.handleChange(event.target.value || null)
@@ -302,6 +280,7 @@ export default function EditCouponSheet({
                         name={field.name}
                         type="number"
                         min={0}
+                        placeholder="10"
                         value={field.state.value}
                         onChange={(event) =>
                           field.handleChange(Number(event.target.value))
@@ -324,9 +303,7 @@ export default function EditCouponSheet({
                       htmlFor={field.name}
                     >
                       Redemption Limit{" "}
-                      <span className="text-gray-500">
-                        (leave empty for unlimited)
-                      </span>
+                      <span className="text-gray-500">(0 for unlimited)</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -335,13 +312,10 @@ export default function EditCouponSheet({
                         name={field.name}
                         type="number"
                         min={0}
-                        value={field.state.value ?? ""}
+                        placeholder="0"
+                        value={field.state.value}
                         onChange={(event) =>
-                          field.handleChange(
-                            event.target.value
-                              ? Number(event.target.value)
-                              : null,
-                          )
+                          field.handleChange(Number(event.target.value))
                         }
                         onBlur={field.handleBlur}
                       />
@@ -484,7 +458,7 @@ export default function EditCouponSheet({
                     type="submit"
                     disabled={!isDirty || isSubmitting}
                   >
-                    {isSubmitting ? "Saving..." : "Save Changes"}
+                    {isSubmitting ? "Creating..." : "Create Coupon"}
                   </button>
                   <button
                     className="flex-1 cursor-pointer rounded-md px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 dark:text-white dark:ring-gray-600 dark:hover:bg-gray-800"

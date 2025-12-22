@@ -196,7 +196,7 @@ export default function EditUserSheet({
       }}
     >
       <SheetContent
-        className="w-full overflow-y-auto sm:max-w-lg"
+        className="flex w-full flex-col sm:max-w-lg"
         side="right"
       >
         <SheetHeader>
@@ -207,7 +207,7 @@ export default function EditUserSheet({
         </SheetHeader>
 
         <form
-          className="flex flex-col gap-6 p-4"
+          className="flex min-h-0 flex-1 flex-col"
           onSubmit={(event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -215,324 +215,342 @@ export default function EditUserSheet({
           }}
           noValidate
         >
-          {/* Name Field */}
-          <form.Field
-            name="name"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Name <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-2">
-                  <input
-                    className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Email Field */}
-          <form.Field
-            name="email"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Email <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-2">
-                  <input
-                    className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                    id={field.name}
-                    name={field.name}
-                    type="email"
-                    value={field.state.value}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Username Field */}
-          <form.Field
-            name="username"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Username
-                </label>
-                <div className="mt-2">
-                  <input
-                    className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value ?? ""}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    placeholder="Optional username"
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Profile Color Field */}
-          <form.Field
-            name="color"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Profile Color
-                </label>
-                <div className="mt-2 flex items-center gap-3">
-                  <input
-                    className="h-10 w-16 cursor-pointer rounded-md border-0 bg-transparent p-0"
-                    id={field.name}
-                    name={field.name}
-                    type="color"
-                    value={field.state.value || defaultColor}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                  />
-                  <input
-                    className="block flex-1 rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                    type="text"
-                    value={field.state.value ?? ""}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    placeholder={defaultColor}
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Email Verified Field */}
-          <form.Field
-            name="emailVerified"
-            children={(field) => (
-              <div className="rounded-lg border border-gray-700 p-4">
-                <div className="flex items-center justify-between">
+          <div className="flex-1 overflow-y-auto p-4">
+            <div className="flex flex-col gap-6">
+              {/* Name Field */}
+              <form.Field
+                name="name"
+                children={(field) => (
                   <div>
                     <label
-                      className="text-sm font-medium text-white"
+                      className="block text-sm font-medium text-white"
                       htmlFor={field.name}
                     >
-                      Email Verified
+                      Name <span className="text-red-500">*</span>
                     </label>
-                    <p className="mt-1 text-xs text-gray-400">
-                      {field.state.value
-                        ? "User's email has been verified"
-                        : "User has not verified their email"}
-                    </p>
+                    <div className="mt-2">
+                      <input
+                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        value={field.state.value}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        onBlur={field.handleBlur}
+                      />
+                    </div>
+                    <FieldInfo field={field} />
                   </div>
-                  <button
-                    className={cn(
-                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none",
-                      field.state.value ? "bg-green-600" : "bg-gray-500",
-                    )}
-                    id={field.name}
-                    type="button"
-                    role="switch"
-                    aria-checked={field.state.value}
-                    onClick={() => field.handleChange(!field.state.value)}
-                  >
-                    <span
-                      className={cn(
-                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                        field.state.value ? "translate-x-5" : "translate-x-0",
-                      )}
-                    />
-                  </button>
-                </div>
-                {!field.state.value && (
-                  <button
-                    className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                    type="button"
-                    onClick={handleResendVerificationEmail}
-                    disabled={isSendingVerification}
-                  >
-                    <MailIcon size={16} />
-                    {isSendingVerification
-                      ? "Sending..."
-                      : "Resend Verification Email"}
-                  </button>
                 )}
-              </div>
-            )}
-          />
+              />
 
-          {/* Role Field */}
-          <form.Field
-            name="role"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Role <span className="text-red-500">*</span>
-                </label>
-                <div className="mt-2">
-                  <SelectInput
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onChange={(event) =>
-                      field.handleChange(
-                        event.target.value as "member" | "admin",
-                      )
-                    }
-                    onBlur={field.handleBlur}
-                    options={[
-                      { value: "member", label: "Member" },
-                      { value: "admin", label: "Admin" },
-                    ]}
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Banned Section */}
-          <div className="rounded-lg border border-gray-700 p-4">
-            <form.Field
-              name="banned"
-              children={(field) => (
-                <div className="flex items-center justify-between">
+              {/* Email Field */}
+              <form.Field
+                name="email"
+                children={(field) => (
                   <div>
                     <label
-                      className="text-sm font-medium text-white"
+                      className="block text-sm font-medium text-white"
                       htmlFor={field.name}
                     >
-                      Banned
+                      Email <span className="text-red-500">*</span>
                     </label>
-                    <p className="mt-1 text-xs text-gray-400">
-                      {field.state.value
-                        ? "User is currently banned"
-                        : "User is not banned"}
-                    </p>
+                    <div className="mt-2">
+                      <input
+                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        value={field.state.value}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        onBlur={field.handleBlur}
+                      />
+                    </div>
+                    <FieldInfo field={field} />
                   </div>
-                  <button
-                    className={cn(
-                      "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none",
-                      field.state.value ? "bg-red-600" : "bg-gray-500",
+                )}
+              />
+
+              {/* Username Field */}
+              <form.Field
+                name="username"
+                children={(field) => (
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-white"
+                      htmlFor={field.name}
+                    >
+                      Username
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        value={field.state.value ?? ""}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        onBlur={field.handleBlur}
+                        placeholder="Optional username"
+                      />
+                    </div>
+                    <FieldInfo field={field} />
+                  </div>
+                )}
+              />
+
+              {/* Profile Color Field */}
+              <form.Field
+                name="color"
+                children={(field) => (
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-white"
+                      htmlFor={field.name}
+                    >
+                      Profile Color
+                    </label>
+                    <div className="mt-2 flex items-center gap-3">
+                      <input
+                        className="h-10 w-16 cursor-pointer rounded-md border-0 bg-transparent p-0"
+                        id={field.name}
+                        name={field.name}
+                        type="color"
+                        value={field.state.value || defaultColor}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        onBlur={field.handleBlur}
+                      />
+                      <input
+                        className="block flex-1 rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        type="text"
+                        value={field.state.value ?? ""}
+                        onChange={(event) =>
+                          field.handleChange(event.target.value)
+                        }
+                        placeholder={defaultColor}
+                      />
+                    </div>
+                    <FieldInfo field={field} />
+                  </div>
+                )}
+              />
+
+              {/* Email Verified Field */}
+              <form.Field
+                name="emailVerified"
+                children={(field) => (
+                  <div className="rounded-lg border border-gray-700 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label
+                          className="text-sm font-medium text-white"
+                          htmlFor={field.name}
+                        >
+                          Email Verified
+                        </label>
+                        <p className="mt-1 text-xs text-gray-400">
+                          {field.state.value
+                            ? "User's email has been verified"
+                            : "User has not verified their email"}
+                        </p>
+                      </div>
+                      <button
+                        className={cn(
+                          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none",
+                          field.state.value ? "bg-green-600" : "bg-gray-500",
+                        )}
+                        id={field.name}
+                        type="button"
+                        role="switch"
+                        aria-checked={field.state.value}
+                        onClick={() => field.handleChange(!field.state.value)}
+                      >
+                        <span
+                          className={cn(
+                            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                            field.state.value
+                              ? "translate-x-5"
+                              : "translate-x-0",
+                          )}
+                        />
+                      </button>
+                    </div>
+                    {!field.state.value && (
+                      <button
+                        className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        type="button"
+                        onClick={handleResendVerificationEmail}
+                        disabled={isSendingVerification}
+                      >
+                        <MailIcon size={16} />
+                        {isSendingVerification
+                          ? "Sending..."
+                          : "Resend Verification Email"}
+                      </button>
                     )}
-                    id={field.name}
-                    type="button"
-                    role="switch"
-                    aria-checked={field.state.value}
-                    onClick={() => field.handleChange(!field.state.value)}
-                  >
-                    <span
-                      className={cn(
-                        "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                        field.state.value ? "translate-x-5" : "translate-x-0",
-                      )}
-                    />
-                  </button>
-                </div>
-              )}
-            />
-
-            {/* Ban Reason - only show when banned */}
-            <form.Subscribe
-              selector={(state) => state.values.banned}
-              children={(isBanned) =>
-                isBanned ? (
-                  <div className="mt-4 space-y-4">
-                    <form.Field
-                      name="banReason"
-                      children={(field) => (
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-white"
-                            htmlFor={field.name}
-                          >
-                            Ban Reason
-                          </label>
-                          <div className="mt-2">
-                            <textarea
-                              className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                              id={field.name}
-                              name={field.name}
-                              value={field.state.value ?? ""}
-                              onChange={(event) =>
-                                field.handleChange(event.target.value)
-                              }
-                              onBlur={field.handleBlur}
-                              placeholder="Reason for banning this user"
-                              rows={2}
-                            />
-                          </div>
-                          <FieldInfo field={field} />
-                        </div>
-                      )}
-                    />
-
-                    <form.Field
-                      name="banExpires"
-                      children={(field) => (
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-white"
-                            htmlFor={field.name}
-                          >
-                            Ban Expires
-                          </label>
-                          <p className="mt-1 text-xs text-gray-400">
-                            Leave empty for permanent ban
-                          </p>
-                          <div className="mt-2">
-                            <input
-                              className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                              id={field.name}
-                              name={field.name}
-                              type="datetime-local"
-                              value={field.state.value ?? ""}
-                              onChange={(event) =>
-                                field.handleChange(event.target.value)
-                              }
-                              onBlur={field.handleBlur}
-                            />
-                          </div>
-                          <FieldInfo field={field} />
-                        </div>
-                      )}
-                    />
                   </div>
-                ) : null
-              }
-            />
+                )}
+              />
+
+              {/* Role Field */}
+              <form.Field
+                name="role"
+                children={(field) => (
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-white"
+                      htmlFor={field.name}
+                    >
+                      Role <span className="text-red-500">*</span>
+                    </label>
+                    <div className="mt-2">
+                      <SelectInput
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onChange={(event) =>
+                          field.handleChange(
+                            event.target.value as "member" | "admin",
+                          )
+                        }
+                        onBlur={field.handleBlur}
+                        options={[
+                          { value: "member", label: "Member" },
+                          { value: "admin", label: "Admin" },
+                        ]}
+                      />
+                    </div>
+                    <FieldInfo field={field} />
+                  </div>
+                )}
+              />
+
+              {/* Banned Section */}
+              <div className="rounded-lg border border-gray-700 p-4">
+                <form.Field
+                  name="banned"
+                  children={(field) => (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <label
+                          className="text-sm font-medium text-white"
+                          htmlFor={field.name}
+                        >
+                          Banned
+                        </label>
+                        <p className="mt-1 text-xs text-gray-400">
+                          {field.state.value
+                            ? "User is currently banned"
+                            : "User is not banned"}
+                        </p>
+                      </div>
+                      <button
+                        className={cn(
+                          "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none",
+                          field.state.value ? "bg-red-600" : "bg-gray-500",
+                        )}
+                        id={field.name}
+                        type="button"
+                        role="switch"
+                        aria-checked={field.state.value}
+                        onClick={() => field.handleChange(!field.state.value)}
+                      >
+                        <span
+                          className={cn(
+                            "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                            field.state.value
+                              ? "translate-x-5"
+                              : "translate-x-0",
+                          )}
+                        />
+                      </button>
+                    </div>
+                  )}
+                />
+
+                {/* Ban Reason - only show when banned */}
+                <form.Subscribe
+                  selector={(state) => state.values.banned}
+                  children={(isBanned) =>
+                    isBanned ? (
+                      <div className="mt-4 space-y-4">
+                        <form.Field
+                          name="banReason"
+                          children={(field) => (
+                            <div>
+                              <label
+                                className="block text-sm font-medium text-white"
+                                htmlFor={field.name}
+                              >
+                                Ban Reason
+                              </label>
+                              <div className="mt-2">
+                                <textarea
+                                  className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                                  id={field.name}
+                                  name={field.name}
+                                  value={field.state.value ?? ""}
+                                  onChange={(event) =>
+                                    field.handleChange(event.target.value)
+                                  }
+                                  onBlur={field.handleBlur}
+                                  placeholder="Reason for banning this user"
+                                  rows={2}
+                                />
+                              </div>
+                              <FieldInfo field={field} />
+                            </div>
+                          )}
+                        />
+
+                        <form.Field
+                          name="banExpires"
+                          children={(field) => (
+                            <div>
+                              <label
+                                className="block text-sm font-medium text-white"
+                                htmlFor={field.name}
+                              >
+                                Ban Expires
+                              </label>
+                              <p className="mt-1 text-xs text-gray-400">
+                                Leave empty for permanent ban
+                              </p>
+                              <div className="mt-2">
+                                <input
+                                  className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                                  id={field.name}
+                                  name={field.name}
+                                  type="datetime-local"
+                                  value={field.state.value ?? ""}
+                                  onChange={(event) =>
+                                    field.handleChange(event.target.value)
+                                  }
+                                  onBlur={field.handleBlur}
+                                />
+                              </div>
+                              <FieldInfo field={field} />
+                            </div>
+                          )}
+                        />
+                      </div>
+                    ) : null
+                  }
+                />
+              </div>
+            </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="mt-4 flex gap-3">
+          {/* Form Actions - Fixed Footer */}
+          <div className="flex gap-3 border-t border-gray-700 p-4">
             <form.Subscribe
               selector={(state) => [state.isDirty, state.isSubmitting]}
               children={([isDirty, isSubmitting]) => (
