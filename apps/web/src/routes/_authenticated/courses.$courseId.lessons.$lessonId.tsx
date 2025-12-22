@@ -5,18 +5,38 @@ import {
   Clock,
   Maximize2,
   Minimize2,
+  Plus,
 } from "lucide-react";
 import { useState } from "react";
+import {
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs as AriaTabs,
+} from "react-aria-components";
 import YouTube, { YouTubeProps } from "react-youtube";
-import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
+import Loading from "~/components/loading";
+import SupportComment from "~/components/support-comment";
+import {
+  CoursesCollection,
+  SupportTicketsCollection,
+  useCourseById,
+  useSupportTicketById,
+  useSupportTickets,
+} from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
+import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute(
   "/_authenticated/courses/$courseId/lessons/$lessonId",
 )({
   component: LessonPage,
   loader: async ({ params }) => {
-    await CoursesCollection.preload();
+    await Promise.all([
+      CoursesCollection.preload(),
+      SupportTicketsCollection.preload(),
+    ]);
     // Ensure we have the full course with modules and lessons
     const courseInCollection = CoursesCollection.findOne(params.courseId);
     if (!courseInCollection?.modules) {
@@ -42,8 +62,20 @@ function LessonPage() {
   const [layoutMode, setLayoutMode] = useState<"sidebar" | "fullscreen">(
     "sidebar",
   );
+  const [selectedTab, setSelectedTab] = useState("transcription");
+  const [viewMode, setViewMode] = useState<"list" | "create" | "view">("list");
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
   const { data: course, isLoading } = useCourseById({ courseId });
+  const { data: allTickets, isLoading: ticketsLoading } = useSupportTickets();
+  const { data: selectedTicket } = useSupportTicketById({
+    ticketId: selectedTicketId || "",
+  });
+
+  // Filter tickets for this lesson
+  const lessonTickets = allTickets?.filter(
+    (ticket) => ticket.lessonId === lessonId,
+  );
 
   if (isLoading || !course) {
     return (
@@ -55,10 +87,12 @@ function LessonPage() {
 
   // Find the lesson in the course modules
   let lesson = null;
+  let moduleTitle = "";
   for (const module of course.modules || []) {
     const found = module.lessons?.find((l) => l.id === lessonId);
     if (found) {
       lesson = found;
+      moduleTitle = module.title;
       break;
     }
   }
@@ -268,19 +302,223 @@ function LessonPage() {
 
             {/* Notes and Playlist Side by Side */}
             <div className="grid grow gap-6 overflow-hidden bg-white p-6 dark:bg-gray-800 md:grid-cols-2">
-              {/* Notes Section */}
-              <div className="space-y-4 overflow-y-auto">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {lesson.title}
-                </h2>
-                <div className="prose prose-sm max-w-none dark:prose-invert">
-                  {lesson.content && typeof lesson.content === "object" && (
-                    <div className="text-gray-700 dark:text-gray-300">
-                      {/* Content would be rendered here with proper JSON handling */}
-                      <p>Lesson notes and content...</p>
+              {/* Tabs Section (replaces Notes) */}
+              <div className="flex flex-col overflow-hidden">
+                <AriaTabs
+                  selectedKey={selectedTab}
+                  onSelectionChange={(key) => setSelectedTab(key as string)}
+                  className="flex h-full flex-col"
+                >
+                  <TabList
+                    aria-label="Lesson content"
+                    className="flex border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <Tab
+                      id="transcription"
+                      className={({ isSelected }) =>
+                        cn(
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          isSelected
+                            ? "border-green-600 text-green-600"
+                            : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
+                        )
+                      }
+                    >
+                      Transcription
+                    </Tab>
+                    <Tab
+                      id="notes"
+                      className={({ isSelected }) =>
+                        cn(
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          isSelected
+                            ? "border-green-600 text-green-600"
+                            : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
+                        )
+                      }
+                    >
+                      Notes
+                    </Tab>
+                    <Tab
+                      id="support"
+                      className={({ isSelected }) =>
+                        cn(
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          isSelected
+                            ? "border-green-600 text-green-600"
+                            : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
+                        )
+                      }
+                    >
+                      Support ({lessonTickets?.length || 0})
+                    </Tab>
+                  </TabList>
+
+                  <TabPanel
+                    id="transcription"
+                    className="grow overflow-y-auto p-4"
+                  >
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <p className="text-gray-700 dark:text-gray-300">
+                        Transcription coming soon...
+                      </p>
                     </div>
-                  )}
-                </div>
+                  </TabPanel>
+
+                  <TabPanel id="notes" className="grow overflow-y-auto p-4">
+                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                      <p className="text-gray-700 dark:text-gray-300">
+                        Notes coming soon...
+                      </p>
+                    </div>
+                  </TabPanel>
+
+                  <TabPanel
+                    id="support"
+                    className="flex grow flex-col overflow-hidden p-4"
+                  >
+                    {viewMode === "list" && (
+                      <div className="flex grow flex-col overflow-hidden">
+                        <div className="mb-4 flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            Support Tickets
+                          </h3>
+                          <button
+                            onClick={() => setViewMode("create")}
+                            className="flex items-center gap-2 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700"
+                          >
+                            <Plus className="h-4 w-4" />
+                            New Ticket
+                          </button>
+                        </div>
+
+                        {ticketsLoading ? (
+                          <Loading />
+                        ) : lessonTickets && lessonTickets.length > 0 ? (
+                          <div className="grow space-y-2 overflow-y-auto">
+                            {lessonTickets.map((ticket) => (
+                              <button
+                                key={ticket.id}
+                                onClick={() => {
+                                  setSelectedTicketId(ticket.id);
+                                  setViewMode("view");
+                                }}
+                                className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
+                              >
+                                <div className="mb-2 flex items-start justify-between">
+                                  <h4 className="font-semibold text-gray-900 dark:text-white">
+                                    {ticket.title}
+                                  </h4>
+                                  <span
+                                    className={cn(
+                                      "rounded-full px-2 py-1 text-xs font-medium",
+                                      ticket.status === "open"
+                                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                        : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+                                    )}
+                                  >
+                                    {ticket.status}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-gray-600 line-clamp-2 dark:text-gray-400">
+                                  {ticket.description}
+                                </p>
+                                <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
+                                  <span className="capitalize">
+                                    {ticket.priority} priority
+                                  </span>
+                                  <span>
+                                    {ticket.comments?.length || 0} comments
+                                  </span>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="flex grow items-center justify-center text-gray-600 dark:text-gray-400">
+                            <p>No support tickets for this lesson yet.</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {viewMode === "create" && (
+                      <div className="grow overflow-y-auto">
+                        <div className="mb-4 flex items-center justify-between">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                            Create New Ticket
+                          </h3>
+                          <button
+                            onClick={() => setViewMode("list")}
+                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                          >
+                            ← Back to list
+                          </button>
+                        </div>
+                        <NewSupportTicketForm />
+                      </div>
+                    )}
+
+                    {viewMode === "view" && selectedTicket && (
+                      <div className="grow overflow-y-auto">
+                        <div className="mb-4 flex items-center justify-between">
+                          <button
+                            onClick={() => {
+                              setViewMode("list");
+                              setSelectedTicketId(null);
+                            }}
+                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                          >
+                            ← Back to list
+                          </button>
+                        </div>
+
+                        <div className="space-y-4">
+                          <div>
+                            <div className="mb-2 flex items-start justify-between">
+                              <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                {selectedTicket.title}
+                              </h3>
+                              <span
+                                className={cn(
+                                  "rounded-full px-3 py-1 text-sm font-medium",
+                                  selectedTicket.status === "open"
+                                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                                    : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
+                                )}
+                              >
+                                {selectedTicket.status}
+                              </span>
+                            </div>
+                            <p className="text-gray-700 dark:text-gray-300">
+                              {selectedTicket.description}
+                            </p>
+                            <div className="mt-2 flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
+                              <span className="capitalize">
+                                {selectedTicket.priority} priority
+                              </span>
+                            </div>
+                          </div>
+
+                          {selectedTicket.comments &&
+                            selectedTicket.comments.length > 0 && (
+                              <div className="space-y-3">
+                                <h4 className="font-semibold text-gray-900 dark:text-white">
+                                  Comments
+                                </h4>
+                                {selectedTicket.comments.map((comment) => (
+                                  <SupportComment
+                                    key={comment.id}
+                                    comment={comment}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                        </div>
+                      </div>
+                    )}
+                  </TabPanel>
+                </AriaTabs>
               </div>
 
               {/* Playlist Section */}
