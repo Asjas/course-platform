@@ -28,8 +28,10 @@ console.log(`🌱 Seeding database schema: ${schemaName}`);
 let connectionString = databaseUrl;
 if (schemaName !== "public") {
   // Append search_path option to connection string
+  // URL-encode the schema name to handle special characters like dots
   const separator = databaseUrl.includes("?") ? "&" : "?";
-  connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${schemaName}`;
+  const encodedSchemaName = encodeURIComponent(schemaName);
+  connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${encodedSchemaName}`;
 }
 
 const pool = new Pool({
