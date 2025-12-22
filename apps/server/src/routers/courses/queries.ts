@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 
 const preparedGetAllCoursesAsAdminStatement = db.query.course
@@ -116,4 +116,64 @@ export async function getModulesAndLessonsByCourseId({
   });
 
   return course?.modules ?? [];
+}
+
+const preparedGetLessonByIdStatement = db.query.courseLesson
+  .findFirst({
+    with: {
+      module: true,
+      course: true,
+    },
+    where: (lesson) => eq(lesson.id, sql.placeholder("lessonId")),
+  })
+  .prepare("getLessonById");
+
+export async function getLessonById({ lessonId }: { lessonId: string }) {
+  const lesson = await preparedGetLessonByIdStatement.execute({ lessonId });
+  return lesson ?? null;
+}
+
+export async function getLessonProgress({
+  userId,
+  lessonId,
+}: {
+  userId: string;
+  lessonId: string;
+}) {
+  const progress = await db.query.lessonProgress.findFirst({
+    where: (progress) =>
+      and(eq(progress.userId, userId), eq(progress.lessonId, lessonId)),
+  });
+
+  return progress ?? null;
+}
+
+export async function getCourseProgress({
+  userId,
+  courseId,
+}: {
+  userId: string;
+  courseId: string;
+}) {
+  const progress = await db.query.courseProgress.findFirst({
+    where: (progress) =>
+      and(eq(progress.userId, userId), eq(progress.courseId, courseId)),
+  });
+
+  return progress ?? null;
+}
+
+export async function getEnrollmentStatus({
+  userId,
+  courseId,
+}: {
+  userId: string;
+  courseId: string;
+}) {
+  const enrollment = await db.query.enrollment.findFirst({
+    where: (enrollment) =>
+      and(eq(enrollment.userId, userId), eq(enrollment.courseId, courseId)),
+  });
+
+  return enrollment ?? null;
 }

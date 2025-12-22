@@ -32,6 +32,8 @@ export const isAuthenticated = t.middleware(({ ctx, next }) => {
   });
 });
 
+export const protectedProcedure = t.procedure.use(isAuthenticated);
+
 export const isOwner = t.middleware(({ ctx, next, input }) => {
   if (!ctx.user) {
     throw new TRPCError({
