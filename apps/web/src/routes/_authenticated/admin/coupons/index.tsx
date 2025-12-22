@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import EditCouponSheet from "~/components/edit-coupon-sheet";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -31,6 +32,22 @@ export const Route = createFileRoute("/_authenticated/admin/coupons/")({
 function AdminCouponsPage() {
   const { data: coupons, isLoading } = useCoupons();
   const [copiedCouponId, setCopiedCouponId] = useState<string | null>(null);
+  const [editingCoupon, setEditingCoupon] = useState<
+    (typeof coupons)[number] | null
+  >(null);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+
+  function handleEditCoupon(coupon: (typeof coupons)[number]) {
+    setEditingCoupon(coupon);
+    setIsEditSheetOpen(true);
+  }
+
+  function handleEditSheetOpenChange(open: boolean) {
+    setIsEditSheetOpen(open);
+    if (!open) {
+      setEditingCoupon(null);
+    }
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -180,16 +197,16 @@ function AdminCouponsPage() {
                               Copy coupon code {coupon.code}
                             </span>
                           </button>
-                          <Link
-                            className="text-blue-500 hover:text-blue-600"
-                            to="/admin/coupons/edit/index/$couponId"
-                            params={{ couponId: coupon.id }}
+                          <button
+                            className="cursor-pointer text-blue-500 hover:text-blue-600"
+                            type="button"
+                            onClick={() => handleEditCoupon(coupon)}
                           >
                             <PencilIcon className="h-4 w-4" />
                             <span className="sr-only">
                               Edit coupon {coupon.code}
                             </span>
-                          </Link>
+                          </button>
                           <button
                             className="cursor-pointer text-red-500 hover:text-red-600"
                             onClick={() => {
@@ -244,6 +261,12 @@ function AdminCouponsPage() {
           </p>
         </div>
       )}
+
+      <EditCouponSheet
+        coupon={editingCoupon}
+        open={isEditSheetOpen}
+        onOpenChange={handleEditSheetOpenChange}
+      />
     </div>
   );
 }

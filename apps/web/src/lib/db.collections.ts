@@ -61,6 +61,30 @@ export const CouponsCollection = createCollection(
         throw error;
       }
     },
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.coupons.updateCouponById.mutate({
+          id: modified.id,
+          active: modified.active,
+          code: modified.code,
+          courseId: modified.courseId,
+          description: modified.description,
+          discountType: modified.discountType,
+          discountValue: modified.discountValue,
+          maxRedemptions: modified.redemptionLimit,
+          validFrom: new Date(modified.validFrom),
+          validTo: modified.validUntil ? new Date(modified.validUntil) : null,
+        });
+      } catch (error) {
+        console.error("Error updating coupon: ", error);
+        toast.error(
+          "An error occurred while updating the coupon. Please try again.",
+        );
+        throw error;
+      }
+    },
     onDelete: async ({ transaction }) => {
       try {
         const { original } = transaction.mutations[0];
