@@ -22,6 +22,9 @@ tsx scripts/seed-test-data.ts [schema_name]
 **Parameters:**
 - `schema_name` (optional): Database schema to use. Defaults to `"public"`.
 
+**Environment Variables:**
+- `DATABASE_URL`: PostgreSQL connection string. Required for CI, defaults to `postgresql://localhost:5432/course_platform` for local development.
+
 **Example:**
 ```bash
 # Seed public schema
@@ -43,6 +46,9 @@ tsx scripts/cleanup-test-data.ts [schema_name]
 **Parameters:**
 - `schema_name` (optional): Database schema to clean. Defaults to `"public"`.
 
+**Environment Variables:**
+- `DATABASE_URL`: PostgreSQL connection string. Required for CI, defaults to `postgresql://localhost:5432/course_platform` for local development.
+
 **Behavior:**
 - For non-public schemas: Drops the entire schema (CASCADE)
 - For public schema: Truncates all tables (CASCADE)
@@ -58,17 +64,20 @@ tsx scripts/cleanup-test-data.ts test_pr_123
 
 ## CI/CD Integration
 
-These scripts are automatically used in the GitHub Actions CI pipeline:
+These scripts are automatically used in the GitHub Actions CI pipeline with a **hosted PostgreSQL database** dedicated to CI:
 
 1. **Before Tests**: `seed-test-data.ts` is run to populate the database
 2. **After Tests**: `cleanup-test-data.ts` is run (even on failure) to clean up
 
-The CI uses unique schema names based on PR number and Node.js version to allow concurrent test runs:
-```
-test_pr_<PR_NUMBER>_<NODE_VERSION>
-```
+The CI uses:
+- **Hosted Database**: `DATABASE_URL` secret points to a dedicated CI database
+- **Unique schema names** based on PR number and Node.js version to allow concurrent test runs:
+  ```
+  test_pr_<PR_NUMBER>_<NODE_VERSION>
+  ```
+  Example: `test_pr_456_20.x`
 
-Example: `test_pr_456_20.x`
+This approach allows multiple CI jobs to run concurrently without conflicts, as each job uses its own isolated schema within the shared hosted database.
 
 ## Development
 
@@ -119,3 +128,4 @@ The scripts support schema-level isolation, which allows:
 - **Fast cleanup** by dropping schemas instead of truncating tables
 
 Each test run creates its own isolated schema, runs tests, and cleans up automatically.
+
