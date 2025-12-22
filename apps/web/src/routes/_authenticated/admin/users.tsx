@@ -6,7 +6,9 @@ import {
 import type { UserWithRole } from "better-auth/plugins/admin";
 import { intlFormat } from "date-fns";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import EditUserSheet from "~/components/edit-user-sheet";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -24,6 +26,7 @@ import { cn } from "~/lib/utils";
 interface ExtendedUserWithRole extends UserWithRole {
   username?: string;
   displayUsername?: string;
+  color?: string | null;
 }
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
@@ -42,6 +45,16 @@ function AdminUsersPage() {
   const router = useRouter();
   const navigate = useNavigate();
   const data = Route.useLoaderData();
+
+  const [editingUser, setEditingUser] = useState<ExtendedUserWithRole | null>(
+    null,
+  );
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+
+  function handleEditUser(user: ExtendedUserWithRole) {
+    setEditingUser(user);
+    setIsEditSheetOpen(true);
+  }
 
   if (!data) {
     return <Loading />;
@@ -104,7 +117,10 @@ function AdminUsersPage() {
                     <TableBodyRow key={user.id}>
                       <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
                         <span className="flex items-center gap-2">
-                          <UserRoundIcon size={16} />
+                          <UserRoundIcon
+                            size={16}
+                            style={{ color: user.color || "currentColor" }}
+                          />
                           {user.name}
                         </span>
                       </TableBodyCell>
@@ -258,6 +274,13 @@ function AdminUsersPage() {
                             <span className="sr-only">, {user.name}</span>
                           </button>
                           <button
+                            className="cursor-pointer text-blue-500 no-underline hover:text-blue-600 hover:underline"
+                            onClick={() => handleEditUser(user)}
+                          >
+                            Edit
+                            <span className="sr-only">, {user.name}</span>
+                          </button>
+                          <button
                             className="cursor-pointer text-red-500 no-underline hover:text-red-600 hover:underline"
                             onClick={async () => {
                               if (
@@ -310,6 +333,12 @@ function AdminUsersPage() {
           <p className="text-md text-gray-300">No users found.</p>
         </div>
       )}
+
+      <EditUserSheet
+        user={editingUser}
+        open={isEditSheetOpen}
+        onOpenChange={setIsEditSheetOpen}
+      />
     </>
   );
 }
