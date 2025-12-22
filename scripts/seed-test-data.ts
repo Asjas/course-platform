@@ -230,27 +230,112 @@ async function seedDatabase() {
       // Create the schema
       await pool.query(`CREATE SCHEMA IF NOT EXISTS "${schemaName}"`);
       
-      // Clone the structure from public schema to test schema
+      // Clone the entire structure from public schema to test schema using pg_dump approach
       console.log("📋 Cloning schema structure from public schema...");
       
-      // Get all table definitions from public schema
+      // Use a more reliable approach: Clone using CREATE TABLE AS with NO DATA
+      // This preserves column types, defaults, constraints, but we need to handle sequences separately
       const tablesResult = await pool.query(`
         SELECT tablename 
         FROM pg_tables 
         WHERE schemaname = 'public'
+        AND tablename NOT LIKE 'pg_%'
+        AND tablename NOT LIKE 'sql_%'
         ORDER BY tablename
       `);
       
+      // First pass: Create all tables with their structure
       for (const row of tablesResult.rows) {
         const tableName = row.tablename;
-        // Create table in test schema with same structure as public
-        await pool.query(`
-          CREATE TABLE IF NOT EXISTS "${schemaName}"."${tableName}" 
-          (LIKE "public"."${tableName}" INCLUDING ALL)
-        `);
+        try {
+          // Create table with full structure including defaults and constraints
+          await pool.query(`
+            CREATE TABLE "${schemaName}"."${tableName}" 
+            (LIKE "public"."${tableName}" INCLUDING DEFAULTS INCLUDING CONSTRAINTS INCLUDING INDEXES)
+          `);
+        } catch (error: unknown) {
+          const errMessage = (error as Error).message;
+          // Skip if table already exists
+          if (!errMessage.includes("already exists")) {
+            console.error(`  ⚠️  Warning creating ${tableName}:`, errMessage);
+          }
+        }
       }
       
-      console.log(`✅ Schema "${schemaName}" created with ${tablesResult.rows.length} tables`);
+      // Second pass: Add foreign key constraints (must be done after all tables exist)
+      for (const row of tablesResult.rows) {
+        const tableName = row.tablename;
+        try {
+          // Get foreign keys from public schema
+          const fkResult = await pool.query(`
+            SELECT
+              con.conname AS constraint_name,
+              pg_get_constraintdef(con.oid) AS constraint_def
+            FROM pg_constraint con
+            JOIN pg_class rel ON rel.oid = con.conrelid
+            JOIN pg_namespace nsp ON nsp.oid = rel.relnamespace
+            WHERE nsp.nspname = 'public'
+              AND rel.relname = $1
+              AND con.contype = 'f'
+          `, [tableName]);
+          
+          for (const fk of fkResult.rows) {
+            await pool.query(`
+              ALTER TABLE "${schemaName}"."${tableName}"
+              ADD CONSTRAINT "${fk.constraint_name}" ${fk.constraint_def}
+            `);
+          }
+        } catch (error: unknown) {
+          const errMessage = (error as Error).message;
+          // Foreign keys might already exist or reference non-existent tables
+          if (!errMessage.includes("already exists")) {
+            console.error(`  ⚠️  Warning adding FK for ${tableName}:`, errMessage);
+          }
+        }
+      }
+      
+      // Third pass: Handle sequences for serial/identity columns
+      for (const row of tablesResult.rows) {
+        const tableName = row.tablename;
+        try {
+          // Get sequences associated with this table
+          const seqResult = await pool.query(`
+            SELECT
+              a.attname AS column_name,
+              pg_get_serial_sequence('public.' || $1, a.attname) AS sequence_name
+            FROM pg_attribute a
+            JOIN pg_class t ON a.attrelid = t.oid
+            JOIN pg_namespace n ON t.relnamespace = n.oid
+            WHERE n.nspname = 'public'
+              AND t.relname = $1
+              AND a.attnum > 0
+              AND NOT a.attisdropped
+              AND pg_get_serial_sequence('public.' || $1, a.attname) IS NOT NULL
+          `, [tableName]);
+          
+          for (const seq of seqResult.rows) {
+            const seqName = seq.sequence_name.split('.').pop(); // Get just the sequence name
+            // Create sequence in test schema
+            await pool.query(`
+              CREATE SEQUENCE IF NOT EXISTS "${schemaName}"."${seqName}"
+            `);
+            // Set the column default to use the new sequence
+            await pool.query(`
+              ALTER TABLE "${schemaName}"."${tableName}"
+              ALTER COLUMN "${seq.column_name}" 
+              SET DEFAULT nextval('"${schemaName}"."${seqName}"'::regclass)
+            `);
+          }
+        } catch (error: unknown) {
+          const errMessage = (error as Error).message;
+          // Sequences might not exist for all tables
+          if (!errMessage.includes("already exists")) {
+            console.error(`  ⚠️  Warning handling sequences for ${tableName}:`, errMessage);
+          }
+        }
+      }
+      
+      console.log(`✅ Schema "${schemaName}" created with ${tablesResult.rows.length} tables, constraints, and sequences`);
       
       // Set search path to use test schema
       await pool.query(`SET search_path TO "${schemaName}"`);
