@@ -207,7 +207,7 @@ function AdminUsersPage() {
                       <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         <div className="flex justify-end gap-4">
                           <button
-                            className="cursor-pointer text-green-500 no-underline hover:text-green-600 hover:underline"
+                            className="cursor-pointer text-green-400 no-underline hover:text-green-300 hover:underline"
                             onClick={async () => {
                               const { error } =
                                 await authClient.admin.impersonateUser({
@@ -237,14 +237,14 @@ function AdminUsersPage() {
                             <span className="sr-only">, {user.name}</span>
                           </button>
                           <button
-                            className="cursor-pointer text-blue-500 no-underline hover:text-blue-600 hover:underline"
+                            className="cursor-pointer text-blue-400 no-underline hover:text-blue-300 hover:underline"
                             onClick={() => handleEditUser(user)}
                           >
                             Edit
                             <span className="sr-only">, {user.name}</span>
                           </button>
                           <button
-                            className="cursor-pointer text-red-500 no-underline hover:text-red-600 hover:underline"
+                            className="cursor-pointer text-red-400 no-underline hover:text-red-300 hover:underline"
                             onClick={async () => {
                               if (
                                 !confirm(

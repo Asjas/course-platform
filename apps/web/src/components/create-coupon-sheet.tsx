@@ -172,7 +172,7 @@ export default function CreateCouponSheet({
                       className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
-                      Code <span className="text-red-500">*</span>
+                      Code <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -233,7 +233,7 @@ export default function CreateCouponSheet({
                       className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
-                      Discount Type <span className="text-red-500">*</span>
+                      Discount Type <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <SelectInput
@@ -272,7 +272,7 @@ export default function CreateCouponSheet({
                         >
                           Discount Value (
                           {discountType === "percentage" ? "%" : "$"}){" "}
-                          <span className="text-red-500">*</span>
+                          <span className="text-red-400">*</span>
                         </label>
                       )}
                     />
@@ -338,7 +338,7 @@ export default function CreateCouponSheet({
                       className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
-                      Valid From <span className="text-red-500">*</span>
+                      Valid From <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input

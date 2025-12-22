@@ -226,7 +226,7 @@ export default function EditUserSheet({
                       className="block text-sm font-medium text-white"
                       htmlFor={field.name}
                     >
-                      Name <span className="text-red-500">*</span>
+                      Name <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -256,7 +256,7 @@ export default function EditUserSheet({
                       className="block text-sm font-medium text-white"
                       htmlFor={field.name}
                     >
-                      Email <span className="text-red-500">*</span>
+                      Email <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -415,7 +415,7 @@ export default function EditUserSheet({
                       className="block text-sm font-medium text-white"
                       htmlFor={field.name}
                     >
-                      Role <span className="text-red-500">*</span>
+                      Role <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <SelectInput

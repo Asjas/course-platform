@@ -191,9 +191,15 @@ function AdminCouponsPage() {
                             }}
                           >
                             {copiedCouponId === coupon.id ? (
-                              <ClipboardCheckIcon className="h-4 w-4" />
+                              <ClipboardCheckIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
                             ) : (
-                              <ClipboardCopyIcon className="h-4 w-4" />
+                              <ClipboardCopyIcon
+                                className="h-4 w-4"
+                                aria-hidden="true"
+                              />
                             )}
 
                             <span className="sr-only">
@@ -201,17 +207,20 @@ function AdminCouponsPage() {
                             </span>
                           </button>
                           <button
-                            className="cursor-pointer text-blue-500 hover:text-blue-600"
+                            className="cursor-pointer text-blue-400 hover:text-blue-300"
                             type="button"
                             onClick={() => handleEditCoupon(coupon)}
                           >
-                            <PencilIcon className="h-4 w-4" />
+                            <PencilIcon
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            />
                             <span className="sr-only">
                               Edit coupon {coupon.code}
                             </span>
                           </button>
                           <button
-                            className="cursor-pointer text-red-500 hover:text-red-600"
+                            className="cursor-pointer text-red-400 hover:text-red-300"
                             onClick={() => {
                               if (
                                 !confirm(
@@ -242,7 +251,10 @@ function AdminCouponsPage() {
                               }
                             }}
                           >
-                            <Trash2Icon className="h-4 w-4" />
+                            <Trash2Icon
+                              className="h-4 w-4"
+                              aria-hidden="true"
+                            />
                             <span className="sr-only">
                               Delete coupon {coupon.code}
                             </span>

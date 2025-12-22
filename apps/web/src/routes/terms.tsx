@@ -222,7 +222,7 @@ function TermsPage() {
             <ul className="mt-2 list-disc space-y-1 pl-6">
               <li>
                 <a
-                  className="text-green-500 underline hover:text-green-600"
+                  className="text-green-400 underline hover:text-green-300"
                   href="/account/purchases"
                 >
                   Your purchases page
@@ -232,7 +232,7 @@ function TermsPage() {
               <li>
                 Email:{" "}
                 <a
-                  className="text-green-500 underline hover:text-green-600"
+                  className="text-green-400 underline hover:text-green-300"
                   href="mailto:refunds@codewizard.training"
                 >
                   refunds@codewizard.training
@@ -604,7 +604,7 @@ function TermsPage() {
             <p className="text-gray-700 dark:text-gray-300">
               To report infringing content, email{" "}
               <a
-                className="text-green-500 underline hover:text-green-600"
+                className="text-green-400 underline hover:text-green-300"
                 href="mailto:dmca@codewizard.training"
               >
                 dmca@codewizard.training
@@ -637,7 +637,7 @@ function TermsPage() {
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               EU users may use the{" "}
               <a
-                className="text-green-500 underline"
+                className="text-green-400 underline"
                 href="https://ec.europa.eu/odr"
               >
                 European ODR platform
@@ -678,7 +678,7 @@ function TermsPage() {
             <p className="text-gray-700 dark:text-gray-300">
               See our{" "}
               <a
-                className="text-green-500 underline hover:text-green-600"
+                className="text-green-400 underline hover:text-green-300"
                 href="/privacy"
               >
                 Privacy Policy
@@ -700,7 +700,7 @@ function TermsPage() {
             <p className="mb-4 text-gray-700 dark:text-gray-300">
               Questions? Email us at{" "}
               <a
-                className="text-green-500 underline hover:text-green-600"
+                className="text-green-400 underline hover:text-green-300"
                 href="mailto:contact@codewizard.training"
               >
                 contact@codewizard.training

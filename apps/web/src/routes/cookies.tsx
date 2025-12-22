@@ -34,14 +34,14 @@ function CookiePolicyPage() {
               This policy explains our use of cookies and similar technologies.
               It supplements our{" "}
               <a
-                className="text-green-500 underline hover:no-underline"
+                className="text-green-400 underline hover:no-underline"
                 href="/privacy"
               >
                 Privacy Policy
               </a>{" "}
               and{" "}
               <a
-                className="text-green-500 underline hover:no-underline"
+                className="text-green-400 underline hover:no-underline"
                 href="/terms"
               >
                 Terms of Service
@@ -185,7 +185,7 @@ function CookiePolicyPage() {
               <li>
                 <strong>Account Settings:</strong> Opt out of analytics in{" "}
                 <a
-                  className="text-green-500 underline"
+                  className="text-green-400 underline"
                   href="/settings/privacy"
                 >
                   Settings ➡️ Privacy
@@ -232,7 +232,7 @@ function CookiePolicyPage() {
             <p className="mb-4 text-gray-700 dark:text-gray-300">
               Questions? Email us at{" "}
               <a
-                className="text-green-500 underline hover:no-underline"
+                className="text-green-400 underline hover:no-underline"
                 href="mailto:privacy@codewizard.training"
               >
                 privacy@codewizard.training

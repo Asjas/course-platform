@@ -404,7 +404,7 @@ function PrivacyPage() {
                       Merchant of Record. They handle your payment details
                       directly and act as a GDPR-compliant processor. Their{" "}
                       <a
-                        className="text-green-500 underline"
+                        className="text-green-400 underline"
                         href="https://polar.sh/legal/privacy"
                       >
                         Privacy Policy
@@ -434,7 +434,7 @@ function PrivacyPage() {
                       <strong>Proton Email</strong> - Delivers course updates,
                       authentication emails, and newsletters. See their{" "}
                       <a
-                        className="text-green-500 underline"
+                        className="text-green-400 underline"
                         href="https://proton.me/legal/privacy"
                       >
                         Privacy Policy
@@ -464,7 +464,7 @@ function PrivacyPage() {
                       <strong>YouTube</strong> - Hosts course videos. May
                       collect analytics on video interactions. See their{" "}
                       <a
-                        className="text-green-500 underline"
+                        className="text-green-400 underline"
                         href="https://policies.google.com/privacy"
                       >
                         Privacy Policy
@@ -623,14 +623,14 @@ function PrivacyPage() {
             <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
               Submit via{" "}
               <a
-                className="text-green-500 underline"
+                className="text-green-400 underline"
                 href="mailto:privacy@codewizard.training"
               >
                 privacy@codewizard.training
               </a>{" "}
               or our{" "}
               <a
-                className="text-green-500 underline"
+                className="text-green-400 underline"
                 href="/dsr"
               >
                 Data Request Form
@@ -681,7 +681,7 @@ function PrivacyPage() {
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400">
               <strong>Opt-out:</strong> Disable in{" "}
               <a
-                className="text-green-500 underline"
+                className="text-green-400 underline"
                 href="/settings/privacy"
               >
                 Settings ➡️ Privacy
@@ -828,7 +828,7 @@ function PrivacyPage() {
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">
                       <a
-                        className="text-green-500 underline hover:no-underline"
+                        className="text-green-400 underline hover:no-underline"
                         href="https://polar.sh/legal/privacy"
                       >
                         Polar
@@ -848,7 +848,7 @@ function PrivacyPage() {
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">
                       <a
-                        className="text-green-500 underline hover:no-underline"
+                        className="text-green-400 underline hover:no-underline"
                         href="https://proton.me/legal/privacy"
                       >
                         Proton Mail
@@ -862,7 +862,7 @@ function PrivacyPage() {
                   <tr className="border-t dark:border-gray-600">
                     <td className="p-2">
                       <a
-                        className="text-green-500 underline hover:no-underline"
+                        className="text-green-400 underline hover:no-underline"
                         href="https://www.netcup.com/en/contact/data-privacy"
                       >
                         Netcup
@@ -920,7 +920,7 @@ function PrivacyPage() {
               <li>
                 <strong>South Africa:</strong> Information Regulator -{" "}
                 <a
-                  className="text-green-500 underline hover:no-underline"
+                  className="text-green-400 underline hover:no-underline"
                   href="https://www.justice.gov.za/inforeg/"
                 >
                   https://www.justice.gov.za/inforeg/
@@ -932,7 +932,7 @@ function PrivacyPage() {
               <li>
                 <strong>UK:</strong> Information Commissioner&apos;s Office -{" "}
                 <a
-                  className="text-green-500 underline hover:no-underline"
+                  className="text-green-400 underline hover:no-underline"
                   href="https://ico.org.uk/"
                 >
                   https://ico.org.uk/
@@ -941,7 +941,7 @@ function PrivacyPage() {
               <li>
                 <strong>California:</strong> California Attorney General -{" "}
                 <a
-                  className="text-green-500 underline hover:no-underline"
+                  className="text-green-400 underline hover:no-underline"
                   href="https://oag.ca.gov/privacy"
                 >
                   https://oag.ca.gov/privacy
@@ -985,7 +985,7 @@ function PrivacyPage() {
                 <p className="text-gray-700 dark:text-gray-300">
                   Review our{" "}
                   <a
-                    className="text-green-500 underline hover:text-green-600"
+                    className="text-green-400 underline hover:text-green-300"
                     href="/terms"
                   >
                     Terms of Service Policy
@@ -1041,7 +1041,7 @@ function PrivacyPage() {
             <p className="text-gray-200 dark:text-gray-200">
               A-J Roos, DPO —{" "}
               <a
-                className="text-green-500 underline hover:text-green-600"
+                className="text-green-400 underline hover:text-green-300"
                 href="mailto:privacy@codewizard.training"
               >
                 privacy@codewizard.training

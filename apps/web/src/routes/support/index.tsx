@@ -166,7 +166,7 @@ function SupportIndexPage() {
                         auth.session?.user.id === ticket.userId ? (
                           <div className="flex justify-end gap-4">
                             <button
-                              className="cursor-pointer text-red-500 no-underline hover:text-red-600 hover:underline"
+                              className="cursor-pointer text-red-400 no-underline hover:text-red-300 hover:underline"
                               onClick={() => {
                                 if (
                                   !confirm(
@@ -204,7 +204,7 @@ function SupportIndexPage() {
                               <span className="sr-only">, {ticket.title}</span>
                             </button>
                             <Link
-                              className="text-blue-500 no-underline hover:text-blue-600 hover:underline"
+                              className="text-blue-400 no-underline hover:text-blue-300 hover:underline"
                               to="/support/$supportTicket/edit"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -212,7 +212,7 @@ function SupportIndexPage() {
                               <span className="sr-only">, {ticket.title}</span>
                             </Link>
                             <Link
-                              className="text-green-500 no-underline hover:text-green-600 hover:underline"
+                              className="text-green-400 no-underline hover:text-green-300 hover:underline"
                               to="/support/$supportTicket"
                               params={{ supportTicket: ticket.id }}
                             >
@@ -222,7 +222,7 @@ function SupportIndexPage() {
                           </div>
                         ) : (
                           <Link
-                            className="text-green-500 no-underline hover:text-green-600 hover:underline"
+                            className="text-green-400 no-underline hover:text-green-300 hover:underline"
                             to="/support/$supportTicket"
                             params={{ supportTicket: ticket.id }}
                           >
