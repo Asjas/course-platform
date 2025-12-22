@@ -37,7 +37,7 @@ function AdminCouponsPage() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-white md:text-3xl">
@@ -237,29 +237,11 @@ function AdminCouponsPage() {
           </div>
         </div>
       ) : (
-        <div className="mt-20 flex flex-col items-center justify-center text-center">
-          <div className="rounded-full bg-gray-800 p-4">
-            <svg
-              className="h-12 w-12 text-gray-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M9 14l6-6m-5-4h8a2 2 0 012 2v8a2 2 0 01-2 2h-8a2 2 0 01-2-2v-8a2 2 0 012-2z"
-              />
-            </svg>
-          </div>
-
-          <div>
-            <p className="mt-4 text-lg text-gray-400">No coupons found</p>
-            <p className="mt-2 text-sm text-gray-500">
-              Get started by creating a new coupon.
-            </p>
-          </div>
+        <div className="flex h-full flex-col items-center justify-center text-center">
+          <p className="mt-4 text-lg text-gray-400">No coupons found</p>
+          <p className="mt-2 text-sm text-gray-300">
+            Get started by creating a new coupon.
+          </p>
         </div>
       )}
     </div>
