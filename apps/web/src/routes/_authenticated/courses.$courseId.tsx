@@ -309,12 +309,12 @@ function CourseDetailPage() {
           <div className="mt-6 space-y-6">
             {/* Star Rating */}
             <div>
-              <label
+              <span
                 className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
                 id="rating-label"
               >
                 Rating
-              </label>
+              </span>
               <div
                 className="flex gap-2"
                 role="group"
