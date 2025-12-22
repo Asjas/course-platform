@@ -87,12 +87,10 @@ function LessonPage() {
 
   // Find the lesson in the course modules
   let lesson = null;
-  let moduleTitle = "";
   for (const module of course.modules || []) {
     const found = module.lessons?.find((l) => l.id === lessonId);
     if (found) {
       lesson = found;
-      moduleTitle = module.title;
       break;
     }
   }

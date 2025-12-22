@@ -7,14 +7,12 @@
  * 3. Unauthenticated users cannot access protected course content
  * 4. Enrolled users can access their own course content
  */
-import { trpcClient } from "../src/lib/trpc.client.js";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { trpcClient } from "~/lib/trpc.client";
 
 describe("Course Access Control", () => {
   // Test data will be seeded by CI pipeline
   let testCourseId: string;
-  let enrolledUserId: string;
-  let unenrolledUserId: string;
   let testLessonId: string;
 
   beforeAll(async () => {
@@ -24,8 +22,6 @@ describe("Course Access Control", () => {
 
     // TODO: Query seeded data to get actual IDs
     testCourseId = "course:test-1";
-    enrolledUserId = "user:enrolled-1";
-    unenrolledUserId = "user:unenrolled-1";
     testLessonId = "lesson:test-1";
   });
 
@@ -82,9 +78,9 @@ describe("Course Access Control", () => {
 
         // If the lesson is not a preview, this should fail for unenrolled users
         // expect to throw or return limited data
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Expected for non-preview lessons
-        expect(error.message).toContain("not enrolled");
+        expect((error as Error).message).toContain("not enrolled");
       }
     });
   });
@@ -133,9 +129,11 @@ describe("Course Access Control", () => {
 
         // Should not reach here if auth is required
         expect(true).toBe(false);
-      } catch (error: any) {
+      } catch (error: unknown) {
         // Expected to throw for unauthenticated users
-        expect(error.message).toMatch(/unauthorized|unauthenticated/i);
+        expect((error as Error).message).toMatch(
+          /unauthorized|unauthenticated/i,
+        );
       }
     });
 
@@ -146,8 +144,10 @@ describe("Course Access Control", () => {
         });
 
         expect(true).toBe(false);
-      } catch (error: any) {
-        expect(error.message).toMatch(/unauthorized|unauthenticated/i);
+      } catch (error: unknown) {
+        expect((error as Error).message).toMatch(
+          /unauthorized|unauthenticated/i,
+        );
       }
     });
   });
@@ -173,7 +173,7 @@ describe("Course Access Control", () => {
 
       // For unenrolled users, videoUrl should be hidden or null
       // This requires backend implementation
-      nonPreviewLessons?.forEach((lesson) => {
+      nonPreviewLessons?.forEach(() => {
         // Would check that videoUrl is not exposed
         // expect(lesson.videoUrl).toBeUndefined();
       });

@@ -127,7 +127,9 @@ function CourseDetailPage() {
                     <div
                       className={cn(
                         "border-b border-gray-200 dark:border-gray-700",
-                        index === course.modules!.length - 1 && "border-b-0",
+                        course.modules &&
+                          index === course.modules.length - 1 &&
+                          "border-b-0",
                       )}
                       key={module.id}
                     >
@@ -307,10 +309,17 @@ function CourseDetailPage() {
           <div className="mt-6 space-y-6">
             {/* Star Rating */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
+              <label
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                id="rating-label"
+              >
                 Rating
               </label>
-              <div className="flex gap-2">
+              <div
+                className="flex gap-2"
+                role="group"
+                aria-labelledby="rating-label"
+              >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
                     className="transition-transform hover:scale-110"

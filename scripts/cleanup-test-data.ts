@@ -1,5 +1,3 @@
-#!/usr/bin/env tsx
-
 /**
  * Database Cleanup Script for Test Data
  *
@@ -63,10 +61,11 @@ async function cleanupDatabase() {
         try {
           await pool.query(`TRUNCATE TABLE "${schemaName}"."${table}" CASCADE`);
           console.log(`  ✓ Truncated ${table}`);
-        } catch (error: any) {
+        } catch (error: unknown) {
           // Table might not exist, that's okay
-          if (!error.message.includes("does not exist")) {
-            console.error(`  ✗ Error truncating ${table}:`, error.message);
+          const errMessage = (error as Error).message;
+          if (!errMessage.includes("does not exist")) {
+            console.error(`  ✗ Error truncating ${table}:`, errMessage);
           }
         }
       }
