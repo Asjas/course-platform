@@ -119,7 +119,11 @@ function AdminUsersPage() {
                         <span className="flex items-center gap-2">
                           <UserRoundIcon
                             size={16}
-                            style={{ color: user.color || "currentColor" }}
+                            style={{
+                              color: user.color
+                                ? `#${user.color}`
+                                : "currentColor",
+                            }}
                           />
                           {user.name}
                         </span>

@@ -133,7 +133,7 @@ export default function EditUserSheet({
         email: userData?.email ?? "",
         username: userData?.username ?? "",
         displayUsername: userData?.displayUsername ?? "",
-        color: userData?.color || defaultColor,
+        color: userData?.color ? `#${userData.color}` : defaultColor,
         emailVerified: userData?.emailVerified ?? false,
         role: (userData?.role as "member" | "admin") ?? "member",
         banned: userData?.banned ?? false,
