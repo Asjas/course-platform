@@ -225,9 +225,35 @@ async function seedDatabase() {
   try {
     // Create schema if it doesn't exist
     if (schemaName !== "public") {
+      console.log(`🔧 Creating test schema "${schemaName}"...`);
+      
+      // Create the schema
       await pool.query(`CREATE SCHEMA IF NOT EXISTS "${schemaName}"`);
+      
+      // Clone the structure from public schema to test schema
+      console.log("📋 Cloning schema structure from public schema...");
+      
+      // Get all table definitions from public schema
+      const tablesResult = await pool.query(`
+        SELECT tablename 
+        FROM pg_tables 
+        WHERE schemaname = 'public'
+        ORDER BY tablename
+      `);
+      
+      for (const row of tablesResult.rows) {
+        const tableName = row.tablename;
+        // Create table in test schema with same structure as public
+        await pool.query(`
+          CREATE TABLE IF NOT EXISTS "${schemaName}"."${tableName}" 
+          (LIKE "public"."${tableName}" INCLUDING ALL)
+        `);
+      }
+      
+      console.log(`✅ Schema "${schemaName}" created with ${tablesResult.rows.length} tables`);
+      
+      // Set search path to use test schema
       await pool.query(`SET search_path TO "${schemaName}"`);
-      console.log(`✅ Schema "${schemaName}" created/verified`);
     }
 
     // Generate Learn Fastify course data
