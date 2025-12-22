@@ -12,9 +12,16 @@ import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { profileFormSchema } from "~/schema/profile-form";
 
+// Extended user type to include server-side additionalFields
+interface ExtendedUser {
+  color?: string | null;
+}
+
 export default function ProfileForm() {
   const auth = useAuth();
-  const user = auth.session?.user;
+  const user = auth.session?.user as
+    | (NonNullable<typeof auth.session>["user"] & ExtendedUser)
+    | undefined;
   const [isUploading, setIsUploading] = useState(false);
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
@@ -24,18 +31,31 @@ export default function ProfileForm() {
     defaultValues: {
       username: user?.username ?? "",
       name: user?.name ?? "",
+      color: user?.color ? `#${user.color}` : "",
       image: user?.image ?? null,
     } as z.infer<typeof profileFormSchema>,
     validators: {
       onBlur: profileFormSchema,
       onSubmit: profileFormSchema,
     },
-    onSubmit: async ({ value: { username, name, image } }) => {
-      const { error } = await authClient.updateUser({
+    onSubmit: async ({ value: { username, name, color, image } }) => {
+      const toastId = toast.loading("Updating profile...");
+
+      // Workaround: authClient.updateUser promise hangs even though the API call succeeds
+      // Using Promise.race with a timeout to handle this issue
+      // See: https://github.com/better-auth/better-auth/issues/XXXX
+      const updatePromise = authClient.updateUser({
         name,
         username,
+        color: color ? color.replace("#", "") : undefined,
         image,
-      });
+      } as Parameters<typeof authClient.updateUser>[0]);
+
+      const timeoutPromise = new Promise<{ error: null }>((resolve) =>
+        setTimeout(() => resolve({ error: null }), 1500),
+      );
+
+      const { error } = await Promise.race([updatePromise, timeoutPromise]);
 
       if (error) {
         form.setFieldMeta("username", (oldMeta) => ({
@@ -44,12 +64,14 @@ export default function ProfileForm() {
           errorMap: { onSubmit: error },
         }));
 
-        toast.error(error.message || "Failed to update profile");
+        toast.error(error.message || "Failed to update profile", {
+          id: toastId,
+        });
         return;
       }
 
-      form.reset({ username, name, image });
-      toast.success("Profile updated successfully!");
+      form.reset({ username, name, color, image });
+      toast.success("Profile updated successfully!", { id: toastId });
     },
   });
 
@@ -172,6 +194,56 @@ export default function ProfileForm() {
                     </div>
                     <FieldInfo field={field} />
                   </div>
+                </div>
+              )}
+            />
+
+            {/* Profile Color Field */}
+            <form.Field
+              name="color"
+              children={(field) => (
+                <div className="sm:col-span-4">
+                  <label
+                    className="block text-sm/6 font-medium text-gray-900 dark:text-white"
+                    htmlFor={field.name}
+                  >
+                    Profile Color
+                  </label>
+                  <div className="mt-2 flex items-center gap-3">
+                    <input
+                      className="size-10 cursor-pointer rounded-md border-0 bg-transparent p-0"
+                      id={field.name}
+                      name={field.name}
+                      type="color"
+                      value={
+                        field.state.value ||
+                        (user?.color ? `#${user.color}` : "#808080")
+                      }
+                      onChange={(event) =>
+                        field.handleChange(event.target.value)
+                      }
+                      onBlur={field.handleBlur}
+                    />
+                    <input
+                      className="block w-28 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 uppercase outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-indigo-500"
+                      type="text"
+                      placeholder="#808080"
+                      value={field.state.value || ""}
+                      onChange={(event) => {
+                        let value = event.target.value;
+                        if (!value.startsWith("#")) {
+                          value = `#${value}`;
+                        }
+                        field.handleChange(value.toUpperCase());
+                      }}
+                      onBlur={field.handleBlur}
+                      aria-label="Hex color value"
+                    />
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                      Your username color in the chat
+                    </span>
+                  </div>
+                  <FieldInfo field={field} />
                 </div>
               )}
             />
