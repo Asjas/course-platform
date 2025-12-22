@@ -95,17 +95,18 @@ function SupportTicketIndexPage() {
         {copied ? (
           <button
             className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
-            title="Copied"
+            aria-label="Link copied"
           >
             <CheckIcon
               size={18}
               color="green"
+              aria-hidden="true"
             />
           </button>
         ) : (
           <button
             className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
-            title="Copy link"
+            aria-label="Copy ticket link"
             onClick={() => {
               const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
               navigator.clipboard.writeText(ticketUrl);
@@ -115,7 +116,10 @@ function SupportTicketIndexPage() {
               setTimeout(() => setCopied(false), 2000);
             }}
           >
-            <CopyIcon size={18} />
+            <CopyIcon
+              size={18}
+              aria-hidden="true"
+            />
           </button>
         )}
       </div>
@@ -136,7 +140,10 @@ function SupportTicketIndexPage() {
                   ticket.status === "open" ? "bg-green-700" : "bg-red-700",
                 )}
               >
-                <CircleDotIcon size={20} />
+                <CircleDotIcon
+                  size={20}
+                  aria-hidden="true"
+                />
                 {ticket.status === "open" ? (
                   <span className="ml-2 text-sm font-medium">Open</span>
                 ) : (
@@ -209,6 +216,7 @@ function SupportTicketIndexPage() {
               <TriangleAlertIcon
                 size={22}
                 color="orange"
+                aria-hidden="true"
               />
               Sign in to add a comment.
             </p>

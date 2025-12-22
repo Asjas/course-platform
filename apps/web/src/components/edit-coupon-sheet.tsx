@@ -158,12 +158,12 @@ export default function EditCouponSheet({
                 name="active"
                 children={(field) => (
                   <div className="flex items-center justify-between">
-                    <label
+                    <span
                       className="text-sm font-medium text-gray-900 dark:text-white"
-                      htmlFor={field.name}
+                      id={`${field.name}-label`}
                     >
                       Active
-                    </label>
+                    </span>
                     <button
                       className={cn(
                         "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none",
@@ -173,6 +173,7 @@ export default function EditCouponSheet({
                       type="button"
                       role="switch"
                       aria-checked={field.state.value}
+                      aria-labelledby={`${field.name}-label`}
                       onClick={() => field.handleChange(!field.state.value)}
                     >
                       <span
@@ -208,6 +209,7 @@ export default function EditCouponSheet({
                           field.handleChange(event.target.value)
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                       />
                     </div>
                     <FieldInfo field={field} />
@@ -266,6 +268,7 @@ export default function EditCouponSheet({
                           )
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                         options={[
                           { value: "percentage", label: "Percentage" },
                           { value: "fixed", label: "Fixed Amount" },
@@ -307,6 +310,7 @@ export default function EditCouponSheet({
                           field.handleChange(Number(event.target.value))
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                       />
                     </div>
                     <FieldInfo field={field} />
@@ -382,6 +386,7 @@ export default function EditCouponSheet({
                           field.handleChange(dateValue);
                         }}
                         onBlur={field.handleBlur}
+                        aria-required="true"
                       />
                     </div>
                     <FieldInfo field={field} />

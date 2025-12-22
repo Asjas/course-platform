@@ -209,8 +209,8 @@ export default function GitHubMessageEditor({
             {/* Action Bar */}
             <button
               className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add header text"
               type="button"
+              aria-label="Add header text"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -233,12 +233,15 @@ export default function GitHubMessageEditor({
                 });
               }}
             >
-              <HeadingIcon size={16} />
+              <HeadingIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add bold text"
               type="button"
+              aria-label="Add bold text"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -326,12 +329,15 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <BoldIcon size={16} />
+              <BoldIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add italic text"
               type="button"
+              aria-label="Add italic text"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -420,12 +426,15 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <ItalicIcon size={16} />
+              <ItalicIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Insert a quote"
               type="button"
+              aria-label="Insert a quote"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -499,12 +508,15 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <TextQuoteIcon size={16} />
+              <TextQuoteIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add inline code"
               type="button"
+              aria-label="Add inline code"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -594,12 +606,15 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <CodeIcon size={16} />
+              <CodeIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add a link"
               type="button"
+              aria-label="Add a link"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -668,12 +683,15 @@ export default function GitHubMessageEditor({
                 });
               }}
             >
-              <LinkIcon size={16} />
+              <LinkIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add a bulleted list"
               type="button"
+              aria-label="Add a bulleted list"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -747,12 +765,15 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <ListIcon size={16} />
+              <ListIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
             <button
               className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
-              title="Add a numbered list"
               type="button"
+              aria-label="Add a numbered list"
               onClick={() => {
                 const textarea = textareaRef.current;
                 if (!textarea) return;
@@ -838,7 +859,10 @@ export default function GitHubMessageEditor({
                 }
               }}
             >
-              <ListOrderedIcon size={16} />
+              <ListOrderedIcon
+                size={16}
+                aria-hidden="true"
+              />
             </button>
           </div>
         ) : null}

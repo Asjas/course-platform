@@ -239,6 +239,7 @@ export default function EditUserSheet({
                           field.handleChange(event.target.value)
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                       />
                     </div>
                     <FieldInfo field={field} />
@@ -268,6 +269,7 @@ export default function EditUserSheet({
                           field.handleChange(event.target.value)
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                       />
                     </div>
                     <FieldInfo field={field} />
@@ -350,12 +352,12 @@ export default function EditUserSheet({
                   <div className="rounded-lg border border-gray-700 p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <label
+                        <span
                           className="text-sm font-medium text-white"
-                          htmlFor={field.name}
+                          id={`${field.name}-label`}
                         >
                           Email Verified
-                        </label>
+                        </span>
                         <p className="mt-1 text-xs text-gray-400">
                           {field.state.value
                             ? "User's email has been verified"
@@ -371,6 +373,7 @@ export default function EditUserSheet({
                         type="button"
                         role="switch"
                         aria-checked={field.state.value}
+                        aria-labelledby={`${field.name}-label`}
                         onClick={() => field.handleChange(!field.state.value)}
                       >
                         <span
@@ -390,7 +393,10 @@ export default function EditUserSheet({
                         onClick={handleResendVerificationEmail}
                         disabled={isSendingVerification}
                       >
-                        <MailIcon size={16} />
+                        <MailIcon
+                          size={16}
+                          aria-hidden="true"
+                        />
                         {isSendingVerification
                           ? "Sending..."
                           : "Resend Verification Email"}
@@ -422,6 +428,7 @@ export default function EditUserSheet({
                           )
                         }
                         onBlur={field.handleBlur}
+                        aria-required="true"
                         options={[
                           { value: "member", label: "Member" },
                           { value: "admin", label: "Admin" },
@@ -440,12 +447,12 @@ export default function EditUserSheet({
                   children={(field) => (
                     <div className="flex items-center justify-between">
                       <div>
-                        <label
+                        <span
                           className="text-sm font-medium text-white"
-                          htmlFor={field.name}
+                          id={`${field.name}-label`}
                         >
                           Banned
-                        </label>
+                        </span>
                         <p className="mt-1 text-xs text-gray-400">
                           {field.state.value
                             ? "User is currently banned"
@@ -461,6 +468,7 @@ export default function EditUserSheet({
                         type="button"
                         role="switch"
                         aria-checked={field.state.value}
+                        aria-labelledby={`${field.name}-label`}
                         onClick={() => field.handleChange(!field.state.value)}
                       >
                         <span

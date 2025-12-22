@@ -136,12 +136,13 @@ export default function Header({ auth }: { auth: AuthState }) {
                   <img
                     className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                     src={user.image}
-                    alt="profile"
+                    alt={`${user.name}'s profile`}
                   />
                 ) : (
                   <UserIcon
                     className="hover:text-green-700"
                     size={28}
+                    aria-hidden="true"
                   />
                 )}
               </MenuButton>
@@ -294,12 +295,13 @@ export default function Header({ auth }: { auth: AuthState }) {
                           <img
                             className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                             src={user.image}
-                            alt="profile"
+                            alt={`${user.name}'s profile`}
                           />
                         ) : (
                           <UserIcon
                             className="hover:text-green-700"
                             size={28}
+                            aria-hidden="true"
                           />
                         )}
                       </MenuButton>

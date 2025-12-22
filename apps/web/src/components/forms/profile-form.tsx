@@ -277,7 +277,7 @@ export default function ProfileForm() {
                           <img
                             className="size-12 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                             src={image || (user.image as string)}
-                            alt="profile"
+                            alt="Your profile"
                           />
                         )}
                       />

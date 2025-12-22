@@ -123,6 +123,7 @@ function AdminUsersPage() {
                                 ? `#${user.color}`
                                 : "currentColor",
                             }}
+                            aria-hidden="true"
                           />
                           {user.name}
                         </span>
@@ -130,7 +131,10 @@ function AdminUsersPage() {
 
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         <span className="flex items-center gap-2">
-                          <MailIcon size={16} />
+                          <MailIcon
+                            size={16}
+                            aria-hidden="true"
+                          />
                           {user.email}
                         </span>
                       </TableBodyCell>
@@ -155,7 +159,10 @@ function AdminUsersPage() {
                       <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
                         {user.banned ? (
                           <span className="inline-flex items-center gap-1 rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
-                            <BanIcon size={14} />
+                            <BanIcon
+                              size={14}
+                              aria-hidden="true"
+                            />
                             Banned
                           </span>
                         ) : (
