@@ -5,7 +5,6 @@ export const editUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email address"),
   username: z.string().optional(),
-  displayUsername: z.string().optional(),
   color: z.string().optional(),
   emailVerified: z.boolean(),
   role: z.enum(["member", "admin"]),

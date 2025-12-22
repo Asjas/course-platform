@@ -25,7 +25,6 @@ import { cn } from "~/lib/utils";
 // https://github.com/better-auth/better-auth/issues/3033
 interface ExtendedUserWithRole extends UserWithRole {
   username?: string;
-  displayUsername?: string;
   color?: string | null;
 }
 

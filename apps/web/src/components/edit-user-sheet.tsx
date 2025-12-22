@@ -22,7 +22,6 @@ interface UserData {
   role?: string;
   banned: boolean | null;
   username?: string;
-  displayUsername?: string;
   color?: string | null;
   emailVerified?: boolean;
   banReason?: string | null;
@@ -61,7 +60,6 @@ export default function EditUserSheet({
       name: user?.name ?? "",
       email: user?.email ?? "",
       username: user?.username ?? "",
-      displayUsername: user?.displayUsername ?? "",
       color: user?.color ? `#${user.color}` : defaultColor,
       emailVerified: user?.emailVerified ?? false,
       role: (user?.role as "member" | "admin") ?? "member",
@@ -83,7 +81,6 @@ export default function EditUserSheet({
           name: value.name,
           email: value.email,
           username: value.username || undefined,
-          displayUsername: value.displayUsername || undefined,
           color: value.color ? value.color.replace("#", "") : undefined,
           emailVerified: value.emailVerified,
           role: value.role,
@@ -132,7 +129,6 @@ export default function EditUserSheet({
         name: userData?.name ?? "",
         email: userData?.email ?? "",
         username: userData?.username ?? "",
-        displayUsername: userData?.displayUsername ?? "",
         color: userData?.color ? `#${userData.color}` : defaultColor,
         emailVerified: userData?.emailVerified ?? false,
         role: (userData?.role as "member" | "admin") ?? "member",
@@ -293,34 +289,6 @@ export default function EditUserSheet({
                     onChange={(event) => field.handleChange(event.target.value)}
                     onBlur={field.handleBlur}
                     placeholder="Optional username"
-                  />
-                </div>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          />
-
-          {/* Display Username Field */}
-          <form.Field
-            name="displayUsername"
-            children={(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-white"
-                  htmlFor={field.name}
-                >
-                  Display Username
-                </label>
-                <div className="mt-2">
-                  <input
-                    className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    value={field.state.value ?? ""}
-                    onChange={(event) => field.handleChange(event.target.value)}
-                    onBlur={field.handleBlur}
-                    placeholder="How username appears publicly"
                   />
                 </div>
                 <FieldInfo field={field} />
