@@ -1,0 +1,1 @@
+ALTER TABLE "my_schema"."user" ADD COLUMN "color" text;

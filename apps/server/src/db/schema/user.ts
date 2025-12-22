@@ -1,12 +1,6 @@
 import { relations } from "drizzle-orm";
-import {
-  boolean,
-  index,
-  pgEnum,
-  pgTable,
-  text,
-  timestamp,
-} from "drizzle-orm/pg-core";
+import { boolean, index, text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { courseWishlist } from "~/db/schema/course.js";
 import { enrollment } from "~/db/schema/enrollment.js";
@@ -20,10 +14,10 @@ import { teamLicense } from "~/db/schema/teamLicense.js";
 export type User = typeof user.$inferSelect;
 
 // Enums
-export const members = pgEnum("members", ["member", "admin"]);
+export const members = mySchema.enum("members", ["member", "admin"]);
 
 // Tables
-export const user = pgTable(
+export const user = mySchema.table(
   "user",
   {
     id: text().primaryKey(),
@@ -44,7 +38,7 @@ export const user = pgTable(
   (table) => [index("user_email_idx").on(table.email)],
 );
 
-export const account = pgTable("account", {
+export const account = mySchema.table("account", {
   id: text().primaryKey(),
   accountId: text().notNull(),
   providerId: text().notNull(),
@@ -61,7 +55,7 @@ export const account = pgTable("account", {
   ...timestamps,
 });
 
-export const session = pgTable(
+export const session = mySchema.table(
   "session",
   {
     id: text().primaryKey(),
@@ -78,7 +72,7 @@ export const session = pgTable(
   (table) => [index("session_token_idx").on(table.token)],
 );
 
-export const verification = pgTable("verification", {
+export const verification = mySchema.table("verification", {
   id: text().primaryKey(),
   identifier: text().notNull(),
   value: text().notNull(),
@@ -86,7 +80,7 @@ export const verification = pgTable("verification", {
   ...timestamps,
 });
 
-export const organization = pgTable("organization", {
+export const organization = mySchema.table("organization", {
   id: text().primaryKey(),
   name: text().notNull(),
   slug: text().unique(),
@@ -95,7 +89,7 @@ export const organization = pgTable("organization", {
   ...timestamps,
 });
 
-export const member = pgTable("member", {
+export const member = mySchema.table("member", {
   id: text().primaryKey(),
   role: members().default("member").notNull(),
   organizationId: text()
@@ -107,7 +101,7 @@ export const member = pgTable("member", {
   ...timestamps,
 });
 
-export const invitation = pgTable("invitation", {
+export const invitation = mySchema.table("invitation", {
   id: text().primaryKey(),
   email: text().notNull(),
   role: members().default("member").notNull(),

@@ -6,34 +6,33 @@ import {
   integer,
   jsonb,
   numeric,
-  pgEnum,
-  pgTable,
   smallint,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { enrollment } from "~/db/schema/enrollment.js";
 import { courseProgress, lessonProgress } from "~/db/schema/progress.js";
 import { user } from "~/db/schema/user.js";
 
-export const courseLevel = pgEnum("course_level", [
+export const courseLevel = mySchema.enum("course_level", [
   "All levels",
   "Beginner",
   "Intermediate",
   "Advanced",
 ]);
 
-export const courseAccess = pgEnum("course_access", [
+export const courseAccess = mySchema.enum("course_access", [
   "public",
   "private",
   "unlisted",
 ]);
 
-export const videoProvider = pgEnum("video_provider", ["youtube"]);
+export const videoProvider = mySchema.enum("video_provider", ["youtube"]);
 
-export const course = pgTable(
+export const course = mySchema.table(
   "course",
   {
     id: text().primaryKey(),
@@ -94,7 +93,7 @@ export const course = pgTable(
   ],
 );
 
-export const courseModule = pgTable(
+export const courseModule = mySchema.table(
   "course_module",
   {
     id: text().primaryKey(),
@@ -115,7 +114,7 @@ export const courseModule = pgTable(
   ],
 );
 
-export const courseLesson = pgTable(
+export const courseLesson = mySchema.table(
   "course_lesson",
   {
     id: text().primaryKey(),
@@ -142,7 +141,7 @@ export const courseLesson = pgTable(
   ],
 );
 
-export const courseReview = pgTable(
+export const courseReview = mySchema.table(
   "course_review",
   {
     id: text().primaryKey(),
@@ -178,7 +177,7 @@ export const courseReview = pgTable(
   ],
 );
 
-export const courseWishlist = pgTable(
+export const courseWishlist = mySchema.table(
   "course_wishlist",
   {
     id: text().primaryKey(),
@@ -197,7 +196,7 @@ export const courseWishlist = pgTable(
   ],
 );
 
-export const courseCompletionCertificate = pgTable(
+export const courseCompletionCertificate = mySchema.table(
   "course_completion_certificate",
   {
     id: text().primaryKey(),
@@ -221,7 +220,7 @@ export const courseCompletionCertificate = pgTable(
   ],
 );
 
-export const courseInstructorNote = pgTable(
+export const courseInstructorNote = mySchema.table(
   "course_instructor_note",
   {
     id: text().primaryKey(),
@@ -245,7 +244,7 @@ export const courseInstructorNote = pgTable(
   ],
 );
 
-export const courseFaq = pgTable(
+export const courseFaq = mySchema.table(
   "course_faq",
   {
     id: text().primaryKey(),

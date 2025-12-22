@@ -2,17 +2,16 @@ import { relations, sql } from "drizzle-orm";
 import {
   check,
   index,
-  pgEnum,
-  pgTable,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { user } from "~/db/schema/user.js";
 
 // Enums
-export const announcementIdType = pgEnum("announcement_id_type", [
+export const announcementIdType = mySchema.enum("announcement_id_type", [
   "platform_update",
   "platform_warning",
   "course_update",
@@ -22,7 +21,7 @@ export const announcementIdType = pgEnum("announcement_id_type", [
 ]);
 
 // Tables
-export const platformAnnouncement = pgTable(
+export const platformAnnouncement = mySchema.table(
   "platform_announcement",
   {
     id: text().primaryKey(),
@@ -46,7 +45,7 @@ export const platformAnnouncement = pgTable(
   ],
 );
 
-export const platformAnnouncementRead = pgTable(
+export const platformAnnouncementRead = mySchema.table(
   "platform_announcement_read",
   {
     id: text().primaryKey(),

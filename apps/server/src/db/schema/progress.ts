@@ -3,18 +3,18 @@ import {
   boolean,
   check,
   index,
-  pgTable,
   smallint,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
 
 // Tables
-export const courseProgress = pgTable(
+export const courseProgress = mySchema.table(
   "course_progress",
   {
     id: text().primaryKey(),
@@ -50,7 +50,7 @@ export const courseProgress = pgTable(
   ],
 );
 
-export const lessonProgress = pgTable(
+export const lessonProgress = mySchema.table(
   "lesson_progress",
   {
     id: text().primaryKey(),

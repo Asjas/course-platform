@@ -3,13 +3,12 @@ import {
   boolean,
   check,
   index,
-  pgEnum,
-  pgTable,
   smallint,
   text,
   timestamp,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course } from "~/db/schema/course.js";
 import { payment } from "~/db/schema/purchase.js";
@@ -18,13 +17,13 @@ export type Coupon = typeof coupon.$inferSelect;
 export type NewCoupon = Omit<typeof coupon.$inferInsert, "id">;
 
 // Enums
-export const discountType = pgEnum("discountType", [
+export const discountType = mySchema.enum("discountType", [
   "percentage",
   "fixed",
 ]);
 
 // Tables
-export const coupon = pgTable(
+export const coupon = mySchema.table(
   "coupon",
   {
     id: text().primaryKey(),
@@ -59,7 +58,7 @@ export const coupon = pgTable(
   ],
 );
 
-export const couponRedemption = pgTable(
+export const couponRedemption = mySchema.table(
   "coupon_redemption",
   {
     id: text().primaryKey(),
