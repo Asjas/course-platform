@@ -240,10 +240,10 @@ async function seedDatabase() {
       users.push(generateFakeUser());
     }
 
-    // Insert users with raw SQL to avoid schema issues
+    // Insert users (search_path is already set to the correct schema)
     for (const user of users) {
       await pool.query(
-        `INSERT INTO "${schemaName}".user (id, name, username, display_username, color, email, email_verified, image, role, banned, created_at, updated_at)
+        `INSERT INTO "user" (id, name, username, display_username, color, email, email_verified, image, role, banned, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
         [
           user.id,
@@ -281,7 +281,7 @@ async function seedDatabase() {
 
     for (const course of courses) {
       await pool.query(
-        `INSERT INTO "${schemaName}".course (id, slug, name, description, level, thumbnail_url, published, is_free, price, price_currency, is_sale_active, sale_price, total_enrollments, average_rating, total_reviews, total_modules, total_lessons, total_duration, trial_module_limit, author_id, created_at, updated_at)
+        `INSERT INTO course (id, slug, name, description, level, thumbnail_url, published, is_free, price, price_currency, is_sale_active, sale_price, total_enrollments, average_rating, total_reviews, total_modules, total_lessons, total_duration, trial_module_limit, author_id, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)`,
         [
           course.id,
@@ -324,7 +324,7 @@ async function seedDatabase() {
         const module = generateFakeModule(course.id, m);
 
         await pool.query(
-          `INSERT INTO "${schemaName}".course_module (id, title, slug, description, "order", is_preview, course_id, created_at, updated_at)
+          `INSERT INTO course_module (id, title, slug, description, "order", is_preview, course_id, created_at, updated_at)
            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
           [
             module.id,
@@ -347,7 +347,7 @@ async function seedDatabase() {
           totalLessons++;
 
           await pool.query(
-            `INSERT INTO "${schemaName}".course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
+            `INSERT INTO course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
             [
               lesson.id,
@@ -386,7 +386,7 @@ async function seedDatabase() {
       enrollments.push(enrollment);
 
       await pool.query(
-        `INSERT INTO "${schemaName}".enrollment (id, enrollment_type, enrollment_source, status, user_id, course_id, enrolled_at, created_at, updated_at)
+        `INSERT INTO enrollment (id, enrollment_type, enrollment_source, status, user_id, course_id, enrolled_at, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
         [
           enrollment.id,
@@ -409,7 +409,7 @@ async function seedDatabase() {
       const review = generateFakeReview(users[i].id, courses[0].id);
 
       await pool.query(
-        `INSERT INTO "${schemaName}".course_review (id, user_id, course_id, rating, title, comment, approved, reviewed_at, created_at, updated_at)
+        `INSERT INTO course_review (id, user_id, course_id, rating, title, comment, approved, reviewed_at, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
         [
           review.id,
@@ -441,7 +441,7 @@ async function seedDatabase() {
       );
 
       await pool.query(
-        `INSERT INTO "${schemaName}".support_ticket (id, title, description, repo, priority, status, user_id, lesson_id, created_at, updated_at)
+        `INSERT INTO support_ticket (id, title, description, repo, priority, status, user_id, lesson_id, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
         [
           ticket.id,
