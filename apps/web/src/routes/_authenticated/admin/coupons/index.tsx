@@ -59,11 +59,11 @@ function AdminCouponsPage() {
     <div className="flex h-full flex-col">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-white md:text-3xl">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             Coupons
           </h1>
 
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Manage discount coupons. Create, edit, and track usage of all
             coupons.
           </p>
@@ -103,31 +103,31 @@ function AdminCouponsPage() {
                 <TableBody>
                   {coupons.map((coupon) => (
                     <TableBodyRow key={coupon.id}>
-                      <TableBodyCell className="font-medium text-white">
-                        <code className="rounded bg-gray-600/75 px-2 py-1 text-sm">
+                      <TableBodyCell className="font-medium">
+                        <code className="rounded bg-gray-200 px-2 py-1 text-sm text-gray-800 dark:bg-gray-600/75 dark:text-white">
                           {coupon.code}
                         </code>
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-gray-300">
+                      <TableBodyCell className="text-gray-600 dark:text-gray-300">
                         {coupon.discountType === "percentage"
                           ? "Percentage"
                           : "Fixed Amount"}
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-gray-300">
+                      <TableBodyCell className="text-gray-600 dark:text-gray-300">
                         {coupon.discountType === "percentage"
                           ? `${coupon.discountValue} %`
                           : `$ ${coupon.discountValue.toFixed(2)}`}
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-gray-300">
+                      <TableBodyCell className="text-gray-600 dark:text-gray-300">
                         <span
                           className={cn(
                             coupon.redemptionLimit &&
                               coupon.redemptions.length >=
                                 coupon.redemptionLimit
-                              ? "text-red-400"
+                              ? "text-red-600 dark:text-red-400"
                               : "",
                           )}
                         >
@@ -138,7 +138,7 @@ function AdminCouponsPage() {
                         </span>
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-sm text-gray-400">
+                      <TableBodyCell className="text-sm text-gray-500 dark:text-gray-400">
                         {intlFormat(new Date(coupon.validFrom), {
                           year: "numeric",
                           month: "short",
@@ -146,7 +146,7 @@ function AdminCouponsPage() {
                         })}
                       </TableBodyCell>
 
-                      <TableBodyCell className="text-sm text-gray-400">
+                      <TableBodyCell className="text-sm text-gray-500 dark:text-gray-400">
                         {coupon.validUntil ? (
                           intlFormat(new Date(coupon.validUntil), {
                             year: "numeric",
@@ -154,7 +154,7 @@ function AdminCouponsPage() {
                             day: "numeric",
                           })
                         ) : (
-                          <span className="text-gray-500 italic">
+                          <span className="text-gray-400 italic dark:text-gray-500">
                             No expiry
                           </span>
                         )}
@@ -165,8 +165,8 @@ function AdminCouponsPage() {
                           className={cn(
                             "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium",
                             coupon.active
-                              ? "bg-green-900/30 text-green-400 ring-1 ring-green-500/50 ring-inset"
-                              : "bg-red-900/30 text-red-400 ring-1 ring-red-500/50 ring-inset",
+                              ? "bg-green-100 text-green-700 ring-1 ring-green-500/50 ring-inset dark:bg-green-900/30 dark:text-green-400"
+                              : "bg-red-100 text-red-700 ring-1 ring-red-500/50 ring-inset dark:bg-red-900/30 dark:text-red-400",
                           )}
                         >
                           {coupon.active ? "Active" : "Inactive"}
@@ -176,7 +176,7 @@ function AdminCouponsPage() {
                       <TableBodyCell>
                         <div className="flex justify-around gap-2">
                           <button
-                            className="cursor-pointer text-gray-400 hover:text-gray-300"
+                            className="cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                             onClick={() => {
                               navigator.clipboard.writeText(coupon.code);
                               setCopiedCouponId(coupon.id);
@@ -270,8 +270,10 @@ function AdminCouponsPage() {
         </div>
       ) : (
         <div className="flex h-full flex-col items-center justify-center text-center">
-          <p className="mt-4 text-lg text-gray-400">No coupons found</p>
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
+            No coupons found
+          </p>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Get started by creating a new coupon.
           </p>
         </div>

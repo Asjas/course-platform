@@ -118,14 +118,14 @@ export default function NewSupportTicketForm() {
                 return (
                   <div className="col-span-3">
                     <label
-                      className="block text-sm/6 font-medium text-white"
+                      className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Title (Required)
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white"
                         id={field.name}
                         name={field.name}
                         type="text"
@@ -156,7 +156,7 @@ export default function NewSupportTicketForm() {
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6"
+                        className="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white"
                         name={field.name}
                         type="text"
                         value={field.state.value as string}
@@ -178,7 +178,7 @@ export default function NewSupportTicketForm() {
               children={(field) => (
                 <div className="sm:col-span-4">
                   <label
-                    className="block text-sm/6 font-medium text-white"
+                    className="block text-sm/6 font-medium text-gray-900 dark:text-white"
                     htmlFor={field.name}
                   >
                     Description (Required)

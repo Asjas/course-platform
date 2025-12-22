@@ -60,11 +60,11 @@ export default function DefaultLayoutComponent({
         <Header auth={auth} />
         <div className="mt-10 flex w-full flex-col md:mt-20">
           {user && !user?.emailVerified ? (
-            <div className="flex items-center justify-between bg-green-400 p-4 text-sm text-black">
+            <div className="flex items-center justify-between bg-yellow-100 p-4 text-sm text-gray-900 dark:bg-green-400 dark:text-black">
               Your email is not verified. Please check your inbox for a
               verification email.
               <button
-                className="cursor-pointer rounded-sm border bg-gray-800 px-2 py-1 text-white"
+                className="cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1 text-gray-900 dark:border-transparent dark:bg-gray-800 dark:text-white"
                 type="button"
                 onClick={async () => {
                   await authClient.sendVerificationEmail(

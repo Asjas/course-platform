@@ -4,7 +4,7 @@ import { cn } from "~/lib/utils";
 
 export function Card({ children }: { children: ReactNode }) {
   return (
-    <div className="relative flex flex-col rounded-lg border border-gray-700 p-8 transition-colors hover:border-green-600">
+    <div className="relative flex flex-col rounded-lg border border-gray-200 bg-white p-8 transition-colors hover:border-green-600 dark:border-gray-700 dark:bg-transparent">
       {children}
     </div>
   );
@@ -12,7 +12,7 @@ export function Card({ children }: { children: ReactNode }) {
 
 export function CardHeader({ children }: { children: ReactNode }) {
   return (
-    <h2 className="mb-2 flex items-center justify-between text-2xl font-bold">
+    <h2 className="mb-2 flex items-center justify-between text-2xl font-bold text-gray-900 dark:text-white">
       {children}
     </h2>
   );
@@ -21,7 +21,7 @@ export function CardHeader({ children }: { children: ReactNode }) {
 export function CardPrice({ children }: { children: ReactNode }) {
   return (
     <div className="mb-6">
-      <span className="text-4xl">{children}</span>
+      <span className="text-4xl text-gray-900 dark:text-white">{children}</span>
     </div>
   );
 }
@@ -53,7 +53,7 @@ export function CardContentListItem({
           clipRule="evenodd"
         ></path>
       </svg>
-      <span className="text-gray-300">{children}</span>
+      <span className="text-gray-600 dark:text-gray-300">{children}</span>
     </li>
   );
 }
@@ -77,6 +77,8 @@ export function CardAction({
 
 export function CardFooter({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-4 text-center text-sm text-gray-400">{children}</div>
+    <div className="mt-4 text-center text-sm text-gray-500 dark:text-gray-400">
+      {children}
+    </div>
   );
 }

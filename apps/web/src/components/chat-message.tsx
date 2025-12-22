@@ -91,10 +91,10 @@ export default function ChatMessage({
   }
 
   return (
-    <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-900/55">
+    <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900/55">
       {/* timestamp */}
       <div className="flex w-14 justify-end">
-        <span className="text-[14px] text-gray-300/75">
+        <span className="text-[14px] text-gray-500 dark:text-gray-300/75">
           {format(msg.timestamp, "HH:mm")}
         </span>
       </div>
@@ -106,7 +106,7 @@ export default function ChatMessage({
         </span>
 
         <div
-          className="flex-1 text-sm text-white"
+          className="flex-1 text-sm text-gray-900 dark:text-white"
           dangerouslySetInnerHTML={{ __html: html }}
         />
 
@@ -117,7 +117,7 @@ export default function ChatMessage({
         {/* three-dot button – visible only on hover */}
         <MenuTrigger>
           <MenuButton
-            className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-700"
+            className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
             aria-label="Message actions"
           >
             <EllipsisIcon
@@ -127,10 +127,10 @@ export default function ChatMessage({
           </MenuButton>
 
           <Popover className="z-50">
-            <Menu className="min-w-[120px] rounded-md border border-gray-700 bg-gray-800 p-1 text-sm shadow-lg">
+            <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
               {auth.session?.user.name === msg.name || auth.hasRole("admin") ? (
                 <MenuItem
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-gray-700"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                   onAction={handleEdit}
                 >
                   Edit
@@ -138,7 +138,7 @@ export default function ChatMessage({
               ) : null}
               {auth.session?.user.name === msg.name || auth.hasRole("admin") ? (
                 <MenuItem
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 hover:bg-gray-700"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
                   onAction={handleDelete}
                 >
                   Delete

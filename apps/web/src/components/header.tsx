@@ -1,15 +1,11 @@
-import { Dialog, DialogPanel } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { MenuIcon, UserIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import {
-  Menu,
-  Button as MenuButton,
-  MenuItem,
-  MenuTrigger,
-  Popover,
-} from "react-aria-components";
+import { Button as MenuButton, MenuTrigger } from "react-aria-components";
 import { toast } from "sonner";
+import { ThemeToggle } from "~/components/theme-toggle";
+import { Menu, MenuItem, MenuPopover } from "~/components/ui/menu";
 import { NavLink } from "~/components/ui/nav-link";
 import { authClient } from "~/lib/auth.client";
 import type { AuthState } from "~/lib/auth.context";
@@ -21,7 +17,7 @@ export default function Header({ auth }: { auth: AuthState }) {
   const isImpersonating = !!auth.session?.session.impersonatedBy;
 
   return (
-    <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-50/2 bg-gray-900/40 backdrop-blur transition-colors duration-300 hover:bg-gray-900/60">
+    <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-200 bg-white/80 backdrop-blur transition-colors duration-300 hover:bg-white/90 dark:border-gray-50/2 dark:bg-gray-900/40 dark:hover:bg-gray-900/60">
       <nav
         className="mx-auto flex flex-1 items-center justify-between px-4 md:px-6 lg:px-8"
         aria-label="Global"
@@ -33,7 +29,8 @@ export default function Header({ auth }: { auth: AuthState }) {
                 <NavLink
                   preload="intent"
                   activeProps={{
-                    className: "bg-gray-700 text-white dark:bg-gray-700",
+                    className:
+                      "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white",
                   }}
                   to="/"
                 >
@@ -41,11 +38,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                 </NavLink>
               </li>
 
-              <li className="relative inline-flex border-l border-gray-600 pl-2">
+              <li className="relative inline-flex border-l border-gray-300 pl-2 dark:border-gray-600">
                 <NavLink
                   preload="intent"
                   activeProps={{
-                    className: "bg-gray-700 text-white dark:bg-gray-700",
+                    className:
+                      "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white",
                   }}
                   to="/support"
                 >
@@ -54,11 +52,12 @@ export default function Header({ auth }: { auth: AuthState }) {
               </li>
 
               {auth.isAuthenticated ? (
-                <li className="relative inline-flex border-l border-gray-600 pl-2">
+                <li className="relative inline-flex border-l border-gray-300 pl-2 dark:border-gray-600">
                   <NavLink
                     preload="intent"
                     activeProps={{
-                      className: "bg-gray-700 text-white dark:bg-gray-700",
+                      className:
+                        "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
                     to="/dashboard"
                   >
@@ -72,7 +71,8 @@ export default function Header({ auth }: { auth: AuthState }) {
                   <NavLink
                     preload="intent"
                     activeProps={{
-                      className: "bg-gray-700 text-white dark:bg-gray-700",
+                      className:
+                        "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
                     to="/chat"
                   >
@@ -82,11 +82,12 @@ export default function Header({ auth }: { auth: AuthState }) {
               ) : null}
 
               {auth.isAuthenticated && auth.hasRole("admin") ? (
-                <li className="relative inline-flex border-l border-gray-600 pl-2">
+                <li className="relative inline-flex border-l border-gray-300 pl-2 dark:border-gray-600">
                   <NavLink
                     preload="intent"
                     activeProps={{
-                      className: "bg-gray-700 text-white dark:bg-gray-700",
+                      className:
+                        "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
                     to="/admin"
                   >
@@ -97,17 +98,17 @@ export default function Header({ auth }: { auth: AuthState }) {
             </ul>
           </div>
 
-          <div className="flex lg:hidden">
+          <div className="flex text-gray-700 lg:hidden dark:text-gray-200">
             <button
-              className="-m-2.5 inline-flex cursor-pointer items-center justify-center rounded-md p-2.5 text-gray-700"
+              className="-m-2.5 inline-flex cursor-pointer items-center justify-center rounded-md p-2.5"
               type="button"
               onClick={() => setMobileMenuOpen(true)}
             >
               <span className="sr-only">Open main menu</span>
               <MenuIcon
+                color="currentColor"
                 aria-hidden="true"
                 size={30}
-                color="white"
               />
             </button>
           </div>
@@ -128,7 +129,9 @@ export default function Header({ auth }: { auth: AuthState }) {
           </Link>
         </div>
 
-        <div className="flex flex-1 justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <ThemeToggle />
+
           {auth.isAuthenticated && user ? (
             <MenuTrigger>
               <MenuButton aria-label="Menu">
@@ -147,32 +150,22 @@ export default function Header({ auth }: { auth: AuthState }) {
                 )}
               </MenuButton>
 
-              <Popover>
-                <Menu className="rounded-md bg-gray-700 px-4 py-4">
-                  <MenuItem
-                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
-                    onAction={() => navigate({ to: "/account" })}
-                  >
+              <MenuPopover>
+                <Menu>
+                  <MenuItem onAction={() => navigate({ to: "/account" })}>
                     Account
                   </MenuItem>
 
-                  <MenuItem
-                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
-                    onAction={() => navigate({ to: "/profile" })}
-                  >
+                  <MenuItem onAction={() => navigate({ to: "/profile" })}>
                     Profile
                   </MenuItem>
 
-                  <MenuItem
-                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
-                    onAction={() => navigate({ to: "/purchases" })}
-                  >
+                  <MenuItem onAction={() => navigate({ to: "/purchases" })}>
                     Purchases
                   </MenuItem>
 
                   {isImpersonating ? (
                     <MenuItem
-                      className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                       onAction={async () => {
                         const { error } =
                           await authClient.admin.stopImpersonating();
@@ -201,7 +194,6 @@ export default function Header({ auth }: { auth: AuthState }) {
                   ) : null}
 
                   <MenuItem
-                    className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                     onAction={async () => {
                       const { error } = await authClient.signOut();
 
@@ -217,10 +209,10 @@ export default function Header({ auth }: { auth: AuthState }) {
                     Logout
                   </MenuItem>
                 </Menu>
-              </Popover>
+              </MenuPopover>
             </MenuTrigger>
           ) : (
-            <ul className="ml-4 flex space-x-2">
+            <ul className="flex space-x-2">
               <li className="relative inline-flex">
                 <NavLink
                   className="bg-green-700"
@@ -253,19 +245,20 @@ export default function Header({ auth }: { auth: AuthState }) {
         open={mobileMenuOpen}
         onClose={setMobileMenuOpen}
       >
-        <DialogPanel className="fixed inset-y-0 top-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-900 px-4 py-5">
+        <DialogBackdrop className="fixed inset-0 z-30 bg-black/30" />
+        <DialogPanel className="fixed inset-0 z-40 min-h-20 w-full overflow-y-auto bg-gray-50 px-4 py-5 dark:bg-gray-900">
           <div className="flex items-center justify-between">
-            <div className="flex flex-1">
+            <div className="flex flex-1 text-green-600 dark:text-green-400">
               <button
-                className="-m-2.5 cursor-pointer rounded-md p-2.5 text-gray-700"
+                className="-m-2.5 cursor-pointer rounded-md p-2.5"
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 <span className="sr-only">Close menu</span>
                 <XIcon
+                  color="currentColor"
                   aria-hidden="true"
                   size={30}
-                  color="oklch(0.6321 0.18624607086546197 147.32407676948478)"
                 />
               </button>
             </div>
@@ -285,9 +278,11 @@ export default function Header({ auth }: { auth: AuthState }) {
               </Link>
             </div>
 
-            <div className="flex flex-1 justify-end">
+            <div className="flex flex-1 items-center justify-end gap-2">
+              <ThemeToggle />
+
               {auth.isAuthenticated ? (
-                <div className="flex flex-1 justify-end">
+                <div className="flex justify-end">
                   {auth.isAuthenticated && user ? (
                     <MenuTrigger>
                       <MenuButton aria-label="Menu">
@@ -306,24 +301,21 @@ export default function Header({ auth }: { auth: AuthState }) {
                         )}
                       </MenuButton>
 
-                      <Popover>
-                        <Menu className="rounded-md bg-gray-700">
+                      <MenuPopover>
+                        <Menu>
                           <MenuItem
-                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/account" })}
                           >
                             Account
                           </MenuItem>
 
                           <MenuItem
-                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/profile" })}
                           >
                             Profile
                           </MenuItem>
 
                           <MenuItem
-                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={() => navigate({ to: "/purchases" })}
                           >
                             Purchases
@@ -331,7 +323,6 @@ export default function Header({ auth }: { auth: AuthState }) {
 
                           {isImpersonating ? (
                             <MenuItem
-                              className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                               onAction={async () => {
                                 const { error } =
                                   await authClient.admin.stopImpersonating();
@@ -360,7 +351,6 @@ export default function Header({ auth }: { auth: AuthState }) {
                           ) : null}
 
                           <MenuItem
-                            className="cursor-pointer rounded-sm px-2 py-1 hover:bg-gray-800"
                             onAction={async () => {
                               const { error } = await authClient.signOut();
 
@@ -378,7 +368,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                             Logout
                           </MenuItem>
                         </Menu>
-                      </Popover>
+                      </MenuPopover>
                     </MenuTrigger>
                   ) : (
                     <NavLink
@@ -408,11 +398,11 @@ export default function Header({ auth }: { auth: AuthState }) {
             <ul className="flex w-full flex-col space-y-1">
               <li>
                 <NavLink
-                  className="flex w-full"
+                  className="flex w-full text-gray-700 dark:text-gray-200"
                   preload="intent"
                   activeProps={{
                     className:
-                      "bg-gray-700 flex w-full text-white dark:bg-gray-700",
+                      "bg-gray-200 flex w-full text-gray-900 dark:bg-gray-700 dark:text-white",
                   }}
                   to="/"
                   onClick={() => setMobileMenuOpen(false)}
@@ -423,11 +413,11 @@ export default function Header({ auth }: { auth: AuthState }) {
 
               <li>
                 <NavLink
-                  className="flex w-full"
+                  className="flex w-full text-gray-700 dark:text-gray-200"
                   preload="intent"
                   activeProps={{
                     className:
-                      "bg-gray-700 flex w-full text-white dark:bg-gray-700",
+                      "bg-gray-200 flex w-full text-gray-900 dark:bg-gray-700 dark:text-white",
                   }}
                   to="/support"
                   onClick={() => setMobileMenuOpen(false)}
@@ -439,10 +429,11 @@ export default function Header({ auth }: { auth: AuthState }) {
               {auth.isAuthenticated ? (
                 <li>
                   <NavLink
-                    className="flex w-full"
+                    className="flex w-full text-gray-700 dark:text-gray-200"
                     preload="intent"
                     activeProps={{
-                      className: "bg-gray-700 text-white dark:bg-gray-700",
+                      className:
+                        "bg-gray-200 flex w-full text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
                     to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
@@ -455,13 +446,13 @@ export default function Header({ auth }: { auth: AuthState }) {
               {auth.isAuthenticated ? (
                 <li>
                   <NavLink
-                    className="flex w-full"
+                    className="flex w-full text-gray-700 dark:text-gray-200"
                     preload="intent"
                     activeProps={{
                       className:
-                        "bg-gray-700 flex flex-1 text-white dark:bg-gray-700",
+                        "bg-gray-200 flex w-full text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
-                    to="/dashboard"
+                    to="/chat"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Chat
@@ -472,11 +463,11 @@ export default function Header({ auth }: { auth: AuthState }) {
               {auth.isAuthenticated && auth.hasRole("admin") ? (
                 <li>
                   <NavLink
-                    className="flex w-full"
+                    className="flex w-full text-gray-700 dark:text-gray-200"
                     preload="intent"
                     activeProps={{
                       className:
-                        "bg-gray-700 flex flex-1 text-white dark:bg-gray-700",
+                        "bg-gray-200 flex w-full text-gray-900 dark:bg-gray-700 dark:text-white",
                     }}
                     to="/admin"
                     onClick={() => setMobileMenuOpen(false)}

@@ -52,8 +52,8 @@ export default function SupportComment({
   }
 
   return (
-    <div className="rounded-md border border-white/10 bg-gray-800">
-      <div className="flex items-center justify-between rounded-t-md border-b border-white/10 bg-gray-900 px-4 py-2">
+    <div className="rounded-md border border-gray-200 bg-white dark:border-white/10 dark:bg-gray-800">
+      <div className="flex items-center justify-between rounded-t-md border-b border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-gray-900">
         <div className="flex h-full items-center gap-2">
           {ticket.user.image && (
             <img
@@ -63,7 +63,7 @@ export default function SupportComment({
             />
           )}
           <p className="text-[12px] text-gray-400">
-            <span className="text-sm font-semibold text-white">
+            <span className="text-sm font-semibold text-gray-900 dark:text-white">
               {ticket.user.name}
             </span>{" "}
             commented{" "}
@@ -84,7 +84,7 @@ export default function SupportComment({
         <div className="flex items-center gap-2">
           {auth.session?.user.id === ticket.user.id && (
             <span
-              className="rounded-lg border px-2 py-0.5 text-[12px] text-gray-400"
+              className="rounded-lg border border-gray-300 px-2 py-0.5 text-[12px] text-gray-500 dark:border-gray-600 dark:text-gray-400"
               title="This user is the author of this issue"
             >
               Author
@@ -93,7 +93,7 @@ export default function SupportComment({
           {auth.session?.user.id === ticket.user.id || auth.hasRole("admin") ? (
             <MenuTrigger>
               <MenuButton
-                className="mr-2 cursor-pointer rounded p-1 hover:bg-gray-700"
+                className="mr-2 cursor-pointer rounded p-1 hover:bg-gray-200 dark:hover:bg-gray-700"
                 aria-label="Message actions"
               >
                 <EllipsisIcon
@@ -103,16 +103,16 @@ export default function SupportComment({
               </MenuButton>
 
               <Popover className="z-50">
-                <Menu className="min-w-[120px] rounded-md border border-gray-700 bg-gray-800 p-1 text-sm shadow-lg">
+                <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
                   <MenuItem
-                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-200 hover:bg-gray-700"
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                     onAction={handleEdit}
                   >
                     Edit
                   </MenuItem>
 
                   <MenuItem
-                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-400 hover:bg-gray-700"
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
                     onAction={handleDelete}
                   >
                     Delete
@@ -123,12 +123,12 @@ export default function SupportComment({
           ) : null}
         </div>
       </div>
-      <div className="custom-scrollbar min-h-0 max-w-screen overflow-auto rounded-b-md bg-gray-900">
+      <div className="custom-scrollbar min-h-0 max-w-screen overflow-auto rounded-b-md bg-white dark:bg-gray-900">
         <div
           className={cn(
             "min-w-fit text-base",
-            "prose prose-sm prose-invert p-6",
-            "text-white",
+            "prose prose-sm dark:prose-invert p-6",
+            "text-gray-900 dark:text-white",
             "[&_code]:overflow-visible! [&_pre]:overflow-visible!",
           )}
           key={ticket.id}

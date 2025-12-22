@@ -28,7 +28,7 @@ export const Route = createFileRoute("/terms")({
 function TermsPage() {
   return (
     <div className="flex-none overflow-y-auto outline-none">
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:bg-white">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="mb-12 text-center">
@@ -688,7 +688,7 @@ function TermsPage() {
           </div>
 
           {/* Contact Us */}
-          <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
+          <div className="rounded-lg border border-gray-300 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <MailQuestionMarkIcon
                 className="mr-2"
@@ -706,8 +706,8 @@ function TermsPage() {
                 contact@codewizard.training
               </a>
             </p>
-            <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
-              <p className="text-gray-300 italic dark:text-gray-200">
+            <div className="mt-6 rounded-lg bg-gray-100 p-4 dark:bg-gray-700">
+              <p className="text-gray-600 italic dark:text-gray-300">
                 Our terms are designed to be clear and fair. Reach out if
                 anything needs clarification.
               </p>

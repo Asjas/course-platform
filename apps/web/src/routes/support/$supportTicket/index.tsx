@@ -52,10 +52,10 @@ function SupportTicketIndexPage() {
   if (!ticket) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-        <h1 className="text-lg font-semibold text-white md:text-3xl">
+        <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
           Ticket Not Found
         </h1>
-        <p className="mt-2 text-sm text-gray-300">
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           The support ticket you are looking for does not exist.
         </p>
         <Link
@@ -94,7 +94,7 @@ function SupportTicketIndexPage() {
         </Link>
         {copied ? (
           <button
-            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-gray-900 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:text-white dark:hover:bg-gray-600"
             aria-label="Link copied"
           >
             <CheckIcon
@@ -105,7 +105,7 @@ function SupportTicketIndexPage() {
           </button>
         ) : (
           <button
-            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-white hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500"
+            className="block cursor-pointer rounded-md px-2 py-2 text-center text-sm font-semibold text-gray-900 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:text-white dark:hover:bg-gray-600"
             aria-label="Copy ticket link"
             onClick={() => {
               const ticketUrl = `${window.location.origin}/support/${ticket.id}`;
@@ -128,15 +128,17 @@ function SupportTicketIndexPage() {
       <div className="mt-4 flex flex-col gap-8">
         <div className="sm:flex sm:items-center">
           <div className="sm:flex-auto">
-            <h1 className="text-lg font-semibold text-white md:text-3xl">
+            <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
               {ticket.title}
             </h1>
-            <p className="mt-2 text-[16px] text-gray-400">#{ticket.id}</p>
+            <p className="mt-2 text-[16px] text-gray-500 dark:text-gray-400">
+              #{ticket.id}
+            </p>
 
-            <div className="mt-4 flex items-center gap-2 border-b border-gray-600 pb-4 text-white">
+            <div className="mt-4 flex items-center gap-2 border-b border-gray-300 pb-4 text-gray-900 dark:border-gray-600 dark:text-white">
               <div
                 className={cn(
-                  "flex items-center rounded-2xl px-2.5 py-1.5",
+                  "flex items-center rounded-2xl px-2.5 py-1.5 text-white",
                   ticket.status === "open" ? "bg-green-700" : "bg-red-700",
                 )}
               >
@@ -150,7 +152,7 @@ function SupportTicketIndexPage() {
                   <span className="ml-2 text-sm font-medium">Closed</span>
                 )}
               </div>
-              <p className="text-sm font-[300] text-gray-200">
+              <p className="text-sm font-[300] text-gray-700 dark:text-gray-200">
                 <span className="font-semibold">{ticket.user.name}</span> opened
                 this ticket{" "}
                 <span className="font-[500]">
@@ -212,7 +214,7 @@ function SupportTicketIndexPage() {
           </div>
         ) : (
           <div className="mt-10 flex w-full flex-col items-center">
-            <p className="mt-4 flex items-center gap-2 text-sm text-gray-300">
+            <p className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <TriangleAlertIcon
                 size={22}
                 color="orange"

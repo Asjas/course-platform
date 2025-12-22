@@ -95,12 +95,12 @@ function AuthenticatedChatChannelPage() {
 
   return (
     <div className="grid-container">
-      <div className="bg-gray-900/75 px-4 py-1">
-        <h1 className="text-xl font-bold">{`# ${channelId}`}</h1>
+      <div className="border-b border-gray-200 bg-gray-50 px-4 py-1 dark:border-gray-700 dark:bg-gray-900/75">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">{`# ${channelId}`}</h1>
       </div>
 
       <section
-        className="scrollable-section custom-scrollbar bg-gray-800"
+        className="scrollable-section custom-scrollbar bg-white dark:bg-gray-800"
         ref={scrollRef}
       >
         {!cachedMessages || cachedMessages.length === 0 ? (

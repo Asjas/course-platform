@@ -220,7 +220,7 @@ function CookiePolicyPage() {
           </div>
 
           {/* Contact Section */}
-          <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
+          <div className="rounded-lg border border-gray-300 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <MailQuestionMarkIcon
                 className="mr-2"
@@ -239,8 +239,8 @@ function CookiePolicyPage() {
               </a>
               .
             </p>
-            <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
-              <p className="text-gray-300 italic dark:text-gray-200">
+            <div className="mt-6 rounded-lg bg-gray-100 p-4 dark:bg-gray-700">
+              <p className="text-gray-600 italic dark:text-gray-300">
                 We value your privacy. Reach out with concerns.
               </p>
             </div>

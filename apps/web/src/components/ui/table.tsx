@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function Table({ children }: { children: ReactNode }) {
   return (
-    <table className="relative min-w-full divide-y divide-white/15">
+    <table className="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">
       {children}
     </table>
   );
@@ -13,7 +13,7 @@ export function TableHeader({ children }: { children: ReactNode }) {
 }
 
 export function TableHeaderRow({ children }: { children: ReactNode }) {
-  return <tr className="bg-gray-700/50">{children}</tr>;
+  return <tr className="bg-gray-200/80 dark:bg-gray-700/50">{children}</tr>;
 }
 
 export function TableHeaderCell({
@@ -27,7 +27,7 @@ export function TableHeaderCell({
 }) {
   return (
     <th
-      className={`py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3 ${className}`}
+      className={`py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white ${className}`}
       scope={scope}
     >
       {children}
@@ -36,11 +36,19 @@ export function TableHeaderCell({
 }
 
 export function TableBody({ children }: { children: ReactNode }) {
-  return <tbody className="bg-gray-900">{children}</tbody>;
+  return (
+    <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+      {children}
+    </tbody>
+  );
 }
 
 export function TableBodyRow({ children }: { children: ReactNode }) {
-  return <tr className="even:bg-gray-800/50">{children}</tr>;
+  return (
+    <tr className="odd:bg-white even:bg-gray-100/80 hover:bg-gray-50 dark:odd:bg-gray-900 dark:even:bg-gray-800/50 dark:hover:bg-gray-800">
+      {children}
+    </tr>
+  );
 }
 
 export function TableBodyCell({
@@ -52,7 +60,7 @@ export function TableBodyCell({
 }) {
   return (
     <td
-      className={`py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3 ${className}`}
+      className={`py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-3 dark:text-white ${className}`}
     >
       {children}
     </td>

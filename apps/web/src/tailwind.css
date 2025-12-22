@@ -25,16 +25,28 @@ body {
   text-wrap: wrap;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+/* Remove native select arrow styling */
+select[data-slot="select"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+select[data-slot="select"]::-ms-expand {
+  display: none;
 }
 
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-gray-600) var(--color-gray-900);
+  scrollbar-color: var(--color-gray-400) var(--color-gray-200);
   scrollbar-gutter: stable;
+}
+
+.dark .custom-scrollbar {
+  scrollbar-color: var(--color-gray-600) var(--color-gray-900);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -42,16 +54,16 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-gray-800; /* Track background */
+  @apply bg-gray-200 dark:bg-gray-800; /* Track background */
   border-radius: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply rounded bg-gray-500; /* Thumb color and rounded edges */
+  @apply rounded bg-gray-400 dark:bg-gray-500; /* Thumb color and rounded edges */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-600; /* Thumb color on hover */
+  @apply bg-gray-500 dark:bg-gray-600; /* Thumb color on hover */
 }
 
 /* https://webkit.org/blog/16831/line-height-units/ */
@@ -95,22 +107,22 @@ h6 {
 
 /* Inline code – exactly like GitHub */
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  @apply rounded bg-gray-600/50 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
+  @apply rounded bg-gray-200/80 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-gray-800 dark:bg-gray-600/50 dark:text-white;
 }
 
 /* Make sure inline code inside paragraphs also gets styled */
 .prose p code {
-  @apply rounded bg-gray-600/50 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-white;
+  @apply rounded bg-gray-200/80 px-1.5 py-0.5 font-['Berkeley_Mono'] text-sm font-bold text-gray-800 dark:bg-gray-600/50 dark:text-white;
 }
 
 /* Code blocks – container */
 .prose pre {
-  @apply relative my-4 rounded-lg bg-gray-800/35 p-0;
+  @apply relative my-4 rounded-lg bg-gray-100 p-0 dark:bg-gray-800/35;
 }
 
 /* <pre><code> inside */
 .prose pre code {
-  @apply block p-4 text-sm leading-relaxed font-bold tracking-wider;
+  @apply block p-4 text-sm leading-relaxed font-bold tracking-wider text-gray-800 dark:text-white;
   counter-reset: line;
 }
 
@@ -254,11 +266,11 @@ h6 {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
+  --background: #1f2937; /* Tailwind gray-800 - matches production */
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: #374151; /* Tailwind gray-700 - slightly lighter for cards */
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: #374151;
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
@@ -277,7 +289,7 @@ h6 {
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --sidebar: #1f2937; /* Tailwind gray-800 - matches production */
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
   --sidebar-primary-foreground: oklch(0.985 0 0);

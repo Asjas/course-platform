@@ -66,10 +66,10 @@ function AdminUsersPage() {
     <>
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-white md:text-3xl">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             Users
           </h1>
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Manage all users registered in your application. You can
             impersonate, edit, or delete users from this panel.
           </p>
@@ -84,27 +84,13 @@ function AdminUsersPage() {
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHeaderCell>Name</TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Email
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Username
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Role
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Status
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Verified
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Created At
-                    </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
-                      Updated At
-                    </TableHeaderCell>
+                    <TableHeaderCell>Email</TableHeaderCell>
+                    <TableHeaderCell>Username</TableHeaderCell>
+                    <TableHeaderCell>Role</TableHeaderCell>
+                    <TableHeaderCell>Status</TableHeaderCell>
+                    <TableHeaderCell>Verified</TableHeaderCell>
+                    <TableHeaderCell>Created At</TableHeaderCell>
+                    <TableHeaderCell>Updated At</TableHeaderCell>
                     <TableHeaderCell className="py-3.5 pr-4 pl-3 sm:pr-3">
                       <span className="sr-only">Actions</span>
                     </TableHeaderCell>
@@ -114,7 +100,7 @@ function AdminUsersPage() {
                 <TableBody>
                   {usersWithUsername.map((user) => (
                     <TableBodyRow key={user.id}>
-                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-3">
                         <span className="flex items-center gap-2">
                           <UserRoundIcon
                             size={16}
@@ -129,7 +115,7 @@ function AdminUsersPage() {
                         </span>
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         <span className="flex items-center gap-2">
                           <MailIcon
                             size={16}
@@ -139,26 +125,26 @@ function AdminUsersPage() {
                         </span>
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         {user?.username || "Not set"}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         <span
                           className={cn(
                             "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
                             user.role === "admin"
-                              ? "bg-purple-900/30 text-purple-400 ring-purple-500/50"
-                              : "bg-blue-900/30 text-blue-400 ring-blue-500/50",
+                              ? "bg-purple-100 text-purple-700 ring-purple-500/50 dark:bg-purple-900/30 dark:text-purple-400"
+                              : "bg-blue-100 text-blue-700 ring-blue-500/50 dark:bg-blue-900/30 dark:text-blue-400",
                           )}
                         >
                           {user.role}
                         </span>
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         {user.banned ? (
-                          <span className="inline-flex items-center gap-1 rounded-md bg-red-900/30 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-red-500/50 ring-inset">
+                          <span className="inline-flex items-center gap-1 rounded-md bg-red-100 px-2 py-1 text-xs font-medium text-red-700 ring-1 ring-red-500/50 ring-inset dark:bg-red-900/30 dark:text-red-400">
                             <BanIcon
                               size={14}
                               aria-hidden="true"
@@ -166,25 +152,25 @@ function AdminUsersPage() {
                             Banned
                           </span>
                         ) : (
-                          <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
+                          <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-500/50 ring-inset dark:bg-green-900/30 dark:text-green-400">
                             Active
                           </span>
                         )}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         {user?.emailVerified ? (
-                          <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
+                          <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-500/50 ring-inset dark:bg-green-900/30 dark:text-green-400">
                             Yes
                           </span>
                         ) : (
-                          <span className="inline-flex items-center rounded-md bg-yellow-900/30 px-2 py-1 text-xs font-medium text-yellow-400 ring-1 ring-yellow-500/50 ring-inset">
+                          <span className="inline-flex items-center rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700 ring-1 ring-yellow-500/50 ring-inset dark:bg-yellow-900/30 dark:text-yellow-400">
                             No
                           </span>
                         )}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         {intlFormat(new Date(user.createdAt), {
                           day: "numeric",
                           year: "numeric",
@@ -194,7 +180,7 @@ function AdminUsersPage() {
                         })}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
                         {intlFormat(new Date(user.updatedAt), {
                           day: "numeric",
                           year: "numeric",
@@ -204,7 +190,7 @@ function AdminUsersPage() {
                         })}
                       </TableBodyCell>
 
-                      <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
+                      <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 sm:pr-3 dark:text-gray-400">
                         <div className="flex justify-end gap-4">
                           <button
                             className="cursor-pointer text-green-400 no-underline hover:text-green-300 hover:underline"
@@ -293,7 +279,9 @@ function AdminUsersPage() {
         </div>
       ) : (
         <div className="mt-20 flex justify-center">
-          <p className="text-md text-gray-300">No users found.</p>
+          <p className="text-md text-gray-600 dark:text-gray-300">
+            No users found.
+          </p>
         </div>
       )}
 

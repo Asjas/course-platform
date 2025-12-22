@@ -36,10 +36,10 @@ function SupportIndexPage() {
     <div className="mt-20 mb-20 h-full px-4 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-white md:text-3xl">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             Support Tickets
           </h1>
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Welcome to the support ticket system. Here you can view all support
             tickets submitted by users.
           </p>
@@ -55,7 +55,7 @@ function SupportIndexPage() {
             </Link>
           </div>
         ) : (
-          <p className="mt-4 flex items-center gap-2 text-sm text-gray-300">
+          <p className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
             <TriangleAlertIcon
               size={22}
               color="orange"
@@ -73,22 +73,22 @@ function SupportIndexPage() {
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHeaderCell>User</TableHeaderCell>
-                    <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-white sm:pl-3">
+                    <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white">
                       Title
                     </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Module
                     </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Lesson
                     </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Priority
                     </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Status
                     </TableHeaderCell>
-                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-white">
+                    <TableHeaderCell className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-white">
                       Comments
                     </TableHeaderCell>
                     <TableHeaderCell className="py-3.5 pr-4 pl-3 sm:pr-3">
@@ -100,7 +100,7 @@ function SupportIndexPage() {
                 <TableBody>
                   {tickets.map((ticket) => (
                     <TableBodyRow key={ticket.id}>
-                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-3 dark:text-white">
                         {ticket.user.image ? (
                           <img
                             className="mr-2 inline-block h-6 w-6 rounded-full object-cover"
@@ -111,19 +111,19 @@ function SupportIndexPage() {
                         {ticket.user.name}
                       </TableBodyCell>
 
-                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-white sm:pl-3">
+                      <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-3 dark:text-white">
                         {ticket.title}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                         {ticket.module?.order || "N/A"}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                         {ticket.lesson?.order || "N/A"}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                         {ticket.priority === "low" ? (
                           <span className="inline-flex items-center rounded-md bg-blue-900/30 px-2 py-1 text-xs font-medium text-blue-400 ring-1 ring-blue-500/50 ring-inset">
                             Low
@@ -143,7 +143,7 @@ function SupportIndexPage() {
                         )}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
                         {ticket.status === "open" ? (
                           <span className="inline-flex items-center rounded-md bg-green-900/30 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-green-500/50 ring-inset">
                             Open
@@ -155,8 +155,8 @@ function SupportIndexPage() {
                         )}
                       </TableBodyCell>
 
-                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-400">
-                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-white">
+                      <TableBodyCell className="px-3 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
+                        <span className="inline-flex items-center px-2 py-1 text-xs font-medium text-gray-900 dark:text-white">
                           {ticket.comments.length}
                         </span>
                       </TableBodyCell>
@@ -240,7 +240,7 @@ function SupportIndexPage() {
         </div>
       ) : (
         <div className="flex h-full items-center justify-center">
-          <p className="text-md text-gray-300">
+          <p className="text-md text-gray-600 dark:text-gray-300">
             No support tickets created yet.
           </p>
         </div>

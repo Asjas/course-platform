@@ -144,7 +144,7 @@ export default function ChatMessageEditor({
   };
 
   return (
-    <div className="overflow-hidden rounded-md border border-gray-700">
+    <div className="overflow-hidden rounded-md border border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
       {/* Hidden file input */}
       <input
         className="hidden"
@@ -162,12 +162,12 @@ export default function ChatMessageEditor({
         onDrop={handleDrop}
       >
         {/* Comment Box */}
-        <div className="bg-gray-900 p-2">
+        <div className="bg-gray-100 p-2 dark:bg-gray-900">
           <textarea
             className={cn(
-              "size-to-fit block min-h-5 w-full resize-y rounded-sm bg-white px-2 py-2.5 text-sm text-gray-900",
-              "focus:ring-1 focus:ring-green-500 focus:outline-none",
-              "dark:bg-gray-900 dark:text-white",
+              "size-to-fit block min-h-5 w-full resize-y rounded-sm border border-gray-200 bg-white px-2 py-2.5 text-sm text-gray-900",
+              "focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none",
+              "dark:border-gray-700 dark:bg-gray-900 dark:text-white",
               "placeholder-gray-500 dark:placeholder-gray-400",
               "box-border leading-normal",
               "custom-scrollbar",
@@ -190,15 +190,15 @@ export default function ChatMessageEditor({
           />
         </div>
       </div>
-      <div className="flex justify-between px-2">
+      <div className="flex justify-between border-t border-gray-200 bg-gray-100 px-2 dark:border-gray-700 dark:bg-gray-800">
         <div
-          className="mr-3 flex items-center text-xs text-white"
+          className="mr-3 flex items-center text-xs text-gray-700 dark:text-gray-200"
           role="toolbar"
           aria-label="Formatting tools"
         >
           {/* Action Bar */}
           <button
-            className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Upload attachment"
             onClick={() => fileInputRef.current?.click()}
@@ -210,7 +210,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add header text"
             onClick={() => {
@@ -241,7 +241,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add bold text"
             onClick={() => {
@@ -331,7 +331,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add italic text"
             onClick={() => {
@@ -427,7 +427,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Insert a quote"
             onClick={() => {
@@ -506,7 +506,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add inline code"
             onClick={() => {
@@ -598,7 +598,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add a link"
             onClick={() => {
@@ -675,7 +675,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add a bulleted list"
             onClick={() => {
@@ -754,7 +754,7 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"
             aria-label="Add a numbered list"
             onClick={() => {

@@ -17,10 +17,10 @@ export default function PricingSection() {
     <Section>
       <div className="container mx-auto max-w-6xl">
         <div className="mb-16 text-center">
-          <h2 className="mb-6 text-4xl font-bold md:text-5xl">
+          <h2 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl dark:text-white">
             Simple, Transparent Pricing
           </h2>
-          <p className="mx-auto max-w-2xl text-xl text-slate-300">
+          <p className="mx-auto max-w-2xl text-xl text-gray-600 dark:text-slate-300">
             These skills are timeless, and essential even in an AI-driven world.
           </p>
         </div>
@@ -30,7 +30,7 @@ export default function PricingSection() {
             <CardHeader>
               Preview Course
               <img
-                className="inline h-10"
+                className="inline h-10 invert dark:invert-0"
                 src="fastify-white.svg"
                 alt="Fastify"
               />
@@ -51,7 +51,7 @@ export default function PricingSection() {
               <div className="flex items-center justify-between text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -66,7 +66,7 @@ export default function PricingSection() {
 
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -77,7 +77,7 @@ export default function PricingSection() {
 
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -101,7 +101,7 @@ export default function PricingSection() {
             <CardHeader>
               Full Course
               <img
-                className="inline h-10"
+                className="inline h-10 invert dark:invert-0"
                 src="fastify-white.svg"
                 alt="Fastify"
               />
@@ -120,7 +120,7 @@ export default function PricingSection() {
               <div className="flex items-center justify-between text-xs text-gray-500">
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -135,7 +135,7 @@ export default function PricingSection() {
 
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -146,7 +146,7 @@ export default function PricingSection() {
 
                 <div className="flex items-center gap-1">
                   <svg
-                    className="h-4 w-4 text-green-400"
+                    className="h-4 w-4 text-green-500 dark:text-green-400"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -170,7 +170,7 @@ export default function PricingSection() {
           <div className="flex flex-wrap items-center justify-center gap-8">
             <div className="flex items-center gap-2">
               <svg
-                className="h-5 w-5 text-green-400"
+                className="h-5 w-5 text-green-500 dark:text-green-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -180,11 +180,13 @@ export default function PricingSection() {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              <span className="pt-1 text-gray-300">Cancel anytime</span>
+              <span className="pt-1 text-gray-600 dark:text-gray-300">
+                Cancel anytime
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <svg
-                className="h-5 w-5 text-green-400"
+                className="h-5 w-5 text-green-500 dark:text-green-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -194,11 +196,13 @@ export default function PricingSection() {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              <span className="pt-1 text-gray-300">30-day guarantee</span>
+              <span className="pt-1 text-gray-600 dark:text-gray-300">
+                30-day guarantee
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <svg
-                className="h-5 w-5 text-green-400"
+                className="h-5 w-5 text-green-500 dark:text-green-400"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -208,7 +212,9 @@ export default function PricingSection() {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              <span className="pt-1 text-gray-300">Secure payment</span>
+              <span className="pt-1 text-gray-600 dark:text-gray-300">
+                Secure payment
+              </span>
             </div>
           </div>
         </div>

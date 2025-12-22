@@ -7,6 +7,7 @@ import NotFoundComponent from "~/components/not-found";
 import { defaultAuthState, useAuth } from "~/lib/auth.context";
 import { AuthProvider } from "~/lib/auth.provider";
 import { queryClient } from "~/lib/query.client";
+import { ThemeProvider } from "~/lib/theme.provider";
 import reportWebVitals from "~/reportWebVitals";
 import { routeTree } from "~/routeTree.gen";
 import "~/tailwind.css";
@@ -49,11 +50,13 @@ if (rootElement && !rootElement.innerHTML) {
 
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </StrictMode>,
   );
 }

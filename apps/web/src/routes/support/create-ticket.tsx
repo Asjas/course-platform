@@ -10,10 +10,10 @@ function SupportCreateTicketPage() {
     <div className="mx-auto mt-10 w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-lg font-semibold text-white md:text-3xl">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             Create Support Ticket
           </h1>
-          <p className="mt-2 text-sm text-gray-300">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Please fill out the form below to create a support ticket.
           </p>
         </div>

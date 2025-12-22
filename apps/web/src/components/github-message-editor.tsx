@@ -169,16 +169,16 @@ export default function GitHubMessageEditor({
   };
 
   return (
-    <div className="overflow-hidden rounded-md border border-gray-700">
+    <div className="overflow-hidden rounded-md border border-gray-300 dark:border-gray-700">
       {/* Editor Header */}
-      <div className="flex justify-between border-b-[1px] border-gray-700 bg-gray-800">
+      <div className="flex justify-between border-b-[1px] border-gray-300 bg-gray-200 dark:border-gray-700 dark:bg-gray-800">
         <div className="-mb-px pt-2.5">
           <button
             className={cn(
               "ml-2 flex-1 cursor-pointer px-4 py-2 text-sm font-medium",
               activeTab === "write"
-                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-700 bg-gray-900 text-white"
-                : "border-gray-700 bg-gray-800 text-gray-400",
+                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-300 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                : "border-gray-300 bg-gray-200 text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400",
             )}
             type="button"
             onClick={() => setActiveTab("write")}
@@ -189,8 +189,8 @@ export default function GitHubMessageEditor({
             className={cn(
               "flex-1 cursor-pointer px-4 py-2 text-sm font-medium",
               activeTab === "preview"
-                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-700 bg-gray-900 text-white"
-                : "border-gray-700 bg-gray-800 text-gray-400",
+                ? "rounded-t-md border-t border-r border-b-0 border-l border-gray-300 bg-white text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                : "border-gray-300 bg-gray-200 text-gray-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400",
             )}
             type="button"
             onClick={() => setActiveTab("preview")}
@@ -202,13 +202,13 @@ export default function GitHubMessageEditor({
 
         {activeTab === "write" ? (
           <div
-            className="mr-3 flex items-center text-xs text-white"
+            className="mr-3 flex items-center text-xs text-gray-900 dark:text-white"
             role="toolbar"
             aria-label="Formatting tools"
           >
             {/* Action Bar */}
             <button
-              className="cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add header text"
               onClick={() => {
@@ -239,7 +239,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add bold text"
               onClick={() => {
@@ -335,7 +335,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add italic text"
               onClick={() => {
@@ -432,7 +432,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Insert a quote"
               onClick={() => {
@@ -514,7 +514,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add inline code"
               onClick={() => {
@@ -612,7 +612,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add a link"
               onClick={() => {
@@ -689,7 +689,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add a bulleted list"
               onClick={() => {
@@ -771,7 +771,7 @@ export default function GitHubMessageEditor({
               />
             </button>
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-600"
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-300 dark:hover:bg-gray-600"
               type="button"
               aria-label="Add a numbered list"
               onClick={() => {
@@ -878,7 +878,7 @@ export default function GitHubMessageEditor({
           onDrop={handleDrop}
         >
           {/* Comment Box */}
-          <div className="bg-gray-900 p-2">
+          <div className="bg-gray-100 p-2 dark:bg-gray-900">
             <textarea
               className={cn(
                 "size-to-fit block min-h-[180px] w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
@@ -904,12 +904,12 @@ export default function GitHubMessageEditor({
           <div className="absolute top-2 right-2"></div>
         </div>
       ) : (
-        <div className="custom-scrollbar min-h-[180px] overflow-auto bg-gray-900">
+        <div className="custom-scrollbar min-h-[180px] overflow-auto bg-white dark:bg-gray-900">
           <div
             className={cn(
               "min-w-fit text-base",
-              "prose prose-sm prose-invert p-6",
-              "text-white",
+              "prose prose-sm dark:prose-invert p-6",
+              "text-gray-900 dark:text-white",
               "[&_code]:overflow-visible! [&_pre]:overflow-visible!",
             )}
             dangerouslySetInnerHTML={{ __html: preview }}
@@ -918,7 +918,7 @@ export default function GitHubMessageEditor({
       )}
 
       {/* Markdown Help (GitHub-style) */}
-      <div className="col-span-full flex justify-between gap-4 border-t border-gray-700 bg-gray-800 px-3 py-2 text-xs text-white">
+      <div className="col-span-full flex justify-between gap-4 border-t border-gray-300 bg-gray-200 px-3 py-2 text-xs text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
         <label className="relative inline-block w-full cursor-pointer hover:underline">
           {/* Hidden native file input */}
           <input
@@ -939,7 +939,7 @@ export default function GitHubMessageEditor({
         </label>
         <span>
           <a
-            className="text-white hover:text-green-600"
+            className="text-gray-900 hover:text-green-600 dark:text-white"
             target="_blank"
             rel="noopener noreferrer"
             href="https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax"

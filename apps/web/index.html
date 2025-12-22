@@ -1,6 +1,6 @@
 <!doctype html>
 <html
-  class="custom-scrollbar dark"
+  class="custom-scrollbar"
   lang="en"
 >
   <head>
@@ -32,6 +32,23 @@
       href="https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&family=Geist:wght@100..900&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // Prevent flash of wrong theme by applying before first paint
+      (function () {
+        const theme = localStorage.getItem("theme-preference");
+        const systemDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const shouldBeDark =
+          theme === "dark" || (theme !== "light" && systemDark);
+        if (shouldBeDark) {
+          document.documentElement.classList.add("dark");
+        }
+        document.documentElement.style.colorScheme = shouldBeDark
+          ? "dark"
+          : "light";
+      })();
+    </script>
     <script type="module">
       // https://vite.dev/guide/build.html#load-error-handling
       window.addEventListener("vite:preloadError", () => {
@@ -39,9 +56,9 @@
       });
     </script>
   </head>
-  <body class="h-full min-h-screen">
+  <body class="bg-background h-full min-h-screen">
     <div
-      class="h-full w-full bg-gray-800"
+      class="h-full w-full"
       id="app"
     ></div>
     <script

@@ -1025,7 +1025,7 @@ function PrivacyPage() {
           </div>
 
           {/* Contact Section */}
-          <div className="rounded-lg border border-gray-700 bg-gray-800 p-8 shadow-lg dark:border-gray-600 dark:bg-gray-700">
+          <div className="rounded-lg border border-gray-300 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-gray-800">
             <h2 className="mb-4 flex items-center text-2xl font-bold text-gray-900 dark:text-white">
               <MailQuestionMarkIcon
                 className="mr-2"
@@ -1038,7 +1038,7 @@ function PrivacyPage() {
               Questions about this policy or your data? Contact our Data
               Protection Officer:
             </p>
-            <p className="text-gray-200 dark:text-gray-200">
+            <p className="text-gray-700 dark:text-gray-200">
               A-J Roos, DPO —{" "}
               <a
                 className="text-green-400 underline hover:text-green-300"
@@ -1047,8 +1047,8 @@ function PrivacyPage() {
                 privacy@codewizard.training
               </a>
             </p>
-            <div className="mt-6 rounded-lg bg-gray-700 p-4 dark:bg-gray-600">
-              <p className="text-gray-300 italic dark:text-gray-200">
+            <div className="mt-6 rounded-lg bg-gray-100 p-4 dark:bg-gray-700">
+              <p className="text-gray-600 italic dark:text-gray-300">
                 As developers, we value your privacy. Let us know if you have
                 concerns, and we&apos;ll address them promptly.
               </p>

@@ -10,11 +10,11 @@ export const Route = createFileRoute("/_authenticated/account")({
 function AuthenticatedAccountPage() {
   return (
     <div className="mx-auto mt-20 w-full max-w-7xl px-4 md:px-6 lg:px-8">
-      <h1 className="text-2xl/9 font-semibold text-white">
+      <h1 className="text-2xl/9 font-semibold text-gray-900 dark:text-white">
         Account Management
       </h1>
 
-      <p className="mt-1 text-sm/6 text-gray-400">
+      <p className="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">
         Manage your account email and password.
       </p>
 

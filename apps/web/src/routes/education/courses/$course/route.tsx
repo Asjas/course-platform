@@ -20,7 +20,7 @@ function CourseLayout() {
             <div className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-10">
               {/* Left Column */}
               <div className="lg:col-span-7">
-                <h1 className="mb-6 text-4xl font-bold text-white sm:text-5xl">
+                <h1 className="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl dark:text-white">
                   {courseName}
                 </h1>
                 <Outlet />
@@ -28,8 +28,8 @@ function CourseLayout() {
               {/* Right Column */}
               <div className="space-y-6 lg:col-span-3">
                 {/* Course Card */}
-                <div className="overflow-hidden rounded-xl border border-gray-700 bg-gray-800 shadow-2xl">
-                  <div className="relative aspect-video w-full bg-gray-700">
+                <div className="overflow-hidden rounded-xl border border-gray-300 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-800">
+                  <div className="relative aspect-video w-full bg-gray-200 dark:bg-gray-700">
                     <img
                       className="object-fit h-full w-full opacity-80"
                       alt="Vim"
@@ -42,7 +42,7 @@ function CourseLayout() {
                   </div>
 
                   <div className="p-6">
-                    <div className="mb-6 space-y-3 text-sm text-gray-300">
+                    <div className="mb-6 space-y-3 text-sm text-gray-600 dark:text-gray-300">
                       <div className="flex items-center gap-2">
                         <svg
                           className="h-4 w-4 text-gray-400"

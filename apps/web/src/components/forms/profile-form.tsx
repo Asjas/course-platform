@@ -289,7 +289,7 @@ export default function ProfileForm() {
                     )}
                     <div className="flex flex-col gap-2">
                       <input
-                        className="mt-2 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white shadow-none inset-ring inset-ring-white/5 hover:bg-white/20 md:mt-0"
+                        className="mt-2 rounded-md bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-900 shadow-none inset-ring inset-ring-gray-300 hover:bg-gray-200 md:mt-0 dark:bg-white/10 dark:text-white dark:inset-ring-white/5 dark:hover:bg-white/20"
                         id={field.name}
                         type="file"
                         name={field.name}

@@ -223,14 +223,14 @@ export default function EditUserSheet({
                 children={(field) => (
                   <div>
                     <label
-                      className="block text-sm font-medium text-white"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Name <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                         id={field.name}
                         name={field.name}
                         type="text"
@@ -253,14 +253,14 @@ export default function EditUserSheet({
                 children={(field) => (
                   <div>
                     <label
-                      className="block text-sm font-medium text-white"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Email <span className="text-red-400">*</span>
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                         id={field.name}
                         name={field.name}
                         type="email"
@@ -283,14 +283,14 @@ export default function EditUserSheet({
                 children={(field) => (
                   <div>
                     <label
-                      className="block text-sm font-medium text-white"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Username
                     </label>
                     <div className="mt-2">
                       <input
-                        className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                         id={field.name}
                         name={field.name}
                         type="text"
@@ -313,7 +313,7 @@ export default function EditUserSheet({
                 children={(field) => (
                   <div>
                     <label
-                      className="block text-sm font-medium text-white"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Profile Color
@@ -331,7 +331,7 @@ export default function EditUserSheet({
                         onBlur={field.handleBlur}
                       />
                       <input
-                        className="block flex-1 rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                        className="block flex-1 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                         type="text"
                         value={field.state.value ?? ""}
                         onChange={(event) =>
@@ -349,16 +349,16 @@ export default function EditUserSheet({
               <form.Field
                 name="emailVerified"
                 children={(field) => (
-                  <div className="rounded-lg border border-gray-700 p-4">
+                  <div className="rounded-lg border border-gray-300 p-4 dark:border-gray-700">
                     <div className="flex items-center justify-between">
                       <div>
                         <span
-                          className="text-sm font-medium text-white"
+                          className="text-sm font-medium text-gray-900 dark:text-white"
                           id={`${field.name}-label`}
                         >
                           Email Verified
                         </span>
-                        <p className="mt-1 text-xs text-gray-400">
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           {field.state.value
                             ? "User's email has been verified"
                             : "User has not verified their email"}
@@ -412,7 +412,7 @@ export default function EditUserSheet({
                 children={(field) => (
                   <div>
                     <label
-                      className="block text-sm font-medium text-white"
+                      className="block text-sm font-medium text-gray-900 dark:text-white"
                       htmlFor={field.name}
                     >
                       Role <span className="text-red-400">*</span>
@@ -441,19 +441,19 @@ export default function EditUserSheet({
               />
 
               {/* Banned Section */}
-              <div className="rounded-lg border border-gray-700 p-4">
+              <div className="rounded-lg border border-gray-300 p-4 dark:border-gray-700">
                 <form.Field
                   name="banned"
                   children={(field) => (
                     <div className="flex items-center justify-between">
                       <div>
                         <span
-                          className="text-sm font-medium text-white"
+                          className="text-sm font-medium text-gray-900 dark:text-white"
                           id={`${field.name}-label`}
                         >
                           Banned
                         </span>
-                        <p className="mt-1 text-xs text-gray-400">
+                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                           {field.state.value
                             ? "User is currently banned"
                             : "User is not banned"}
@@ -495,14 +495,14 @@ export default function EditUserSheet({
                           children={(field) => (
                             <div>
                               <label
-                                className="block text-sm font-medium text-white"
+                                className="block text-sm font-medium text-gray-900 dark:text-white"
                                 htmlFor={field.name}
                               >
                                 Ban Reason
                               </label>
                               <div className="mt-2">
                                 <textarea
-                                  className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                                   id={field.name}
                                   name={field.name}
                                   value={field.state.value ?? ""}
@@ -524,17 +524,17 @@ export default function EditUserSheet({
                           children={(field) => (
                             <div>
                               <label
-                                className="block text-sm font-medium text-white"
+                                className="block text-sm font-medium text-gray-900 dark:text-white"
                                 htmlFor={field.name}
                               >
                                 Ban Expires
                               </label>
-                              <p className="mt-1 text-xs text-gray-400">
+                              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                 Leave empty for permanent ban
                               </p>
                               <div className="mt-2">
                                 <input
-                                  className="block w-full rounded-md bg-gray-800 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-600 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6"
+                                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-600 sm:text-sm/6 dark:bg-gray-800 dark:text-white dark:outline-gray-600 dark:placeholder:text-gray-400"
                                   id={field.name}
                                   name={field.name}
                                   type="datetime-local"
@@ -558,7 +558,7 @@ export default function EditUserSheet({
           </div>
 
           {/* Form Actions - Fixed Footer */}
-          <div className="flex gap-3 border-t border-gray-700 p-4">
+          <div className="flex gap-3 border-t border-gray-300 p-4 dark:border-gray-700">
             <form.Subscribe
               selector={(state) => [state.isDirty, state.isSubmitting]}
               children={([isDirty, isSubmitting]) => (
@@ -576,7 +576,7 @@ export default function EditUserSheet({
                     {isSubmitting ? "Saving..." : "Save Changes"}
                   </button>
                   <button
-                    className="flex-1 cursor-pointer rounded-md px-4 py-2 text-sm font-semibold text-white ring-1 ring-gray-600 ring-inset hover:bg-gray-800"
+                    className="flex-1 cursor-pointer rounded-md px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-100 dark:text-white dark:ring-gray-600 dark:hover:bg-gray-800"
                     type="button"
                     onClick={handleClose}
                   >

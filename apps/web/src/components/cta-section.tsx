@@ -5,13 +5,13 @@ export default function CTASection() {
   return (
     <Section>
       <div className="container mx-auto max-w-4xl text-center">
-        <h2 className="mb-6 text-4xl font-bold md:text-5xl">
+        <h2 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl dark:text-white">
           Ready to level up your skills?
         </h2>
-        <p className="mt-8 mb-4 text-xl text-slate-300">
+        <p className="mt-8 mb-4 text-xl text-gray-600 dark:text-slate-300">
           Create a free account.
         </p>
-        <p className="mb-12 text-xl text-slate-300">
+        <p className="mb-12 text-xl text-gray-600 dark:text-slate-300">
           Watch a few free modules and then decide on whether you want to buy
           the course or not.
         </p>
@@ -23,7 +23,7 @@ export default function CTASection() {
             Try it free
           </Link>
         </div>
-        <p className="mt-4 text-sm text-gray-400">
+        <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
           Cancel anytime. 30-Day money-back guarantee.
         </p>
       </div>
