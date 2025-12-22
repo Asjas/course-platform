@@ -7,6 +7,7 @@ import {
   Minimize2,
 } from "lucide-react";
 import { useState } from "react";
+import YouTube, { YouTubeProps } from "react-youtube";
 import { CoursesCollection, useCourseById } from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
 
@@ -78,6 +79,44 @@ function LessonPage() {
     setLayoutMode((prev) => (prev === "sidebar" ? "fullscreen" : "sidebar"));
   };
 
+  // YouTube player options
+  const youtubeOpts: YouTubeProps["opts"] = {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      autoplay: 0,
+      modestbranding: 1,
+      rel: 0,
+    },
+  };
+
+  // Extract video ID from URL if it's a full URL
+  const getVideoId = (urlOrId: string): string => {
+    // If it's already just an ID (11 characters), return it
+    if (urlOrId.length === 11 && !urlOrId.includes("/")) {
+      return urlOrId;
+    }
+    // Try to extract from various YouTube URL formats
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+      /youtube\.com\/embed\/([^&\n?#]+)/,
+      /youtube\.com\/v\/([^&\n?#]+)/,
+    ];
+    for (const pattern of patterns) {
+      const match = urlOrId.match(pattern);
+      if (match && match[1]) {
+        return match[1];
+      }
+    }
+    // If no pattern matches, assume it's an ID
+    return urlOrId;
+  };
+
+  const videoId =
+    lesson.videoProvider === "youtube" && lesson.videoUrl
+      ? getVideoId(lesson.videoUrl)
+      : null;
+
   return (
     <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -119,25 +158,28 @@ function LessonPage() {
       {/* Main Content */}
       <div className="grow overflow-hidden">
         {layoutMode === "sidebar" ? (
-          <div className="grid h-full lg:grid-cols-[1fr_400px]">
+          <div className="sidebar grid h-full lg:grid-cols-[1fr_400px]">
             {/* Video Player */}
-            <div className="flex flex-col overflow-y-auto bg-black">
+            <div className="flex flex-col bg-black">
               <div className="aspect-video w-full bg-gray-900">
-                {lesson.videoProvider === "youtube" && lesson.videoUrl && (
-                  <iframe
+                {videoId ? (
+                  <YouTube
+                    videoId={videoId}
+                    opts={youtubeOpts}
                     className="h-full w-full"
-                    src={`https://www.youtube.com/embed/${lesson.videoUrl}`}
-                    title={lesson.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
+                    iframeClassName="h-full w-full"
                   />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-white">
+                    <p>No video available</p>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Lesson Playlist */}
             <div className="flex flex-col overflow-hidden border-l border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-              <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+              <div className="shrink-0 border-b border-gray-200 p-4 dark:border-gray-700">
                 <h2 className="font-semibold text-gray-900 dark:text-white">
                   Course Content
                 </h2>
@@ -145,8 +187,11 @@ function LessonPage() {
 
               <div className="grow overflow-y-auto">
                 {sortedModules.map((module) => (
-                  <div key={module.id} className="border-b border-gray-200 dark:border-gray-700">
-                    <div className="bg-gray-50 p-3 dark:bg-gray-900">
+                  <div
+                    key={module.id}
+                    className="border-b border-gray-200 dark:border-gray-700"
+                  >
+                    <div className="shrink-0 bg-gray-50 p-3 dark:bg-gray-900">
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                         {module.title}
                       </h3>
@@ -202,26 +247,29 @@ function LessonPage() {
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-col overflow-y-auto">
+          <div className="flex h-full flex-col overflow-hidden">
             {/* Fullscreen Video Player */}
-            <div className="w-full bg-black">
+            <div className="shrink-0 w-full bg-black">
               <div className="aspect-video w-full bg-gray-900">
-                {lesson.videoProvider === "youtube" && lesson.videoUrl && (
-                  <iframe
+                {videoId ? (
+                  <YouTube
+                    videoId={videoId}
+                    opts={youtubeOpts}
                     className="h-full w-full"
-                    src={`https://www.youtube.com/embed/${lesson.videoUrl}`}
-                    title={lesson.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
+                    iframeClassName="h-full w-full"
                   />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-white">
+                    <p>No video available</p>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Notes and Playlist Side by Side */}
-            <div className="grid grow gap-6 overflow-y-auto bg-white p-6 dark:bg-gray-800 md:grid-cols-2">
+            <div className="grid grow gap-6 overflow-hidden bg-white p-6 dark:bg-gray-800 md:grid-cols-2">
               {/* Notes Section */}
-              <div className="space-y-4">
+              <div className="space-y-4 overflow-y-auto">
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                   {lesson.title}
                 </h2>
@@ -236,17 +284,20 @@ function LessonPage() {
               </div>
 
               {/* Playlist Section */}
-              <div className="rounded-lg border border-gray-200 dark:border-gray-700">
-                <div className="border-b border-gray-200 p-4 dark:border-gray-700">
+              <div className="flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="shrink-0 border-b border-gray-200 p-4 dark:border-gray-700">
                   <h3 className="font-semibold text-gray-900 dark:text-white">
                     Course Content
                   </h3>
                 </div>
 
-                <div className="max-h-[600px] overflow-y-auto">
+                <div className="grow overflow-y-auto">
                   {sortedModules.map((module) => (
-                    <div key={module.id} className="border-b border-gray-200 dark:border-gray-700">
-                      <div className="bg-gray-50 p-3 dark:bg-gray-900">
+                    <div
+                      key={module.id}
+                      className="border-b border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="shrink-0 bg-gray-50 p-3 dark:bg-gray-900">
                         <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                           {module.title}
                         </h4>
