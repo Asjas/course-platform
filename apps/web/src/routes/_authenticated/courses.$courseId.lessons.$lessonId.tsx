@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Check,
   ChevronRight,
@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {
+  Tabs as AriaTabs,
   Tab,
   TabList,
   TabPanel,
-  Tabs as AriaTabs,
 } from "react-aria-components";
 import YouTube, { YouTubeProps } from "react-youtube";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
@@ -157,17 +157,17 @@ function LessonPage() {
       <div className="border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
         <div className="flex items-center justify-between">
           <Link
+            className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
             to="/courses/$courseId"
             params={{ courseId }}
-            className="flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
           >
             <ChevronRight className="mr-1 h-4 w-4 rotate-180" />
             Back to Course
           </Link>
 
           <button
-            onClick={toggleLayout}
             className="flex items-center gap-2 rounded-lg bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            onClick={toggleLayout}
             aria-label={
               layoutMode === "sidebar"
                 ? "Switch to fullscreen mode"
@@ -198,9 +198,9 @@ function LessonPage() {
               <div className="aspect-video w-full bg-gray-900">
                 {videoId ? (
                   <YouTube
+                    className="h-full w-full"
                     videoId={videoId}
                     opts={youtubeOpts}
-                    className="h-full w-full"
                     iframeClassName="h-full w-full"
                   />
                 ) : (
@@ -222,8 +222,8 @@ function LessonPage() {
               <div className="grow overflow-y-auto">
                 {sortedModules.map((module) => (
                   <div
-                    key={module.id}
                     className="border-b border-gray-200 dark:border-gray-700"
+                    key={module.id}
                   >
                     <div className="shrink-0 bg-gray-50 p-3 dark:bg-gray-900">
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -240,16 +240,16 @@ function LessonPage() {
                             return (
                               <li key={moduleLesson.id}>
                                 <Link
-                                  to="/courses/$courseId/lessons/$lessonId"
-                                  params={{
-                                    courseId,
-                                    lessonId: moduleLesson.id,
-                                  }}
                                   className={`flex items-center gap-3 border-l-4 p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 ${
                                     isActive
                                       ? "border-green-600 bg-green-50 dark:bg-green-900/20"
                                       : "border-transparent"
                                   }`}
+                                  to="/courses/$courseId/lessons/$lessonId"
+                                  params={{
+                                    courseId,
+                                    lessonId: moduleLesson.id,
+                                  }}
                                 >
                                   <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
                                     <Check className="h-3 w-3 text-gray-300 dark:text-gray-600" />
@@ -283,13 +283,13 @@ function LessonPage() {
         ) : (
           <div className="flex h-full flex-col overflow-hidden">
             {/* Fullscreen Video Player */}
-            <div className="shrink-0 w-full bg-black">
+            <div className="w-full shrink-0 bg-black">
               <div className="aspect-video w-full bg-gray-900">
                 {videoId ? (
                   <YouTube
+                    className="h-full w-full"
                     videoId={videoId}
                     opts={youtubeOpts}
-                    className="h-full w-full"
                     iframeClassName="h-full w-full"
                   />
                 ) : (
@@ -301,72 +301,75 @@ function LessonPage() {
             </div>
 
             {/* Notes and Playlist Side by Side */}
-            <div className="grid grow gap-6 overflow-hidden bg-white p-6 dark:bg-gray-800 md:grid-cols-2">
+            <div className="grid grow gap-6 overflow-hidden bg-white p-6 md:grid-cols-2 dark:bg-gray-800">
               {/* Tabs Section (replaces Notes) */}
               <div className="flex flex-col overflow-hidden">
                 <AriaTabs
+                  className="flex h-full flex-col"
                   selectedKey={selectedTab}
                   onSelectionChange={(key) => setSelectedTab(key as string)}
-                  className="flex h-full flex-col"
                 >
                   <TabList
-                    aria-label="Lesson content"
                     className="flex border-b border-gray-200 dark:border-gray-700"
+                    aria-label="Lesson content"
                   >
                     <Tab
-                      id="transcription"
                       className={({ isSelected }) =>
                         cn(
-                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors outline-none",
                           isSelected
                             ? "border-green-600 text-green-600"
                             : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
                         )
                       }
+                      id="transcription"
                     >
                       Transcription
                     </Tab>
                     <Tab
-                      id="notes"
                       className={({ isSelected }) =>
                         cn(
-                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors outline-none",
                           isSelected
                             ? "border-green-600 text-green-600"
                             : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
                         )
                       }
+                      id="notes"
                     >
                       Notes
                     </Tab>
                     <Tab
-                      id="support"
                       className={({ isSelected }) =>
                         cn(
-                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium outline-none transition-colors",
+                          "cursor-pointer border-b-2 px-4 py-2 text-sm font-medium transition-colors outline-none",
                           isSelected
                             ? "border-green-600 text-green-600"
                             : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
                         )
                       }
+                      id="support"
                     >
                       Support ({lessonTickets?.length || 0})
                     </Tab>
                   </TabList>
 
                   <TabPanel
-                    id="transcription"
                     className="grow overflow-y-auto p-4"
+                    id="transcription"
                   >
-                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
                       <p className="text-gray-700 dark:text-gray-300">
                         Transcription coming soon...
                       </p>
                     </div>
                   </TabPanel>
 
-                  <TabPanel id="notes" className="grow overflow-y-auto p-4">
-                    <div className="prose prose-sm max-w-none dark:prose-invert">
+                  <TabPanel
+                    className="grow overflow-y-auto p-4"
+                    id="notes"
+                  >
+                    <div className="prose prose-sm dark:prose-invert max-w-none">
                       <p className="text-gray-700 dark:text-gray-300">
                         Notes coming soon...
                       </p>
@@ -374,8 +377,8 @@ function LessonPage() {
                   </TabPanel>
 
                   <TabPanel
-                    id="support"
                     className="flex grow flex-col overflow-hidden p-4"
+                    id="support"
                   >
                     {viewMode === "list" && (
                       <div className="flex grow flex-col overflow-hidden">
@@ -384,8 +387,8 @@ function LessonPage() {
                             Support Tickets
                           </h3>
                           <button
-                            onClick={() => setViewMode("create")}
                             className="flex items-center gap-2 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700"
+                            onClick={() => setViewMode("create")}
                           >
                             <Plus className="h-4 w-4" />
                             New Ticket
@@ -398,12 +401,12 @@ function LessonPage() {
                           <div className="grow space-y-2 overflow-y-auto">
                             {lessonTickets.map((ticket) => (
                               <button
+                                className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
                                 key={ticket.id}
                                 onClick={() => {
                                   setSelectedTicketId(ticket.id);
                                   setViewMode("view");
                                 }}
-                                className="w-full rounded-lg border border-gray-200 bg-white p-4 text-left transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
                               >
                                 <div className="mb-2 flex items-start justify-between">
                                   <h4 className="font-semibold text-gray-900 dark:text-white">
@@ -420,7 +423,7 @@ function LessonPage() {
                                     {ticket.status}
                                   </span>
                                 </div>
-                                <p className="text-sm text-gray-600 line-clamp-2 dark:text-gray-400">
+                                <p className="line-clamp-2 text-sm text-gray-600 dark:text-gray-400">
                                   {ticket.description}
                                 </p>
                                 <div className="mt-2 flex items-center gap-4 text-xs text-gray-500 dark:text-gray-500">
@@ -449,8 +452,8 @@ function LessonPage() {
                             Create New Ticket
                           </h3>
                           <button
-                            onClick={() => setViewMode("list")}
                             className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+                            onClick={() => setViewMode("list")}
                           >
                             ← Back to list
                           </button>
@@ -463,11 +466,11 @@ function LessonPage() {
                       <div className="grow overflow-y-auto">
                         <div className="mb-4 flex items-center justify-between">
                           <button
+                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                             onClick={() => {
                               setViewMode("list");
                               setSelectedTicketId(null);
                             }}
-                            className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
                           >
                             ← Back to list
                           </button>
@@ -532,8 +535,8 @@ function LessonPage() {
                 <div className="grow overflow-y-auto">
                   {sortedModules.map((module) => (
                     <div
-                      key={module.id}
                       className="border-b border-gray-200 dark:border-gray-700"
+                      key={module.id}
                     >
                       <div className="shrink-0 bg-gray-50 p-3 dark:bg-gray-900">
                         <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -550,16 +553,16 @@ function LessonPage() {
                               return (
                                 <li key={moduleLesson.id}>
                                   <Link
-                                    to="/courses/$courseId/lessons/$lessonId"
-                                    params={{
-                                      courseId,
-                                      lessonId: moduleLesson.id,
-                                    }}
                                     className={`flex items-center gap-3 border-l-4 p-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900 ${
                                       isActive
                                         ? "border-green-600 bg-green-50 dark:bg-green-900/20"
                                         : "border-transparent"
                                     }`}
+                                    to="/courses/$courseId/lessons/$lessonId"
+                                    params={{
+                                      courseId,
+                                      lessonId: moduleLesson.id,
+                                    }}
                                   >
                                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 border-gray-300 dark:border-gray-600">
                                       <Check className="h-3 w-3 text-gray-300 dark:text-gray-600" />

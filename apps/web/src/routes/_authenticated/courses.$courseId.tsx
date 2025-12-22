@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import {
   Award,
   BookOpen,
@@ -76,7 +76,7 @@ function CourseDetailPage() {
   // Calculate counts
   const moduleCount = course.modules?.length || 0;
   const lessonCount = course.totalLessons || 0;
-  
+
   // Mock data for now - these would come from the backend
   const courseProgress = 45; // percentage
   const currentRating = 4.5; // out of 5
@@ -93,8 +93,8 @@ function CourseDetailPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <Link
-        to="/dashboard"
         className="mb-4 inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+        to="/dashboard"
       >
         <ChevronRight className="mr-1 h-4 w-4 rotate-180" />
         Back to Courses
@@ -125,11 +125,11 @@ function CourseDetailPage() {
                   .sort((a, b) => a.order - b.order)
                   .map((module, index) => (
                     <div
-                      key={module.id}
                       className={cn(
                         "border-b border-gray-200 dark:border-gray-700",
                         index === course.modules!.length - 1 && "border-b-0",
                       )}
+                      key={module.id}
                     >
                       <div className="bg-gray-50 p-4 dark:bg-gray-900">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -149,12 +149,12 @@ function CourseDetailPage() {
                             .map((lesson) => (
                               <li key={lesson.id}>
                                 <Link
+                                  className="flex items-center gap-3 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
                                   to="/courses/$courseId/lessons/$lessonId"
                                   params={{
                                     courseId: course.id,
                                     lessonId: lesson.id,
                                   }}
-                                  className="flex items-center gap-3 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
                                 >
                                   <Play className="h-5 w-5 shrink-0 text-green-600" />
                                   <span className="grow text-gray-900 dark:text-white">
@@ -187,9 +187,9 @@ function CourseDetailPage() {
           {course.thumbnailUrl && (
             <div className="overflow-hidden rounded-lg">
               <img
+                className="h-auto w-full"
                 src={course.thumbnailUrl}
                 alt={course.name}
-                className="h-auto w-full"
               />
             </div>
           )}
@@ -256,9 +256,9 @@ function CourseDetailPage() {
               <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
                 {/* Certificate Link */}
                 <Link
+                  className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                   to="/certificate/$courseId"
                   params={{ courseId }}
-                  className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                 >
                   <Award className="h-4 w-4" />
                   View Certificate
@@ -279,8 +279,8 @@ function CourseDetailPage() {
 
                 {/* Leave Rating Button */}
                 <button
-                  onClick={() => setIsRatingSheetOpen(true)}
                   className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
+                  onClick={() => setIsRatingSheetOpen(true)}
                 >
                   Leave a Rating
                 </button>
@@ -313,12 +313,12 @@ function CourseDetailPage() {
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
+                    className="transition-transform hover:scale-110"
                     key={star}
                     type="button"
                     onClick={() => setRating(star)}
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
-                    className="transition-transform hover:scale-110"
                   >
                     <Star
                       className={cn(
@@ -341,18 +341,18 @@ function CourseDetailPage() {
             {/* Comment */}
             <div>
               <label
-                htmlFor="review-comment"
                 className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                htmlFor="review-comment"
               >
                 Your Review (Optional)
               </label>
               <textarea
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-hidden dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
                 id="review-comment"
                 rows={6}
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
                 placeholder="Tell us about your experience with this course..."
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-hidden dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
               />
             </div>
 
@@ -366,9 +366,9 @@ function CourseDetailPage() {
 
             {/* Submit Button */}
             <button
+              className="w-full rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               onClick={handleRatingSubmit}
               disabled={rating === 0}
-              className="w-full rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
             >
               Submit Rating
             </button>

@@ -42,8 +42,8 @@ function AuthenticatedDashboardPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => (
             <CourseCard
-              key={course.id}
               id={course.id}
+              key={course.id}
               name={course.name}
               description={course.description}
               thumbnailUrl={course.thumbnailUrl}

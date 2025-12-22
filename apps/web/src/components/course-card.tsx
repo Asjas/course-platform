@@ -32,16 +32,16 @@ export function CourseCard({
 }: CourseCardProps) {
   return (
     <Link
+      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
       to="/courses/$courseId"
       params={{ courseId: id }}
-      className="group block overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg dark:border-gray-700 dark:bg-gray-800"
     >
       <div className="relative aspect-video overflow-hidden bg-gray-100 dark:bg-gray-900">
         {thumbnailUrl ? (
           <img
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
             src={thumbnailUrl}
             alt={name}
-            className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
