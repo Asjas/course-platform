@@ -70,7 +70,7 @@ function AdminUsersPage() {
             Users
           </h1>
           <p className="mt-2 text-sm text-gray-300">
-            Manage all users registered in your application. You can ban, unban,
+            Manage all users registered in your application. You can
             impersonate, edit, or delete users from this panel.
           </p>
         </div>
@@ -199,53 +199,6 @@ function AdminUsersPage() {
 
                       <TableBodyCell className="py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap sm:pr-3">
                         <div className="flex justify-end gap-4">
-                          {user.banned ? (
-                            <button
-                              className="cursor-pointer text-green-500 no-underline hover:text-green-600 hover:underline"
-                              onClick={async () => {
-                                const { error } =
-                                  await authClient.admin.unbanUser({
-                                    userId: user.id,
-                                  });
-
-                                if (error) {
-                                  toast.error(
-                                    `Failed to unban user: ${user.username || user.name}`,
-                                  );
-                                  console.error(error);
-                                  return;
-                                }
-
-                                router.invalidate();
-                              }}
-                            >
-                              Unban
-                              <span className="sr-only">, {user.name}</span>
-                            </button>
-                          ) : (
-                            <button
-                              className="cursor-pointer text-orange-500 no-underline hover:text-orange-600 hover:underline"
-                              onClick={async () => {
-                                const { error } =
-                                  await authClient.admin.banUser({
-                                    userId: user.id,
-                                  });
-
-                                if (error) {
-                                  toast.error(
-                                    `Failed to ban user: ${user.username || user.name}`,
-                                  );
-                                  console.error(error);
-                                  return;
-                                }
-
-                                router.invalidate();
-                              }}
-                            >
-                              Ban
-                              <span className="sr-only">, {user.name}</span>
-                            </button>
-                          )}
                           <button
                             className="cursor-pointer text-green-500 no-underline hover:text-green-600 hover:underline"
                             onClick={async () => {
