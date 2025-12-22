@@ -1,6 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import {
-  Award,
   BookOpen,
   ChevronRight,
   Clock,
@@ -16,7 +15,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+import {
+  type CourseWithDetails,
+  CoursesCollection,
+  useCourseById,
+} from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -25,18 +28,40 @@ export const Route = createFileRoute("/_authenticated/courses/$courseId")({
   loader: async ({ params }) => {
     await CoursesCollection.preload();
     // If the course with full details isn't in collection, fetch it
-    const courseInCollection = CoursesCollection.findOne(params.courseId);
-    if (!courseInCollection?.modules) {
+    const courseInCollection = CoursesCollection.get(params.courseId);
+    // Check if we have modules with nested lessons (from getCourseById)
+    const hasFullDetails =
+      courseInCollection?.modules &&
+      courseInCollection.modules.length > 0 &&
+      "lessons" in courseInCollection.modules[0];
+    if (!hasFullDetails) {
       const fullCourse = await trpcClient.courses.getById.query({
         courseId: params.courseId,
       });
       // Update the collection with full course details
       if (fullCourse) {
-        CoursesCollection.upsert(fullCourse);
+        CoursesCollection.utils.writeUpsert(fullCourse);
       }
     }
   },
 });
+
+// Type for lesson in module
+interface ModuleLesson {
+  id: string;
+  title: string;
+  order: number;
+  duration: number | null;
+}
+
+// Type for module with lessons
+interface ModuleWithLessons {
+  id: string;
+  title: string;
+  order: number;
+  description: string;
+  lessons?: ModuleLesson[];
+}
 
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0m";
@@ -73,9 +98,13 @@ function CourseDetailPage() {
     );
   }
 
+  // Cast to CourseWithDetails since the loader ensures we have full course data
+  const fullCourse = course as CourseWithDetails;
+  const modules = (fullCourse.modules || []) as ModuleWithLessons[];
+
   // Calculate counts
-  const moduleCount = course.modules?.length || 0;
-  const lessonCount = course.totalLessons || 0;
+  const moduleCount = modules.length;
+  const lessonCount = fullCourse.totalLessons || 0;
 
   // Mock data for now - these would come from the backend
   const courseProgress = 45; // percentage
@@ -101,12 +130,12 @@ function CourseDetailPage() {
       </Link>
 
       <h1 className="mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-        {course.name}
+        {fullCourse.name}
       </h1>
 
-      {course.description && (
+      {fullCourse.description && (
         <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-          {course.description}
+          {fullCourse.description}
         </p>
       )}
 
@@ -119,17 +148,15 @@ function CourseDetailPage() {
           </h2>
 
           <div className="overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-            {course.modules && course.modules.length > 0 ? (
+            {modules.length > 0 ? (
               <div>
-                {course.modules
+                {modules
                   .sort((a, b) => a.order - b.order)
                   .map((module, index) => (
                     <div
                       className={cn(
                         "border-b border-gray-200 dark:border-gray-700",
-                        course.modules &&
-                          index === course.modules.length - 1 &&
-                          "border-b-0",
+                        index === modules.length - 1 && "border-b-0",
                       )}
                       key={module.id}
                     >
@@ -154,7 +181,7 @@ function CourseDetailPage() {
                                   className="flex items-center gap-3 p-4 transition-colors hover:bg-gray-50 dark:hover:bg-gray-900"
                                   to="/courses/$courseId/lessons/$lessonId"
                                   params={{
-                                    courseId: course.id,
+                                    courseId: fullCourse.id,
                                     lessonId: lesson.id,
                                   }}
                                 >
@@ -186,12 +213,12 @@ function CourseDetailPage() {
         {/* Right: Course Info Card (Static) */}
         <div className="flex flex-col gap-6">
           {/* Course Thumbnail */}
-          {course.thumbnailUrl && (
+          {fullCourse.thumbnailUrl && (
             <div className="overflow-hidden rounded-lg">
               <img
                 className="h-auto w-full"
-                src={course.thumbnailUrl}
-                alt={course.name}
+                src={fullCourse.thumbnailUrl}
+                alt={fullCourse.name}
               />
             </div>
           )}
@@ -231,7 +258,7 @@ function CourseDetailPage() {
                   <span className="text-sm">Duration</span>
                 </div>
                 <span className="font-semibold text-gray-900 dark:text-white">
-                  {formatDuration(course.totalDuration)}
+                  {formatDuration(fullCourse.totalDuration)}
                 </span>
               </div>
 
@@ -256,15 +283,7 @@ function CourseDetailPage() {
 
               {/* Divider */}
               <div className="border-t border-gray-200 pt-4 dark:border-gray-700">
-                {/* Certificate Link */}
-                <Link
-                  className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 transition-colors hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
-                  to="/certificate/$courseId"
-                  params={{ courseId }}
-                >
-                  <Award className="h-4 w-4" />
-                  View Certificate
-                </Link>
+                {/* TODO: Create /certificate/$courseId route for certificate feature */}
 
                 {/* Rating */}
                 <div className="mb-3 flex items-center justify-between">

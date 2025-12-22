@@ -14,11 +14,12 @@ import {
   TabList,
   TabPanel,
 } from "react-aria-components";
-import YouTube, { YouTubeProps } from "react-youtube";
+import YouTube, { type YouTubeProps } from "react-youtube";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import {
+  type CourseWithDetails,
   CoursesCollection,
   SupportTicketsCollection,
   useCourseById,
@@ -38,17 +39,39 @@ export const Route = createFileRoute(
       SupportTicketsCollection.preload(),
     ]);
     // Ensure we have the full course with modules and lessons
-    const courseInCollection = CoursesCollection.findOne(params.courseId);
-    if (!courseInCollection?.modules) {
+    const courseInCollection = CoursesCollection.get(params.courseId);
+    // Check if we have modules with nested lessons (from getCourseById)
+    const hasFullDetails =
+      courseInCollection?.modules &&
+      courseInCollection.modules.length > 0 &&
+      "lessons" in courseInCollection.modules[0];
+    if (!hasFullDetails) {
       const fullCourse = await trpcClient.courses.getById.query({
         courseId: params.courseId,
       });
       if (fullCourse) {
-        CoursesCollection.upsert(fullCourse);
+        CoursesCollection.utils.writeUpsert(fullCourse);
       }
     }
   },
 });
+
+// Type for lesson in module
+interface ModuleLesson {
+  id: string;
+  title: string;
+  order: number;
+  duration: number | null;
+}
+
+// Type for module with lessons
+interface ModuleWithLessons {
+  id: string;
+  title: string;
+  order: number;
+  description: string;
+  lessons?: ModuleLesson[];
+}
 
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0:00";
@@ -85,10 +108,13 @@ function LessonPage() {
     );
   }
 
+  // Cast to CourseWithDetails since the loader ensures we have full course data
+  const fullCourse = course as CourseWithDetails;
+
   // Find the lesson in the course modules
   let lesson = null;
-  for (const module of course.modules || []) {
-    const found = module.lessons?.find((l) => l.id === lessonId);
+  for (const module of fullCourse.modules || []) {
+    const found = module.lessons?.find((l: ModuleLesson) => l.id === lessonId);
     if (found) {
       lesson = found;
       break;
@@ -103,8 +129,10 @@ function LessonPage() {
     );
   }
 
-  const sortedModules = course.modules
-    ? course.modules.sort((a, b) => a.order - b.order)
+  const sortedModules: ModuleWithLessons[] = fullCourse.modules
+    ? (fullCourse.modules as ModuleWithLessons[]).sort(
+        (a, b) => a.order - b.order,
+      )
     : [];
 
   const toggleLayout = () => {
@@ -510,7 +538,9 @@ function LessonPage() {
                                 {selectedTicket.comments.map((comment) => (
                                   <SupportComment
                                     key={comment.id}
-                                    comment={comment}
+                                    ticket={selectedTicket}
+                                    content={comment.comment}
+                                    date={comment.createdAt}
                                   />
                                 ))}
                               </div>

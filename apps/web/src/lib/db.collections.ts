@@ -1,11 +1,32 @@
+import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
+import type {
+  AllCourses,
+  CourseById,
+} from "@apps/server/src/routers/courses/queries";
+import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { toast } from "sonner";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
+type SupportTicket = AllSupportTickets[number];
+type Coupon = CouponsReturnType[number];
+
+// Course type that supports both list (getAllCourses) and detail (getCourseById) data
+// The collection starts with getAllCourses data, but may be updated with getCourseById data
+// which includes modules with nested lessons
+type CourseFromList = AllCourses[number];
+type CourseWithDetails = NonNullable<CourseById>;
+
+// Union type to support both shapes - the collection may contain either
+type Course = CourseFromList | CourseWithDetails;
+
+// Export the detailed type for components that need the full structure
+export type { CourseWithDetails };
+
 export const SupportTicketsCollection = createCollection(
-  queryCollectionOptions({
+  queryCollectionOptions<SupportTicket>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
@@ -43,7 +64,7 @@ export const SupportTicketsCollection = createCollection(
 );
 
 export const CouponsCollection = createCollection(
-  queryCollectionOptions({
+  queryCollectionOptions<Coupon>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: trpc.coupons.getAllCoupons.queryKey(),
@@ -136,7 +157,7 @@ export function useCouponById({ couponId }: { couponId: string }) {
 }
 
 export const CoursesCollection = createCollection(
-  queryCollectionOptions({
+  queryCollectionOptions<Course>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: trpc.courses.getAll.queryKey(),
@@ -145,7 +166,7 @@ export const CoursesCollection = createCollection(
 );
 
 export const CourseProgressCollection = createCollection(
-  queryCollectionOptions({
+  queryCollectionOptions<{ id: string }>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["courseProgress"],
@@ -157,7 +178,7 @@ export const CourseProgressCollection = createCollection(
 );
 
 export const LessonProgressCollection = createCollection(
-  queryCollectionOptions({
+  queryCollectionOptions<{ id: string }>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["lessonProgress"],
