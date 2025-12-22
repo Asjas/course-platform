@@ -137,8 +137,15 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
-      - name: Run database migrations
+      - name: Create test schema
+        run: |
+          # Create schema if it doesn't exist
+          echo "CREATE SCHEMA IF NOT EXISTS \"${{ env.TEST_SCHEMA }}\";" | psql "${{ secrets.DATABASE_URL }}"
+
+      - name: Run database migrations in test schema
         run: pnpm --filter @apps/server drizzle:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}?options=-c%20search_path=${{ env.TEST_SCHEMA }}
 
       - name: Seed test database
         run: pnpm tsx scripts/seed-test-data.ts "${{ env.TEST_SCHEMA }}"
@@ -183,8 +190,15 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
-      - name: Run database migrations
+      - name: Create test schema
+        run: |
+          # Create schema if it doesn't exist
+          echo "CREATE SCHEMA IF NOT EXISTS \"${{ env.TEST_SCHEMA }}\";" | psql "${{ secrets.DATABASE_URL }}"
+
+      - name: Run database migrations in test schema
         run: pnpm --filter @apps/server drizzle:migrate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}?options=-c%20search_path=${{ env.TEST_SCHEMA }}
 
       - name: Seed test database
         run: pnpm tsx scripts/seed-test-data.ts "${{ env.TEST_SCHEMA }}"
