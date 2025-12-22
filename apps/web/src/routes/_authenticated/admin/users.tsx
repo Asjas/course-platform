@@ -71,7 +71,7 @@ function AdminUsersPage() {
           </h1>
           <p className="mt-2 text-sm text-gray-300">
             Manage all users registered in your application. You can ban, unban,
-            impersonate, or delete users from this panel.
+            impersonate, edit, or delete users from this panel.
           </p>
         </div>
       </div>
