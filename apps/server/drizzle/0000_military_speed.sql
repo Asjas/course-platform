@@ -1,4 +1,4 @@
-CREATE SCHEMA "my_schema";
+CREATE SCHEMA IF NOT EXISTS "my_schema";
 --> statement-breakpoint
 CREATE TYPE "my_schema"."discountType" AS ENUM('percentage', 'fixed');--> statement-breakpoint
 CREATE TYPE "my_schema"."course_access" AS ENUM('public', 'private', 'unlisted');--> statement-breakpoint
