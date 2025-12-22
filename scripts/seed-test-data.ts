@@ -133,7 +133,7 @@ function generateFakeUser() {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
   const username = faker.internet
-    .userName({ firstName, lastName })
+    .username({ firstName, lastName })
     .toLowerCase();
 
   return {
@@ -142,7 +142,7 @@ function generateFakeUser() {
     username,
     displayUsername: username,
     color: faker.color.rgb(),
-    email: faker.internet.email({ firstName, lastName }).toLowerCase(),
+    email: faker.internet.email().toLowerCase(),
     emailVerified: true,
     image: faker.image.avatar(),
     role: faker.helpers.arrayElement(["member", "admin"] as const),
