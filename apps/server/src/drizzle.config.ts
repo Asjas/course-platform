@@ -1,13 +1,19 @@
-// Use relative path because drizzle-kit doesn't resolve ~/* aliases
-import config from "./config.js";
 import { defineConfig } from "drizzle-kit";
+
+// Read DATABASE_URL directly from environment to avoid module resolution issues
+// when drizzle-kit executes this config file directly
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL environment variable is required");
+}
 
 export default defineConfig({
   out: "./drizzle",
   schema: ["src/db/my-schema.ts", "src/db/schema"],
   dialect: "postgresql",
   dbCredentials: {
-    url: config.DATABASE_URL,
+    url: databaseUrl,
   },
   casing: "snake_case",
 });
