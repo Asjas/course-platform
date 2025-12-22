@@ -134,3 +134,52 @@ export function useCouponById({ couponId }: { couponId: string }) {
     [couponId],
   );
 }
+
+export const CoursesCollection = createCollection(
+  queryCollectionOptions({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.courses.getAll.queryKey(),
+    queryFn: () => trpcClient.courses.getAll.query(),
+  }),
+);
+
+export const CourseProgressCollection = createCollection(
+  queryCollectionOptions({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["courseProgress"],
+    queryFn: async () => {
+      // This will be empty initially and populated per course
+      return [];
+    },
+  }),
+);
+
+export const LessonProgressCollection = createCollection(
+  queryCollectionOptions({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["lessonProgress"],
+    queryFn: async () => {
+      // This will be empty initially and populated per lesson
+      return [];
+    },
+  }),
+);
+
+export function useCourses() {
+  return useLiveQuery(CoursesCollection);
+}
+
+export function useCourseById({ courseId }: { courseId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ course: CoursesCollection })
+        .where(({ course }) => eq(course.id, courseId))
+        .findOne();
+    },
+    [courseId],
+  );
+}

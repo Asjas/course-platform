@@ -1,4 +1,3 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Check,
@@ -8,23 +7,25 @@ import {
   Minimize2,
 } from "lucide-react";
 import { useState } from "react";
-import { trpc } from "~/lib/trpc.client";
+import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+import { trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute(
   "/_authenticated/courses/$courseId/lessons/$lessonId",
 )({
   component: LessonPage,
-  loader: async ({ context, params }) => {
-    await Promise.all([
-      context.queryClient.ensureQueryData(
-        trpc.courses.getLessonById.queryOptions({ lessonId: params.lessonId }),
-      ),
-      context.queryClient.ensureQueryData(
-        trpc.courses.getModulesAndLessonsByCourseId.queryOptions({
-          courseId: params.courseId,
-        }),
-      ),
-    ]);
+  loader: async ({ params }) => {
+    await CoursesCollection.preload();
+    // Ensure we have the full course with modules and lessons
+    const courseInCollection = CoursesCollection.findOne(params.courseId);
+    if (!courseInCollection?.modules) {
+      const fullCourse = await trpcClient.courses.getById.query({
+        courseId: params.courseId,
+      });
+      if (fullCourse) {
+        CoursesCollection.upsert(fullCourse);
+      }
+    }
   },
 });
 
@@ -41,13 +42,25 @@ function LessonPage() {
     "sidebar",
   );
 
-  const { data: lesson } = useSuspenseQuery(
-    trpc.courses.getLessonById.queryOptions({ lessonId }),
-  );
+  const { data: course, isLoading } = useCourseById({ courseId });
 
-  const { data: modules } = useSuspenseQuery(
-    trpc.courses.getModulesAndLessonsByCourseId.queryOptions({ courseId }),
-  );
+  if (isLoading || !course) {
+    return (
+      <div className="p-8">
+        <p>Loading lesson...</p>
+      </div>
+    );
+  }
+
+  // Find the lesson in the course modules
+  let lesson = null;
+  for (const module of course.modules || []) {
+    const found = module.lessons?.find((l) => l.id === lessonId);
+    if (found) {
+      lesson = found;
+      break;
+    }
+  }
 
   if (!lesson) {
     return (
@@ -57,8 +70,8 @@ function LessonPage() {
     );
   }
 
-  const sortedModules = modules
-    ? modules.sort((a, b) => a.order - b.order)
+  const sortedModules = course.modules
+    ? course.modules.sort((a, b) => a.order - b.order)
     : [];
 
   const toggleLayout = () => {

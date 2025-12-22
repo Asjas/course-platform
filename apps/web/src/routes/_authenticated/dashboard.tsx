@@ -1,16 +1,31 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { CourseCard } from "~/components/course-card";
-import { trpc } from "~/lib/trpc.client";
+import { CoursesCollection, useCourses } from "~/lib/db.collections";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: AuthenticatedDashboardPage,
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(trpc.courses.getAll.queryOptions()),
+  loader: async () => {
+    await CoursesCollection.preload();
+  },
 });
 
 function AuthenticatedDashboardPage() {
-  const { data: courses } = useSuspenseQuery(trpc.courses.getAll.queryOptions());
+  const { data: courses, isLoading } = useCourses();
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            My Courses
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
+            Loading courses...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

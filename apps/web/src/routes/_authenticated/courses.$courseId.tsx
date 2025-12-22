@@ -1,14 +1,24 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BookOpen, ChevronRight, Clock, Play } from "lucide-react";
-import { trpc } from "~/lib/trpc.client";
+import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+import { trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/courses/$courseId")({
   component: CourseDetailPage,
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(
-      trpc.courses.getById.queryOptions({ courseId: params.courseId }),
-    ),
+  loader: async ({ params }) => {
+    await CoursesCollection.preload();
+    // If the course with full details isn't in collection, fetch it
+    const courseInCollection = CoursesCollection.findOne(params.courseId);
+    if (!courseInCollection?.modules) {
+      const fullCourse = await trpcClient.courses.getById.query({
+        courseId: params.courseId,
+      });
+      // Update the collection with full course details
+      if (fullCourse) {
+        CoursesCollection.upsert(fullCourse);
+      }
+    }
+  },
 });
 
 function formatDuration(seconds: number | null | undefined): string {
@@ -24,9 +34,15 @@ function formatDuration(seconds: number | null | undefined): string {
 
 function CourseDetailPage() {
   const { courseId } = Route.useParams();
-  const { data: course } = useSuspenseQuery(
-    trpc.courses.getById.queryOptions({ courseId }),
-  );
+  const { data: course, isLoading } = useCourseById({ courseId });
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-7xl px-4 py-8">
+        <p>Loading course...</p>
+      </div>
+    );
+  }
 
   if (!course) {
     return (
