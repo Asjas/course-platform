@@ -162,9 +162,9 @@ async function seedDatabase() {
       await client.query(
         `
         INSERT INTO course_lesson (
-          id, module_id, course_id, title, description, content,
-          video_url, duration, "order", is_free, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          id, module_id, course_id, title, slug, video_url, video_provider,
+          content, transcription, duration, "order", is_preview, created_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
         ON CONFLICT (id) DO NOTHING;
       `,
         [
@@ -172,12 +172,14 @@ async function seedDatabase() {
           lesson.moduleId,
           lesson.courseId,
           lesson.title,
-          lesson.description,
-          lesson.content,
+          lesson.slug,
           lesson.videoUrl,
+          lesson.videoProvider,
+          lesson.content,
+          lesson.transcription,
           lesson.duration,
           lesson.order,
-          lesson.isFree,
+          lesson.isPreview,
           lesson.createdAt,
           lesson.updatedAt,
         ],
