@@ -193,21 +193,25 @@ async function seedDatabase() {
       await client.query(
         `
         INSERT INTO enrollment (
-          id, user_id, course_id, status, progress_percentage,
-          last_accessed_at, completed_at, gifted_by_user_id,
-          enrolled_at, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+          id, enrollment_type, enrollment_source, status, gifted_by_user_id,
+          user_id, course_id, payment_id, invoice_id, team_license_id,
+          team_invite_id, gifted_at, enrolled_at, created_at, updated_at
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
         ON CONFLICT (id) DO NOTHING;
       `,
         [
           enrollment.id,
+          enrollment.enrollmentType,
+          enrollment.enrollmentSource,
+          enrollment.status,
+          enrollment.giftedByUserId,
           enrollment.userId,
           enrollment.courseId,
-          enrollment.status,
-          enrollment.progressPercentage,
-          enrollment.lastAccessedAt,
-          enrollment.completedAt,
-          enrollment.giftedByUserId,
+          enrollment.paymentId,
+          enrollment.invoiceId,
+          enrollment.teamLicenseId,
+          enrollment.teamInviteId,
+          enrollment.giftedAt,
           enrollment.enrolledAt,
           enrollment.createdAt,
           enrollment.updatedAt,
@@ -249,9 +253,9 @@ async function seedDatabase() {
       await client.query(
         `
         INSERT INTO support_ticket (
-          id, title, description, category, status, priority,
+          id, title, description, repo, status, priority,
           course_id, module_id, lesson_id, user_id, assigned_to_user_id,
-          resolved_at, closed_at, assigned_at, created_at, updated_at
+          assigned_at, resolved_at, closed_at, created_at, updated_at
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
         ON CONFLICT (id) DO NOTHING;
       `,
@@ -259,7 +263,7 @@ async function seedDatabase() {
           ticket.id,
           ticket.title,
           ticket.description,
-          ticket.category,
+          ticket.repo,
           ticket.status,
           ticket.priority,
           ticket.courseId,
@@ -267,9 +271,9 @@ async function seedDatabase() {
           ticket.lessonId,
           ticket.userId,
           ticket.assignedToUserId,
+          ticket.assignedAt,
           ticket.resolvedAt,
           ticket.closedAt,
-          ticket.assignedAt,
           ticket.createdAt,
           ticket.updatedAt,
         ],

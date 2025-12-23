@@ -1,5 +1,7 @@
 /**
  * Hardcoded test support tickets with deterministic IDs
+ * Schema: id, title, description, repo, status, priority, courseId, moduleId, lessonId,
+ *         userId, assignedToUserId, assignedAt, resolvedAt, closedAt, createdAt, updatedAt
  */
 export const testSupportTickets = [
   {
@@ -7,7 +9,7 @@ export const testSupportTickets = [
     title: "Video not loading in Lesson 3",
     description:
       "The video in 'Creating Your First Route' lesson is not loading. I get a 404 error.",
-    category: "learn-fastify/course-content" as const,
+    repo: null,
     status: "open" as const,
     priority: "high" as const,
     courseId: "course:01TESTCOURSE00000000001",
@@ -15,9 +17,9 @@ export const testSupportTickets = [
     lessonId: "lesson:01TESTLESSON0000000003",
     userId: "user:01TESTUSER0000000000001",
     assignedToUserId: null,
+    assignedAt: null,
     resolvedAt: null,
     closedAt: null,
-    assignedAt: null,
     createdAt: new Date("2024-12-10T14:30:00Z"),
     updatedAt: new Date("2024-12-10T14:30:00Z"),
   },
@@ -26,7 +28,7 @@ export const testSupportTickets = [
     title: "Question about generic constraints",
     description:
       "Can you explain more about how to use 'extends' with generic constraints? The lesson was a bit unclear.",
-    category: "learn-fastify/course-content" as const,
+    repo: null,
     status: "in_progress" as const,
     priority: "medium" as const,
     courseId: "course:01TESTCOURSE00000000002",
@@ -34,9 +36,9 @@ export const testSupportTickets = [
     lessonId: "lesson:01TESTLESSON0000000023",
     userId: "user:01TESTUSER0000000000001",
     assignedToUserId: "user:01TESTUSER0000000000003",
+    assignedAt: new Date("2024-12-11T10:00:00Z"),
     resolvedAt: null,
     closedAt: null,
-    assignedAt: new Date("2024-12-11T10:00:00Z"),
     createdAt: new Date("2024-12-11T09:30:00Z"),
     updatedAt: new Date("2024-12-11T10:00:00Z"),
   },
@@ -45,7 +47,7 @@ export const testSupportTickets = [
     title: "Completed the Fastify course - certificate?",
     description:
       "I've completed all lessons in the Fastify course. How do I get my certificate of completion?",
-    category: "learn-fastify/course-content" as const,
+    repo: null,
     status: "resolved" as const,
     priority: "low" as const,
     courseId: "course:01TESTCOURSE00000000001",
@@ -53,9 +55,9 @@ export const testSupportTickets = [
     lessonId: null,
     userId: "user:01TESTUSER0000000000002",
     assignedToUserId: "user:01TESTUSER0000000000003",
+    assignedAt: new Date("2024-12-12T11:00:00Z"),
     resolvedAt: new Date("2024-12-12T16:00:00Z"),
     closedAt: null,
-    assignedAt: new Date("2024-12-12T11:00:00Z"),
     createdAt: new Date("2024-12-12T10:30:00Z"),
     updatedAt: new Date("2024-12-12T16:00:00Z"),
   },
@@ -64,7 +66,7 @@ export const testSupportTickets = [
     title: "Typo in code example",
     description:
       "There's a typo in the code example for 'CRUD Operations' lesson. Line 15 should be 'const' not 'cosnt'.",
-    category: "learn-fastify/course-content" as const,
+    repo: null,
     status: "closed" as const,
     priority: "low" as const,
     courseId: "course:01TESTCOURSE00000000001",
@@ -72,9 +74,9 @@ export const testSupportTickets = [
     lessonId: "lesson:01TESTLESSON0000000007",
     userId: "user:01TESTUSER0000000000005",
     assignedToUserId: "user:01TESTUSER0000000000003",
+    assignedAt: new Date("2024-12-08T10:00:00Z"),
     resolvedAt: new Date("2024-12-08T14:00:00Z"),
     closedAt: new Date("2024-12-08T15:00:00Z"),
-    assignedAt: new Date("2024-12-08T10:00:00Z"),
     createdAt: new Date("2024-12-08T09:00:00Z"),
     updatedAt: new Date("2024-12-08T15:00:00Z"),
   },
