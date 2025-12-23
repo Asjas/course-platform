@@ -240,7 +240,9 @@ jobs:
         run: |
           pnpm --filter @apps/server dev > server.log 2>&1 &
           echo $! > server.pid
-          sleep 10
+
+      - name: Wait for backend to be ready
+        run: npx wait-on http://localhost:5000/health --timeout 60000
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
