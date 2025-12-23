@@ -234,7 +234,9 @@ function generateFakeSupportTicket(
     priority: faker.helpers.arrayElement(["low", "medium", "high"] as const),
     status,
     userId,
-    assignedToId: null,
+    courseId,
+    assignedToUserId: null,
+    assignedAt: null,
     moduleId: null,
     lessonId,
     resolvedAt,
@@ -483,8 +485,8 @@ async function seedDatabase() {
       );
 
       await pool.query(
-        `INSERT INTO support_ticket (id, title, description, repo, priority, status, user_id, lesson_id, resolved_at, closed_at, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+        `INSERT INTO support_ticket (id, title, description, repo, priority, status, user_id, course_id, assigned_to_user_id, assigned_at, module_id, lesson_id, resolved_at, closed_at, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
         [
           ticket.id,
           ticket.title,
@@ -493,6 +495,10 @@ async function seedDatabase() {
           ticket.priority,
           ticket.status,
           ticket.userId,
+          ticket.courseId,
+          ticket.assignedToUserId,
+          ticket.assignedAt,
+          ticket.moduleId,
           ticket.lessonId,
           ticket.resolvedAt,
           ticket.closedAt,
