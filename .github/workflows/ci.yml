@@ -224,6 +224,9 @@ jobs:
             ${{ runner.os }}-cypress-${{ matrix.node-version }}-
 
       - name: Build
+        env:
+          VITE_BETTER_AUTH_URL: http://localhost:3000
+          VITE_TRPC_URL: http://localhost:3000/trpc
         run: pnpm build --cache=remote:rw
 
       - name: Run database migrations
