@@ -25,6 +25,10 @@ import {
   getSupportTicketById,
   getSupportTicketCommentById,
 } from "~/routers/support-tickets/queries.js";
+import {
+  getCourseStats,
+  getPlatformStats,
+} from "~/db/queries/stats.js";
 
 export const cache = createCache({
   storage: {
@@ -169,4 +173,26 @@ export const cache = createCache({
       },
     },
     getLessonById,
+  )
+  .define(
+    "getCourseStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~courses",
+      references() {
+        return ["stats~all", "course~all", "enrollment~all"];
+      },
+    },
+    getCourseStats,
+  )
+  .define(
+    "getPlatformStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~platform",
+      references() {
+        return ["stats~all", "course~all", "enrollment~all"];
+      },
+    },
+    getPlatformStats,
   );

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
     if (location.pathname === "/admin" || location.pathname === "/admin/") {
       throw redirect({
-        to: "/admin/users",
+        to: "/admin/stats",
       });
     }
   },
