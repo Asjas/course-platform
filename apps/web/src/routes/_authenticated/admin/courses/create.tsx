@@ -81,27 +81,27 @@ function CreateCoursePage() {
       <div className="border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
         <div className="flex items-center justify-between">
           <div>
-            <Link
-              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-              to="/admin/courses"
-            >
-              <ArrowLeftIcon className="mr-2 h-4 w-4" />
-              Back to Courses
-            </Link>
-            <h1 className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
               Create New Course
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Fill in the course details below
             </p>
           </div>
+          <Link
+            className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+            to="/admin/courses"
+          >
+            <ArrowLeftIcon className="mr-2 h-4 w-4" />
+            Back to Courses
+          </Link>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left Column - Form */}
-        <div className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
+        <div className="flex-1 bg-white p-8 dark:bg-gray-800">
           <form
             className="mx-auto max-w-2xl space-y-6"
             onSubmit={(e) => {
@@ -371,7 +371,7 @@ function CreateCoursePage() {
         </div>
 
         {/* Right Column - Preview */}
-        <div className="w-96 flex-shrink-0 border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
+        <div className="custom-scrollbar w-96 flex-shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
           <h3 className="mb-4 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
             Course Structure
           </h3>
