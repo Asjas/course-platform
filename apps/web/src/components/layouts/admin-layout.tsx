@@ -73,7 +73,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </ul>
         </nav>
       </div>
-      <main className="flex w-full flex-col bg-white px-6 py-8 dark:bg-gray-800">
+      <main className="flex w-full flex-col bg-white px-6 pt-8 dark:bg-gray-800">
         {children}
       </main>
     </div>

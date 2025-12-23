@@ -99,9 +99,9 @@ function CreateCoursePage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* Left Column - Form */}
-        <div className="flex-1 overflow-y-auto bg-white px-8 py-6 dark:bg-gray-800">
+        <div className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
           <form
             className="mx-auto max-w-2xl space-y-6"
             onSubmit={(e) => {
@@ -227,7 +227,7 @@ function CreateCoursePage() {
                     >
                       Thumbnail URL
                     </label>
-                   <input
+                    <input
                       className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       id="thumbnailUrl"
                       name="thumbnailUrl"

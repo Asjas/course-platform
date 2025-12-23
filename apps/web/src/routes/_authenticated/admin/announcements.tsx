@@ -151,7 +151,7 @@ function AnnouncementsPage() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between pb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Announcements
         </h1>
