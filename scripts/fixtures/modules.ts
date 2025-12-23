@@ -1,6 +1,6 @@
 /**
  * Hardcoded test modules with deterministic IDs
- * 
+ *
  * Note: course_module schema only has: id, title, slug, description, order, isPreview, courseId, createdAt, updatedAt
  */
 export const testModules = [

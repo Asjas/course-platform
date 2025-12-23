@@ -10,16 +10,16 @@
  * The schema_name defaults to "public" but can be set to any schema (e.g., "test_pr_123")
  * to support concurrent test runs in CI.
  */
-import pg from "pg";
 import {
-  testUsers,
   testCourses,
-  testModules,
-  testLessons,
   testEnrollments,
+  testLessons,
+  testModules,
   testReviews,
   testSupportTickets,
+  testUsers,
 } from "./fixtures/index.js";
+import pg from "pg";
 
 const { Pool } = pg;
 

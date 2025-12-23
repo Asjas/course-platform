@@ -47,8 +47,7 @@ export const testReviews = [
     courseId: "course:01TESTCOURSE00000000002",
     rating: 3,
     title: "Pending review",
-    comment:
-      "This is a test review that hasn't been approved yet.",
+    comment: "This is a test review that hasn't been approved yet.",
     approved: false,
     reviewedAt: null,
     createdAt: new Date("2024-12-15T11:00:00Z"),

@@ -9,7 +9,8 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "What is Fastify?",
     description: "Introduction to Fastify and its benefits",
-    content: "# What is Fastify?\n\nFastify is a fast and low overhead web framework for Node.js...",
+    content:
+      "# What is Fastify?\n\nFastify is a fast and low overhead web framework for Node.js...",
     videoUrl: "https://example.com/videos/fastify-intro.mp4",
     duration: 480,
     order: 1,
@@ -37,7 +38,8 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "Creating Your First Route",
     description: "Learn how to create HTTP routes in Fastify",
-    content: "# Routes in Fastify\n\nRoutes are the core of any web application...",
+    content:
+      "# Routes in Fastify\n\nRoutes are the core of any web application...",
     videoUrl: "https://example.com/videos/fastify-routes.mp4",
     duration: 540,
     order: 3,
@@ -51,7 +53,8 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "Request and Response Handling",
     description: "Working with requests and responses",
-    content: "# Request/Response\n\nUnderstanding Fastify's request and response objects...",
+    content:
+      "# Request/Response\n\nUnderstanding Fastify's request and response objects...",
     videoUrl: "https://example.com/videos/fastify-req-res.mp4",
     duration: 420,
     order: 4,
@@ -137,7 +140,8 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "Rate Limiting & Security",
     description: "Protect your APIs from abuse",
-    content: "# Security Best Practices\n\nRate limiting and security headers...",
+    content:
+      "# Security Best Practices\n\nRate limiting and security headers...",
     videoUrl: null,
     duration: 480,
     order: 5,
@@ -298,7 +302,8 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000002",
     title: "Generic Functions",
     description: "Creating reusable generic functions",
-    content: "# Generic Functions\n\nMaking functions type-safe and reusable...",
+    content:
+      "# Generic Functions\n\nMaking functions type-safe and reusable...",
     videoUrl: null,
     duration: 480,
     order: 1,
