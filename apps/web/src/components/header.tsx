@@ -140,7 +140,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                 <MenuButton aria-label="Menu">
                   {user.image ? (
                     <img
-                      className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                      className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                       src={user.image}
                       alt={`${user.name}'s profile`}
                     />
@@ -293,7 +293,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                       <MenuButton aria-label="Menu">
                         {user.image ? (
                           <img
-                            className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                            className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                             src={user.image}
                             alt={`${user.name}'s profile`}
                           />

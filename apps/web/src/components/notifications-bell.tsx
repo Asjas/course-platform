@@ -80,17 +80,17 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
         <span className="sr-only">Notifications</span>
       </PopoverButton>
 
-      <PopoverPanel className="absolute right-0 z-50 mt-2 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:w-full max-md:rounded-none max-md:border-x-0 md:max-w-md dark:border-gray-700 dark:bg-gray-800">
+      <PopoverPanel className="absolute right-0 z-50 mt-6 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:w-full max-md:rounded-none max-md:border-x-0 md:max-w-md dark:border-gray-700 dark:bg-gray-800">
         {({ close }) => (
           <div className="p-4 max-md:min-h-[calc(100vh-3.5rem)]">
             <div className="mb-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 Notifications
               </h3>
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
+              <div className="flex items-center gap-4">
+                <div className="flex gap-2">
                   <button
-                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                       activeTab === "new"
                         ? "bg-green-600 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
@@ -100,7 +100,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                     New {unreadCount > 0 && `(${unreadCount})`}
                   </button>
                   <button
-                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                       activeTab === "read"
                         ? "bg-green-600 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
