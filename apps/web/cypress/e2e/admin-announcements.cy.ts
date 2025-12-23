@@ -25,7 +25,7 @@ describe("User-Facing Announcement Notifications", () => {
   it("should display notification bell in header", () => {
     cy.visit("/dashboard");
 
-    // Verify bell icon exists in header
-    cy.get('button[aria-label*="notification"]').should("exist");
+    // Verify bell icon exists in header - PopoverButton with Bell icon and sr-only text "Notifications"
+    cy.get('button').contains('Notifications').should("exist");
   });
 });
