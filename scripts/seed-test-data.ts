@@ -50,6 +50,9 @@ async function seedDatabase() {
       `🔧 Using test schema "${schemaName}" (created by migrations)...`,
     );
 
+    // Start a transaction
+    await client.query("BEGIN");
+
     // Create ghost user first (required for foreign keys)
     console.log("👻 Creating default ghost user...");
     await client.query(`
@@ -272,9 +275,14 @@ async function seedDatabase() {
     }
     console.log(`✅ Created ${testSupportTickets.length} support tickets`);
 
+    // Commit the transaction
+    await client.query("COMMIT");
+
     console.log("✅ Database seeding completed successfully!");
   } catch (error) {
     console.error("❌ Error seeding database:", error);
+    // Rollback on error
+    await client.query("ROLLBACK");
     throw error;
   } finally {
     client.release();
