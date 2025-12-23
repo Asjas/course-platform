@@ -244,6 +244,13 @@ jobs:
       - name: Wait for backend to be ready
         run: npx wait-on http://localhost:3000/health --timeout 60000
 
+      - name: Check server started successfully
+        run: |
+          echo "=== Backend Server Startup Logs ==="
+          cat server.log
+          echo "=== Checking health endpoint ==="
+          curl -v http://localhost:3000/health || echo "Health check failed"
+
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
