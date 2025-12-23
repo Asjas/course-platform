@@ -1,7 +1,6 @@
 import {
   DndContext,
   type DragEndEvent,
-  type DragOverEvent,
   DragOverlay,
   type DragStartEvent,
   PointerSensor,
@@ -287,14 +286,13 @@ export default function CourseEditorSidebar({
     setActiveId(event.active.id);
   }
 
-  function handleDragOver(event: DragOverEvent) {
-    setOverId(event.over?.id || null);
+  function handleDragOver() {
+    // Over event tracking removed - not currently used
   }
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     setActiveId(null);
-    setOverId(null);
 
     if (!over || active.id === over.id) {
       return;
@@ -320,7 +318,7 @@ export default function CourseEditorSidebar({
       }));
 
       // Optimistically update
-      onModulesReordered(updatedModules);
+      onModulesReordered();
 
       // Persist to backend
       const toastId = toast.loading("Reordering modules...");
@@ -368,13 +366,7 @@ export default function CourseEditorSidebar({
             order: idx,
           }));
 
-          // Update all lessons with new order
-          const allUpdatedLessons = lessons.map((lesson) => {
-            const updated = updatedLessons.find((ul) => ul.id === lesson.id);
-            return updated || lesson;
-          });
-
-          onLessonsReordered(allUpdatedLessons);
+          onLessonsReordered();
 
           const toastId = toast.loading("Reordering lessons...");
           try {

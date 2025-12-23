@@ -181,7 +181,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
     trpc.courses.deleteModule.mutationOptions(),
   );
 
-  const form = useForm<CreateModuleFormData | UpdateModuleFormData>({
+  const form = useForm({
     defaultValues:
       moduleId && module
         ? {
@@ -201,7 +201,14 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
             courseId,
           },
     validators: {
-      onChange: moduleId ? updateModuleSchema : createModuleSchema,
+      onChange: ({ value }) => {
+        const schema = moduleId ? updateModuleSchema : createModuleSchema;
+        const result = schema.safeParse(value);
+        if (!result.success) {
+          return result.error.format();
+        }
+        return undefined;
+      },
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading(
@@ -421,7 +428,7 @@ function LessonEditor({
     trpc.courses.deleteLesson.mutationOptions(),
   );
 
-  const form = useForm<CreateLessonFormData | UpdateLessonFormData>({
+  const form = useForm({
     defaultValues:
       lessonId && lesson
         ? {
@@ -450,7 +457,14 @@ function LessonEditor({
             moduleId: preselectedModuleId || course?.modules?.[0]?.id || "",
           },
     validators: {
-      onChange: lessonId ? updateLessonSchema : createLessonSchema,
+      onChange: ({ value }) => {
+        const schema = lessonId ? updateLessonSchema : createLessonSchema;
+        const result = schema.safeParse(value);
+        if (!result.success) {
+          return result.error.format();
+        }
+        return undefined;
+      },
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading(
