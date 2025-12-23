@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Activity, BookOpen, TrendingUp, Users } from "lucide-react";
-import { trpcClient } from "~/lib/trpc-client";
+import { trpcClient } from "~/lib/trpc.client.js";
 
 export const Route = createFileRoute("/_authenticated/admin/stats")({
   loader: async () => {
