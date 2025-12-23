@@ -1,6 +1,7 @@
 import {
   DndContext,
   type DragEndEvent,
+  type DragOverEvent,
   DragOverlay,
   type DragStartEvent,
   PointerSensor,
@@ -286,8 +287,52 @@ export default function CourseEditorSidebar({
     setActiveId(event.active.id);
   }
 
-  function handleDragOver() {
-    // Over event tracking removed - not currently used
+  function handleDragOver(event: DragOverEvent) {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
+      return;
+    }
+
+    // Visual feedback: Find indices and temporarily reorder for preview
+    const activeIsModule = modules.some((m) => m.id === active.id);
+    const overIsModule = modules.some((m) => m.id === over.id);
+
+    // Module to module reordering
+    if (activeIsModule && overIsModule) {
+      setModules((prevModules) => {
+        const oldIndex = prevModules.findIndex((m) => m.id === active.id);
+        const newIndex = prevModules.findIndex((m) => m.id === over.id);
+        return arrayMove(prevModules, oldIndex, newIndex);
+      });
+    }
+
+    // Lesson reordering (within same module or between modules)
+    if (!activeIsModule && !overIsModule) {
+      const activeLesson = lessons.find((l) => l.id === active.id);
+      const overLesson = lessons.find((l) => l.id === over.id);
+
+      if (activeLesson && overLesson) {
+        setLessons((prevLessons) => {
+          const oldIndex = prevLessons.findIndex((l) => l.id === active.id);
+          const newIndex = prevLessons.findIndex((l) => l.id === over.id);
+
+          // Create new array with moved lesson
+          const movedLessons = arrayMove(prevLessons, oldIndex, newIndex);
+
+          // Update moduleId if moving between modules
+          if (activeLesson.moduleId !== overLesson.moduleId) {
+            return movedLessons.map((lesson) =>
+              lesson.id === activeLesson.id
+                ? { ...lesson, moduleId: overLesson.moduleId }
+                : lesson,
+            );
+          }
+
+          return movedLessons;
+        });
+      }
+    }
   }
 
   async function handleDragEnd(event: DragEndEvent) {
