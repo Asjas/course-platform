@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, isNull, not, sql } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import {
   platformAnnouncement,

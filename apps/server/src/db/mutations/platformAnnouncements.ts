@@ -86,6 +86,7 @@ export async function insertPlatformAnnouncementRead(
         id,
         announcementId,
         userId,
+        readAt: new Date(),
       })
       .returning();
 
