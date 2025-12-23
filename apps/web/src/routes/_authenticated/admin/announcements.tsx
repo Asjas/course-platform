@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
-import { trpc } from "~/lib/trpc.client.js";
+import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/admin/announcements")({
   component: AnnouncementsPage,

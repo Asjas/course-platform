@@ -19,7 +19,7 @@ import {
   UsersRound,
   XCircle,
 } from "lucide-react";
-import { trpcClient } from "~/lib/trpc.client.js";
+import { trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/admin/stats")({
   loader: async () => {
