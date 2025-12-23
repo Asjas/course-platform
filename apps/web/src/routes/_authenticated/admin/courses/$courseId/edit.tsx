@@ -269,7 +269,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
           </h2>
           {moduleId && (
             <button
-              className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="inline-flex cursor-pointer items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
               onClick={handleDelete}
               type="button"
             >
@@ -385,7 +385,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
 
           <div className="flex justify-end space-x-3">
             <button
-              className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+              className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={form.state.isSubmitting}
               type="submit"
             >
@@ -525,7 +525,7 @@ function LessonEditor({
           </h2>
           {lessonId && (
             <button
-              className="inline-flex items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
+              className="inline-flex cursor-pointer items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
               onClick={handleDelete}
               type="button"
             >

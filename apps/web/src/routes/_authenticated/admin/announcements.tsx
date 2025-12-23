@@ -4,7 +4,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
-import AdminLayout from "~/components/layouts/admin-layout";
 import { trpc } from "~/lib/trpc.client.js";
 
 export const Route = createFileRoute("/_authenticated/admin/announcements")({
@@ -151,13 +150,13 @@ function AnnouncementsPage() {
   const announcements = announcementsData?.announcements || [];
 
   return (
-    <AdminLayout>
+    <>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Announcements
         </h1>
         <button
-          className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          className="cursor-pointer rounded-md bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
           onClick={handleCreate}
         >
           Create Announcement
@@ -348,7 +347,7 @@ function AnnouncementsPage() {
 
                 <div className="flex gap-2 pt-4">
                   <button
-                    className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="cursor-pointer rounded-md bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                     type="submit"
                     disabled={
                       createMutation.isPending || updateMutation.isPending
@@ -357,7 +356,7 @@ function AnnouncementsPage() {
                     {selectedAnnouncement ? "Update" : "Create"}
                   </button>
                   <button
-                    className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                    className="cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                     type="button"
                     onClick={handleCancel}
                   >
@@ -365,7 +364,7 @@ function AnnouncementsPage() {
                   </button>
                   {selectedAnnouncement && (
                     <button
-                      className="ml-auto rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
+                      className="ml-auto cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                       type="button"
                       onClick={() => handleDelete(selectedAnnouncement.id)}
                       disabled={deleteMutation.isPending}
@@ -385,6 +384,6 @@ function AnnouncementsPage() {
           )}
         </div>
       </div>
-    </AdminLayout>
+    </>
   );
 }
