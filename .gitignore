@@ -142,6 +142,9 @@ dist
 # Tanstack router
 .tanstack
 
+# Turborepo
+.turbo
+
 # Tauri
 target/
 .tauri/build/
