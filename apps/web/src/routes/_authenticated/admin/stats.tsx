@@ -9,24 +9,73 @@ import {
   Gift,
   UsersRound,
   XCircle,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Ticket,
+  UserCheck,
+  Tag,
+  Award,
+  Heart,
+  Bell,
 } from "lucide-react";
 import { trpcClient } from "~/lib/trpc.client.js";
 
 export const Route = createFileRoute("/_authenticated/admin/stats")({
   loader: async () => {
-    const [platformStats, courseStats, revenueStats] = await Promise.all([
+    const [
+      platformStats,
+      courseStats,
+      revenueStats,
+      supportStats,
+      userStats,
+      couponStats,
+      teamLicenseStats,
+      progressStats,
+      wishlistStats,
+      announcementStats,
+    ] = await Promise.all([
       trpcClient.stats.getPlatformStats.query(),
       trpcClient.stats.getCourseStats.query(),
       trpcClient.stats.getRevenueStats.query(),
+      trpcClient.stats.getSupportStats.query(),
+      trpcClient.stats.getUserStats.query(),
+      trpcClient.stats.getCouponStats.query(),
+      trpcClient.stats.getTeamLicenseStats.query(),
+      trpcClient.stats.getProgressStats.query(),
+      trpcClient.stats.getWishlistStats.query(),
+      trpcClient.stats.getAnnouncementStats.query(),
     ]);
 
-    return { platformStats, courseStats, revenueStats };
+    return {
+      platformStats,
+      courseStats,
+      revenueStats,
+      supportStats,
+      userStats,
+      couponStats,
+      teamLicenseStats,
+      progressStats,
+      wishlistStats,
+      announcementStats,
+    };
   },
   component: StatsPage,
 });
 
 function StatsPage() {
-  const { platformStats, courseStats, revenueStats } = Route.useLoaderData();
+  const {
+    platformStats,
+    courseStats,
+    revenueStats,
+    supportStats,
+    userStats,
+    couponStats,
+    teamLicenseStats,
+    progressStats,
+    wishlistStats,
+    announcementStats,
+  } = Route.useLoaderData();
 
   // Format currency
   const formatCurrency = (cents: number) => {
@@ -296,6 +345,292 @@ function StatsPage() {
                   )
                 : 0}
               % of total
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-200 dark:border-gray-700" />
+
+      {/* User Statistics */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+          User Activity
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
+                <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Total Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {userStats.totalUsers}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {userStats.activeUsers} active
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
+                <UserCheck className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Verified Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {userStats.verifiedUsers}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {userStats.verificationRate}% verified
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
+                <Award className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Admin Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {userStats.adminUsers}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-red-100 p-3 dark:bg-red-900">
+                <XCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Banned Users
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {userStats.bannedUsers}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Support Tickets */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+          Support Tickets
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
+                <Ticket className="h-6 w-6 text-orange-600 dark:text-orange-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Total Tickets
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {supportStats.totalTickets}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {supportStats.activeTickets} active
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-red-100 p-3 dark:bg-red-900">
+                <AlertCircle className="h-6 w-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Urgent
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {supportStats.urgentTickets}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {supportStats.highPriorityTickets} high priority
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
+                <Clock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  In Progress
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {supportStats.inProgressTickets}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {supportStats.openTickets} open
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="flex items-center">
+              <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
+                <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  Resolution Rate
+                </p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {supportStats.resolutionRate}%
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  {supportStats.resolvedTickets} resolved
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Learning Progress */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+          Learning Progress
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Course Completion
+              </p>
+              <Activity className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {progressStats.courseCompletionRate}%
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              {progressStats.completedCourses} / {progressStats.totalCourseProgress} completed
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Avg Course Progress
+              </p>
+              <TrendingUp className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {progressStats.avgCourseProgress}%
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              across all enrolled users
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Lesson Completion
+              </p>
+              <CheckCircle className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {progressStats.lessonCompletionRate}%
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              {progressStats.completedLessons} / {progressStats.totalLessonProgress} lessons
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Metrics */}
+      <div>
+        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+          Additional Metrics
+        </h2>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Coupons
+              </p>
+              <Tag className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {couponStats.activeCoupons}
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              {couponStats.totalRedemptions} redemptions
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Team Seats
+              </p>
+              <UsersRound className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {teamLicenseStats.seatUtilization}%
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              {teamLicenseStats.claimedSeats} / {teamLicenseStats.totalSeats} claimed
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Wishlisted
+              </p>
+              <Heart className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {wishlistStats.totalWishlistItems}
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              total wishlist items
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                Announcements
+              </p>
+              <Bell className="h-4 w-4 text-gray-400" />
+            </div>
+            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+              {announcementStats.publishedAnnouncements}
+            </p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
+              {announcementStats.totalReads} reads
             </p>
           </div>
         </div>

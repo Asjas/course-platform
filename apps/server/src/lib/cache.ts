@@ -1,6 +1,17 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
-import { getCourseStats, getPlatformStats, getRevenueStats } from "~/db/queries/stats.js";
+import {
+  getCourseStats,
+  getPlatformStats,
+  getRevenueStats,
+  getSupportStats,
+  getUserStats,
+  getCouponStats,
+  getTeamLicenseStats,
+  getProgressStats,
+  getWishlistStats,
+  getAnnouncementStats,
+} from "~/db/queries/stats.js";
 import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import {
@@ -203,4 +214,81 @@ export const cache = createCache({
       },
     },
     getRevenueStats,
+  )
+  .define(
+    "getSupportStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~support",
+      references() {
+        return ["stats~all", "support-ticket~all"];
+      },
+    },
+    getSupportStats,
+  )
+  .define(
+    "getUserStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~users",
+      references() {
+        return ["stats~all", "user~all"];
+      },
+    },
+    getUserStats,
+  )
+  .define(
+    "getCouponStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~coupons",
+      references() {
+        return ["stats~all", "coupon~all"];
+      },
+    },
+    getCouponStats,
+  )
+  .define(
+    "getTeamLicenseStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~team-licenses",
+      references() {
+        return ["stats~all", "team-license~all"];
+      },
+    },
+    getTeamLicenseStats,
+  )
+  .define(
+    "getProgressStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~progress",
+      references() {
+        return ["stats~all", "progress~all"];
+      },
+    },
+    getProgressStats,
+  )
+  .define(
+    "getWishlistStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~wishlists",
+      references() {
+        return ["stats~all", "wishlist~all", "course~all"];
+      },
+    },
+    getWishlistStats,
+  )
+  .define(
+    "getAnnouncementStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~announcements",
+      references() {
+        return ["stats~all", "announcement~all"];
+      },
+    },
+    getAnnouncementStats,
   );
