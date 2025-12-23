@@ -7,6 +7,8 @@ import {
   closestCenter,
   useSensor,
   useSensors,
+  DragOverEvent,
+  type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -53,6 +55,62 @@ interface CourseEditorSidebarProps {
   selectedItemId: string | null;
   onSelectItem: (itemId: string, type: "module" | "lesson") => void;
   onModulesReordered: (modules: Module[]) => void;
+  onLessonsReordered: (lessons: Lesson[]) => void;
+}
+
+interface SortableLessonProps {
+  lesson: Lesson;
+  isSelected: boolean;
+  onSelect: () => void;
+}
+
+function SortableLesson({
+  lesson,
+  isSelected,
+  onSelect,
+}: SortableLessonProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: lesson.id, data: { type: "lesson", moduleId: lesson.moduleId } });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      className={`group flex items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 ${
+        isSelected
+          ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
+          : "text-gray-700 dark:text-gray-300"
+      }`}
+      ref={setNodeRef}
+      style={style}
+    >
+      <button
+        className="cursor-grab touch-none text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+        type="button"
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className="h-3 w-3" />
+      </button>
+      <button
+        className="flex-1 text-left"
+        type="button"
+        onClick={onSelect}
+      >
+        {lesson.order + 1}. {lesson.title}
+      </button>
+    </div>
+  );
 }
 
 interface SortableModuleProps {
@@ -150,22 +208,19 @@ function SortableModule({
 
       {isExpanded && sortedLessons.length > 0 && (
         <div className="mt-1 ml-8 space-y-1">
-          {sortedLessons.map((lesson) => (
-            <button
-              className={`group flex w-full items-center gap-2 rounded px-3 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 ${
-                selectedLessonId === lesson.id
-                  ? "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-300"
-                  : "text-gray-700 dark:text-gray-300"
-              }`}
-              key={lesson.id}
-              type="button"
-              onClick={() => onSelectLesson(lesson.id)}
-            >
-              <span className="flex-1 text-left">
-                {lesson.order + 1}. {lesson.title}
-              </span>
-            </button>
-          ))}
+          <SortableContext
+            items={sortedLessons.map((l) => l.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {sortedLessons.map((lesson) => (
+              <SortableLesson
+                isSelected={selectedLessonId === lesson.id}
+                key={lesson.id}
+                lesson={lesson}
+                onSelect={() => onSelectLesson(lesson.id)}
+              />
+            ))}
+          </SortableContext>
         </div>
       )}
     </div>
@@ -178,14 +233,24 @@ export default function CourseEditorSidebar({
   selectedItemId,
   onSelectItem,
   onModulesReordered,
+  onLessonsReordered,
 }: CourseEditorSidebarProps) {
   const [expandedModules, setExpandedModules] = useState<Set<string>>(
     new Set(modules.map((m) => m.id)),
   );
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
 
   const reorderModulesMutation = useMutation(
     trpc.courses.reorderModules.mutationOptions(),
+  );
+
+  const reorderLessonsMutation = useMutation(
+    trpc.courses.reorderLessons.mutationOptions(),
+  );
+
+  const moveLessonMutation = useMutation(
+    trpc.courses.moveLessonToModule.mutationOptions(),
   );
 
   const deleteModuleMutation = useMutation(
@@ -200,6 +265,14 @@ export default function CourseEditorSidebar({
     }),
   );
 
+  const sortedModules = [...modules].sort((a, b) => a.order - b.order);
+  
+  // Get all sortable item IDs (modules + lessons)
+  const allItems = [
+    ...sortedModules.map((m) => m.id),
+    ...lessons.map((l) => l.id),
+  ];
+
   function toggleModule(moduleId: string) {
     setExpandedModules((prev) => {
       const next = new Set(prev);
@@ -213,52 +286,169 @@ export default function CourseEditorSidebar({
   }
 
   function handleDragStart(event: DragStartEvent) {
-    setActiveId(event.active.id as string);
+    setActiveId(event.active.id);
+  }
+
+  function handleDragOver(event: DragOverEvent) {
+    setOverId(event.over?.id || null);
   }
 
   async function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     setActiveId(null);
+    setOverId(null);
 
     if (!over || active.id === over.id) {
       return;
     }
 
-    const oldIndex = modules.findIndex((m) => m.id === active.id);
-    const newIndex = modules.findIndex((m) => m.id === over.id);
+    // Check if we're dragging a module
+    const isModuleDrag = modules.some((m) => m.id === active.id);
+    const isLessonDrag = lessons.some((l) => l.id === active.id);
 
-    if (oldIndex === -1 || newIndex === -1) {
-      return;
-    }
+    if (isModuleDrag && modules.some((m) => m.id === over.id)) {
+      // Module reordering
+      const oldIndex = sortedModules.findIndex((m) => m.id === active.id);
+      const newIndex = sortedModules.findIndex((m) => m.id === over.id);
 
-    const reorderedModules = arrayMove(modules, oldIndex, newIndex);
-    const updatedModules = reorderedModules.map((m, idx) => ({
-      ...m,
-      order: idx,
-    }));
+      if (oldIndex === -1 || newIndex === -1) {
+        return;
+      }
 
-    // Optimistically update
-    onModulesReordered(updatedModules);
+      const reorderedModules = arrayMove(sortedModules, oldIndex, newIndex);
+      const updatedModules = reorderedModules.map((m, idx) => ({
+        ...m,
+        order: idx,
+      }));
 
-    // Persist to backend
-    const toastId = toast.loading("Reordering modules...");
-    try {
-      await reorderModulesMutation.mutateAsync({
-        modules: updatedModules.map((m) => ({ id: m.id, order: m.order })),
-      });
+      // Optimistically update
+      onModulesReordered(updatedModules);
 
-      queryClient.invalidateQueries({
-        queryKey: ["admin", "courses"],
-      });
+      // Persist to backend
+      const toastId = toast.loading("Reordering modules...");
+      try {
+        await reorderModulesMutation.mutateAsync({
+          modules: updatedModules.map((m) => ({ id: m.id, order: m.order })),
+        });
 
-      toast.success("Modules reordered successfully!", { id: toastId });
-    } catch (error) {
-      console.error("Failed to reorder modules:", error);
-      toast.error("Failed to reorder modules. Please try again.", {
-        id: toastId,
-      });
-      // Revert optimistic update
-      onModulesReordered(modules);
+        queryClient.invalidateQueries({
+          queryKey: ["admin", "courses"],
+        });
+
+        toast.success("Modules reordered!", { id: toastId });
+      } catch (error) {
+        console.error("Failed to reorder modules:", error);
+        toast.error("Failed to reorder modules", { id: toastId });
+      }
+    } else if (isLessonDrag) {
+      // Lesson reordering or moving between modules
+      const activeLesson = lessons.find((l) => l.id === active.id);
+      if (!activeLesson) return;
+
+      const overLesson = lessons.find((l) => l.id === over.id);
+      const overModule = modules.find((m) => m.id === over.id);
+
+      if (overLesson) {
+        // Lesson dropped on another lesson
+        const sourceModuleId = activeLesson.moduleId;
+        const targetModuleId = overLesson.moduleId;
+
+        if (sourceModuleId === targetModuleId) {
+          // Reordering within same module
+          const moduleLessons = lessons
+            .filter((l) => l.moduleId === sourceModuleId)
+            .sort((a, b) => a.order - b.order);
+
+          const oldIndex = moduleLessons.findIndex((l) => l.id === active.id);
+          const newIndex = moduleLessons.findIndex((l) => l.id === over.id);
+
+          if (oldIndex === -1 || newIndex === -1) return;
+
+          const reorderedLessons = arrayMove(moduleLessons, oldIndex, newIndex);
+          const updatedLessons = reorderedLessons.map((l, idx) => ({
+            ...l,
+            order: idx,
+          }));
+
+          // Update all lessons with new order
+          const allUpdatedLessons = lessons.map((lesson) => {
+            const updated = updatedLessons.find((ul) => ul.id === lesson.id);
+            return updated || lesson;
+          });
+
+          onLessonsReordered(allUpdatedLessons);
+
+          const toastId = toast.loading("Reordering lessons...");
+          try {
+            await reorderLessonsMutation.mutateAsync({
+              lessons: updatedLessons.map((l) => ({ id: l.id, order: l.order })),
+            });
+
+            queryClient.invalidateQueries({
+              queryKey: ["admin", "courses"],
+            });
+
+            toast.success("Lessons reordered!", { id: toastId });
+          } catch (error) {
+            console.error("Failed to reorder lessons:", error);
+            toast.error("Failed to reorder lessons", { id: toastId });
+          }
+        } else {
+          // Moving between modules
+          const targetModuleLessons = lessons
+            .filter((l) => l.moduleId === targetModuleId)
+            .sort((a, b) => a.order - b.order);
+
+          const insertIndex = targetModuleLessons.findIndex(
+            (l) => l.id === over.id,
+          );
+
+          const toastId = toast.loading("Moving lesson...");
+          try {
+            await moveLessonMutation.mutateAsync({
+              lessonId: activeLesson.id,
+              newModuleId: targetModuleId,
+              newOrder: insertIndex >= 0 ? insertIndex : targetModuleLessons.length,
+            });
+
+            queryClient.invalidateQueries({
+              queryKey: ["admin", "courses"],
+            });
+
+            toast.success("Lesson moved!", { id: toastId });
+          } catch (error) {
+            console.error("Failed to move lesson:", error);
+            toast.error("Failed to move lesson", { id: toastId });
+          }
+        }
+      } else if (overModule) {
+        // Lesson dropped on module header - move to end of that module
+        const targetModuleId = overModule.id;
+
+        if (activeLesson.moduleId === targetModuleId) return;
+
+        const targetModuleLessons = lessons
+          .filter((l) => l.moduleId === targetModuleId)
+          .sort((a, b) => a.order - b.order);
+
+        const toastId = toast.loading("Moving lesson...");
+        try {
+          await moveLessonMutation.mutateAsync({
+            lessonId: activeLesson.id,
+            newModuleId: targetModuleId,
+            newOrder: targetModuleLessons.length,
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: ["admin", "courses"],
+          });
+
+          toast.success("Lesson moved!", { id: toastId });
+        } catch (error) {
+          console.error("Failed to move lesson:", error);
+          toast.error("Failed to move lesson", { id: toastId });
+        }
+      }
     }
   }
 
@@ -290,8 +480,8 @@ export default function CourseEditorSidebar({
     }
   }
 
-  const sortedModules = [...modules].sort((a, b) => a.order - b.order);
-  const activeModule = modules.find((m) => m.id === activeId);
+  const activeModule = sortedModules.find((m) => m.id === activeId);
+  const activeLesson = lessons.find((l) => l.id === activeId);
 
   return (
     <div className="flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
@@ -311,26 +501,27 @@ export default function CourseEditorSidebar({
 
       <div className="flex-1 overflow-y-auto p-4">
         <DndContext
-          sensors={sensors}
           collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDragStart={handleDragStart}
+          sensors={sensors}
         >
           <SortableContext
-            items={sortedModules.map((m) => m.id)}
+            items={allItems}
             strategy={verticalListSortingStrategy}
           >
             {sortedModules.map((module) => (
               <SortableModule
-                key={module.id}
-                module={module}
-                lessons={lessons}
                 isExpanded={expandedModules.has(module.id)}
                 isSelected={selectedItemId === module.id}
-                onToggle={() => toggleModule(module.id)}
-                onSelect={() => onSelectItem(module.id, "module")}
+                key={module.id}
+                lessons={lessons}
+                module={module}
                 onDelete={() => handleDeleteModule(module.id, module.title)}
+                onSelect={() => onSelectItem(module.id, "module")}
                 onSelectLesson={(lessonId) => onSelectItem(lessonId, "lesson")}
+                onToggle={() => toggleModule(module.id)}
                 selectedLessonId={
                   selectedItemId && lessons.find((l) => l.id === selectedItemId)
                     ? selectedItemId
@@ -347,6 +538,15 @@ export default function CourseEditorSidebar({
                   <GripVertical className="h-4 w-4 text-gray-400" />
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {activeModule.order + 1}. {activeModule.title}
+                  </span>
+                </div>
+              </div>
+            ) : activeLesson ? (
+              <div className="rounded-lg border border-gray-200 bg-white px-3 py-2 shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                <div className="flex items-center gap-2">
+                  <GripVertical className="h-3 w-3 text-gray-400" />
+                  <span className="text-sm text-gray-900 dark:text-white">
+                    {activeLesson.order + 1}. {activeLesson.title}
                   </span>
                 </div>
               </div>
