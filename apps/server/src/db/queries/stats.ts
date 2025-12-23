@@ -1,13 +1,12 @@
 import { count, eq, sql } from "drizzle-orm";
-import type { FastifyInstance } from "fastify";
+import { db } from "~/db/index.js";
 import { course } from "~/db/schema/course.js";
 import { enrollment } from "~/db/schema/enrollment.js";
 
 /**
  * Get basic course statistics for admin dashboard
  */
-export async function getCourseStats(this: FastifyInstance) {
-  const db = this.db;
+export async function getCourseStats() {
 
   // Get total enrollments per course
   const enrollmentStats = await db
@@ -62,8 +61,7 @@ export async function getCourseStats(this: FastifyInstance) {
 /**
  * Get overall platform statistics
  */
-export async function getPlatformStats(this: FastifyInstance) {
-  const db = this.db;
+export async function getPlatformStats() {
 
   const [courseCount, enrollmentCount, activeEnrollmentCount] =
     await Promise.all([
