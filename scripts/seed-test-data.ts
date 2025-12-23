@@ -85,9 +85,9 @@ async function seedDatabase() {
 
       // If user has a password, create an account entry with hashed password
       if ("password" in user && user.password) {
-        // Use Better Auth's Argon2 hashing
-        const { hash } = await import("@node-rs/argon2");
-        const hashedPassword = await hash(user.password);
+        // Use argon2 for password hashing
+        const argon2 = await import("argon2");
+        const hashedPassword = await argon2.hash(user.password);
 
         await client.query(
           `
