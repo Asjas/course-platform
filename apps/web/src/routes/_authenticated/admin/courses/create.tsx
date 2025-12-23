@@ -109,276 +109,277 @@ function CreateCoursePage() {
               form.handleSubmit();
             }}
           >
-          <form.Field name="name">
-            {(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  htmlFor="name"
-                >
-                  Course Name *
-                </label>
-                <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  required
-                />
-                <FieldInfo field={field} />
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="slug">
-            {(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  htmlFor="slug"
-                >
-                  URL Slug *
-                </label>
-                <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  id="slug"
-                  name="slug"
-                  type="text"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="my-awesome-course"
-                  required
-                />
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  This will be used in the URL: /courses/
-                  {field.state.value || "your-slug"}
-                </p>
-                <FieldInfo field={field} />
-              </div>
-            )}
-          </form.Field>
-
-          <form.Field name="description">
-            {(field) => (
-              <div>
-                <label
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                  htmlFor="description"
-                >
-                  Description
-                </label>
-                <textarea
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                  id="description"
-                  name="description"
-                  rows={4}
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  placeholder="A brief description of what students will learn..."
-                />
-                <FieldInfo field={field} />
-              </div>
-            )}
-          </form.Field>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <form.Field name="level">
+            <form.Field name="name">
               {(field) => (
                 <div>
                   <label
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    htmlFor="level"
+                    htmlFor="name"
                   >
-                    Level
-                  </label>
-                  <select
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    id="level"
-                    name="level"
-                    value={field.state.value}
-                    onChange={(e) =>
-                      field.handleChange(
-                        e.target.value as
-                          | "All levels"
-                          | "Beginner"
-                          | "Intermediate"
-                          | "Advanced",
-                      )
-                    }
-                  >
-                    <option value="All levels">All levels</option>
-                    <option value="Beginner">Beginner</option>
-                    <option value="Intermediate">Intermediate</option>
-                    <option value="Advanced">Advanced</option>
-                  </select>
-                  <FieldInfo field={field} />
-                </div>
-              )}
-            </form.Field>
-
-            <form.Field name="thumbnailUrl">
-              {(field) => (
-                <div>
-                  <label
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                    htmlFor="thumbnailUrl"
-                  >
-                    Thumbnail URL
+                    Course Name *
                   </label>
                   <input
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                    id="thumbnailUrl"
-                    name="thumbnailUrl"
-                    type="url"
+                    id="name"
+                    name="name"
+                    type="text"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="https://..."
+                    required
                   />
                   <FieldInfo field={field} />
                 </div>
               )}
             </form.Field>
-          </div>
 
-          <div className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-700">
-            <h3 className="font-medium text-gray-900 dark:text-white">
-              Pricing
-            </h3>
+            <form.Field name="slug">
+              {(field) => (
+                <div>
+                  <label
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    htmlFor="slug"
+                  >
+                    URL Slug *
+                  </label>
+                  <input
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    id="slug"
+                    name="slug"
+                    type="text"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="my-awesome-course"
+                    required
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    This will be used in the URL: /courses/
+                    {field.state.value || "your-slug"}
+                  </p>
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            </form.Field>
 
-            <form.Field name="isFree">
+            <form.Field name="description">
+              {(field) => (
+                <div>
+                  <label
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    htmlFor="description"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    id="description"
+                    name="description"
+                    rows={4}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="A brief description of what students will learn..."
+                  />
+                  <FieldInfo field={field} />
+                </div>
+              )}
+            </form.Field>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <form.Field name="level">
+                {(field) => (
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      htmlFor="level"
+                    >
+                      Level
+                    </label>
+                    <select
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      id="level"
+                      name="level"
+                      value={field.state.value}
+                      onChange={(e) =>
+                        field.handleChange(
+                          e.target.value as
+                            | "All levels"
+                            | "Beginner"
+                            | "Intermediate"
+                            | "Advanced",
+                        )
+                      }
+                    >
+                      <option value="All levels">All levels</option>
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Advanced">Advanced</option>
+                    </select>
+                    <FieldInfo field={field} />
+                  </div>
+                )}
+              </form.Field>
+
+              <form.Field name="thumbnailUrl">
+                {(field) => (
+                  <div>
+                    <label
+                      className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                      htmlFor="thumbnailUrl"
+                    >
+                      Thumbnail URL
+                    </label>
+                    <input
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      id="thumbnailUrl"
+                      name="thumbnailUrl"
+                      type="url"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="https://..."
+                    />
+                    <FieldInfo field={field} />
+                  </div>
+                )}
+              </form.Field>
+            </div>
+
+            <div className="space-y-4 rounded-md border border-gray-200 p-4 dark:border-gray-700">
+              <h3 className="font-medium text-gray-900 dark:text-white">
+                Pricing
+              </h3>
+
+              <form.Field name="isFree">
+                {(field) => (
+                  <div className="flex items-center">
+                    <input
+                      className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700"
+                      id="isFree"
+                      name="isFree"
+                      type="checkbox"
+                      checked={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.checked)}
+                    />
+                    <label
+                      className="ml-2 text-sm text-gray-700 dark:text-gray-300"
+                      htmlFor="isFree"
+                    >
+                      This is a free course
+                    </label>
+                  </div>
+                )}
+              </form.Field>
+
+              <form.Subscribe selector={(state) => !state.values.isFree}>
+                {(showPrice) =>
+                  showPrice && (
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <form.Field name="price">
+                        {(field) => (
+                          <div>
+                            <label
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                              htmlFor="price"
+                            >
+                              Price ($)
+                            </label>
+                            <input
+                              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              id="price"
+                              name="price"
+                              type="number"
+                              min="0"
+                              value={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(Number(e.target.value))
+                              }
+                            />
+                            <FieldInfo field={field} />
+                          </div>
+                        )}
+                      </form.Field>
+
+                      <form.Field name="trialModuleLimit">
+                        {(field) => (
+                          <div>
+                            <label
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                              htmlFor="trialModuleLimit"
+                            >
+                              Free Trial Modules
+                            </label>
+                            <input
+                              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              id="trialModuleLimit"
+                              name="trialModuleLimit"
+                              type="number"
+                              min="0"
+                              value={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(Number(e.target.value))
+                              }
+                            />
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                              Number of modules available for free preview
+                            </p>
+                            <FieldInfo field={field} />
+                          </div>
+                        )}
+                      </form.Field>
+                    </div>
+                  )
+                }
+              </form.Subscribe>
+            </div>
+
+            <form.Field name="published">
               {(field) => (
                 <div className="flex items-center">
                   <input
                     className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700"
-                    id="isFree"
-                    name="isFree"
+                    id="published"
+                    name="published"
                     type="checkbox"
                     checked={field.state.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
                   />
                   <label
                     className="ml-2 text-sm text-gray-700 dark:text-gray-300"
-                    htmlFor="isFree"
+                    htmlFor="published"
                   >
-                    This is a free course
+                    Publish course immediately
                   </label>
                 </div>
               )}
             </form.Field>
 
-            <form.Subscribe selector={(state) => !state.values.isFree}>
-              {(showPrice) =>
-                showPrice && (
-                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <form.Field name="price">
-                      {(field) => (
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            htmlFor="price"
-                          >
-                            Price ($)
-                          </label>
-                          <input
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            id="price"
-                            name="price"
-                            type="number"
-                            min="0"
-                            value={field.state.value}
-                            onChange={(e) =>
-                              field.handleChange(Number(e.target.value))
-                            }
-                          />
-                          <FieldInfo field={field} />
-                        </div>
-                      )}
-                    </form.Field>
-
-                    <form.Field name="trialModuleLimit">
-                      {(field) => (
-                        <div>
-                          <label
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                            htmlFor="trialModuleLimit"
-                          >
-                            Free Trial Modules
-                          </label>
-                          <input
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-                            id="trialModuleLimit"
-                            name="trialModuleLimit"
-                            type="number"
-                            min="0"
-                            value={field.state.value}
-                            onChange={(e) =>
-                              field.handleChange(Number(e.target.value))
-                            }
-                          />
-                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Number of modules available for free preview
-                          </p>
-                          <FieldInfo field={field} />
-                        </div>
-                      )}
-                    </form.Field>
-                  </div>
-                )
-              }
-            </form.Subscribe>
-          </div>
-
-          <form.Field name="published">
-            {(field) => (
-              <div className="flex items-center">
-                <input
-                  className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700"
-                  id="published"
-                  name="published"
-                  type="checkbox"
-                  checked={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.checked)}
-                />
-                <label
-                  className="ml-2 text-sm text-gray-700 dark:text-gray-300"
-                  htmlFor="published"
-                >
-                  Publish course immediately
-                </label>
-              </div>
-            )}
-          </form.Field>
-
-          <div className="flex gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
-            <button
-              className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-              type="submit"
-              disabled={form.state.isSubmitting}
-            >
-              <SaveIcon className="mr-2 h-4 w-4" />
-              {form.state.isSubmitting ? "Creating..." : "Create Course"}
-            </button>
-            <Link
-              className="inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
-              to="/admin/courses"
-            >
-              Cancel
-            </Link>
-          </div>
-        </form>
+            <div className="flex gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
+              <button
+                className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                type="submit"
+                disabled={form.state.isSubmitting}
+              >
+                <SaveIcon className="mr-2 h-4 w-4" />
+                {form.state.isSubmitting ? "Creating..." : "Create Course"}
+              </button>
+              <Link
+                className="inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                to="/admin/courses"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
         </div>
 
         {/* Right Column - Preview */}
         <div className="w-96 flex-shrink-0 border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-700 dark:text-gray-300">
+          <h3 className="mb-4 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
             Course Structure
           </h3>
           <div className="space-y-3">
             <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                After creating the course, you'll be able to add modules and lessons using the drag-and-drop editor.
+                After creating the course, you'll be able to add modules and
+                lessons using the drag-and-drop editor.
               </p>
             </div>
             <div className="space-y-2">
@@ -390,8 +391,12 @@ function CreateCoursePage() {
                   </div>
                 </div>
                 <div className="ml-7 space-y-1">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">→ Lesson 1</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">→ Lesson 2</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    → Lesson 1
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    → Lesson 2
+                  </div>
                 </div>
               </div>
               <div className="rounded-md bg-white p-3 shadow-sm dark:bg-gray-800">
@@ -402,7 +407,9 @@ function CreateCoursePage() {
                   </div>
                 </div>
                 <div className="ml-7 space-y-1">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">→ Lesson 1</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    → Lesson 1
+                  </div>
                 </div>
               </div>
             </div>

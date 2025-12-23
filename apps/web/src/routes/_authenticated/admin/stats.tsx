@@ -720,7 +720,7 @@ function StatsPage() {
                   </td>
                 </tr>
               ) : (
-                courseStats.map((course) => (
+                courseStats.map((course: (typeof courseStats)[number]) => (
                   <tr
                     className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
                     key={course.id}
