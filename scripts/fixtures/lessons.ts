@@ -10,21 +10,21 @@ export const testLessons = [
     title: "What is Fastify?",
     slug: "what-is-fastify",
     content: {
-    type: "doc",
-    content: [
+      type: "doc",
+      content: [
         {
-    type: "paragraph",
-    content: [
+          type: "paragraph",
+          content: [
             {
-    type: "text",
-    text: "Fastify is a fast and low overhead web framework for Node.js...",
+              type: "text",
+              text: "Fastify is a fast and low overhead web framework for Node.js...",
             },
           ],
         },
       ],
     },
     transcription: {
-    segments: [
+      segments: [
         { start: 0, end: 10, text: "Welcome to the Fastify course..." },
       ],
     },
@@ -42,7 +42,17 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "Setting Up Your First Project",
     slug: "setting-up-your-first-project",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Setting Up Your First Project content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Setting Up Your First Project content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/fastify-setup.mp4",
     videoProvider: "youtube",
@@ -51,14 +61,24 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-06-01T01:00:00Z"),
     updatedAt: new Date("2024-06-01T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000003",
     moduleId: "mod:01TESTMODULE000000000001",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Creating Your First Route",
     slug: "creating-your-first-route",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Creating Your First Route content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Creating Your First Route content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/fastify-routes.mp4",
     videoProvider: "youtube",
@@ -67,14 +87,24 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-06-01T02:00:00Z"),
     updatedAt: new Date("2024-06-01T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000004",
     moduleId: "mod:01TESTMODULE000000000001",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Request and Response Handling",
     slug: "request-and-response-handling",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Request and Response Handling content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Request and Response Handling content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/fastify-req-res.mp4",
     videoProvider: "youtube",
@@ -83,14 +113,22 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-06-01T03:00:00Z"),
     updatedAt: new Date("2024-06-01T03:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000005",
     moduleId: "mod:01TESTMODULE000000000001",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Schema Validation",
     slug: "schema-validation",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Schema Validation content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Schema Validation content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/fastify-validation.mp4",
     videoProvider: "youtube",
@@ -99,7 +137,7 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-06-01T04:00:00Z"),
     updatedAt: new Date("2024-06-01T04:00:00Z"),
-    },
+  },
   // Module 2: Building REST APIs
   {
     id: "lesson:01TESTLESSON0000000006",
@@ -107,7 +145,17 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "REST API Design Principles",
     slug: "rest-api-design-principles",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "REST API Design Principles content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "REST API Design Principles content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/rest-api-design.mp4",
     videoProvider: "youtube",
@@ -116,14 +164,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T00:00:00Z"),
     updatedAt: new Date("2024-06-02T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000007",
     moduleId: "mod:01TESTMODULE000000000002",
     courseId: "course:01TESTCOURSE00000000001",
     title: "CRUD Operations",
     slug: "crud-operations",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "CRUD Operations content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "CRUD Operations content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/crud-operations.mp4",
     videoProvider: "youtube",
@@ -132,14 +188,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T01:00:00Z"),
     updatedAt: new Date("2024-06-02T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000008",
     moduleId: "mod:01TESTMODULE000000000002",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Error Handling",
     slug: "error-handling",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Error Handling content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Error Handling content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/error-handling.mp4",
     videoProvider: "youtube",
@@ -148,14 +212,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T02:00:00Z"),
     updatedAt: new Date("2024-06-02T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000009",
     moduleId: "mod:01TESTMODULE000000000002",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Authentication & Authorization",
     slug: "authentication-authorization",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Authentication & Authorization content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Authentication & Authorization content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/auth.mp4",
     videoProvider: "youtube",
@@ -164,14 +238,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T03:00:00Z"),
     updatedAt: new Date("2024-06-02T03:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000010",
     moduleId: "mod:01TESTMODULE000000000002",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Rate Limiting & Security",
     slug: "rate-limiting-security",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Rate Limiting & Security content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Rate Limiting & Security content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/rate-limiting.mp4",
     videoProvider: "youtube",
@@ -180,14 +264,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T04:00:00Z"),
     updatedAt: new Date("2024-06-02T04:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000011",
     moduleId: "mod:01TESTMODULE000000000002",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Testing Your APIs",
     slug: "testing-your-apis",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Testing Your APIs content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Testing Your APIs content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/testing-apis.mp4",
     videoProvider: "youtube",
@@ -196,7 +288,7 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-02T05:00:00Z"),
     updatedAt: new Date("2024-06-02T05:00:00Z"),
-    },
+  },
   // Module 3: Advanced Fastify Features (4 lessons)
   {
     id: "lesson:01TESTLESSON0000000012",
@@ -204,7 +296,15 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000001",
     title: "Fastify Plugins",
     slug: "fastify-plugins",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Fastify Plugins content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Fastify Plugins content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/fastify-plugins.mp4",
     videoProvider: "youtube",
@@ -213,14 +313,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-03T00:00:00Z"),
     updatedAt: new Date("2024-06-03T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000013",
     moduleId: "mod:01TESTMODULE000000000003",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Hooks & Lifecycle",
     slug: "hooks-lifecycle",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Hooks & Lifecycle content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Hooks & Lifecycle content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/hooks-lifecycle.mp4",
     videoProvider: "youtube",
@@ -229,14 +337,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-03T01:00:00Z"),
     updatedAt: new Date("2024-06-03T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000014",
     moduleId: "mod:01TESTMODULE000000000003",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Performance Optimization",
     slug: "performance-optimization",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Performance Optimization content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Performance Optimization content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/performance.mp4",
     videoProvider: "youtube",
@@ -245,14 +363,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-03T02:00:00Z"),
     updatedAt: new Date("2024-06-03T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000015",
     moduleId: "mod:01TESTMODULE000000000003",
     courseId: "course:01TESTCOURSE00000000001",
     title: "Deployment Best Practices",
     slug: "deployment-best-practices",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Deployment Best Practices content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Deployment Best Practices content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/deployment.mp4",
     videoProvider: "youtube",
@@ -261,7 +389,7 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-06-03T03:00:00Z"),
     updatedAt: new Date("2024-06-03T03:00:00Z"),
-    },
+  },
   // TypeScript Course Lessons (20 lessons across 4 modules)
   // Module 4: Type System Fundamentals (5 lessons)
   {
@@ -270,7 +398,15 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000002",
     title: "TypeScript Basics",
     slug: "typescript-basics",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "TypeScript Basics content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "TypeScript Basics content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/ts-basics.mp4",
     videoProvider: "youtube",
@@ -279,14 +415,22 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-07-01T00:00:00Z"),
     updatedAt: new Date("2024-07-01T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000017",
     moduleId: "mod:01TESTMODULE000000000004",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Structural Typing",
     slug: "structural-typing",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Structural Typing content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Structural Typing content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/structural-typing.mp4",
     videoProvider: "youtube",
@@ -295,14 +439,24 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-07-01T01:00:00Z"),
     updatedAt: new Date("2024-07-01T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000018",
     moduleId: "mod:01TESTMODULE000000000004",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Union and Intersection Types",
     slug: "union-and-intersection-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Union and Intersection Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Union and Intersection Types content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/union-intersection.mp4",
     videoProvider: "youtube",
@@ -311,14 +465,22 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-07-01T02:00:00Z"),
     updatedAt: new Date("2024-07-01T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000019",
     moduleId: "mod:01TESTMODULE000000000004",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Type Guards",
     slug: "type-guards",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Type Guards content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Type Guards content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/type-guards.mp4",
     videoProvider: "youtube",
@@ -327,14 +489,22 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-07-01T03:00:00Z"),
     updatedAt: new Date("2024-07-01T03:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000020",
     moduleId: "mod:01TESTMODULE000000000004",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Type Assertions",
     slug: "type-assertions",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Type Assertions content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Type Assertions content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/type-assertions.mp4",
     videoProvider: "youtube",
@@ -343,7 +513,7 @@ export const testLessons = [
     isPreview: true,
     createdAt: new Date("2024-07-01T04:00:00Z"),
     updatedAt: new Date("2024-07-01T04:00:00Z"),
-    },
+  },
   // Module 5: Advanced Generics (6 lessons)
   {
     id: "lesson:01TESTLESSON0000000021",
@@ -351,7 +521,15 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000002",
     title: "Generic Functions",
     slug: "generic-functions",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Generic Functions content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Generic Functions content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/generic-functions.mp4",
     videoProvider: "youtube",
@@ -360,14 +538,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T00:00:00Z"),
     updatedAt: new Date("2024-07-02T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000022",
     moduleId: "mod:01TESTMODULE000000000005",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Generic Classes",
     slug: "generic-classes",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Generic Classes content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Generic Classes content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/generic-classes.mp4",
     videoProvider: "youtube",
@@ -376,14 +562,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T01:00:00Z"),
     updatedAt: new Date("2024-07-02T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000023",
     moduleId: "mod:01TESTMODULE000000000005",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Generic Constraints",
     slug: "generic-constraints",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Generic Constraints content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Generic Constraints content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/generic-constraints.mp4",
     videoProvider: "youtube",
@@ -392,14 +586,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T02:00:00Z"),
     updatedAt: new Date("2024-07-02T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000024",
     moduleId: "mod:01TESTMODULE000000000005",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Default Generic Types",
     slug: "default-generic-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Default Generic Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Default Generic Types content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/default-generic-types.mp4",
     videoProvider: "youtube",
@@ -408,14 +610,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T03:00:00Z"),
     updatedAt: new Date("2024-07-02T03:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000025",
     moduleId: "mod:01TESTMODULE000000000005",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Generic Variance",
     slug: "generic-variance",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Generic Variance content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Generic Variance content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/generic-variance.mp4",
     videoProvider: "youtube",
@@ -424,14 +634,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T04:00:00Z"),
     updatedAt: new Date("2024-07-02T04:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000026",
     moduleId: "mod:01TESTMODULE000000000005",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Higher-Order Generics",
     slug: "higher-order-generics",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Higher-Order Generics content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Higher-Order Generics content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/higher-order-generics.mp4",
     videoProvider: "youtube",
@@ -440,7 +658,7 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-02T05:00:00Z"),
     updatedAt: new Date("2024-07-02T05:00:00Z"),
-    },
+  },
   // Module 6: Conditional Types (5 lessons)
   {
     id: "lesson:01TESTLESSON0000000027",
@@ -448,7 +666,17 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000002",
     title: "Conditional Type Basics",
     slug: "conditional-type-basics",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Conditional Type Basics content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Conditional Type Basics content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/conditional-type-basics.mp4",
     videoProvider: "youtube",
@@ -457,14 +685,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-03T00:00:00Z"),
     updatedAt: new Date("2024-07-03T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000028",
     moduleId: "mod:01TESTMODULE000000000006",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Distributive Conditional Types",
     slug: "distributive-conditional-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Distributive Conditional Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Distributive Conditional Types content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/distributive-conditional.mp4",
     videoProvider: "youtube",
@@ -473,14 +711,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-03T01:00:00Z"),
     updatedAt: new Date("2024-07-03T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000029",
     moduleId: "mod:01TESTMODULE000000000006",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Infer Keyword",
     slug: "infer-keyword",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Infer Keyword content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Infer Keyword content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/infer-keyword.mp4",
     videoProvider: "youtube",
@@ -489,14 +735,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-03T02:00:00Z"),
     updatedAt: new Date("2024-07-03T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000030",
     moduleId: "mod:01TESTMODULE000000000006",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Mapped Types",
     slug: "mapped-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Mapped Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Mapped Types content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/mapped-types.mp4",
     videoProvider: "youtube",
@@ -505,14 +759,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-03T03:00:00Z"),
     updatedAt: new Date("2024-07-03T03:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000031",
     moduleId: "mod:01TESTMODULE000000000006",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Template Literal Types",
     slug: "template-literal-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Template Literal Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Template Literal Types content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/template-literal-types.mp4",
     videoProvider: "youtube",
@@ -521,7 +785,7 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-03T04:00:00Z"),
     updatedAt: new Date("2024-07-03T04:00:00Z"),
-    },
+  },
   // Module 7: Utility Types & Patterns (4 lessons)
   {
     id: "lesson:01TESTLESSON0000000032",
@@ -529,7 +793,17 @@ export const testLessons = [
     courseId: "course:01TESTCOURSE00000000002",
     title: "Built-in Utility Types",
     slug: "built-in-utility-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Built-in Utility Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Built-in Utility Types content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/builtin-utility-types.mp4",
     videoProvider: "youtube",
@@ -538,14 +812,22 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-04T00:00:00Z"),
     updatedAt: new Date("2024-07-04T00:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000033",
     moduleId: "mod:01TESTMODULE000000000007",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Custom Utility Types",
     slug: "custom-utility-types",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Custom Utility Types content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Custom Utility Types content..." }],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/custom-utility-types.mp4",
     videoProvider: "youtube",
@@ -554,14 +836,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-04T01:00:00Z"),
     updatedAt: new Date("2024-07-04T01:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000034",
     moduleId: "mod:01TESTMODULE000000000007",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Type-Safe Builder Pattern",
     slug: "type-safe-builder-pattern",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Type-Safe Builder Pattern content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Type-Safe Builder Pattern content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/builder-pattern.mp4",
     videoProvider: "youtube",
@@ -570,14 +862,24 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-04T02:00:00Z"),
     updatedAt: new Date("2024-07-04T02:00:00Z"),
-    },
+  },
   {
     id: "lesson:01TESTLESSON0000000035",
     moduleId: "mod:01TESTMODULE000000000007",
     courseId: "course:01TESTCOURSE00000000002",
     title: "Advanced Type Patterns",
     slug: "advanced-type-patterns",
-    content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Advanced Type Patterns content..." }] }] },
+    content: {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "Advanced Type Patterns content..." },
+          ],
+        },
+      ],
+    },
     transcription: { segments: [] },
     videoUrl: "https://example.com/videos/advanced-type-patterns.mp4",
     videoProvider: "youtube",
@@ -586,5 +888,5 @@ export const testLessons = [
     isPreview: false,
     createdAt: new Date("2024-07-04T03:00:00Z"),
     updatedAt: new Date("2024-07-04T03:00:00Z"),
-    },
+  },
 ];
