@@ -1,0 +1,36 @@
+# Pre-install dependencies for GitHub Copilot coding agent
+# This allows Copilot to hit the ground running with the right environment
+
+name: Copilot Setup Steps
+
+on:
+  workflow_dispatch:
+
+jobs:
+  copilot-setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.x
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Cache Cypress for E2E tests
+        run: pnpx cypress install
+        working-directory: apps/web

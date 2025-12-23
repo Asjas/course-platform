@@ -3,155 +3,163 @@ applyTo: "**"
 description: "Comprehensive onboarding guide for coding agents working on the course platform"
 ---
 
-# Course Platform - Coding Agent Onboarding
+# Course Platform - Coding Agent Instructions
 
 ## Project Overview
-Full-stack monorepo: course platform with web app (React 19), API server (Fastify), native desktop app (Tauri), marketing site (Astro). PostgreSQL database, Redis cache, Better Auth, Drizzle ORM, TanStack stack.
 
-## Critical Setup (Required Order)
+Full-stack TypeScript monorepo for a course platform:
+- **apps/web**: React 19 + Vite + TanStack (Router, Query, Form) + Tailwind 4
+- **apps/server**: Fastify 5 + tRPC + Drizzle ORM + Better Auth
+- **packages/shared-ui**: Radix UI component library
+- **marketing/learn-fastify**: Astro static site
 
-### 1. Install Dependencies
+**Runtime**: PostgreSQL 18, Redis/Dragonfly, Node.js >=22.16.0
+
+---
+
+## Commands Reference
+
+### Package Manager
+Always use pnpm with frozen lockfile:
 ```bash
-pnpm install --frozen-lockfile  # ALWAYS use --frozen-lockfile, NEVER npm/yarn
+pnpm install --frozen-lockfile  # NEVER use npm or yarn
 ```
 
-### 2. Environment Setup
+### Development
 ```bash
-cp apps/server/.env.sample apps/server/.env
-cp apps/web/.env.sample apps/web/.env
-# Edit .env files - server needs DATABASE_URL, REDIS_HOST, BETTER_AUTH_SECRET (32+ chars), PEPPER_SECRET (32+ chars)
-# web needs VITE_BETTER_AUTH_URL, VITE_TRPC_URL
+pnpm dev                                         # All apps concurrently
+pnpm --filter @apps/web dev                      # Frontend only (port 4173)
+pnpm --filter @apps/server dev                   # Backend only (port 5000)
 ```
 
-### 3. Start Services
+### Validation (Run Before Any PR)
 ```bash
-docker-compose up -d  # Starts PostgreSQL + Redis/Dragonfly
-pnpm run --filter "./apps/server" drizzle:migrate  # Run DB migrations
+pnpm check-format                                # Prettier check
+pnpm lint                                        # ESLint
+pnpm typecheck                                   # TypeScript strict mode
+pnpm build                                       # Full Turborepo build
+pnpm test                                        # All Vitest tests
 ```
 
-## Development Commands
-
+### Database (Drizzle)
 ```bash
-pnpm run dev                                    # All apps
-pnpm run --filter "./apps/web" dev              # Frontend (port 4173)
-pnpm run --filter "./apps/server" dev           # Backend (port 5000)
-pnpm run --filter "./apps/server" drizzle:studio # DB GUI
-```
-
-## Pre-Commit Validation (Must Pass)
-
-**Husky runs these automatically. Run manually before PR:**
-```bash
-pnpm run check-format  # Prettier check
-pnpm run lint          # ESLint (flat config in eslint.config.mjs)
-pnpm run typecheck     # TypeScript strict mode
-pnpm run build         # Turborepo build (outputs: dist/, build/, .astro/)
-pnpm run test          # Vitest all packages
-```
-
-## CI/CD Replication
-
-**GitHub Actions workflow** (`.github/workflows/ci.yml`) tests on Node.js 20-24:
-```bash
-pnpm install --frozen-lockfile
-pnpm run check-format && pnpm run lint && pnpm run typecheck
-pnpm run build  # Uses Turborepo remote cache
-pnpm run --filter @apps/server test
-# E2E: cypress install (first time), then build web, preview, run cypress
-```
-
-## Architecture & File Locations
-
-### Monorepo Structure
-```
-apps/web/               # React frontend (Vite + TanStack Router)
-  src/routes/          # File-based routing (__root.tsx, index.tsx, $param.tsx)
-  src/components/      # React components
-  vite.config.ts       # MDX, Lightning CSS, Tailwind 4, TanStack Router plugin
-  vitest.config.ts     # jsdom, tests in src/**/*.{spec,test}.{ts,tsx}
-apps/server/           # Fastify backend
-  src/routes/          # REST API routes (export default function(fastify, opts))
-  src/routers/         # tRPC routers for type-safe API
-  src/db/schema/       # Drizzle schemas (snake_case tables)
-  src/db/queries/      # Read operations (prepared queries)
-  src/db/mutations/    # Write operations (insert/update/delete)
-  src/lib/             # Utilities (auth, logging, redis, email)
-  src/drizzle.config.ts
-  drizzle/             # Generated migrations
-  vitest.config.ts     # node env, tests in tests/**/*.{spec,test}.ts
-packages/shared-ui/    # Radix UI components
-marketing/learn-fastify/ # Astro static site
-```
-
-### Key Config Files
-- **pnpm-workspace.yaml**: Workspace definition (apps/**, marketing/**, packages/**)
-- **turbo.json**: Build cache config (remote enabled: https://turborepo.codewizard.training)
-- **apps/*/tsconfig.json**: Strict mode, path alias ~/* → src/*
-- **.prettierrc**: Import sorting, double quotes, semicolons required
-- **eslint.config.mjs**: Flat config, separate rules for web (React), server (Node), marketing (Astro)
-
-## Common Patterns
-
-### Routing
-**Frontend**: TanStack Router file-based
-- `apps/web/src/routes/__root.tsx` = root layout
-- `apps/web/src/routes/index.tsx` = /
-- `apps/web/src/routes/verify-email.$token.tsx` = /verify-email/:token
-- `(auth)/` = route group (layout)
-- `_authenticated/` = protected layout
-
-**Backend**: Fastify routes in `apps/server/src/routes/`
-```typescript
-export default function featureRoutes(fastify, opts) {
-  fastify.get('/path', async (req, reply) => { ... });
-}
-```
-
-### Database
-```bash
-# Workflow: Edit schema → generate → migrate
-pnpm run --filter "./apps/server" drizzle:generate
-pnpm run --filter "./apps/server" drizzle:migrate
+pnpm --filter @apps/server drizzle:generate      # Generate migration from schema
+pnpm --filter @apps/server drizzle:migrate       # Apply migrations
+pnpm --filter @apps/server drizzle:studio        # Open Drizzle Studio GUI
 ```
 
 ### Testing
-**Unit/Integration** (Vitest): `pnpm run test` or `pnpm run --filter <pkg> test`
-**E2E** (Cypress): Install browsers first `pnpx cypress install`, then:
 ```bash
-pnpm run --filter @apps/web build
-pnpm run --filter @apps/web preview  # Terminal 1
-pnpm run --filter @apps/web e2e:run  # Terminal 2
+pnpm test                                        # All tests
+pnpm --filter @apps/server test                  # Server tests only
+pnpm --filter @apps/web test                     # Web tests only
+pnpm --filter @apps/web e2e                      # Cypress interactive
+pnpm --filter @apps/web e2e:run                  # Cypress headless
 ```
 
-## Known Issues & Solutions
+---
 
-**Issue**: Native deps fail build
-**Fix**: Already handled in Dockerfile (python3, make, g++, postgresql-dev)
+## Architecture
 
-**Issue**: Workspace install order errors
-**Fix**: Always use `pnpm install --frozen-lockfile`
+### Directory Structure
+```
+apps/web/src/
+├── routes/           # TanStack Router (file-based)
+├── components/       # React components
+├── lib/              # Utilities, API clients
+└── schema/           # Zod validation schemas
 
-**Issue**: Tests fail without .env
-**Fix**: Copy .env.sample files and configure before testing
+apps/server/src/
+├── routes/           # Fastify REST routes
+├── routers/          # tRPC routers
+├── db/
+│   ├── schema/       # Drizzle table definitions
+│   ├── queries/      # Read operations
+│   └── mutations/    # Write operations
+├── lib/              # Auth, logging, redis, email
+└── plugins/          # Fastify plugins
+```
 
-**Issue**: Cypress browser not found
-**Fix**: Run `pnpx cypress install` once
+### File Naming Conventions
+- **Routes (web)**: `__root.tsx`, `index.tsx`, `$param.tsx`, `(group)/`, `_layout/`
+- **Routes (server)**: `export default function(fastify, opts) {}`
+- **Components**: PascalCase (`UserProfile.tsx`)
+- **Utilities**: camelCase (`formatDate.ts`)
+- **Database**: snake_case for tables/columns
 
-## Code Quality Standards
+---
 
-- **TypeScript**: Strict mode, no implicit any, unused vars/params not allowed
-- **Imports**: Auto-sorted by Prettier, unused auto-removed by ESLint
-- **Style**: Semicolons required, double quotes, 80 char line width
-- **Commits**: Conventional commits enforced (feat, fix, docs, style, refactor, test, chore)
-- **Pre-commit**: Husky runs format check + lint (see `.husky/pre-commit`)
+## Code Style Requirements
 
-## Dependencies
+### TypeScript
+- Strict mode enabled
+- No `any` - use `unknown` if unsure
+- Define explicit types for function parameters
+- Use path alias `~/` for imports (maps to `src/`)
+- Use `.js` extension for relative imports in server code
 
-**Package Manager**: pnpm 10.26.1 (in package.json packageManager field)
-**Node.js**: Server requires >=22.16.0, CI tests 20.x-24.x
-**Runtime**: PostgreSQL 18, Redis/Dragonfly
-**Build-only deps**: Listed in pnpm-workspace.yaml onlyBuiltDependencies (argon2, esbuild, sharp, etc.)
+### Formatting (Prettier)
+- Double quotes for strings
+- Semicolons required
+- Imports auto-sorted
+- 80 character line width
 
-## Trust These Instructions
+### React Components
+- Functional components with ES5 function declarations
+- Use `function MyComponent()` not arrow functions
+- Use TanStack Query for server state
+- Use Zod 4 for validation
 
-Information validated from codebase analysis. Only search further if encountering undocumented errors or needing specific implementation details. Review `.github/instructions/` for specialized guidelines (a11y, security, performance, testing).
+### Fastify Routes
+```typescript
+export default function myRoutes(fastify, opts) {
+  fastify.get("/path", async (req, reply) => {
+    // handler
+  });
+}
+```
+
+### Drizzle Queries
+- Schemas in `src/db/schema/<entity>.ts`
+- Queries (reads) in `src/db/queries/`
+- Mutations (writes) in `src/db/mutations/`
+- Use `$inferSelect` and `$inferInsert` for types
+
+---
+
+## Testing Expectations
+
+### Unit Tests (Vitest)
+- Server: `apps/server/tests/**/*.{spec,test}.ts`
+- Web: `apps/web/src/**/*.{spec,test}.{ts,tsx}`
+- Mock dependencies with `vi.mock()`
+
+### E2E Tests (Cypress)
+- Located in `apps/web/cypress/e2e/`
+- Use `data-testid` for stable selectors
+- Use `cy.intercept()` for API mocking
+
+---
+
+## Commit Messages
+
+Follow Conventional Commits:
+```
+<type>(<scope>): <subject>
+
+Types: feat, fix, docs, style, refactor, perf, test, chore
+Scope: api, ui, auth, db, etc.
+```
+
+---
+
+## Path-Specific Instructions
+
+Specialized guidelines exist in `.github/instructions/`:
+- `typescript-react.instructions.md` - React/web patterns
+- `typescript-node.instructions.md` - Server/Fastify patterns
+- `cypress-e2e.instructions.md` - E2E test patterns
+- `a11y.instructions.md` - Accessibility requirements
+- `security-and-owasp.instructions.md` - Security practices
+
+These are automatically applied based on file paths.
