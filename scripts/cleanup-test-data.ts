@@ -20,9 +20,19 @@ const databaseUrl =
 
 console.log(`🧹 Cleaning up database schema: ${schemaName}`);
 
-// Create database connection
+// Create database connection with search_path set to the target schema
+// This ensures all queries use the correct schema
+let connectionString = databaseUrl;
+if (schemaName !== "public") {
+  // Append search_path option to connection string
+  // URL-encode the schema name to handle special characters like dots
+  const separator = databaseUrl.includes("?") ? "&" : "?";
+  const encodedSchemaName = encodeURIComponent(schemaName);
+  connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${encodedSchemaName}`;
+}
+
 const pool = new Pool({
-  connectionString: databaseUrl,
+  connectionString,
 });
 
 async function cleanupDatabase() {
@@ -61,7 +71,8 @@ async function cleanupDatabase() {
 
       for (const table of tables) {
         try {
-          await pool.query(`TRUNCATE TABLE "${schemaName}"."${table}" CASCADE`);
+          // No schema prefix - rely on search_path set via connection string
+          await pool.query(`TRUNCATE TABLE "${table}" CASCADE`);
           console.log(`  ✓ Truncated ${table}`);
         } catch (error: unknown) {
           // Table might not exist, that's okay
