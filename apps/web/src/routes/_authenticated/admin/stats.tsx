@@ -88,33 +88,60 @@ function StatsPage() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
+            <thead className="border-b border-gray-200 bg-gray-50 text-xs text-gray-700 uppercase dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-6 py-3">
+                <th
+                  className="px-6 py-3"
+                  scope="col"
+                >
                   Course Name
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th
+                  className="px-6 py-3"
+                  scope="col"
+                >
                   Status
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th
+                  className="px-6 py-3"
+                  scope="col"
+                >
                   Price
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Modules
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Lessons
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Total Enrollments
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Active
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Completed
                 </th>
-                <th scope="col" className="px-6 py-3 text-center">
+                <th
+                  className="px-6 py-3 text-center"
+                  scope="col"
+                >
                   Completion Rate
                 </th>
               </tr>
@@ -123,8 +150,8 @@ function StatsPage() {
               {courseStats.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={9}
                     className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
+                    colSpan={9}
                   >
                     No courses found
                   </td>
@@ -132,12 +159,12 @@ function StatsPage() {
               ) : (
                 courseStats.map((course) => (
                   <tr
-                    key={course.id}
                     className="border-b border-gray-200 bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:hover:bg-gray-800"
+                    key={course.id}
                   >
                     <th
+                      className="px-6 py-4 font-medium whitespace-nowrap text-gray-900 dark:text-white"
                       scope="row"
-                      className="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white"
                     >
                       {course.name}
                     </th>

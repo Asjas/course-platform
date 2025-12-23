@@ -7,18 +7,19 @@ import { enrollment } from "~/db/schema/enrollment.js";
  * Get basic course statistics for admin dashboard
  */
 export async function getCourseStats() {
-
   // Get total enrollments per course
   const enrollmentStats = await db
     .select({
       courseId: enrollment.courseId,
       totalEnrollments: count(enrollment.id).as("total_enrollments"),
-      activeEnrollments: sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'active' THEN 1 END)`.as(
-        "active_enrollments",
-      ),
-      completedEnrollments: sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'completed' THEN 1 END)`.as(
-        "completed_enrollments",
-      ),
+      activeEnrollments:
+        sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'active' THEN 1 END)`.as(
+          "active_enrollments",
+        ),
+      completedEnrollments:
+        sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'completed' THEN 1 END)`.as(
+          "completed_enrollments",
+        ),
     })
     .from(enrollment)
     .groupBy(enrollment.courseId);
@@ -62,7 +63,6 @@ export async function getCourseStats() {
  * Get overall platform statistics
  */
 export async function getPlatformStats() {
-
   const [courseCount, enrollmentCount, activeEnrollmentCount] =
     await Promise.all([
       // Total courses

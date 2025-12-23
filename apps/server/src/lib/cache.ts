@@ -1,5 +1,6 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
+import { getCourseStats, getPlatformStats } from "~/db/queries/stats.js";
 import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import {
@@ -25,10 +26,6 @@ import {
   getSupportTicketById,
   getSupportTicketCommentById,
 } from "~/routers/support-tickets/queries.js";
-import {
-  getCourseStats,
-  getPlatformStats,
-} from "~/db/queries/stats.js";
 
 export const cache = createCache({
   storage: {
