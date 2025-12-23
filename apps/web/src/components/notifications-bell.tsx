@@ -82,56 +82,107 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
         <span className="sr-only">Notifications</span>
       </PopoverButton>
 
-      <PopoverPanel className="absolute right-0 z-50 mt-2 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
-        <div className="p-4">
-          <div className="mb-4 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Notifications
-            </h3>
-            <div className="flex gap-1">
-              <button
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  activeTab === "new"
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                }`}
-                onClick={() => setActiveTab("new")}
-              >
-                New {unreadCount > 0 && `(${unreadCount})`}
-              </button>
-              <button
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                  activeTab === "read"
-                    ? "bg-green-600 text-white"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                }`}
-                onClick={() => setActiveTab("read")}
-              >
-                Read
-              </button>
+      <PopoverPanel className="absolute right-0 z-50 mt-2 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:w-full max-md:rounded-none max-md:border-x-0 md:max-w-md dark:border-gray-700 dark:bg-gray-800">
+        {({ close }) => (
+          <div className="p-4 max-md:min-h-[calc(100vh-3.5rem)]">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Notifications
+              </h3>
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <button
+                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                      activeTab === "new"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    }`}
+                    onClick={() => setActiveTab("new")}
+                  >
+                    New {unreadCount > 0 && `(${unreadCount})`}
+                  </button>
+                  <button
+                    className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                      activeTab === "read"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                    }`}
+                    onClick={() => setActiveTab("read")}
+                  >
+                    Read
+                  </button>
+                </div>
+                <button
+                  className="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                  onClick={() => close()}
+                  aria-label="Close notifications"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="custom-scrollbar max-h-96 space-y-3 overflow-y-auto">
-            {activeTab === "new" ? (
-              unreadAnnouncements.length > 0 ? (
-                unreadAnnouncements.map((announcement: Announcement) => {
+            <div className="custom-scrollbar max-h-96 space-y-3 overflow-y-auto">
+              {activeTab === "new" ? (
+                unreadAnnouncements.length > 0 ? (
+                  unreadAnnouncements.map((announcement: Announcement) => {
+                    const Icon = announcementIcons[announcement.type] || Info;
+                    const colorClass =
+                      announcementColors[announcement.type] ||
+                      announcementColors.general;
+                    const iconColorClass =
+                      announcementIconColors[announcement.type] ||
+                      announcementIconColors.general;
+                    return (
+                      <div
+                        className={`rounded-lg border p-3 ${colorClass}`}
+                        key={announcement.id}
+                      >
+                        <div className="flex items-start gap-2">
+                          <Icon
+                            className={`mt-0.5 h-4 w-4 flex-shrink-0 ${iconColorClass}`}
+                          />
+                          <div className="flex-1">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                              {announcement.title}
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
+                              {announcement.message}
+                            </p>
+                            {announcement.publishedAt && (
+                              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                {new Date(
+                                  announcement.publishedAt,
+                                ).toLocaleDateString()}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            className="flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                            onClick={() => handleDismiss(announcement.id)}
+                            aria-label="Dismiss notification"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
+                    No new notifications
+                  </p>
+                )
+              ) : readAnnouncements.length > 0 ? (
+                readAnnouncements.map((announcement: Announcement) => {
                   const Icon = announcementIcons[announcement.type] || Info;
-                  const colorClass =
-                    announcementColors[announcement.type] ||
-                    announcementColors.general;
-                  const iconColorClass =
-                    announcementIconColors[announcement.type] ||
-                    announcementIconColors.general;
                   return (
                     <div
-                      className={`rounded-lg border p-3 ${colorClass}`}
+                      className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 dark:border-gray-700 dark:bg-gray-900/50"
                       key={announcement.id}
                     >
                       <div className="flex items-start gap-2">
-                        <Icon
-                          className={`mt-0.5 h-4 w-4 flex-shrink-0 ${iconColorClass}`}
-                        />
+                        <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
                         <div className="flex-1">
                           <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                             {announcement.title}
@@ -139,70 +190,30 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                           <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
                             {announcement.message}
                           </p>
-                          {announcement.publishedAt && (
-                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                              {new Date(
-                                announcement.publishedAt,
-                              ).toLocaleDateString()}
-                            </p>
-                          )}
+                          <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                            <CheckCircle className="h-3 w-3" />
+                            <span>
+                              Dismissed{" "}
+                              {announcement.readAt
+                                ? new Date(
+                                    announcement.readAt,
+                                  ).toLocaleDateString()
+                                : ""}
+                            </span>
+                          </div>
                         </div>
-                        <button
-                          className="flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                          onClick={() => handleDismiss(announcement.id)}
-                          aria-label="Dismiss notification"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
                       </div>
                     </div>
                   );
                 })
               ) : (
                 <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
-                  No new notifications
+                  No read notifications
                 </p>
-              )
-            ) : readAnnouncements.length > 0 ? (
-              readAnnouncements.map((announcement: Announcement) => {
-                const Icon = announcementIcons[announcement.type] || Info;
-                return (
-                  <div
-                    className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 dark:border-gray-700 dark:bg-gray-900/50"
-                    key={announcement.id}
-                  >
-                    <div className="flex items-start gap-2">
-                      <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
-                      <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {announcement.title}
-                        </h4>
-                        <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
-                          {announcement.message}
-                        </p>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                          <CheckCircle className="h-3 w-3" />
-                          <span>
-                            Dismissed{" "}
-                            {announcement.readAt
-                              ? new Date(
-                                  announcement.readAt,
-                                ).toLocaleDateString()
-                              : ""}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
-                No read notifications
-              </p>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </PopoverPanel>
     </Popover>
   );

@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
-import { trpc } from "~/lib/trpc.client.js";
+import { trpc } from "~/lib/trpc.client";
 
 interface Announcement {
   id: string;
