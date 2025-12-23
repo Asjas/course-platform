@@ -7,12 +7,31 @@ import type {
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
+import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 type SupportTicket = AllSupportTickets[number];
 type Coupon = CouponsReturnType[number];
+
+// Announcement types
+export interface Announcement {
+  id: string;
+  title: string;
+  message: string;
+  type:
+    | "platform_update"
+    | "platform_warning"
+    | "course_update"
+    | "new_course"
+    | "general"
+    | "warning";
+  publishedAt: Date | string | null;
+  readAt?: Date | string | null;
+  authorId?: string | null;
+}
 
 // Course type that supports both list (getAllCourses) and detail (getCourseById) data
 // The collection starts with getAllCourses data, but may be updated with getCourseById data
@@ -160,6 +179,56 @@ export function useCouponById({ couponId }: { couponId: string }) {
     },
     [couponId],
   );
+}
+
+//Announcements Collection
+export const AnnouncementsCollection = createCollection(
+  queryCollectionOptions<Announcement>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.announcements.getPublished.queryKey(),
+    queryFn: () => trpcClient.announcements.getPublished.query(),
+  }),
+);
+
+export function useAnnouncements() {
+  return useLiveQuery(AnnouncementsCollection);
+}
+
+//Announcements Collection - User-specific queries
+export function useUnreadAnnouncements({ userId }: { userId: string }) {
+  return useQuery(trpc.announcements.getUnreadForUser.queryOptions(userId));
+}
+
+export function useReadAnnouncements({ userId }: { userId: string }) {
+  return useQuery(trpc.announcements.getReadForUser.queryOptions(userId));
+}
+
+export async function markAnnouncementAsRead({
+  announcementId,
+  userId,
+}: {
+  announcementId: string;
+  userId: string;
+}) {
+  try {
+    await trpcClient.announcements.markAsRead.mutate({
+      id: ulid(),
+      announcementId,
+      userId,
+    });
+
+    // Update the collection locally
+    await queryClient.invalidateQueries({
+      queryKey: trpc.announcements.getPublished.queryKey(),
+    });
+
+    toast.success("Announcement dismissed");
+  } catch (error) {
+    console.error("Error marking announcement as read:", error);
+    toast.error("Failed to dismiss announcement");
+    throw error;
+  }
 }
 
 export const CoursesCollection = createCollection(

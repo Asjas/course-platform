@@ -4,6 +4,7 @@ import { MenuIcon, UserIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Button as MenuButton, MenuTrigger } from "react-aria-components";
 import { toast } from "sonner";
+import { NotificationsBell } from "~/components/notifications-bell";
 import { ThemeToggle } from "~/components/theme-toggle";
 import { Menu, MenuItem, MenuPopover } from "~/components/ui/menu";
 import { NavLink } from "~/components/ui/nav-link";
@@ -133,84 +134,87 @@ export default function Header({ auth }: { auth: AuthState }) {
           <ThemeToggle />
 
           {auth.isAuthenticated && user ? (
-            <MenuTrigger>
-              <MenuButton aria-label="Menu">
-                {user.image ? (
-                  <img
-                    className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
-                    src={user.image}
-                    alt={`${user.name}'s profile`}
-                  />
-                ) : (
-                  <UserIcon
-                    className="hover:text-green-700"
-                    size={28}
-                    aria-hidden="true"
-                  />
-                )}
-              </MenuButton>
+            <>
+              <NotificationsBell userId={user.id} />
+              <MenuTrigger>
+                <MenuButton aria-label="Menu">
+                  {user.image ? (
+                    <img
+                      className="size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                      src={user.image}
+                      alt={`${user.name}'s profile`}
+                    />
+                  ) : (
+                    <UserIcon
+                      className="hover:text-green-700"
+                      size={28}
+                      aria-hidden="true"
+                    />
+                  )}
+                </MenuButton>
 
-              <MenuPopover>
-                <Menu>
-                  <MenuItem onAction={() => navigate({ to: "/account" })}>
-                    Account
-                  </MenuItem>
+                <MenuPopover>
+                  <Menu>
+                    <MenuItem onAction={() => navigate({ to: "/account" })}>
+                      Account
+                    </MenuItem>
 
-                  <MenuItem onAction={() => navigate({ to: "/profile" })}>
-                    Profile
-                  </MenuItem>
+                    <MenuItem onAction={() => navigate({ to: "/profile" })}>
+                      Profile
+                    </MenuItem>
 
-                  <MenuItem onAction={() => navigate({ to: "/purchases" })}>
-                    Purchases
-                  </MenuItem>
+                    <MenuItem onAction={() => navigate({ to: "/purchases" })}>
+                      Purchases
+                    </MenuItem>
 
-                  {isImpersonating ? (
+                    {isImpersonating ? (
+                      <MenuItem
+                        onAction={async () => {
+                          const { error } =
+                            await authClient.admin.stopImpersonating();
+
+                          if (error) {
+                            toast.error(
+                              `Failed to stop impersonating user: ${user.username || user.name}`,
+                            );
+                            console.error(error);
+
+                            return;
+                          }
+
+                          toast.success(
+                            `Stopped impersonating user: ${user.username || user.name}`,
+                          );
+
+                          navigate({
+                            to: "/admin/users",
+                            reloadDocument: true,
+                          });
+                        }}
+                      >
+                        Stop Impersonating
+                      </MenuItem>
+                    ) : null}
+
                     <MenuItem
                       onAction={async () => {
-                        const { error } =
-                          await authClient.admin.stopImpersonating();
+                        const { error } = await authClient.signOut();
 
                         if (error) {
-                          toast.error(
-                            `Failed to stop impersonating user: ${user.username || user.name}`,
-                          );
-                          console.error(error);
+                          toast.error(error.message || "Failed to logout");
 
                           return;
                         }
 
-                        toast.success(
-                          `Stopped impersonating user: ${user.username || user.name}`,
-                        );
-
-                        navigate({
-                          to: "/admin/users",
-                          reloadDocument: true,
-                        });
+                        navigate({ to: "/" });
                       }}
                     >
-                      Stop Impersonating
+                      Logout
                     </MenuItem>
-                  ) : null}
-
-                  <MenuItem
-                    onAction={async () => {
-                      const { error } = await authClient.signOut();
-
-                      if (error) {
-                        toast.error(error.message || "Failed to logout");
-
-                        return;
-                      }
-
-                      navigate({ to: "/" });
-                    }}
-                  >
-                    Logout
-                  </MenuItem>
-                </Menu>
-              </MenuPopover>
-            </MenuTrigger>
+                  </Menu>
+                </MenuPopover>
+              </MenuTrigger>
+            </>
           ) : (
             <ul className="flex space-x-2">
               <li className="relative inline-flex">
@@ -282,7 +286,8 @@ export default function Header({ auth }: { auth: AuthState }) {
               <ThemeToggle />
 
               {auth.isAuthenticated ? (
-                <div className="flex justify-end">
+                <div className="flex items-center justify-end gap-2">
+                  {user && <NotificationsBell userId={user.id} />}
                   {auth.isAuthenticated && user ? (
                     <MenuTrigger>
                       <MenuButton aria-label="Menu">
