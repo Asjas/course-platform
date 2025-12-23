@@ -21,7 +21,7 @@ export function ThemeToggle() {
         aria-label={`Change theme. Current theme: ${theme}`}
       >
         <CurrentIcon
-          className="size-5"
+          className="size-6"
           aria-hidden="true"
         />
       </AriaButton>
