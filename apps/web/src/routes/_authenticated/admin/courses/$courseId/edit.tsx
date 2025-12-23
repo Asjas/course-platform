@@ -1,7 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-form-adapter";
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -200,7 +199,6 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
           isPreview: false,
           courseId,
         },
-    validatorAdapter: zodValidator(),
     validators: {
       onChange: moduleId ? updateModuleSchema : createModuleSchema,
     },
@@ -449,7 +447,6 @@ function LessonEditor({
           courseId,
           moduleId: preselectedModuleId || (course?.modules?.[0]?.id || ""),
         },
-    validatorAdapter: zodValidator(),
     validators: {
       onChange: lessonId ? updateLessonSchema : createLessonSchema,
     },
