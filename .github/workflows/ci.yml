@@ -65,7 +65,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 21.x, 22.x, 23.x, 24.x]
+        node-version: [20.x, 22.x]
 
     steps:
       - name: Check out repository
@@ -111,7 +111,8 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 21.x, 22.x, 23.x, 24.x]
+        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
+        node-version: [20, 22]
 
     steps:
       - name: Check out repository
@@ -134,15 +135,67 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
+      - name: Run database migrations
+        run: pnpm --filter @apps/server drizzle:migrate
+
+      - name: Seed test database
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+
       - name: Run server tests
         run: pnpm --filter @apps/server test
+
+      - name: Cleanup test database
+        if: always()
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
+
+  web-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
+        node-version: [20, 22]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build --cache=remote:rw
+
+      - name: Run database migrations
+        run: pnpm --filter @apps/server drizzle:migrate
+
+      - name: Seed test database
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+
+      - name: Run web tests
+        run: pnpm --filter @apps/web test
+
+      - name: Cleanup test database
+        if: always()
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
 
   e2e-tests:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [20.x, 21.x, 22.x, 23.x, 24.x]
+        node-version: [20.x, 22.x]
 
     steps:
       - name: Check out repository
