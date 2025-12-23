@@ -210,6 +210,19 @@ function generateFakeSupportTicket(
   courseId: string,
   lessonId: string,
 ) {
+  const status = faker.helpers.arrayElement([
+    "open",
+    "in_progress",
+    "resolved",
+    "closed",
+  ] as const);
+  
+  // Constraint: resolvedAt must be NOT NULL if status is 'resolved', NULL otherwise
+  const resolvedAt = status === "resolved" ? faker.date.past({ days: 30 }) : null;
+  
+  // Constraint: closedAt must be NOT NULL if status is 'closed', NULL otherwise
+  const closedAt = status === "closed" ? faker.date.past({ days: 10 }) : null;
+  
   return {
     id: generateId("suptick"),
     title: `Issue with ${faker.hacker.noun()}: ${faker.lorem.sentence()}`,
@@ -219,16 +232,13 @@ function generateFakeSupportTicket(
       "fastify/fastify",
     ]),
     priority: faker.helpers.arrayElement(["low", "medium", "high"] as const),
-    status: faker.helpers.arrayElement([
-      "open",
-      "in-progress",
-      "resolved",
-      "closed",
-    ] as const),
+    status,
     userId,
     assignedToId: null,
     moduleId: null,
     lessonId,
+    resolvedAt,
+    closedAt,
     createdAt: faker.date.past({ days: 90 }),
     updatedAt: new Date(),
   };
@@ -473,8 +483,8 @@ async function seedDatabase() {
       );
 
       await pool.query(
-        `INSERT INTO support_ticket (id, title, description, repo, priority, status, user_id, lesson_id, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
+        `INSERT INTO support_ticket (id, title, description, repo, priority, status, user_id, lesson_id, resolved_at, closed_at, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
         [
           ticket.id,
           ticket.title,
@@ -484,6 +494,8 @@ async function seedDatabase() {
           ticket.status,
           ticket.userId,
           ticket.lessonId,
+          ticket.resolvedAt,
+          ticket.closedAt,
           ticket.createdAt,
           ticket.updatedAt,
         ],
