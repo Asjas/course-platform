@@ -376,6 +376,7 @@ async function seedDatabase() {
         ],
       );
     }
+    console.log(`✅ Inserted ${allModules.length} modules`);
 
     // Generate all lessons for all modules
     for (const module of allModules) {
@@ -387,7 +388,21 @@ async function seedDatabase() {
     }
 
     // Insert all lessons sequentially to ensure referential integrity
-    for (const lesson of allLessons) {
+    console.log(`📝 Inserting ${allLessons.length} lessons...`);
+    for (let i = 0; i < allLessons.length; i++) {
+      const lesson = allLessons[i];
+      // Verify the module exists before inserting the lesson
+      const moduleCheck = await pool.query(
+        `SELECT id FROM course_module WHERE id = $1`,
+        [lesson.moduleId],
+      );
+      
+      if (moduleCheck.rows.length === 0) {
+        console.error(`❌ Module ${lesson.moduleId} not found for lesson ${lesson.id} (${i + 1}/${allLessons.length})`);
+        console.error(`   Available module IDs: ${allModules.map(m => m.id).slice(0, 5).join(', ')}...`);
+        throw new Error(`Module ${lesson.moduleId} does not exist`);
+      }
+      
       await pool.query(
         `INSERT INTO course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
@@ -409,6 +424,7 @@ async function seedDatabase() {
         ],
       );
     }
+    console.log(`✅ Inserted ${allLessons.length} lessons`);
 
     // Update course totals
     for (const course of courses) {
