@@ -1,11 +1,11 @@
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { trpc } from "~/lib/trpc.client.js";
+import { ulid } from "ulid";
 import AdminLayout from "~/components/layouts/admin-layout";
-import { z } from "zod";
-import { useForm } from "@tanstack/react-form";
-import { nanoid } from "nanoid";
+import { trpc } from "~/lib/trpc.client.js";
 
 export const Route = createFileRoute("/_authenticated/admin/announcements")({
   component: AnnouncementsPage,
@@ -37,18 +37,33 @@ const announcementTypeColors: Record<AnnouncementType, string> = {
   warning: "bg-yellow-100 text-yellow-800",
 };
 
+interface Announcement {
+  id: string;
+  title: string;
+  message: string;
+  type: AnnouncementType;
+  publishedAt: Date | string | null;
+}
+
 function AnnouncementsPage() {
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState<any>(null);
+  const [selectedAnnouncement, setSelectedAnnouncement] =
+    useState<Announcement | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
   const {
     data: announcementsData,
     isLoading,
     refetch,
-  } = trpc.announcements.getAll.useQuery();
-  const createMutation = trpc.announcements.create.useMutation();
-  const updateMutation = trpc.announcements.update.useMutation();
-  const deleteMutation = trpc.announcements.delete.useMutation();
+  } = useQuery(trpc.announcements.getAll.queryOptions());
+  const createMutation = useMutation(
+    trpc.announcements.create.mutationOptions(),
+  );
+  const updateMutation = useMutation(
+    trpc.announcements.update.mutationOptions(),
+  );
+  const deleteMutation = useMutation(
+    trpc.announcements.delete.mutationOptions(),
+  );
 
   const form = useForm({
     defaultValues: {
@@ -72,7 +87,7 @@ function AnnouncementsPage() {
           toast.success("Announcement updated successfully");
         } else {
           await createMutation.mutateAsync({
-            id: nanoid(),
+            id: ulid(),
             title: value.title,
             message: value.message,
             type: value.type,
@@ -82,7 +97,7 @@ function AnnouncementsPage() {
         }
         refetch();
         handleCancel();
-      } catch (error) {
+      } catch {
         toast.error(
           selectedAnnouncement
             ? "Failed to update announcement"
@@ -92,7 +107,7 @@ function AnnouncementsPage() {
     },
   });
 
-  function handleEdit(announcement: any) {
+  function handleEdit(announcement: Announcement) {
     setSelectedAnnouncement(announcement);
     setIsCreating(false);
     form.setFieldValue("title", announcement.title);
@@ -122,7 +137,7 @@ function AnnouncementsPage() {
       if (selectedAnnouncement?.id === id) {
         handleCancel();
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete announcement");
     }
   }
@@ -142,8 +157,8 @@ function AnnouncementsPage() {
           Announcements
         </h1>
         <button
-          onClick={handleCreate}
           className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+          onClick={handleCreate}
         >
           Create Announcement
         </button>
@@ -165,15 +180,16 @@ function AnnouncementsPage() {
               </p>
             ) : (
               <div className="space-y-2">
-                {announcements.map((announcement: any) => (
-                  <div
-                    key={announcement.id}
-                    onClick={() => handleEdit(announcement)}
-                    className={`cursor-pointer rounded-md border p-3 transition-colors ${
+                {announcements.map((announcement: Announcement) => (
+                  <button
+                    className={`w-full cursor-pointer rounded-md border p-3 text-left transition-colors ${
                       selectedAnnouncement?.id === announcement.id
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                     }`}
+                    type="button"
+                    key={announcement.id}
+                    onClick={() => handleEdit(announcement)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -187,16 +203,10 @@ function AnnouncementsPage() {
                         <div className="mt-2 flex items-center gap-2">
                           <span
                             className={`rounded px-2 py-1 text-xs font-medium ${
-                              announcementTypeColors[
-                                announcement.type as AnnouncementType
-                              ]
+                              announcementTypeColors[announcement.type]
                             }`}
                           >
-                            {
-                              announcementTypeLabels[
-                                announcement.type as AnnouncementType
-                              ]
-                            }
+                            {announcementTypeLabels[announcement.type]}
                           </span>
                           {announcement.publishedAt && (
                             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -206,7 +216,7 @@ function AnnouncementsPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
@@ -222,30 +232,30 @@ function AnnouncementsPage() {
               </h2>
 
               <form
+                className="space-y-4"
                 onSubmit={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   form.handleSubmit();
                 }}
-                className="space-y-4"
               >
                 <div>
                   <form.Field name="title">
                     {(field) => (
                       <>
                         <label
-                          htmlFor="title"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor="title"
                         >
                           Title
                         </label>
                         <input
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id="title"
                           type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
                           required
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                       </>
                     )}
@@ -257,18 +267,18 @@ function AnnouncementsPage() {
                     {(field) => (
                       <>
                         <label
-                          htmlFor="message"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor="message"
                         >
                           Message
                         </label>
                         <textarea
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id="message"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
                           required
                           rows={6}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                       </>
                     )}
@@ -280,22 +290,27 @@ function AnnouncementsPage() {
                     {(field) => (
                       <>
                         <label
-                          htmlFor="type"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor="type"
                         >
                           Type
                         </label>
                         <select
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id="type"
                           value={field.state.value}
                           onChange={(e) =>
-                            field.handleChange(e.target.value as AnnouncementType)
+                            field.handleChange(
+                              e.target.value as AnnouncementType,
+                            )
                           }
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         >
                           {Object.entries(announcementTypeLabels).map(
                             ([value, label]) => (
-                              <option key={value} value={value}>
+                              <option
+                                key={value}
+                                value={value}
+                              >
                                 {label}
                               </option>
                             ),
@@ -311,17 +326,17 @@ function AnnouncementsPage() {
                     {(field) => (
                       <>
                         <label
-                          htmlFor="publishedAt"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor="publishedAt"
                         >
                           Publish Date (Optional)
                         </label>
                         <input
+                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id="publishedAt"
                           type="datetime-local"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                           Leave empty for draft
@@ -333,27 +348,27 @@ function AnnouncementsPage() {
 
                 <div className="flex gap-2 pt-4">
                   <button
+                    className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                     type="submit"
                     disabled={
                       createMutation.isPending || updateMutation.isPending
                     }
-                    className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:opacity-50"
                   >
                     {selectedAnnouncement ? "Update" : "Create"}
                   </button>
                   <button
+                    className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                     type="button"
                     onClick={handleCancel}
-                    className="rounded-md border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                   >
                     Cancel
                   </button>
                   {selectedAnnouncement && (
                     <button
+                      className="ml-auto rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
                       type="button"
                       onClick={() => handleDelete(selectedAnnouncement.id)}
                       disabled={deleteMutation.isPending}
-                      className="ml-auto rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:opacity-50"
                     >
                       Delete
                     </button>

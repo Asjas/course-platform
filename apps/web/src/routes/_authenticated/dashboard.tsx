@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { CourseCard } from "~/components/course-card";
-import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
+import { CourseCard } from "~/components/course-card";
 import { useAuth } from "~/lib/auth.context";
+import { CoursesCollection, useCourses } from "~/lib/db.collections";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: AuthenticatedDashboardPage,

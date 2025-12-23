@@ -1,14 +1,17 @@
 import { count, desc, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
+import { coupon, couponRedemption } from "~/db/schema/coupon.js";
 import { course, courseWishlist } from "~/db/schema/course.js";
 import { enrollment } from "~/db/schema/enrollment.js";
-import { supportTicket } from "~/db/schema/support-tickets.js";
-import { user } from "~/db/schema/user.js";
-import { coupon, couponRedemption } from "~/db/schema/coupon.js";
-import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
+import {
+  platformAnnouncement,
+  platformAnnouncementRead,
+} from "~/db/schema/platformAnnouncements.js";
 import { courseProgress, lessonProgress } from "~/db/schema/progress.js";
-import { platformAnnouncement, platformAnnouncementRead } from "~/db/schema/platformAnnouncements.js";
-import { payment, invoice } from "~/db/schema/purchase.js";
+import { payment } from "~/db/schema/purchase.js";
+import { supportTicket } from "~/db/schema/support-tickets.js";
+import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
+import { user } from "~/db/schema/user.js";
 
 /**
  * Get basic course statistics for admin dashboard
@@ -97,15 +100,15 @@ export async function getRevenueStats() {
   // Get payment statistics
   const paymentStats = await db
     .select({
-      totalRevenue: sql<number>`SUM(CASE WHEN ${payment.status} = 'completed' THEN ${payment.amount} ELSE 0 END)`.as(
-        "total_revenue",
-      ),
-      refundedAmount: sql<number>`SUM(CASE WHEN ${payment.status} = 'refunded' THEN ${payment.amount} ELSE 0 END)`.as(
-        "refunded_amount",
-      ),
-      totalPaid: count(payment.id)
-        .as("total_paid")
-        .mapWith((val) => (val === null ? 0 : Number(val))),
+      totalRevenue:
+        sql<number>`SUM(CASE WHEN ${payment.status} = 'completed' THEN ${payment.amount} ELSE 0 END)`.as(
+          "total_revenue",
+        ),
+      refundedAmount:
+        sql<number>`SUM(CASE WHEN ${payment.status} = 'refunded' THEN ${payment.amount} ELSE 0 END)`.as(
+          "refunded_amount",
+        ),
+      totalPaid: count(payment.id).as("total_paid"),
       refundCount:
         sql<number>`COUNT(CASE WHEN ${payment.status} = 'refunded' THEN 1 END)`.as(
           "refund_count",
@@ -153,12 +156,16 @@ export async function getRevenueStats() {
   return {
     totalRevenue: Number(stats?.totalRevenue || 0),
     refundedAmount: Number(stats?.refundedAmount || 0),
-    netRevenue: Number(stats?.totalRevenue || 0) - Number(stats?.refundedAmount || 0),
+    netRevenue:
+      Number(stats?.totalRevenue || 0) - Number(stats?.refundedAmount || 0),
     totalPayments: Number(stats?.totalPaid || 0),
     refundCount: Number(stats?.refundCount || 0),
     refundRate:
       Number(stats?.totalPaid || 0) > 0
-        ? Math.round((Number(stats?.refundCount || 0) / Number(stats?.totalPaid || 0)) * 100)
+        ? Math.round(
+            (Number(stats?.refundCount || 0) / Number(stats?.totalPaid || 0)) *
+              100,
+          )
         : 0,
     giftPurchases: Number(stats?.giftCount || 0),
     teamPurchases: Number(stats?.teamPurchaseCount || 0),
@@ -257,11 +264,13 @@ export async function getUserStats() {
     bannedUsers: Number(stats?.bannedUsers || 0),
     verifiedUsers: Number(stats?.verifiedUsers || 0),
     adminUsers: Number(stats?.adminUsers || 0),
-    activeUsers: Number(stats?.totalUsers || 0) - Number(stats?.bannedUsers || 0),
+    activeUsers:
+      Number(stats?.totalUsers || 0) - Number(stats?.bannedUsers || 0),
     verificationRate:
       Number(stats?.totalUsers || 0) > 0
         ? Math.round(
-            (Number(stats?.verifiedUsers || 0) / Number(stats?.totalUsers || 0)) *
+            (Number(stats?.verifiedUsers || 0) /
+              Number(stats?.totalUsers || 0)) *
               100,
           )
         : 0,
@@ -314,7 +323,9 @@ export async function getTeamLicenseStats() {
     db
       .select({
         totalLicenses: count(teamLicense.id),
-        totalSeats: sql<number>`SUM(${teamLicense.totalSeats})`.as("total_seats"),
+        totalSeats: sql<number>`SUM(${teamLicense.totalSeats})`.as(
+          "total_seats",
+        ),
         claimedSeats: sql<number>`SUM(${teamLicense.claimedSeats})`.as(
           "claimed_seats",
         ),
@@ -347,7 +358,8 @@ export async function getTeamLicenseStats() {
     seatUtilization:
       Number(license?.totalSeats || 0) > 0
         ? Math.round(
-            (Number(license?.claimedSeats || 0) / Number(license?.totalSeats || 0)) *
+            (Number(license?.claimedSeats || 0) /
+              Number(license?.totalSeats || 0)) *
               100,
           )
         : 0,
@@ -369,7 +381,9 @@ export async function getProgressStats() {
           sql<number>`COUNT(CASE WHEN ${courseProgress.completed} = true THEN 1 END)`.as(
             "completed_courses",
           ),
-        avgProgress: sql<number>`AVG(${courseProgress.progress})`.as("avg_progress"),
+        avgProgress: sql<number>`AVG(${courseProgress.progress})`.as(
+          "avg_progress",
+        ),
       })
       .from(courseProgress),
     db

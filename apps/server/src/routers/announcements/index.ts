@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { z } from "zod";
+import * as z from "zod";
 import {
   deletePlatformAnnouncementById,
   insertPlatformAnnouncement,
@@ -45,7 +45,7 @@ export const announcementsRouter = router({
     try {
       const result = await getAllAnnouncements();
       return result;
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch announcements",
@@ -57,7 +57,7 @@ export const announcementsRouter = router({
     try {
       const announcements = await getPublishedAnnouncements();
       return announcements;
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch published announcements",
@@ -71,7 +71,7 @@ export const announcementsRouter = router({
       try {
         const announcements = await getUnreadAnnouncementsForUser(input);
         return announcements;
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch unread announcements",
@@ -83,7 +83,7 @@ export const announcementsRouter = router({
     try {
       const announcements = await getReadAnnouncementsForUser(input);
       return announcements;
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch read announcements",
@@ -117,13 +117,11 @@ export const announcementsRouter = router({
         const result = await insertPlatformAnnouncement({
           newPlatformAnnouncement: {
             ...input,
-            publishedAt: input.publishedAt
-              ? new Date(input.publishedAt)
-              : null,
+            publishedAt: input.publishedAt ? new Date(input.publishedAt) : null,
           },
         });
         return result[0];
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create announcement",
@@ -140,7 +138,7 @@ export const announcementsRouter = router({
     )
     .mutation(async ({ input }) => {
       try {
-        const updates: any = { ...input.updates };
+        const updates: Record<string, unknown> = { ...input.updates };
         if (input.updates.publishedAt !== undefined) {
           updates.publishedAt = input.updates.publishedAt
             ? new Date(input.updates.publishedAt)
@@ -172,7 +170,7 @@ export const announcementsRouter = router({
     try {
       await deletePlatformAnnouncementById(input);
       return { success: true };
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to delete announcement",
@@ -195,7 +193,7 @@ export const announcementsRouter = router({
           userId: input.userId,
         });
         return result[0];
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to mark announcement as read",

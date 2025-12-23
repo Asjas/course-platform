@@ -1,16 +1,16 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
 import {
+  getAnnouncementStats,
+  getCouponStats,
   getCourseStats,
   getPlatformStats,
+  getProgressStats,
   getRevenueStats,
   getSupportStats,
-  getUserStats,
-  getCouponStats,
   getTeamLicenseStats,
-  getProgressStats,
+  getUserStats,
   getWishlistStats,
-  getAnnouncementStats,
 } from "~/db/queries/stats.js";
 import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";

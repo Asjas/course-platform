@@ -1,23 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Activity,
-  BookOpen,
-  TrendingUp,
-  Users,
-  DollarSign,
-  RefreshCw,
-  Gift,
-  UsersRound,
-  XCircle,
   AlertCircle,
+  Award,
+  Bell,
+  BookOpen,
   CheckCircle,
   Clock,
-  Ticket,
-  UserCheck,
-  Tag,
-  Award,
+  DollarSign,
+  Gift,
   Heart,
-  Bell,
+  RefreshCw,
+  Tag,
+  Ticket,
+  TrendingUp,
+  UserCheck,
+  Users,
+  UsersRound,
+  XCircle,
 } from "lucide-react";
 import { trpcClient } from "~/lib/trpc.client.js";
 
@@ -532,7 +532,8 @@ function StatsPage() {
               {progressStats.courseCompletionRate}%
             </p>
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-              {progressStats.completedCourses} / {progressStats.totalCourseProgress} completed
+              {progressStats.completedCourses} /{" "}
+              {progressStats.totalCourseProgress} completed
             </p>
           </div>
 
@@ -562,7 +563,8 @@ function StatsPage() {
               {progressStats.lessonCompletionRate}%
             </p>
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-              {progressStats.completedLessons} / {progressStats.totalLessonProgress} lessons
+              {progressStats.completedLessons} /{" "}
+              {progressStats.totalLessonProgress} lessons
             </p>
           </div>
         </div>
@@ -600,7 +602,8 @@ function StatsPage() {
               {teamLicenseStats.seatUtilization}%
             </p>
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-              {teamLicenseStats.claimedSeats} / {teamLicenseStats.totalSeats} claimed
+              {teamLicenseStats.claimedSeats} / {teamLicenseStats.totalSeats}{" "}
+              claimed
             </p>
           </div>
 
