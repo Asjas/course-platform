@@ -21,7 +21,7 @@ import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
-export const Route = createFileRoute("/_authenticated/admin/courses")({
+export const Route = createFileRoute("/_authenticated/admin/courses/")({
   loader: async () => {
     await CoursesAdminCollection.preload();
   },
