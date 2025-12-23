@@ -16,7 +16,7 @@ import {
   SheetTitle,
 } from "~/components/ui/sheet";
 import {
-  type CourseWithDetails,
+  type CourseDetail,
   CoursesCollection,
   useCourseById,
 } from "~/lib/db.collections";
@@ -98,8 +98,8 @@ function CourseDetailPage() {
     );
   }
 
-  // Cast to CourseWithDetails since the loader ensures we have full course data
-  const fullCourse = course as CourseWithDetails;
+  // Cast to CourseDetail since the loader ensures we have full course data
+  const fullCourse = course as CourseDetail;
   const modules = (fullCourse.modules || []) as ModuleWithLessons[];
 
   // Calculate counts
