@@ -99,9 +99,9 @@ function CreateCoursePage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1">
         {/* Left Column - Form */}
-        <div className="flex-1 bg-white p-8 dark:bg-gray-800">
+        <div className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
           <form
             className="mx-auto max-w-2xl space-y-6"
             onSubmit={(e) => {
@@ -119,7 +119,7 @@ function CreateCoursePage() {
                     Course Name *
                   </label>
                   <input
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     id="name"
                     name="name"
                     type="text"
@@ -142,7 +142,7 @@ function CreateCoursePage() {
                     URL Slug *
                   </label>
                   <input
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     id="slug"
                     name="slug"
                     type="text"
@@ -170,7 +170,7 @@ function CreateCoursePage() {
                     Description
                   </label>
                   <textarea
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     id="description"
                     name="description"
                     rows={4}
@@ -194,7 +194,7 @@ function CreateCoursePage() {
                       Level
                     </label>
                     <select
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                      className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       id="level"
                       name="level"
                       value={field.state.value}
@@ -227,8 +227,8 @@ function CreateCoursePage() {
                     >
                       Thumbnail URL
                     </label>
-                    <input
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                   <input
+                      className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                       id="thumbnailUrl"
                       name="thumbnailUrl"
                       type="url"
@@ -282,7 +282,7 @@ function CreateCoursePage() {
                               Price ($)
                             </label>
                             <input
-                              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                               id="price"
                               name="price"
                               type="number"
@@ -307,7 +307,7 @@ function CreateCoursePage() {
                               Free Trial Modules
                             </label>
                             <input
-                              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                              className="mt-1 block h-9 w-full rounded-md border border-gray-300 px-3 py-1 text-sm shadow-xs focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                               id="trialModuleLimit"
                               name="trialModuleLimit"
                               type="number"
