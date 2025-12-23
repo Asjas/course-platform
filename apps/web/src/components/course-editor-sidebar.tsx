@@ -1,14 +1,14 @@
 import {
   DndContext,
   type DragEndEvent,
-  DragOverlay,
   type DragOverEvent,
+  DragOverlay,
   type DragStartEvent,
   PointerSensor,
+  type UniqueIdentifier,
   closestCenter,
   useSensor,
   useSensors,
-  type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -64,11 +64,7 @@ interface SortableLessonProps {
   onSelect: () => void;
 }
 
-function SortableLesson({
-  lesson,
-  isSelected,
-  onSelect,
-}: SortableLessonProps) {
+function SortableLesson({ lesson, isSelected, onSelect }: SortableLessonProps) {
   const {
     attributes,
     listeners,
@@ -76,7 +72,10 @@ function SortableLesson({
     transform,
     transition,
     isDragging,
-  } = useSortable({ id: lesson.id, data: { type: "lesson", moduleId: lesson.moduleId } });
+  } = useSortable({
+    id: lesson.id,
+    data: { type: "lesson", moduleId: lesson.moduleId },
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -266,7 +265,7 @@ export default function CourseEditorSidebar({
   );
 
   const sortedModules = [...modules].sort((a, b) => a.order - b.order);
-  
+
   // Get all sortable item IDs (modules + lessons)
   const allItems = [
     ...sortedModules.map((m) => m.id),
@@ -381,7 +380,10 @@ export default function CourseEditorSidebar({
           const toastId = toast.loading("Reordering lessons...");
           try {
             await reorderLessonsMutation.mutateAsync({
-              lessons: updatedLessons.map((l) => ({ id: l.id, order: l.order })),
+              lessons: updatedLessons.map((l) => ({
+                id: l.id,
+                order: l.order,
+              })),
             });
 
             queryClient.invalidateQueries({
@@ -408,7 +410,8 @@ export default function CourseEditorSidebar({
             await moveLessonMutation.mutateAsync({
               lessonId: activeLesson.id,
               newModuleId: targetModuleId,
-              newOrder: insertIndex >= 0 ? insertIndex : targetModuleLessons.length,
+              newOrder:
+                insertIndex >= 0 ? insertIndex : targetModuleLessons.length,
             });
 
             queryClient.invalidateQueries({

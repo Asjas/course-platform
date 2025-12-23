@@ -8,19 +8,19 @@ import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
 import { queryClient } from "~/lib/query.client";
+import { trpc, trpcClient } from "~/lib/trpc.client";
 import {
-  createLessonSchema,
-  updateLessonSchema,
   type CreateLessonFormData,
   type UpdateLessonFormData,
+  createLessonSchema,
+  updateLessonSchema,
 } from "~/schema/lesson";
 import {
-  createModuleSchema,
-  updateModuleSchema,
   type CreateModuleFormData,
   type UpdateModuleFormData,
+  createModuleSchema,
+  updateModuleSchema,
 } from "~/schema/module";
-import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute(
   "/_authenticated/admin/courses/$courseId/edit",
@@ -182,23 +182,24 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
   );
 
   const form = useForm<CreateModuleFormData | UpdateModuleFormData>({
-    defaultValues: moduleId && module
-      ? {
-          id: module.id,
-          title: module.title,
-          slug: module.slug,
-          description: module.description,
-          order: module.order,
-          isPreview: module.isPreview,
-        }
-      : {
-          title: "",
-          slug: "",
-          description: "",
-          order: (course?.modules?.length || 0),
-          isPreview: false,
-          courseId,
-        },
+    defaultValues:
+      moduleId && module
+        ? {
+            id: module.id,
+            title: module.title,
+            slug: module.slug,
+            description: module.description,
+            order: module.order,
+            isPreview: module.isPreview,
+          }
+        : {
+            title: "",
+            slug: "",
+            description: "",
+            order: course?.modules?.length || 0,
+            isPreview: false,
+            courseId,
+          },
     validators: {
       onChange: moduleId ? updateModuleSchema : createModuleSchema,
     },
@@ -288,7 +289,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
                   Module Title
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="title"
                   name="title"
                   onBlur={field.handleBlur}
@@ -312,7 +313,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
                   Slug
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="slug"
                   name="slug"
                   onBlur={field.handleBlur}
@@ -339,7 +340,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
                   Description
                 </label>
                 <textarea
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="description"
                   name="description"
                   onBlur={field.handleBlur}
@@ -357,9 +358,9 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
             {(field) => (
               <div className="flex items-center">
                 <input
-                  checked={field.state.value}
                   className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                   id="isPreview"
+                  checked={field.state.value}
                   name="isPreview"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.checked)}
@@ -421,32 +422,33 @@ function LessonEditor({
   );
 
   const form = useForm<CreateLessonFormData | UpdateLessonFormData>({
-    defaultValues: lessonId && lesson
-      ? {
-          id: lesson.id,
-          title: lesson.title,
-          slug: lesson.slug,
-          videoUrl: lesson.videoUrl,
-          videoProvider: lesson.videoProvider,
-          content: lesson.content || {},
-          transcription: lesson.transcription || {},
-          duration: lesson.duration || null,
-          order: lesson.order,
-          isPreview: lesson.isPreview,
-        }
-      : {
-          title: "",
-          slug: "",
-          videoUrl: "",
-          videoProvider: "youtube" as const,
-          content: {},
-          transcription: {},
-          duration: null,
-          order: 0,
-          isPreview: false,
-          courseId,
-          moduleId: preselectedModuleId || (course?.modules?.[0]?.id || ""),
-        },
+    defaultValues:
+      lessonId && lesson
+        ? {
+            id: lesson.id,
+            title: lesson.title,
+            slug: lesson.slug,
+            videoUrl: lesson.videoUrl,
+            videoProvider: lesson.videoProvider,
+            content: lesson.content || {},
+            transcription: lesson.transcription || {},
+            duration: lesson.duration || null,
+            order: lesson.order,
+            isPreview: lesson.isPreview,
+          }
+        : {
+            title: "",
+            slug: "",
+            videoUrl: "",
+            videoProvider: "youtube" as const,
+            content: {},
+            transcription: {},
+            duration: null,
+            order: 0,
+            isPreview: false,
+            courseId,
+            moduleId: preselectedModuleId || course?.modules?.[0]?.id || "",
+          },
     validators: {
       onChange: lessonId ? updateLessonSchema : createLessonSchema,
     },
@@ -537,7 +539,7 @@ function LessonEditor({
                     Module
                   </label>
                   <select
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                     id="moduleId"
                     name="moduleId"
                     onBlur={field.handleBlur}
@@ -545,7 +547,10 @@ function LessonEditor({
                     value={field.state.value}
                   >
                     {course?.modules?.map((module) => (
-                      <option key={module.id} value={module.id}>
+                      <option
+                        key={module.id}
+                        value={module.id}
+                      >
                         {module.title}
                       </option>
                     ))}
@@ -566,7 +571,7 @@ function LessonEditor({
                   Lesson Title
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="title"
                   name="title"
                   onBlur={field.handleBlur}
@@ -590,7 +595,7 @@ function LessonEditor({
                   Slug
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="slug"
                   name="slug"
                   onBlur={field.handleBlur}
@@ -617,7 +622,7 @@ function LessonEditor({
                   Video URL
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="videoUrl"
                   name="videoUrl"
                   onBlur={field.handleBlur}
@@ -641,7 +646,7 @@ function LessonEditor({
                   Duration (seconds)
                 </label>
                 <input
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
                   id="duration"
                   name="duration"
                   onBlur={field.handleBlur}
@@ -665,9 +670,9 @@ function LessonEditor({
             {(field) => (
               <div className="flex items-center">
                 <input
-                  checked={field.state.value}
                   className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
                   id="isPreview"
+                  checked={field.state.value}
                   name="isPreview"
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.checked)}
