@@ -99,9 +99,9 @@ function CreateCoursePage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {/* Left Column - Form */}
-        <div className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
+        <div className="flex-1 overflow-y-auto bg-white px-8 py-6 dark:bg-gray-800">
           <form
             className="mx-auto max-w-2xl space-y-6"
             onSubmit={(e) => {
