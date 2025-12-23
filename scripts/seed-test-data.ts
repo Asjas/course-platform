@@ -528,7 +528,7 @@ async function seedDatabase() {
       const lesson = faker.helpers.arrayElement(learnFastifyLessons);
       const ticket = generateFakeSupportTicket(
         users[i].id,
-        courses[0].id,
+        lesson.courseId, // Use lesson's courseId instead of courses[0].id
         lesson.id,
       );
 
