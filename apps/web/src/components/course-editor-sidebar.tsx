@@ -54,8 +54,8 @@ interface CourseEditorSidebarProps {
   lessons: Lesson[];
   selectedItemId: string | null;
   onSelectItem: (itemId: string, type: "module" | "lesson") => void;
-  onModulesReordered: (modules: Module[]) => void;
-  onLessonsReordered: (lessons: Lesson[]) => void;
+  onModulesReordered: () => void;
+  onLessonsReordered: () => void;
 }
 
 interface SortableLessonProps {
@@ -238,7 +238,6 @@ export default function CourseEditorSidebar({
     new Set(modules.map((m) => m.id)),
   );
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
 
   const reorderModulesMutation = useMutation(
     trpc.courses.reorderModules.mutationOptions(),

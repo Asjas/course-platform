@@ -80,11 +80,11 @@ function EditCoursePage() {
   const modules = course.modules || [];
   const lessons = course.lessons || [];
 
-  function handleModulesReordered(updatedModules: typeof modules) {
+  function handleModulesReordered() {
     // Optimistic update handled by queryClient invalidation
   }
 
-  function handleLessonsReordered(updatedLessons: typeof lessons) {
+  function handleLessonsReordered() {
     // Optimistic update handled by queryClient invalidation
   }
 
