@@ -257,6 +257,14 @@ async function seedDatabase() {
       // search_path is already set via connection string options
     }
 
+    // Create default ghost user (required for foreign key constraints)
+    console.log("👻 Creating default ghost user...");
+    await pool.query(`
+      INSERT INTO "user" (id, name, username, email, email_verified)
+      VALUES ('ghost', 'Ghost', 'ghost', 'ghost@codewizard.training', true)
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
     // Generate Learn Fastify course data
     console.log("👥 Creating users...");
     const users: ReturnType<typeof generateFakeUser>[] = [];
