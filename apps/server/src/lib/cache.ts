@@ -142,7 +142,10 @@ export const cache = createCache({
     "getAllCoursesAsAdmin",
     {
       ttl: ONE_HOUR,
-      serialize: () => "course~all~admin",
+      serialize: (args) =>
+        args && Object.keys(args).length > 0
+          ? `course~all~admin~${JSON.stringify(args)}`
+          : "course~all~admin",
       references() {
         return ["course~all"];
       },
