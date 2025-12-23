@@ -2,6 +2,7 @@ import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries
 import type {
   AllCourses,
   CourseById,
+  getAllAsAdminCourses,
 } from "@apps/server/src/routers/courses/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
@@ -17,13 +18,18 @@ type Coupon = CouponsReturnType[number];
 // The collection starts with getAllCourses data, but may be updated with getCourseById data
 // which includes modules with nested lessons
 type CourseFromList = AllCourses[number];
-type CourseWithDetails = NonNullable<CourseById>;
+type CourseDetail = NonNullable<CourseById>;
 
 // Union type to support both shapes - the collection may contain either
-type Course = CourseFromList | CourseWithDetails;
+type Course = CourseFromList | CourseDetail;
+
+// Type for admin queries that always return full details
+export type CourseWithDetails = Awaited<
+  ReturnType<typeof getAllAsAdminCourses>
+>[number];
 
 // Export the detailed type for components that need the full structure
-export type { CourseWithDetails };
+export type { CourseDetail };
 
 export const SupportTicketsCollection = createCollection(
   queryCollectionOptions<SupportTicket>({
@@ -172,50 +178,6 @@ export const CoursesAdminCollection = createCollection(
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
     queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
-    onInsert: async ({ transaction }) => {
-      try {
-        const { modified } = transaction.mutations[0];
-
-        await trpcClient.courses.createCourse.mutate(modified);
-      } catch (error) {
-        console.error("Error inserting course: ", error);
-        toast.error(
-          "An error occurred while creating the course. Please try again.",
-        );
-        throw error;
-      }
-    },
-    onUpdate: async ({ transaction }) => {
-      try {
-        const { modified } = transaction.mutations[0];
-
-        await trpcClient.courses.updateCourse.mutate({
-          id: modified.id,
-          ...modified,
-        });
-      } catch (error) {
-        console.error("Error updating course: ", error);
-        toast.error(
-          "An error occurred while updating the course. Please try again.",
-        );
-        throw error;
-      }
-    },
-    onDelete: async ({ transaction }) => {
-      try {
-        const { original } = transaction.mutations[0];
-
-        await trpcClient.courses.deleteCourse.mutate({
-          courseId: original.id,
-        });
-      } catch (error) {
-        console.error("Error deleting course: ", error);
-        toast.error(
-          "An error occurred while deleting the course. Please try again.",
-        );
-        throw error;
-      }
-    },
   }),
 );
 

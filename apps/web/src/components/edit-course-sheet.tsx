@@ -1,5 +1,3 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowRightIcon } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -25,7 +23,10 @@ export default function EditCourseSheet({
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <SheetContent className="w-full max-w-3xl overflow-y-auto sm:max-w-3xl">
         <SheetHeader>
           <SheetTitle>Manage Course: {course.name}</SheetTitle>
@@ -126,8 +127,8 @@ export default function EditCourseSheet({
                   .sort((a, b) => a.order - b.order)
                   .map((module) => (
                     <div
-                      key={module.id}
                       className="rounded-lg border border-gray-200 p-4 dark:border-gray-700"
+                      key={module.id}
                     >
                       <h4 className="font-medium text-gray-900 dark:text-white">
                         {module.order + 1}. {module.title}
@@ -135,20 +136,28 @@ export default function EditCourseSheet({
                       <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
                         {module.description}
                       </p>
-                      {module.lessons && module.lessons.length > 0 && (
-                        <ul className="mt-3 ml-4 space-y-1">
-                          {module.lessons
-                            .sort((a, b) => a.order - b.order)
-                            .map((lesson) => (
-                              <li
-                                key={lesson.id}
-                                className="text-sm text-gray-700 dark:text-gray-300"
-                              >
-                                {lesson.order + 1}. {lesson.title}
-                              </li>
-                            ))}
-                        </ul>
-                      )}
+                      {"lessons" in module &&
+                        Array.isArray(module.lessons) &&
+                        module.lessons.length > 0 && (
+                          <ul className="mt-3 ml-4 space-y-1">
+                            {(
+                              module.lessons as {
+                                id: string;
+                                order: number;
+                                title: string;
+                              }[]
+                            )
+                              .sort((a, b) => a.order - b.order)
+                              .map((lesson) => (
+                                <li
+                                  className="text-sm text-gray-700 dark:text-gray-300"
+                                  key={lesson.id}
+                                >
+                                  {lesson.order + 1}. {lesson.title}
+                                </li>
+                              ))}
+                          </ul>
+                        )}
                     </div>
                   ))}
               </div>
@@ -160,15 +169,13 @@ export default function EditCourseSheet({
           </div>
 
           <div className="flex justify-end gap-3 border-t pt-6 dark:border-gray-700">
-            <Link
-              to="/admin/courses/$courseId/edit"
-              params={{ courseId: course.id }}
-              className="inline-flex items-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            <button
+              className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              type="button"
               onClick={() => onOpenChange(false)}
             >
-              Edit Course Details
-              <ArrowRightIcon className="ml-2 h-4 w-4" />
-            </Link>
+              Close
+            </button>
           </div>
         </div>
       </SheetContent>

@@ -1,4 +1,3 @@
-import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
@@ -15,7 +14,6 @@ import { useAuth } from "~/lib/auth.context";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
-import { createCourseSchema } from "~/schema/course";
 
 interface CreateCourseSheetProps {
   open: boolean;
@@ -55,10 +53,6 @@ export default function CreateCourseSheet({
       trialModuleLimit: 0,
       authorId: userId || "",
     },
-    validators: {
-      onSubmit: createCourseSchema,
-      onBlur: createCourseSchema,
-    },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading(`Creating course ${value.name}...`);
 
@@ -88,17 +82,21 @@ export default function CreateCourseSheet({
     form.reset({
       slug: "",
       name: "",
-      description: null,
-      level: "All levels",
-      thumbnailUrl: null,
+      description: null as string | null,
+      level: "All levels" as
+        | "All levels"
+        | "Beginner"
+        | "Intermediate"
+        | "Advanced",
+      thumbnailUrl: null as string | null,
       published: false,
       isFree: false,
       price: 19,
       priceCurrency: "USD",
       isSaleActive: false,
       salePrice: 0,
-      saleStartAt: null,
-      saleExpiresAt: null,
+      saleStartAt: null as Date | null,
+      saleExpiresAt: null as Date | null,
       trialModuleLimit: 0,
       authorId: userId || "",
     });
@@ -111,7 +109,10 @@ export default function CreateCourseSheet({
   }, [open, resetForm]);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
+    <Sheet
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <SheetContent className="w-full max-w-3xl overflow-y-auto sm:max-w-3xl">
         <SheetHeader>
           <SheetTitle>Create New Course</SheetTitle>
@@ -122,30 +123,30 @@ export default function CreateCourseSheet({
         </SheetHeader>
 
         <form
+          className="mt-6 space-y-6"
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
             form.handleSubmit();
           }}
-          className="mt-6 space-y-6"
         >
           <form.Field name="name">
             {(field) => (
               <div>
                 <label
-                  htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={field.name}
                 >
                   Course Name *
                 </label>
                 <input
-                  type="text"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   id={field.name}
+                  type="text"
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   placeholder="Introduction to Fastify"
                 />
                 <FieldInfo field={field} />
@@ -157,19 +158,19 @@ export default function CreateCourseSheet({
             {(field) => (
               <div>
                 <label
-                  htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={field.name}
                 >
                   Slug *
                 </label>
                 <input
-                  type="text"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   id={field.name}
+                  type="text"
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   placeholder="introduction-to-fastify"
                 />
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -184,19 +185,19 @@ export default function CreateCourseSheet({
             {(field) => (
               <div>
                 <label
-                  htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={field.name}
                 >
                   Description
                 </label>
                 <textarea
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   id={field.name}
                   name={field.name}
                   value={field.state.value ?? ""}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value || null)}
                   rows={3}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   placeholder="A comprehensive introduction to building APIs with Fastify"
                 />
                 <FieldInfo field={field} />
@@ -208,12 +209,13 @@ export default function CreateCourseSheet({
             {(field) => (
               <div>
                 <label
-                  htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={field.name}
                 >
                   Level
                 </label>
-                <SelectInput
+                <select
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   id={field.name}
                   name={field.name}
                   value={field.state.value}
@@ -227,13 +229,12 @@ export default function CreateCourseSheet({
                         | "Advanced",
                     )
                   }
-                  className="mt-1"
                 >
                   <option value="All levels">All levels</option>
                   <option value="Beginner">Beginner</option>
                   <option value="Intermediate">Intermediate</option>
                   <option value="Advanced">Advanced</option>
-                </SelectInput>
+                </select>
                 <FieldInfo field={field} />
               </div>
             )}
@@ -243,19 +244,19 @@ export default function CreateCourseSheet({
             {(field) => (
               <div>
                 <label
-                  htmlFor={field.name}
                   className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  htmlFor={field.name}
                 >
                   Thumbnail URL
                 </label>
                 <input
-                  type="url"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   id={field.name}
+                  type="url"
                   name={field.name}
                   value={field.state.value ?? ""}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value || null)}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                   placeholder="https://example.com/thumbnail.jpg"
                 />
                 <FieldInfo field={field} />
@@ -268,16 +269,16 @@ export default function CreateCourseSheet({
               {(field) => (
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-800"
                     id={field.name}
+                    type="checkbox"
                     name={field.name}
                     checked={field.state.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-800"
                   />
                   <label
-                    htmlFor={field.name}
                     className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                    htmlFor={field.name}
                   >
                     Free Course
                   </label>
@@ -289,16 +290,16 @@ export default function CreateCourseSheet({
               {(field) => (
                 <div className="flex items-center">
                   <input
-                    type="checkbox"
+                    className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-800"
                     id={field.name}
+                    type="checkbox"
                     name={field.name}
                     checked={field.state.value}
                     onChange={(e) => field.handleChange(e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-500 dark:border-gray-600 dark:bg-gray-800"
                   />
                   <label
-                    htmlFor={field.name}
                     className="ml-2 block text-sm text-gray-700 dark:text-gray-300"
+                    htmlFor={field.name}
                   >
                     Published
                   </label>
@@ -318,14 +319,15 @@ export default function CreateCourseSheet({
                     {(field) => (
                       <div>
                         <label
-                          htmlFor={field.name}
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor={field.name}
                         >
                           Price ($)
                         </label>
                         <input
-                          type="number"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id={field.name}
+                          type="number"
                           name={field.name}
                           value={field.state.value}
                           onBlur={field.handleBlur}
@@ -333,7 +335,6 @@ export default function CreateCourseSheet({
                             field.handleChange(Number(e.target.value))
                           }
                           min="0"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                         <FieldInfo field={field} />
                       </div>
@@ -344,14 +345,15 @@ export default function CreateCourseSheet({
                     {(field) => (
                       <div>
                         <label
-                          htmlFor={field.name}
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          htmlFor={field.name}
                         >
                           Sale Price ($)
                         </label>
                         <input
-                          type="number"
+                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                           id={field.name}
+                          type="number"
                           name={field.name}
                           value={field.state.value}
                           onBlur={field.handleBlur}
@@ -359,7 +361,6 @@ export default function CreateCourseSheet({
                             field.handleChange(Number(e.target.value))
                           }
                           min="0"
-                          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm dark:border-gray-600 dark:bg-gray-800 dark:text-white"
                         />
                         <FieldInfo field={field} />
                       </div>
@@ -372,20 +373,20 @@ export default function CreateCourseSheet({
 
           <div className="flex justify-end gap-3 pt-4">
             <button
+              className={cn(
+                "rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700",
+              )}
               type="button"
               onClick={() => onOpenChange(false)}
-              className={cn(
-                "rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700",
-              )}
             >
               Cancel
             </button>
             <button
+              className={cn(
+                "rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50",
+              )}
               type="submit"
               disabled={createCourseMutation.isPending}
-              className={cn(
-                "rounded-md border border-transparent bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50",
-              )}
             >
               {createCourseMutation.isPending ? "Creating..." : "Create Course"}
             </button>

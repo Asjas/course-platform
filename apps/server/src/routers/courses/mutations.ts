@@ -1,11 +1,7 @@
 import { eq } from "drizzle-orm";
 import { ulid } from "ulid";
 import { db } from "~/db/index.js";
-import {
-  course,
-  courseLesson,
-  courseModule,
-} from "~/db/schema/course.js";
+import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "routers:courses:mutations" });
@@ -29,7 +25,10 @@ export async function insertCourse({ newCourse }: { newCourse: NewCourse }) {
   const newCourseWithId = { id, ...newCourse };
 
   try {
-    const [result] = await db.insert(course).values(newCourseWithId).returning();
+    const [result] = await db
+      .insert(course)
+      .values(newCourseWithId)
+      .returning();
     return result;
   } catch (err) {
     log.error(err, "Failed to insert course");
@@ -132,7 +131,7 @@ export async function deleteModule({ moduleId }: { moduleId: string }) {
 export async function reorderModules({
   modules,
 }: {
-  modules: Array<{ id: string; order: number }>;
+  modules: { id: string; order: number }[];
 }) {
   try {
     const results = await Promise.all(
@@ -212,7 +211,7 @@ export async function deleteLesson({ lessonId }: { lessonId: string }) {
 export async function reorderLessons({
   lessons,
 }: {
-  lessons: Array<{ id: string; order: number }>;
+  lessons: { id: string; order: number }[];
 }) {
   try {
     const results = await Promise.all(

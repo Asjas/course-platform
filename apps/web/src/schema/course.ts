@@ -6,19 +6,19 @@ export const createCourseSchema = z.object({
     .min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must be lowercase and hyphen-separated"),
   name: z.string().min(1, "Name is required"),
-  description: z.string().nullable().optional(),
+  description: z.string().nullable().default(null),
   level: z
     .enum(["All levels", "Beginner", "Intermediate", "Advanced"])
     .default("All levels"),
-  thumbnailUrl: z.string().url().nullable().optional(),
+  thumbnailUrl: z.string().url().nullable().default(null),
   published: z.boolean().default(false),
   isFree: z.boolean().default(false),
   price: z.number().int().min(0).default(19),
   priceCurrency: z.string().default("USD"),
   isSaleActive: z.boolean().default(false),
   salePrice: z.number().int().min(0).default(0),
-  saleStartAt: z.date().nullable().optional(),
-  saleExpiresAt: z.date().nullable().optional(),
+  saleStartAt: z.date().nullable().default(null),
+  saleExpiresAt: z.date().nullable().default(null),
   trialModuleLimit: z.number().int().min(0).default(0),
   authorId: z.string(),
 });

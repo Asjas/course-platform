@@ -1,6 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import { isAdmin, protectedProcedure, publicProcedure, router } from "~/router.js";
+import {
+  isAdmin,
+  protectedProcedure,
+  publicProcedure,
+  router,
+} from "~/router.js";
 import {
   deleteCourse,
   deleteLesson,
@@ -260,7 +265,9 @@ export const coursesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
-      const [err, course] = await fastify.to(insertCourse({ newCourse: input }));
+      const [err, course] = await fastify.to(
+        insertCourse({ newCourse: input }),
+      );
 
       if (err) {
         fastify.log.error(err);
@@ -363,7 +370,9 @@ export const coursesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
-      const [err, module] = await fastify.to(insertModule({ newModule: input }));
+      const [err, module] = await fastify.to(
+        insertModule({ newModule: input }),
+      );
 
       if (err) {
         fastify.log.error(err);
@@ -498,7 +507,9 @@ export const coursesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
-      const [err, lesson] = await fastify.to(insertLesson({ newLesson: input }));
+      const [err, lesson] = await fastify.to(
+        insertLesson({ newLesson: input }),
+      );
 
       if (err) {
         fastify.log.error(err);

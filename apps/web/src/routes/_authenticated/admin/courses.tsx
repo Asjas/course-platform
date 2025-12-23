@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
@@ -15,10 +16,12 @@ import {
   TableHeaderRow,
 } from "~/components/ui/table";
 import {
-  CoursesAdminCollection,
   type CourseWithDetails,
+  CoursesAdminCollection,
   useCoursesAdmin,
 } from "~/lib/db.collections";
+import { queryClient } from "~/lib/query.client";
+import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/courses")({
@@ -36,6 +39,10 @@ function AdminCoursesPage() {
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
 
+  const deleteCourseMutation = useMutation(
+    trpc.courses.deleteCourse.mutationOptions(),
+  );
+
   function handleEditCourse(course: CourseWithDetails) {
     setEditingCourse(course);
     setIsEditSheetOpen(true);
@@ -45,6 +52,37 @@ function AdminCoursesPage() {
     setIsEditSheetOpen(open);
     if (!open) {
       setEditingCourse(null);
+    }
+  }
+
+  async function handleDeleteCourse(course: CourseWithDetails) {
+    if (
+      !confirm(
+        `Are you sure you want to delete "${course.name}"? This will also delete all modules and lessons. This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    const toastId = toast.loading(`Deleting course ${course.name}...`);
+
+    try {
+      await deleteCourseMutation.mutateAsync({ courseId: course.id });
+
+      queryClient.invalidateQueries({
+        queryKey: ["admin", "courses"],
+      });
+
+      toast.success(`Course ${course.name} deleted successfully.`, {
+        id: toastId,
+      });
+    } catch (error) {
+      console.error("Error deleting course:", error);
+
+      toast.error(
+        `An error occurred while deleting the course ${course.name}. Please try again.`,
+        { id: toastId },
+      );
     }
   }
 
@@ -173,35 +211,7 @@ function AdminCoursesPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
-                            onClick={() => {
-                              if (
-                                !confirm(
-                                  `Are you sure you want to delete "${course.name}"? This will also delete all modules and lessons. This action cannot be undone.`,
-                                )
-                              ) {
-                                return;
-                              }
-
-                              const toastId = toast.loading(
-                                `Deleting course ${course.name}...`,
-                              );
-
-                              try {
-                                CoursesAdminCollection.delete(course.id);
-
-                                toast.success(
-                                  `Course ${course.name} deleted successfully.`,
-                                  { id: toastId },
-                                );
-                              } catch (error) {
-                                console.error("Error deleting course:", error);
-
-                                toast.error(
-                                  `An error occurred while deleting the course ${course.name}. Please try again.`,
-                                  { id: toastId },
-                                );
-                              }
-                            }}
+                            onClick={() => handleDeleteCourse(course)}
                           >
                             <Trash2Icon
                               className="h-4 w-4"
