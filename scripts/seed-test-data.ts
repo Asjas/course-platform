@@ -358,9 +358,9 @@ async function seedDatabase() {
       }
     }
 
-    // Insert all modules in a single batch
-    const moduleInsertPromises = allModules.map((module) =>
-      pool.query(
+    // Insert all modules sequentially to ensure they're committed before lessons reference them
+    for (const module of allModules) {
+      await pool.query(
         `INSERT INTO course_module (id, title, slug, description, "order", is_preview, course_id, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
         [
@@ -374,9 +374,8 @@ async function seedDatabase() {
           module.createdAt,
           module.updatedAt,
         ],
-      ),
-    );
-    await Promise.all(moduleInsertPromises);
+      );
+    }
 
     // Generate all lessons for all modules
     for (const module of allModules) {
@@ -387,9 +386,9 @@ async function seedDatabase() {
       }
     }
 
-    // Insert all lessons in a single batch
-    const lessonInsertPromises = allLessons.map((lesson) =>
-      pool.query(
+    // Insert all lessons sequentially to ensure referential integrity
+    for (const lesson of allLessons) {
+      await pool.query(
         `INSERT INTO course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
         [
@@ -408,9 +407,8 @@ async function seedDatabase() {
           lesson.createdAt,
           lesson.updatedAt,
         ],
-      ),
-    );
-    await Promise.all(lessonInsertPromises);
+      );
+    }
 
     // Update course totals
     for (const course of courses) {
