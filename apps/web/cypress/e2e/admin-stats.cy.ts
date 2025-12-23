@@ -1,6 +1,34 @@
-describe("Application", () => {
-  it("should load without errors", () => {
-    cy.visit("/");
-    cy.get("body").should("exist");
+describe("Admin Stats Dashboard", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("should display stats dashboard page", () => {
+    cy.visit("/admin/stats");
+
+    // Verify page loads
+    cy.contains("Stats").should("be.visible");
+  });
+
+  it("should display platform overview section", () => {
+    cy.visit("/admin/stats");
+
+    // Verify platform overview section exists
+    cy.contains("Platform Overview").should("be.visible");
+  });
+
+  it("should display revenue statistics section", () => {
+    cy.visit("/admin/stats");
+
+    // Verify revenue stats section exists
+    cy.contains("Revenue").should("be.visible");
+  });
+
+  it("should display user statistics section", () => {
+    cy.visit("/admin/stats");
+
+    // Verify user stats section exists
+    cy.contains("Users").should("be.visible");
   });
 });
+
