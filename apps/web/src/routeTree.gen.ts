@@ -36,6 +36,7 @@ import { Route as EducationCoursesIndexRouteImport } from "./routes/education/co
 import { Route as AuthenticatedCoursesCourseIdRouteImport } from "./routes/_authenticated/courses.$courseId"
 import { Route as AuthenticatedChatChannelIdRouteImport } from "./routes/_authenticated/chat.$channelId"
 import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authenticated/admin/users"
+import { Route as AuthenticatedAdminStatsRouteImport } from "./routes/_authenticated/admin/stats"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
 import { Route as authVerifyEmailTokenRouteImport } from "./routes/(auth)/verify-email.$token"
 import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
@@ -187,6 +188,11 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: "/users",
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminStatsRoute = AuthenticatedAdminStatsRouteImport.update({
+  id: "/stats",
+  path: "/stats",
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminPurchasesRoute =
   AuthenticatedAdminPurchasesRouteImport.update({
     id: "/purchases",
@@ -296,6 +302,7 @@ export interface FileRoutesByFullPath {
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
   "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
+  "/admin/stats": typeof AuthenticatedAdminStatsRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
   "/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/courses/$courseId": typeof AuthenticatedCoursesCourseIdRouteWithChildren
@@ -333,6 +340,7 @@ export interface FileRoutesByTo {
   "/support": typeof SupportIndexRoute
   "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
+  "/admin/stats": typeof AuthenticatedAdminStatsRoute
   "/admin/users": typeof AuthenticatedAdminUsersRoute
   "/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/courses/$courseId": typeof AuthenticatedCoursesCourseIdRouteWithChildren
@@ -377,6 +385,7 @@ export interface FileRoutesById {
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
   "/(auth)/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
+  "/_authenticated/admin/stats": typeof AuthenticatedAdminStatsRoute
   "/_authenticated/admin/users": typeof AuthenticatedAdminUsersRoute
   "/_authenticated/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/_authenticated/courses/$courseId": typeof AuthenticatedCoursesCourseIdRouteWithChildren
@@ -420,6 +429,7 @@ export interface FileRouteTypes {
     | "/support/$supportTicket/edit"
     | "/verify-email/$token"
     | "/admin/purchases"
+    | "/admin/stats"
     | "/admin/users"
     | "/chat/$channelId"
     | "/courses/$courseId"
@@ -457,6 +467,7 @@ export interface FileRouteTypes {
     | "/support"
     | "/verify-email/$token"
     | "/admin/purchases"
+    | "/admin/stats"
     | "/admin/users"
     | "/chat/$channelId"
     | "/courses/$courseId"
@@ -500,6 +511,7 @@ export interface FileRouteTypes {
     | "/support/$supportTicket/edit"
     | "/(auth)/verify-email/$token"
     | "/_authenticated/admin/purchases"
+    | "/_authenticated/admin/stats"
     | "/_authenticated/admin/users"
     | "/_authenticated/chat/$channelId"
     | "/_authenticated/courses/$courseId"
@@ -722,6 +734,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/_authenticated/admin/stats": {
+      id: "/_authenticated/admin/stats"
+      path: "/stats"
+      fullPath: "/admin/stats"
+      preLoaderRoute: typeof AuthenticatedAdminStatsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     "/_authenticated/admin/purchases": {
       id: "/_authenticated/admin/purchases"
       path: "/purchases"
@@ -843,6 +862,7 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
+  AuthenticatedAdminStatsRoute: typeof AuthenticatedAdminStatsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminCoursesCreateRoute: typeof AuthenticatedAdminCoursesCreateRoute
   AuthenticatedAdminCoursesFaqRoute: typeof AuthenticatedAdminCoursesFaqRoute
@@ -855,6 +875,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
+    AuthenticatedAdminStatsRoute: AuthenticatedAdminStatsRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
     AuthenticatedAdminCoursesCreateRoute: AuthenticatedAdminCoursesCreateRoute,
     AuthenticatedAdminCoursesFaqRoute: AuthenticatedAdminCoursesFaqRoute,
