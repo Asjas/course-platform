@@ -1,6 +1,9 @@
 # Setup steps for GitHub Copilot coding agent
 # These steps run before Copilot executes any commands in pull request sessions
 # Docs: https://docs.github.com/en/copilot/customizing-copilot/extending-copilot-coding-agent
+#
+# IMPORTANT: This file MUST complete successfully before Copilot can run any commands.
+# Without these steps, pnpm, turbo, and tsx will not be available.
 
 steps:
   - name: Setup Node.js
@@ -13,8 +16,11 @@ steps:
     with:
       version: 10
 
-  - name: Install dependencies
+  - name: Install global CLI tools (turbo, tsx)
+    run: npm install -g turbo tsx
+
+  - name: Install project dependencies
     run: pnpm install --frozen-lockfile
 
-  - name: Install Turbo globally
-    run: pnpm add -g turbo
+  - name: Build shared packages
+    run: pnpm --filter @packages/shared-ui build
