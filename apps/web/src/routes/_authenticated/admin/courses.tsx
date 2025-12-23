@@ -1,10 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
-import CreateCourseSheet from "~/components/create-course-sheet";
-import EditCourseSheet from "~/components/edit-course-sheet";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -33,27 +30,10 @@ export const Route = createFileRoute("/_authenticated/admin/courses")({
 
 function AdminCoursesPage() {
   const { data: courses, isLoading } = useCoursesAdmin();
-  const [editingCourse, setEditingCourse] = useState<CourseWithDetails | null>(
-    null,
-  );
-  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
-  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
 
   const deleteCourseMutation = useMutation(
     trpc.courses.deleteCourse.mutationOptions(),
   );
-
-  function handleEditCourse(course: CourseWithDetails) {
-    setEditingCourse(course);
-    setIsEditSheetOpen(true);
-  }
-
-  function handleEditSheetOpenChange(open: boolean) {
-    setIsEditSheetOpen(open);
-    if (!open) {
-      setEditingCourse(null);
-    }
-  }
 
   async function handleDeleteCourse(course: CourseWithDetails) {
     if (
@@ -105,14 +85,13 @@ function AdminCoursesPage() {
         </div>
 
         <div className="mt-4 sm:mt-0 sm:ml-16">
-          <button
+          <Link
             className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
-            type="button"
-            onClick={() => setIsCreateSheetOpen(true)}
+            to="/admin/courses/create"
           >
             <PlusIcon className="mr-2 h-4 w-4" />
             Create New Course
-          </button>
+          </Link>
         </div>
       </div>
 
@@ -198,17 +177,17 @@ function AdminCoursesPage() {
 
                       <TableBodyCell>
                         <div className="flex justify-around gap-2">
-                          <button
+                          <Link
                             className="cursor-pointer text-blue-400 hover:text-blue-300"
-                            type="button"
-                            onClick={() => handleEditCourse(course)}
+                            to="/admin/courses/$courseId/edit"
+                            params={{ courseId: course.id }}
                           >
                             <PencilIcon
                               className="h-4 w-4"
                               aria-hidden="true"
                             />
                             <span className="sr-only">Edit {course.name}</span>
-                          </button>
+                          </Link>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
                             onClick={() => handleDeleteCourse(course)}
@@ -240,17 +219,6 @@ function AdminCoursesPage() {
           </p>
         </div>
       )}
-
-      <EditCourseSheet
-        course={editingCourse}
-        open={isEditSheetOpen}
-        onOpenChange={handleEditSheetOpenChange}
-      />
-
-      <CreateCourseSheet
-        open={isCreateSheetOpen}
-        onOpenChange={setIsCreateSheetOpen}
-      />
     </div>
   );
 }
