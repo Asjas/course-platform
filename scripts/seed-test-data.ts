@@ -89,7 +89,9 @@ async function seedDatabase() {
         const argon2 = await import("argon2");
         const pepperSecret = process.env.PEPPER_SECRET;
         if (!pepperSecret) {
-          throw new Error("PEPPER_SECRET environment variable is required for hashing passwords");
+          throw new Error(
+            "PEPPER_SECRET environment variable is required for hashing passwords",
+          );
         }
         const hashedPassword = await argon2.hash(user.password, {
           secret: Buffer.from(pepperSecret),
