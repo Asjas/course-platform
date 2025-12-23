@@ -13,7 +13,7 @@ import {
   getReadAnnouncementsForUser,
   getUnreadAnnouncementsForUser,
 } from "~/db/queries/platformAnnouncements.js";
-import { publicProcedure, router } from "../index.js";
+import { publicProcedure, router } from "~/router.js";
 
 const announcementTypeEnum = z.enum([
   "platform_update",
