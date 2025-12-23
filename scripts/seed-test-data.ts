@@ -379,10 +379,12 @@ async function seedDatabase() {
     console.log(`✅ Inserted ${allModules.length} modules`);
 
     // Generate all lessons for all modules
-    for (const module of allModules) {
+    for (let modIdx = 0; modIdx < allModules.length; modIdx++) {
+      const module = allModules[modIdx];
       const lessonCount = faker.number.int({ min: 3, max: 8 });
       for (let l = 0; l < lessonCount; l++) {
         const lesson = generateFakeLesson(module.courseId, module.id, l);
+        lesson.moduleIndex = modIdx; // Add for debugging
         allLessons.push(lesson);
       }
     }
@@ -399,7 +401,13 @@ async function seedDatabase() {
       
       if (moduleCheck.rows.length === 0) {
         console.error(`❌ Module ${lesson.moduleId} not found for lesson ${lesson.id} (${i + 1}/${allLessons.length})`);
-        console.error(`   Available module IDs: ${allModules.map(m => m.id).slice(0, 5).join(', ')}...`);
+        console.error(`   Lesson was generated for module index: ${(lesson as any).moduleIndex}`);
+        console.error(`   Total modules in array: ${allModules.length}`);
+        console.error(`   Available module IDs: ${allModules.map(m => m.id).slice(0, 10).join(', ')}...`);
+        
+        // Check database for all modules
+        const dbModules = await pool.query(`SELECT id FROM course_module ORDER BY id`);
+        console.error(`   Modules in database (${dbModules.rows.length}): ${dbModules.rows.map((r: any) => r.id).slice(0, 10).join(', ')}...`);
         throw new Error(`Module ${lesson.moduleId} does not exist`);
       }
       
