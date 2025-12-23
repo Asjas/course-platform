@@ -380,7 +380,7 @@ async function seedDatabase() {
 
       // Update course totals
       await pool.query(
-        `UPDATE "${schemaName}".course SET total_modules = $1, total_lessons = $2, total_duration = $3 WHERE id = $4`,
+        `UPDATE course SET total_modules = $1, total_lessons = $2, total_duration = $3 WHERE id = $4`,
         [moduleCount, totalLessons, totalDuration, course.id],
       );
     }
