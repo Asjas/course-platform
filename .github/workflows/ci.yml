@@ -230,7 +230,7 @@ jobs:
         run: pnpm --filter @apps/server drizzle:migrate
 
       - name: Seed test database with E2E users
-        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+        run: pnpm --filter @apps/server tsx ../../scripts/seed-test-data.ts "my_schema"
 
       - name: Install Cypress
         run: pnpx cypress install
@@ -273,4 +273,4 @@ jobs:
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
+        run: pnpm --filter @apps/server tsx ../../scripts/cleanup-test-data.ts "my_schema" || true
