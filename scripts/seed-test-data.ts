@@ -346,65 +346,68 @@ async function seedDatabase() {
     // Create modules and lessons for each course
     console.log("📖 Creating modules and lessons...");
     const allLessons: ReturnType<typeof generateFakeLesson>[] = [];
-    const allModules: Array<{
-      module: ReturnType<typeof generateFakeModule>;
-      courseId: string;
-    }> = [];
+    const allModules: ReturnType<typeof generateFakeModule>[] = [];
 
-    // First, insert all modules for all courses
+    // First, generate all modules for all courses
     for (const course of courses) {
       const moduleCount = faker.number.int({ min: 3, max: 6 });
 
       for (let m = 0; m < moduleCount; m++) {
         const module = generateFakeModule(course.id, m);
-        allModules.push({ module, courseId: course.id });
-
-        await pool.query(
-          `INSERT INTO course_module (id, title, slug, description, "order", is_preview, course_id, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-          [
-            module.id,
-            module.title,
-            module.slug,
-            module.description,
-            module.order,
-            module.isPreview,
-            module.courseId,
-            module.createdAt,
-            module.updatedAt,
-          ],
-        );
+        allModules.push(module);
       }
     }
 
-    // Then, insert all lessons for all modules
-    for (const { module, courseId } of allModules) {
+    // Insert all modules
+    for (const module of allModules) {
+      await pool.query(
+        `INSERT INTO course_module (id, title, slug, description, "order", is_preview, course_id, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [
+          module.id,
+          module.title,
+          module.slug,
+          module.description,
+          module.order,
+          module.isPreview,
+          module.courseId,
+          module.createdAt,
+          module.updatedAt,
+        ],
+      );
+    }
+
+    // Generate all lessons for all modules
+    for (const module of allModules) {
       const lessonCount = faker.number.int({ min: 3, max: 8 });
       for (let l = 0; l < lessonCount; l++) {
-        const lesson = generateFakeLesson(courseId, module.id, l);
+        const lesson = generateFakeLesson(module.courseId, module.id, l);
         allLessons.push(lesson);
-
-        await pool.query(
-          `INSERT INTO course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
-          [
-            lesson.id,
-            lesson.title,
-            lesson.slug,
-            lesson.videoUrl,
-            lesson.videoProvider,
-            JSON.stringify(lesson.content),
-            JSON.stringify(lesson.transcription),
-            lesson.duration,
-            lesson.order,
-            lesson.isPreview,
-            lesson.courseId,
-            lesson.moduleId,
-            lesson.createdAt,
-            lesson.updatedAt,
-          ],
-        );
       }
+    }
+
+    // Insert all lessons
+    for (const lesson of allLessons) {
+      await pool.query(
+        `INSERT INTO course_lesson (id, title, slug, video_url, video_provider, content, transcription, duration, "order", is_preview, course_id, module_id, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)`,
+        [
+          lesson.id,
+          lesson.title,
+          lesson.slug,
+          lesson.videoUrl,
+          lesson.videoProvider,
+          JSON.stringify(lesson.content),
+          JSON.stringify(lesson.transcription),
+          lesson.duration,
+          lesson.order,
+          lesson.isPreview,
+          lesson.courseId,
+          lesson.moduleId,
+          lesson.createdAt,
+          lesson.updatedAt,
+        ],
+      );
     }
 
     // Update course totals
