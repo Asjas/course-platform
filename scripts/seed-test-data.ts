@@ -395,13 +395,14 @@ async function seedDatabase() {
       enrollments.push(enrollment);
 
       await pool.query(
-        `INSERT INTO enrollment (id, enrollment_type, enrollment_source, status, user_id, course_id, enrolled_at, created_at, updated_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        `INSERT INTO enrollment (id, enrollment_type, enrollment_source, status, gifted_by_user_id, user_id, course_id, enrolled_at, created_at, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
         [
           enrollment.id,
           enrollment.enrollmentType,
           enrollment.enrollmentSource,
           enrollment.status,
+          enrollment.giftedByUserId,
           enrollment.userId,
           enrollment.courseId,
           enrollment.enrolledAt,
