@@ -64,10 +64,11 @@ async function seedDatabase() {
     // Insert users
     console.log("👥 Creating users...");
     for (const user of testUsers) {
+      // Insert user with role
       await client.query(
         `
-        INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO "user" (id, email, name, email_verified, image, role, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
         ON CONFLICT (id) DO NOTHING;
       `,
         [
@@ -76,10 +77,35 @@ async function seedDatabase() {
           user.name,
           user.emailVerified,
           user.image,
+          user.role || "member",
           user.createdAt,
           user.updatedAt,
         ],
       );
+
+      // If user has a password, create an account entry with hashed password
+      if ("password" in user && user.password) {
+        // Use Better Auth's Argon2 hashing
+        const { hash } = await import("@node-rs/argon2");
+        const hashedPassword = await hash(user.password);
+
+        await client.query(
+          `
+          INSERT INTO account (id, account_id, provider_id, user_id, password, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          ON CONFLICT (id) DO NOTHING;
+        `,
+          [
+            `account:${user.id}`,
+            user.email,
+            "credential",
+            user.id,
+            hashedPassword,
+            user.createdAt,
+            user.updatedAt,
+          ],
+        );
+      }
     }
     console.log(`✅ Created ${testUsers.length} users`);
 

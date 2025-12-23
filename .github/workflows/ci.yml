@@ -226,9 +226,21 @@ jobs:
       - name: Build
         run: pnpm build --cache=remote:rw
 
+      - name: Run database migrations
+        run: pnpm --filter @apps/server drizzle:migrate
+
+      - name: Seed test database with E2E users
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+
       - name: Install Cypress
         run: pnpx cypress install
         working-directory: apps/web
+
+      - name: Start backend server in background
+        run: |
+          pnpm --filter @apps/server dev > server.log 2>&1 &
+          echo $! > server.pid
+          sleep 10
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -241,3 +253,22 @@ jobs:
           wait-on: "http://localhost:4173"
           wait-on-timeout: 120
           browser: chrome
+
+      - name: Stop backend server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
+
+      - name: Show server logs on failure
+        if: failure()
+        run: |
+          if [ -f server.log ]; then
+            echo "=== Backend Server Logs ==="
+            cat server.log
+          fi
+
+      - name: Cleanup test database
+        if: always()
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"

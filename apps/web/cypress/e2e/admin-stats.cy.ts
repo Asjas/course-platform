@@ -31,4 +31,3 @@ describe("Admin Stats Dashboard", () => {
     cy.contains("Users").should("be.visible");
   });
 });
-

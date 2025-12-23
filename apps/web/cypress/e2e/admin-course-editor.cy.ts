@@ -5,7 +5,7 @@ describe("Admin Course Editor", () => {
 
   it("should display course editor page", () => {
     cy.visit("/admin/courses");
-    
+
     // Verify courses page loads
     cy.contains("Courses").should("be.visible");
   });

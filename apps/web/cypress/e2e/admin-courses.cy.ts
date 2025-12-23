@@ -12,7 +12,7 @@ describe("Admin Courses Management", () => {
 
   it("should navigate to create course page", () => {
     cy.visit("/admin/courses");
-    
+
     cy.contains("Create Course").click();
     cy.url().should("include", "/admin/courses/create");
   });

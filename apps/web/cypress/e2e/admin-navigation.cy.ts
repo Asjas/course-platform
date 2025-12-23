@@ -51,4 +51,3 @@ describe("Non-Admin Access Control", () => {
     cy.contains("Admin").should("not.exist");
   });
 });
-

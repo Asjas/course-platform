@@ -1,5 +1,6 @@
 /// <reference types="cypress" />
 
+/* eslint-disable @typescript-eslint/no-namespace, promise/always-return */
 declare global {
   namespace Cypress {
     interface Chainable {
