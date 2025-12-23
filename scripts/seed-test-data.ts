@@ -186,6 +186,7 @@ function generateFakeEnrollment(userId: string, courseId: string) {
 }
 
 function generateFakeReview(userId: string, courseId: string) {
+  const approved = faker.datatype.boolean(0.8); // 80% approved
   return {
     id: generateId("review"),
     userId,
@@ -193,8 +194,10 @@ function generateFakeReview(userId: string, courseId: string) {
     rating: faker.number.int({ min: 3, max: 5 }),
     title: faker.lorem.sentence(),
     comment: faker.lorem.paragraph(),
-    approved: faker.datatype.boolean(0.8), // 80% approved
-    reviewedAt: faker.datatype.boolean(0.8)
+    approved,
+    // reviewedAt can only have a value if approved is true (constraint requirement)
+    // If approved is false, reviewedAt must be null
+    reviewedAt: approved && faker.datatype.boolean(0.8)
       ? faker.date.past({ days: 30 })
       : null,
     createdAt: faker.date.past({ years: 1 }),
