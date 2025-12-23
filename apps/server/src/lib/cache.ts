@@ -14,6 +14,7 @@ import {
   getCouponById,
 } from "~/routers/coupons/queries.js";
 import {
+  getAllAsAdminCourses,
   getAllCourses,
   getCourseById,
   getLessonById,
@@ -124,6 +125,17 @@ export const cache = createCache({
       },
     },
     getModulesAndLessonsByCourseId,
+  )
+  .define(
+    "getAllCoursesAsAdmin",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "all-admin",
+      references() {
+        return ["course~all"];
+      },
+    },
+    getAllAsAdminCourses,
   )
   .define(
     "getAllCourses",

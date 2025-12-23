@@ -165,6 +165,60 @@ export const CoursesCollection = createCollection(
   }),
 );
 
+// Admin collection with full CRUD operations
+export const CoursesAdminCollection = createCollection(
+  queryCollectionOptions<CourseWithDetails>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["admin", "courses"],
+    queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.courses.createCourse.mutate(modified);
+      } catch (error) {
+        console.error("Error inserting course: ", error);
+        toast.error(
+          "An error occurred while creating the course. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.courses.updateCourse.mutate({
+          id: modified.id,
+          ...modified,
+        });
+      } catch (error) {
+        console.error("Error updating course: ", error);
+        toast.error(
+          "An error occurred while updating the course. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.courses.deleteCourse.mutate({
+          courseId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting course: ", error);
+        toast.error(
+          "An error occurred while deleting the course. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
 export const CourseProgressCollection = createCollection(
   queryCollectionOptions<{ id: string }>({
     queryClient,
@@ -191,6 +245,10 @@ export const LessonProgressCollection = createCollection(
 
 export function useCourses() {
   return useLiveQuery(CoursesCollection);
+}
+
+export function useCoursesAdmin() {
+  return useLiveQuery(CoursesAdminCollection);
 }
 
 export function useCourseById({ courseId }: { courseId: string }) {
