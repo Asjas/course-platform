@@ -9,6 +9,9 @@ import {
 import {
   getAllAnnouncements,
   getAnnouncementById,
+  getPublishedAnnouncements,
+  getReadAnnouncementsForUser,
+  getUnreadAnnouncementsForUser,
 } from "~/db/queries/platformAnnouncements.js";
 import { publicProcedure, router } from "../index.js";
 
@@ -46,6 +49,44 @@ export const announcementsRouter = router({
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
         message: "Failed to fetch announcements",
+      });
+    }
+  }),
+
+  getPublished: publicProcedure.query(async () => {
+    try {
+      const announcements = await getPublishedAnnouncements();
+      return announcements;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch published announcements",
+      });
+    }
+  }),
+
+  getUnreadForUser: publicProcedure
+    .input(z.string())
+    .query(async ({ input }) => {
+      try {
+        const announcements = await getUnreadAnnouncementsForUser(input);
+        return announcements;
+      } catch (error) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch unread announcements",
+        });
+      }
+    }),
+
+  getReadForUser: publicProcedure.input(z.string()).query(async ({ input }) => {
+    try {
+      const announcements = await getReadAnnouncementsForUser(input);
+      return announcements;
+    } catch (error) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch read announcements",
       });
     }
   }),

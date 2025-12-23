@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CourseCard } from "~/components/course-card";
 import { CoursesCollection, useCourses } from "~/lib/db.collections";
+import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
+import { useAuth } from "~/lib/auth.context";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: AuthenticatedDashboardPage,
@@ -11,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 function AuthenticatedDashboardPage() {
   const { data: courses, isLoading } = useCourses();
+  const { session } = useAuth();
 
   if (isLoading) {
     return (
@@ -29,6 +32,8 @@ function AuthenticatedDashboardPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {session?.user?.id && <AnnouncementsBanner userId={session.user.id} />}
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           My Courses
