@@ -75,7 +75,7 @@ export const testSupportTickets = [
     userId: "user:01TESTUSER0000000000005",
     assignedToUserId: "user:01TESTUSER0000000000003",
     assignedAt: new Date("2024-12-08T10:00:00Z"),
-    resolvedAt: new Date("2024-12-08T14:00:00Z"),
+    resolvedAt: null,
     closedAt: new Date("2024-12-08T15:00:00Z"),
     createdAt: new Date("2024-12-08T09:00:00Z"),
     updatedAt: new Date("2024-12-08T15:00:00Z"),
