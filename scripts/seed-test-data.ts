@@ -53,7 +53,7 @@ function generateFakeCourse(authorId: string) {
     "Security",
   ];
   const topic = faker.helpers.arrayElement(topics);
-  
+
   // Generate price first, then ensure salePrice is less than or equal to price
   const price = faker.number.int({ min: 19, max: 199 });
   const salePrice = faker.number.int({ min: 9, max: Math.min(price, 99) });
