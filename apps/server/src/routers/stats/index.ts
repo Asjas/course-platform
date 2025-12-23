@@ -1,9 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { isAdmin, router } from "~/router.js";
+import { isAdmin, publicProcedure, router } from "~/router.js";
 
 export const statsRouter = router({
   // Get course statistics
-  getCourseStats: router.procedure.use(isAdmin).query(async ({ ctx }) => {
+  getCourseStats: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
     const fastify = ctx.reply.server;
 
     const [err, stats] = await fastify.to(fastify.cache.getCourseStats());
@@ -21,7 +21,7 @@ export const statsRouter = router({
   }),
 
   // Get platform statistics
-  getPlatformStats: router.procedure.use(isAdmin).query(async ({ ctx }) => {
+  getPlatformStats: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
     const fastify = ctx.reply.server;
 
     const [err, stats] = await fastify.to(fastify.cache.getPlatformStats());
