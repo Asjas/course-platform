@@ -82,3 +82,86 @@ export async function getPlatformStats() {
     activeEnrollments: activeEnrollmentCount[0]?.count || 0,
   };
 }
+
+/**
+ * Get revenue and purchase statistics
+ */
+export async function getRevenueStats() {
+  const { payment } = await import("~/db/schema/purchase.js");
+  const { invoice } = await import("~/db/schema/purchase.js");
+
+  // Get payment statistics
+  const paymentStats = await db
+    .select({
+      totalRevenue: sql<number>`SUM(CASE WHEN ${payment.status} = 'completed' THEN ${payment.amount} ELSE 0 END)`.as(
+        "total_revenue",
+      ),
+      refundedAmount: sql<number>`SUM(CASE WHEN ${payment.status} = 'refunded' THEN ${payment.amount} ELSE 0 END)`.as(
+        "refunded_amount",
+      ),
+      totalPaid: count(payment.id)
+        .as("total_paid")
+        .mapWith((val) => (val === null ? 0 : Number(val))),
+      refundCount:
+        sql<number>`COUNT(CASE WHEN ${payment.status} = 'refunded' THEN 1 END)`.as(
+          "refund_count",
+        ),
+      giftCount:
+        sql<number>`COUNT(CASE WHEN ${payment.isGift} = true THEN 1 END)`.as(
+          "gift_count",
+        ),
+      teamPurchaseCount:
+        sql<number>`COUNT(CASE WHEN ${payment.purchaseType} = 'team' THEN 1 END)`.as(
+          "team_purchase_count",
+        ),
+    })
+    .from(payment);
+
+  // Get enrollment type breakdown
+  const enrollmentTypeStats = await db
+    .select({
+      individualCount:
+        sql<number>`COUNT(CASE WHEN ${enrollment.enrollmentType} = 'individual' THEN 1 END)`.as(
+          "individual_count",
+        ),
+      giftCount:
+        sql<number>`COUNT(CASE WHEN ${enrollment.enrollmentType} = 'gift' THEN 1 END)`.as(
+          "gift_count",
+        ),
+      teamCount:
+        sql<number>`COUNT(CASE WHEN ${enrollment.enrollmentType} = 'team' THEN 1 END)`.as(
+          "team_count",
+        ),
+      refundedCount:
+        sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'refunded' THEN 1 END)`.as(
+          "refunded_count",
+        ),
+      cancelledCount:
+        sql<number>`COUNT(CASE WHEN ${enrollment.status} = 'cancelled' THEN 1 END)`.as(
+          "cancelled_count",
+        ),
+    })
+    .from(enrollment);
+
+  const stats = paymentStats[0];
+  const enrollmentStats = enrollmentTypeStats[0];
+
+  return {
+    totalRevenue: Number(stats?.totalRevenue || 0),
+    refundedAmount: Number(stats?.refundedAmount || 0),
+    netRevenue: Number(stats?.totalRevenue || 0) - Number(stats?.refundedAmount || 0),
+    totalPayments: Number(stats?.totalPaid || 0),
+    refundCount: Number(stats?.refundCount || 0),
+    refundRate:
+      Number(stats?.totalPaid || 0) > 0
+        ? Math.round((Number(stats?.refundCount || 0) / Number(stats?.totalPaid || 0)) * 100)
+        : 0,
+    giftPurchases: Number(stats?.giftCount || 0),
+    teamPurchases: Number(stats?.teamPurchaseCount || 0),
+    individualEnrollments: Number(enrollmentStats?.individualCount || 0),
+    giftEnrollments: Number(enrollmentStats?.giftCount || 0),
+    teamEnrollments: Number(enrollmentStats?.teamCount || 0),
+    refundedEnrollments: Number(enrollmentStats?.refundedCount || 0),
+    cancelledEnrollments: Number(enrollmentStats?.cancelledCount || 0),
+  };
+}

@@ -37,4 +37,22 @@ export const statsRouter = router({
 
     return stats;
   }),
+
+  // Get revenue statistics
+  getRevenueStats: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
+    const fastify = ctx.reply.server;
+
+    const [err, stats] = await fastify.to(fastify.cache.getRevenueStats());
+
+    if (err) {
+      fastify.log.error(err);
+
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch revenue statistics",
+      });
+    }
+
+    return stats;
+  }),
 });

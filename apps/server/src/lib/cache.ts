@@ -1,6 +1,6 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
-import { getCourseStats, getPlatformStats } from "~/db/queries/stats.js";
+import { getCourseStats, getPlatformStats, getRevenueStats } from "~/db/queries/stats.js";
 import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import {
@@ -192,4 +192,15 @@ export const cache = createCache({
       },
     },
     getPlatformStats,
+  )
+  .define(
+    "getRevenueStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~revenue",
+      references() {
+        return ["stats~all", "payment~all", "enrollment~all", "invoice~all"];
+      },
+    },
+    getRevenueStats,
   );
