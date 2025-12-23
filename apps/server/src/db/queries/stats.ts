@@ -8,6 +8,7 @@ import { coupon, couponRedemption } from "~/db/schema/coupon.js";
 import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
 import { courseProgress, lessonProgress } from "~/db/schema/progress.js";
 import { platformAnnouncement, platformAnnouncementRead } from "~/db/schema/platformAnnouncements.js";
+import { payment, invoice } from "~/db/schema/purchase.js";
 
 /**
  * Get basic course statistics for admin dashboard
@@ -93,9 +94,6 @@ export async function getPlatformStats() {
  * Get revenue and purchase statistics
  */
 export async function getRevenueStats() {
-  const { payment } = await import("~/db/schema/purchase.js");
-  const { invoice } = await import("~/db/schema/purchase.js");
-
   // Get payment statistics
   const paymentStats = await db
     .select({
