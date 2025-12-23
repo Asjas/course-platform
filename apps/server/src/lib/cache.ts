@@ -130,7 +130,7 @@ export const cache = createCache({
     "getAllCoursesAsAdmin",
     {
       ttl: ONE_HOUR,
-      serialize: () => "all-admin",
+      serialize: () => "course~all~admin",
       references() {
         return ["course~all"];
       },
