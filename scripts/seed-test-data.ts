@@ -406,7 +406,7 @@ async function seedDatabase() {
           `❌ Module ${lesson.moduleId} not found for lesson ${lesson.id} (${i + 1}/${allLessons.length})`,
         );
         console.error(
-          `   Lesson was generated for module index: ${(lesson as any).moduleIndex}`,
+          `   Lesson was generated for module index: ${(lesson as { moduleIndex?: number }).moduleIndex}`,
         );
         console.error(`   Total modules in array: ${allModules.length}`);
         console.error(
@@ -422,7 +422,7 @@ async function seedDatabase() {
         );
         console.error(
           `   Modules in database (${dbModules.rows.length}): ${dbModules.rows
-            .map((r: any) => r.id)
+            .map((r: { id: string }) => r.id)
             .slice(0, 10)
             .join(", ")}...`,
         );
