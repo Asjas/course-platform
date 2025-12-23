@@ -53,6 +53,10 @@ function generateFakeCourse(authorId: string) {
     "Security",
   ];
   const topic = faker.helpers.arrayElement(topics);
+  
+  // Generate price first, then ensure salePrice is less than or equal to price
+  const price = faker.number.int({ min: 19, max: 199 });
+  const salePrice = faker.number.int({ min: 9, max: Math.min(price, 99) });
 
   return {
     id: generateId("course"),
@@ -67,17 +71,13 @@ function generateFakeCourse(authorId: string) {
       "Intermediate",
       "Advanced",
     ] as const),
-    thumbnailUrl: faker.image.urlLoremFlickr({
-      category: "technology",
-      width: 640,
-      height: 480,
-    }),
+    thumbnailUrl: faker.image.url({ width: 640, height: 480 }),
     published: true,
     isFree: faker.datatype.boolean(0.3),
-    price: faker.number.int({ min: 19, max: 199 }),
+    price,
     priceCurrency: "USD",
     isSaleActive: faker.datatype.boolean(0.2),
-    salePrice: faker.number.int({ min: 9, max: 99 }),
+    salePrice,
     saleStartAt: faker.date.recent({ days: 30 }),
     saleExpiresAt: faker.date.future({ years: 0.5 }),
     totalEnrollments: faker.number.int({ min: 10, max: 1000 }),
