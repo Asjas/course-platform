@@ -69,15 +69,13 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
 
   return (
     <Popover className="relative">
-      <PopoverButton className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-200 dark:hover:bg-gray-800">
+      <PopoverButton className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
         <Bell
           className="h-6 w-6"
           aria-hidden="true"
         />
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-semibold text-white">
-            {unreadCount > 9 ? "9+" : unreadCount}
-          </span>
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-600" />
         )}
         <span className="sr-only">Notifications</span>
       </PopoverButton>
