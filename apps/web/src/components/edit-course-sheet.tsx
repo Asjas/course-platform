@@ -5,10 +5,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { CourseWithDetails } from "~/lib/db.collections";
+import type { AdminCourseDetail } from "~/lib/db.collections";
 
 interface EditCourseSheetProps {
-  course: CourseWithDetails | null;
+  course: AdminCourseDetail | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }

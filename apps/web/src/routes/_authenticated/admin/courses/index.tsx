@@ -13,7 +13,7 @@ import {
   TableHeaderRow,
 } from "~/components/ui/table";
 import {
-  type CourseWithDetails,
+  type AdminCourseDetail,
   CoursesAdminCollection,
   useCoursesAdmin,
 } from "~/lib/db.collections";
@@ -35,7 +35,7 @@ function AdminCoursesPage() {
     trpc.courses.deleteCourse.mutationOptions(),
   );
 
-  async function handleDeleteCourse(course: CourseWithDetails) {
+  async function handleDeleteCourse(course: AdminCourseDetail) {
     if (
       !confirm(
         `Are you sure you want to delete "${course.name}"? This will also delete all modules and lessons. This action cannot be undone.`,

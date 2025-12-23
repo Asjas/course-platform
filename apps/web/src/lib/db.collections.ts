@@ -37,18 +37,17 @@ export interface Announcement {
 // The collection starts with getAllCourses data, but may be updated with getCourseById data
 // which includes modules with nested lessons
 type CourseFromList = AllCourses[number];
-type CourseDetail = NonNullable<CourseById>;
+
+// Type for user-facing course detail with full structure (modules + lessons)
+export type CourseWithModulesAndLessons = NonNullable<CourseById>;
 
 // Union type to support both shapes - the collection may contain either
-type Course = CourseFromList | CourseDetail;
+type Course = CourseFromList | CourseWithModulesAndLessons;
 
-// Type for admin queries that always return full details
-export type CourseWithDetails = Awaited<
+// Type for admin queries that always return full course details
+export type AdminCourseDetail = Awaited<
   ReturnType<typeof getAllAsAdminCourses>
 >[number];
-
-// Export the detailed type for components that need the full structure
-export type { CourseDetail };
 
 export const SupportTicketsCollection = createCollection(
   queryCollectionOptions<SupportTicket>({
