@@ -100,6 +100,7 @@ describe("Admin Courses Management", () => {
     // Stub window.confirm
     cy.window().then((win) => {
       cy.stub(win, "confirm").returns(false);
+      return null;
     });
 
     // Click delete button

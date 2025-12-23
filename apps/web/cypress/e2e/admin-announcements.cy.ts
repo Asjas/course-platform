@@ -120,8 +120,9 @@ describe("Admin Announcements Management", () => {
     // Click first announcement to select it
     cy.contains("Platform Update").click();
 
-    // Edit title
-    cy.get('input[name="title"]').clear().type("Updated Platform Update");
+    // Edit title - split chain for safety
+    cy.get('input[name="title"]').clear();
+    cy.get('input[name="title"]').type("Updated Platform Update");
 
     // Save changes
     cy.contains("button", "Save").click();
@@ -138,6 +139,7 @@ describe("Admin Announcements Management", () => {
     // Stub window.confirm
     cy.window().then((win) => {
       cy.stub(win, "confirm").returns(true);
+      return null;
     });
 
     // Click delete button

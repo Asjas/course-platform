@@ -19,7 +19,7 @@ import NewSupportTicketForm from "~/components/forms/create-support-ticket-form"
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import {
-  type CourseDetail,
+  type CourseWithModulesAndLessons,
   CoursesCollection,
   SupportTicketsCollection,
   useCourseById,
@@ -108,8 +108,8 @@ function LessonPage() {
     );
   }
 
-  // Cast to CourseDetail since the loader ensures we have full course data
-  const fullCourse = course as CourseDetail;
+  // Cast to CourseWithModulesAndLessons since the loader ensures we have full course data
+  const fullCourse = course as CourseWithModulesAndLessons;
 
   // Find the lesson in the course modules
   let lesson = null;

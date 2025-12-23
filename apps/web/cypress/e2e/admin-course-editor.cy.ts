@@ -15,58 +15,62 @@ describe("Admin Course Editor with Drag-and-Drop", () => {
     }).as("getSession");
 
     // Mock course data with modules and lessons
-    cy.intercept("GET", "/api/trpc/courses.getCourseAsAdmin*courseId=test-course*", {
-      statusCode: 200,
-      body: {
-        result: {
-          data: {
-            id: "test-course",
-            name: "Test Course",
-            slug: "test-course",
-            description: "A test course for editing",
-            level: "beginner",
-            price: 49.99,
-            published: false,
-            modules: [
-              {
-                id: "module-1",
-                name: "Introduction Module",
-                order: 0,
-                courseId: "test-course",
-                lessons: [
-                  {
-                    id: "lesson-1",
-                    name: "Welcome Lesson",
-                    order: 0,
-                    moduleId: "module-1",
-                  },
-                  {
-                    id: "lesson-2",
-                    name: "Course Overview",
-                    order: 1,
-                    moduleId: "module-1",
-                  },
-                ],
-              },
-              {
-                id: "module-2",
-                name: "Advanced Topics",
-                order: 1,
-                courseId: "test-course",
-                lessons: [
-                  {
-                    id: "lesson-3",
-                    name: "Deep Dive",
-                    order: 0,
-                    moduleId: "module-2",
-                  },
-                ],
-              },
-            ],
+    cy.intercept(
+      "GET",
+      "/api/trpc/courses.getCourseAsAdmin*courseId=test-course*",
+      {
+        statusCode: 200,
+        body: {
+          result: {
+            data: {
+              id: "test-course",
+              name: "Test Course",
+              slug: "test-course",
+              description: "A test course for editing",
+              level: "beginner",
+              price: 49.99,
+              published: false,
+              modules: [
+                {
+                  id: "module-1",
+                  name: "Introduction Module",
+                  order: 0,
+                  courseId: "test-course",
+                  lessons: [
+                    {
+                      id: "lesson-1",
+                      name: "Welcome Lesson",
+                      order: 0,
+                      moduleId: "module-1",
+                    },
+                    {
+                      id: "lesson-2",
+                      name: "Course Overview",
+                      order: 1,
+                      moduleId: "module-1",
+                    },
+                  ],
+                },
+                {
+                  id: "module-2",
+                  name: "Advanced Topics",
+                  order: 1,
+                  courseId: "test-course",
+                  lessons: [
+                    {
+                      id: "lesson-3",
+                      name: "Deep Dive",
+                      order: 0,
+                      moduleId: "module-2",
+                    },
+                  ],
+                },
+              ],
+            },
           },
         },
       },
-    }).as("getCourse");
+    ).as("getCourse");
 
     // Mock module mutations
     cy.intercept("POST", "/api/trpc/courses.createModule*", {
@@ -177,8 +181,9 @@ describe("Admin Course Editor with Drag-and-Drop", () => {
     // Click edit button on first module
     cy.get('[data-testid="edit-module-button"]').first().click();
 
-    // Change module name
-    cy.get('input[name="moduleName"]').clear().type("Updated Module Name");
+    // Change module name - split chain for safety
+    cy.get('input[name="moduleName"]').clear();
+    cy.get('input[name="moduleName"]').type("Updated Module Name");
 
     // Save changes
     cy.contains("button", "Save").click();
@@ -198,6 +203,7 @@ describe("Admin Course Editor with Drag-and-Drop", () => {
     // Stub window.confirm to return true
     cy.window().then((win) => {
       cy.stub(win, "confirm").returns(true);
+      return null;
     });
 
     // Click delete button on last module
@@ -238,7 +244,10 @@ describe("Admin Course Editor with Drag-and-Drop", () => {
 
     // Note: Actual drag-and-drop testing with @dnd-kit requires more complex setup
     // This is a simplified version that verifies the UI elements exist
-    cy.get('[data-testid="draggable-module"]').should("have.length.at.least", 2);
+    cy.get('[data-testid="draggable-module"]').should(
+      "have.length.at.least",
+      2,
+    );
 
     // Verify drag handles are present
     cy.get('[data-testid="module-drag-handle"]').should("be.visible");

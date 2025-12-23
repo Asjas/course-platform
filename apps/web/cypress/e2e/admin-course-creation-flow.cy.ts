@@ -59,7 +59,11 @@ describe("Admin Course Creation Flow", () => {
 
     // Fill in course details
     cy.get('input[name="name"]').type("New Test Course");
-    cy.get('input[name="slug"]').clear().type("new-test-course");
+
+    // Clear and type slug - split chain for safety
+    cy.get('input[name="slug"]').clear();
+    cy.get('input[name="slug"]').type("new-test-course");
+
     cy.get('textarea[name="description"]').type("A test course description");
     cy.get('select[name="level"]').select("beginner");
     cy.get('input[name="thumbnailUrl"]').type(
@@ -69,9 +73,13 @@ describe("Admin Course Creation Flow", () => {
     // Uncheck free course checkbox
     cy.get('input[type="checkbox"][name="isFree"]').uncheck();
 
-    // Enter price
-    cy.get('input[name="price"]').clear().type("29.99");
-    cy.get('input[name="freeTrialModules"]').clear().type("1");
+    // Enter price - split chain for safety
+    cy.get('input[name="price"]').clear();
+    cy.get('input[name="price"]').type("29.99");
+
+    // Enter free trial modules
+    cy.get('input[name="freeTrialModules"]').clear();
+    cy.get('input[name="freeTrialModules"]').type("1");
 
     // Check publish immediately
     cy.get('input[type="checkbox"][name="published"]').check();

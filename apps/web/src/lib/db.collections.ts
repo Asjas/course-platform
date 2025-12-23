@@ -241,7 +241,7 @@ export const CoursesCollection = createCollection(
 
 // Admin collection with full CRUD operations
 export const CoursesAdminCollection = createCollection(
-  queryCollectionOptions<CourseWithDetails>({
+  queryCollectionOptions<AdminCourseDetail>({
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
