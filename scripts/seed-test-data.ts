@@ -296,7 +296,7 @@ async function seedDatabase() {
 }
 
 // Run the seed function
-seedDatabase()
+void seedDatabase()
   .then(() => {
     console.log("🎉 Seeding complete!");
     process.exit(0);
