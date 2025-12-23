@@ -85,9 +85,15 @@ async function seedDatabase() {
 
       // If user has a password, create an account entry with hashed password
       if ("password" in user && user.password) {
-        // Use argon2 for password hashing
+        // Use argon2 for password hashing with PEPPER_SECRET (same as Better Auth)
         const argon2 = await import("argon2");
-        const hashedPassword = await argon2.hash(user.password);
+        const pepperSecret = process.env.PEPPER_SECRET;
+        if (!pepperSecret) {
+          throw new Error("PEPPER_SECRET environment variable is required for hashing passwords");
+        }
+        const hashedPassword = await argon2.hash(user.password, {
+          secret: Buffer.from(pepperSecret),
+        });
 
         await client.query(
           `
