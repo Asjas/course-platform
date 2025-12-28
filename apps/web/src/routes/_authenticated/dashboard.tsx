@@ -1,8 +1,10 @@
+import { useQueries } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
 import { CourseCard } from "~/components/course-card";
 import { useAuth } from "~/lib/auth.context";
 import { CoursesCollection, useCourses } from "~/lib/db.collections";
+import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: AuthenticatedDashboardPage,
@@ -14,6 +16,14 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 function AuthenticatedDashboardPage() {
   const { data: courses, isLoading } = useCourses();
   const { session } = useAuth();
+
+  // Fetch progress for all courses
+  const courseIds = courses?.map((course) => course.id) ?? [];
+  const progressQueries = useQueries({
+    queries: courseIds.map((courseId) =>
+      trpc.courses.getCourseProgress.queryOptions({ courseId }),
+    ),
+  });
 
   if (isLoading) {
     return (
@@ -45,17 +55,25 @@ function AuthenticatedDashboardPage() {
 
       {courses && courses.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course) => (
-            <CourseCard
-              id={course.id}
-              key={course.id}
-              name={course.name}
-              description={course.description}
-              thumbnailUrl={course.thumbnailUrl}
-              totalLessons={course.totalLessons}
-              totalDuration={course.totalDuration}
-            />
-          ))}
+          {courses.map((course, index) => {
+            const progressData = progressQueries[index]?.data;
+            const progress = progressData?.progress ?? 0;
+
+            return (
+              <CourseCard
+                id={course.id}
+                key={course.id}
+                name={course.name}
+                description={course.description}
+                thumbnailUrl={course.thumbnailUrl}
+                totalModules={course.totalModules}
+                totalLessons={course.totalLessons}
+                totalDuration={course.totalDuration}
+                totalEnrollments={course.totalEnrollments}
+                progress={progress}
+              />
+            );
+          })}
         </div>
       ) : (
         <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">

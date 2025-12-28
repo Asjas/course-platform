@@ -1,13 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Clock } from "lucide-react";
+import { BookOpen, Clock, TicketIcon, Users } from "lucide-react";
 
 interface CourseCardProps {
   id: string;
   name: string;
   description: string | null;
   thumbnailUrl: string | null;
+  totalModules: number;
   totalLessons: number;
   totalDuration: number;
+  totalEnrollments: number;
+  supportTicketCount?: number;
   progress?: number;
 }
 
@@ -26,8 +29,11 @@ export function CourseCard({
   name,
   description,
   thumbnailUrl,
+  totalModules,
   totalLessons,
   totalDuration,
+  totalEnrollments,
+  supportTicketCount,
   progress = 0,
 }: CourseCardProps) {
   return (
@@ -61,7 +67,13 @@ export function CourseCard({
           </p>
         )}
 
-        <div className="mb-3 flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
+        <div className="mb-3 grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-1">
+            <BookOpen className="h-4 w-4" />
+            <span>
+              {totalModules} {totalModules === 1 ? "module" : "modules"}
+            </span>
+          </div>
           <div className="flex items-center gap-1">
             <BookOpen className="h-4 w-4" />
             <span>
@@ -72,6 +84,22 @@ export function CourseCard({
             <Clock className="h-4 w-4" />
             <span>{formatDuration(totalDuration)}</span>
           </div>
+          <div className="flex items-center gap-1">
+            <Users className="h-4 w-4" />
+            <span>
+              {totalEnrollments}{" "}
+              {totalEnrollments === 1 ? "student" : "students"}
+            </span>
+          </div>
+          {supportTicketCount !== undefined && (
+            <div className="flex items-center gap-1">
+              <TicketIcon className="h-4 w-4" />
+              <span>
+                {supportTicketCount}{" "}
+                {supportTicketCount === 1 ? "ticket" : "tickets"}
+              </span>
+            </div>
+          )}
         </div>
 
         {progress > 0 && (
