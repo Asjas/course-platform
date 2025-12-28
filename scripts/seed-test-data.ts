@@ -55,13 +55,13 @@ async function seedDatabase() {
 
     // Clean up existing test data (in reverse order of dependencies)
     console.log("🧹 Cleaning up existing test data...");
-    await client.query('DELETE FROM support_ticket WHERE true;');
-    await client.query('DELETE FROM course_review WHERE true;');
-    await client.query('DELETE FROM enrollment WHERE true;');
-    await client.query('DELETE FROM course_lesson WHERE true;');
-    await client.query('DELETE FROM course_module WHERE true;');
-    await client.query('DELETE FROM course WHERE true;');
-    await client.query('DELETE FROM account WHERE true;');
+    await client.query("DELETE FROM support_ticket WHERE true;");
+    await client.query("DELETE FROM course_review WHERE true;");
+    await client.query("DELETE FROM enrollment WHERE true;");
+    await client.query("DELETE FROM course_lesson WHERE true;");
+    await client.query("DELETE FROM course_module WHERE true;");
+    await client.query("DELETE FROM course WHERE true;");
+    await client.query("DELETE FROM account WHERE true;");
     await client.query('DELETE FROM "user" WHERE true;');
 
     // Create ghost user first (required for foreign keys)
