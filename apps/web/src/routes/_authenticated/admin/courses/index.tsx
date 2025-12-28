@@ -89,7 +89,10 @@ function AdminCoursesPage() {
             className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
             to="/admin/courses/create"
           >
-            <PlusIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+            <PlusIcon
+              className="mr-2 h-4 w-4"
+              aria-hidden="true"
+            />
             Create New Course
           </Link>
         </div>
@@ -100,7 +103,10 @@ function AdminCoursesPage() {
           className="mt-12 flow-root"
           aria-labelledby="courses-table-heading"
         >
-          <h2 id="courses-table-heading" className="sr-only">
+          <h2
+            className="sr-only"
+            id="courses-table-heading"
+          >
             Courses list
           </h2>
           <div className="custom-scrollbar overflow-x-auto sm:-mx-6 lg:-mx-8">

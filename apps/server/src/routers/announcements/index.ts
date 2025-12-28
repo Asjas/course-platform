@@ -172,16 +172,16 @@ export const announcementsRouter = router({
     .input(z.string())
     .use(isAdmin)
     .mutation(async ({ input }) => {
-    try {
-      await deletePlatformAnnouncementById(input);
-      return { success: true };
-    } catch {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to delete announcement",
-      });
-    }
-  }),
+      try {
+        await deletePlatformAnnouncementById(input);
+        return { success: true };
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete announcement",
+        });
+      }
+    }),
 
   markAsRead: publicProcedure
     .input(

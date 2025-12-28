@@ -172,8 +172,8 @@ function AnnouncementsPage() {
         >
           <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
             <h2
-              id="announcements-list-heading"
               className="mb-4 text-lg font-semibold text-gray-900 dark:text-white"
+              id="announcements-list-heading"
             >
               All Announcements ({announcements.length})
             </h2>
@@ -237,8 +237,8 @@ function AnnouncementsPage() {
           {isCreating || selectedAnnouncement ? (
             <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
               <h2
-                id="announcement-editor-heading"
                 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white"
+                id="announcement-editor-heading"
               >
                 {selectedAnnouncement ? "Edit" : "Create"} Announcement
               </h2>

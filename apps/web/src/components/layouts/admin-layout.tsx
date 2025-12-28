@@ -5,7 +5,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="sidebar mt-10 flex h-full md:mt-0">
       <div className="relative flex flex-col overflow-y-auto border-r border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900">
-        <nav className="flex flex-1 flex-col" aria-label="Admin navigation">
+        <nav
+          className="flex flex-1 flex-col"
+          aria-label="Admin navigation"
+        >
           <h2 className="mt-2 flex p-2 text-lg font-bold text-gray-900 md:text-xl dark:text-white">
             Admin
           </h2>
@@ -13,7 +16,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/stats"
               >
@@ -23,7 +29,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/users"
               >
@@ -33,7 +42,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/coupons"
               >
@@ -43,7 +55,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/courses"
               >
@@ -53,7 +68,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/announcements"
               >
@@ -63,7 +81,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <li>
               <Link
                 className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
-                activeProps={{ className: "bg-gray-200 dark:bg-gray-800", "aria-current": "page" }}
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
                 activeOptions={{ exact: true }}
                 to="/admin/purchases"
               >
@@ -73,7 +94,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </ul>
         </nav>
       </div>
-      <main id="maincontent" className="flex w-full flex-col bg-white px-6 pt-8 dark:bg-gray-800">
+      <main
+        className="flex w-full flex-col bg-white px-6 pt-8 dark:bg-gray-800"
+        id="maincontent"
+      >
         {children}
       </main>
     </div>

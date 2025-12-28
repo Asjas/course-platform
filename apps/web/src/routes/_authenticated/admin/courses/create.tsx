@@ -92,7 +92,10 @@ function CreateCoursePage() {
             className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
             to="/admin/courses"
           >
-            <ArrowLeftIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+            <ArrowLeftIcon
+              className="mr-2 h-4 w-4"
+              aria-hidden="true"
+            />
             Back to Courses
           </Link>
         </div>
@@ -361,7 +364,10 @@ function CreateCoursePage() {
                   form.state.isSubmitting ? "Creating course" : "Create course"
                 }
               >
-                <SaveIcon className="mr-2 h-4 w-4" aria-hidden="true" />
+                <SaveIcon
+                  className="mr-2 h-4 w-4"
+                  aria-hidden="true"
+                />
                 {form.state.isSubmitting ? "Creating..." : "Create Course"}
               </button>
               <Link
