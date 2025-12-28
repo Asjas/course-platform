@@ -151,23 +151,30 @@ function AnnouncementsPage() {
 
   return (
     <>
-      <div className="mb-6 flex items-center justify-between pb-8">
+      <header className="mb-6 flex items-center justify-between pb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Announcements
         </h1>
         <button
           className="cursor-pointer rounded-md bg-green-600 px-4 py-2 font-medium text-white hover:bg-green-700"
           onClick={handleCreate}
+          aria-label="Create new announcement"
         >
           Create Announcement
         </button>
-      </div>
+      </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Announcements List */}
-        <div className="lg:col-span-1">
+        <section
+          className="lg:col-span-1"
+          aria-labelledby="announcements-list-heading"
+        >
           <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
-            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <h2
+              id="announcements-list-heading"
+              className="mb-4 text-lg font-semibold text-gray-900 dark:text-white"
+            >
               All Announcements ({announcements.length})
             </h2>
 
@@ -220,13 +227,19 @@ function AnnouncementsPage() {
               </div>
             )}
           </div>
-        </div>
+        </section>
 
         {/* Editor Panel */}
-        <div className="lg:col-span-2">
+        <section
+          className="lg:col-span-2"
+          aria-labelledby="announcement-editor-heading"
+        >
           {isCreating || selectedAnnouncement ? (
             <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
-              <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+              <h2
+                id="announcement-editor-heading"
+                className="mb-4 text-xl font-semibold text-gray-900 dark:text-white"
+              >
                 {selectedAnnouncement ? "Edit" : "Create"} Announcement
               </h2>
 
@@ -237,6 +250,11 @@ function AnnouncementsPage() {
                   e.stopPropagation();
                   form.handleSubmit();
                 }}
+                aria-label={
+                  selectedAnnouncement
+                    ? "Edit announcement form"
+                    : "Create announcement form"
+                }
               >
                 <div>
                   <form.Field name="title">
@@ -368,6 +386,7 @@ function AnnouncementsPage() {
                       type="button"
                       onClick={() => handleDelete(selectedAnnouncement.id)}
                       disabled={deleteMutation.isPending}
+                      aria-label={`Delete announcement: ${selectedAnnouncement.title}`}
                     >
                       Delete
                     </button>
@@ -382,7 +401,7 @@ function AnnouncementsPage() {
               </p>
             </div>
           )}
-        </div>
+        </section>
       </div>
     </>
   );

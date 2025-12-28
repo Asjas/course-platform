@@ -72,7 +72,7 @@ function AdminCoursesPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <div className="sm:flex sm:items-center">
+      <header className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             Courses
@@ -89,14 +89,20 @@ function AdminCoursesPage() {
             className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
             to="/admin/courses/create"
           >
-            <PlusIcon className="mr-2 h-4 w-4" />
+            <PlusIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             Create New Course
           </Link>
         </div>
-      </div>
+      </header>
 
       {courses.length > 0 ? (
-        <div className="mt-12 flow-root">
+        <section
+          className="mt-12 flow-root"
+          aria-labelledby="courses-table-heading"
+        >
+          <h2 id="courses-table-heading" className="sr-only">
+            Courses list
+          </h2>
           <div className="custom-scrollbar overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
@@ -208,16 +214,19 @@ function AdminCoursesPage() {
               </Table>
             </div>
           </div>
-        </div>
+        </section>
       ) : (
-        <div className="flex h-full flex-col items-center justify-center text-center">
+        <section
+          className="flex h-full flex-col items-center justify-center text-center"
+          aria-label="Empty state"
+        >
           <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
             No courses found
           </p>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Get started by creating a new course.
           </p>
-        </div>
+        </section>
       )}
     </div>
   );

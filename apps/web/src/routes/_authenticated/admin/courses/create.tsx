@@ -78,7 +78,7 @@ function CreateCoursePage() {
   return (
     <div className="flex h-screen flex-col">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
+      <header className="border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -92,22 +92,23 @@ function CreateCoursePage() {
             className="inline-flex items-center rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
             to="/admin/courses"
           >
-            <ArrowLeftIcon className="mr-2 h-4 w-4" />
+            <ArrowLeftIcon className="mr-2 h-4 w-4" aria-hidden="true" />
             Back to Courses
           </Link>
         </div>
-      </div>
+      </header>
 
       {/* Main Content Area */}
       <div className="flex flex-1">
         {/* Left Column - Form */}
-        <div className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
+        <main className="flex-1 overflow-y-auto bg-white p-8 dark:bg-gray-800">
           <form
             className="mx-auto max-w-2xl space-y-6"
             onSubmit={(e) => {
               e.preventDefault();
               form.handleSubmit();
             }}
+            aria-label="Create new course form"
           >
             <form.Field name="name">
               {(field) => (
@@ -356,8 +357,11 @@ function CreateCoursePage() {
                 className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 type="submit"
                 disabled={form.state.isSubmitting}
+                aria-label={
+                  form.state.isSubmitting ? "Creating course" : "Create course"
+                }
               >
-                <SaveIcon className="mr-2 h-4 w-4" />
+                <SaveIcon className="mr-2 h-4 w-4" aria-hidden="true" />
                 {form.state.isSubmitting ? "Creating..." : "Create Course"}
               </button>
               <Link
@@ -368,13 +372,16 @@ function CreateCoursePage() {
               </Link>
             </div>
           </form>
-        </div>
+        </main>
 
         {/* Right Column - Preview */}
-        <div className="custom-scrollbar w-96 flex-shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900">
-          <h3 className="mb-4 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
+        <aside
+          className="custom-scrollbar w-96 flex-shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900"
+          aria-label="Course structure preview"
+        >
+          <h2 className="mb-4 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">
             Course Structure
-          </h3>
+          </h2>
           <div className="space-y-3">
             <div className="rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -414,7 +421,7 @@ function CreateCoursePage() {
               </div>
             </div>
           </div>
-        </div>
+        </aside>
       </div>
     </div>
   );
