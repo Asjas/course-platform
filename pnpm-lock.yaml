@@ -333,8 +333,8 @@ importers:
         specifier: 5.90.12
         version: 5.90.12
       '@tanstack/query-db-collection':
-        specifier: 1.0.8
-        version: 1.0.8(@tanstack/query-core@5.90.12)(typescript@5.9.3)
+        specifier: 1.0.12
+        version: 1.0.12(@tanstack/query-core@5.90.12)(typescript@5.9.3)
       '@tanstack/react-db':
         specifier: 0.1.56
         version: 0.1.56(react@19.2.3)(typescript@5.9.3)
@@ -4320,8 +4320,8 @@ packages:
   '@tanstack/query-core@5.90.12':
     resolution: {integrity: sha512-T1/8t5DhV/SisWjDnaiU2drl6ySvsHj1bHBCWNXd+/T+Hh1cf6JodyEYMd5sgwm+b/mETT4EV3H+zCVczCU5hg==}
 
-  '@tanstack/query-db-collection@1.0.8':
-    resolution: {integrity: sha512-7HzgJXd7OVnsCKhskjs9anqFhXb3JQygWmG3IzIkQT6DOM1c1VXpWJ9TzHravhyjeI9/MPE7I1NtolU9PnM9uw==}
+  '@tanstack/query-db-collection@1.0.12':
+    resolution: {integrity: sha512-kwE9lfGhbnRbRHut1k4yrshoTSDNqP/uY7Brr0l1HbOJZuW7V8Q1zQ1GN4TMAtsLohKaSsL/XDxZULCi6MGngg==}
     peerDependencies:
       '@tanstack/query-core': ^5.0.0
       typescript: '>=4.7'
@@ -9475,6 +9475,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -14685,10 +14686,10 @@ snapshots:
 
   '@tanstack/query-core@5.90.12': {}
 
-  '@tanstack/query-db-collection@1.0.8(@tanstack/query-core@5.90.12)(typescript@5.9.3)':
+  '@tanstack/query-db-collection@1.0.12(@tanstack/query-core@5.90.12)(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      '@tanstack/db': 0.5.12(typescript@5.9.3)
+      '@tanstack/db': 0.5.16(typescript@5.9.3)
       '@tanstack/query-core': 5.90.12
       typescript: 5.9.3
 
