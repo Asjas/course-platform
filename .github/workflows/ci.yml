@@ -58,6 +58,9 @@ env:
   SMTP_USER: ${{ secrets.SMTP_USER }}
   SMTP_PASS: ${{ secrets.SMTP_PASS }}
   SUPPORT_ASSIGNED_TO_USER_ID: ${{ vars.SUPPORT_ASSIGNED_TO_USER_ID }}
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
 jobs:
   check-format-lint-and-type-check:
