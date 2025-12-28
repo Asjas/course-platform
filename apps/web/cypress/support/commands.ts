@@ -19,7 +19,7 @@ declare global {
 }
 /* eslint-enable @typescript-eslint/no-namespace */
 
-/* eslint-disable cypress/unsafe-to-chain-command, cypress/no-unnecessary-waiting, promise/no-nesting, promise/always-return -- Temporary debug logging */
+/* eslint-disable cypress/unsafe-to-chain-command, promise/no-nesting, promise/always-return -- Temporary debug logging */
 Cypress.Commands.add("loginAsAdmin", () => {
   cy.fixture("users").then((users) => {
     // DEBUG: Log the credentials being used
@@ -54,9 +54,9 @@ Cypress.Commands.add("loginAsAdmin", () => {
         cy.log("DEBUG: Submit button clicked");
       });
 
-    // DEBUG: Check for any error messages without arbitrary wait
-    cy.wait(1000); // Temporary debug wait
-    cy.get("body").then(($body) => {
+    // DEBUG: Check for any error messages after form submission
+    // Using explicit timeout instead of arbitrary wait
+    cy.get("body", { timeout: 1000 }).then(($body) => {
       if ($body.text().includes("Invalid") || $body.text().includes("Error")) {
         cy.log("DEBUG: ERROR MESSAGE DETECTED ON PAGE");
         cy.log($body.text());
@@ -120,9 +120,9 @@ Cypress.Commands.add("loginAsRegularUser", () => {
         cy.log("DEBUG: Submit button clicked");
       });
 
-    // DEBUG: Wait and check for any error messages
-    cy.wait(1000);
-    cy.get("body").then(($body) => {
+    // DEBUG: Check for any error messages after form submission
+    // Using explicit timeout instead of arbitrary wait
+    cy.get("body", { timeout: 1000 }).then(($body) => {
       if ($body.text().includes("Invalid") || $body.text().includes("Error")) {
         cy.log("DEBUG: ERROR MESSAGE DETECTED ON PAGE");
         cy.log($body.text());
@@ -151,6 +151,6 @@ Cypress.Commands.add("loginAsRegularUser", () => {
       });
   });
 });
-/* eslint-enable cypress/unsafe-to-chain-command, cypress/no-unnecessary-waiting, promise/no-nesting */
+/* eslint-enable cypress/unsafe-to-chain-command, promise/no-nesting, promise/always-return */
 
 export {};
