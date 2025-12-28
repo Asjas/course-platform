@@ -26,8 +26,8 @@ Cypress.Commands.add("loginAsAdmin", () => {
     cy.get("#password").clear();
     cy.get("#password").type(users.admin.password);
     cy.get('button[type="submit"]').click();
-    // Wait for redirect to dashboard
-    cy.url().should("include", "/dashboard");
+    // Wait for successful login - Dashboard link should appear in navigation
+    cy.contains("Dashboard").should("be.visible");
   });
 });
 
@@ -39,8 +39,8 @@ Cypress.Commands.add("loginAsRegularUser", () => {
     cy.get("#password").clear();
     cy.get("#password").type(users.regular.password);
     cy.get('button[type="submit"]').click();
-    // Wait for redirect to dashboard
-    cy.url().should("include", "/dashboard");
+    // Wait for successful login - Dashboard link should appear in navigation
+    cy.contains("Dashboard").should("be.visible");
   });
 });
 
