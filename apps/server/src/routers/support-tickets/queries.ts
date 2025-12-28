@@ -92,11 +92,16 @@ export async function getSupportTicketCountsByCourse() {
     .from(supportTicket)
     .groupBy(supportTicket.courseId);
 
-  // Convert to a map for easier lookup, filtering out null courseIds
+  // Create type predicate to safely filter and narrow types
+  const isValidCourseCount = (
+    c: (typeof counts)[number],
+  ): c is { courseId: string; count: number } => {
+    return c.courseId !== null;
+  };
+
+  // Convert to a map for easier lookup with proper type narrowing
   const countsMap = new Map(
-    counts
-      .filter((c) => c.courseId !== null)
-      .map((c) => [c.courseId as string, Number(c.count)]),
+    counts.filter(isValidCourseCount).map((c) => [c.courseId, Number(c.count)]),
   );
 
   return countsMap;

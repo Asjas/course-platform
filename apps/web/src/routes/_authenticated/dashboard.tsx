@@ -25,6 +25,14 @@ function AuthenticatedDashboardPage() {
     ),
   });
 
+  // Create a map of courseId to progress for safer data association
+  const progressMap = new Map(
+    courseIds.map((courseId, index) => {
+      const progressData = progressQueries[index]?.data;
+      return [courseId, progressData?.progress ?? 0];
+    }),
+  );
+
   // Fetch support ticket counts
   const { data: ticketCounts } = useQuery(
     trpc.supportTickets.getSupportTicketCountsByCourse.queryOptions(),
@@ -60,9 +68,8 @@ function AuthenticatedDashboardPage() {
 
       {courses && courses.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {courses.map((course, index) => {
-            const progressData = progressQueries[index]?.data;
-            const progress = progressData?.progress ?? 0;
+          {courses.map((course) => {
+            const progress = progressMap.get(course.id) ?? 0;
             const supportTicketCount = ticketCounts?.[course.id];
 
             return (

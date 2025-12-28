@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Clock, TicketIcon, Users } from "lucide-react";
+import { BookOpen, Clock, Layers, TicketIcon, Users } from "lucide-react";
 
 interface CourseCardProps {
   id: string;
@@ -69,7 +69,7 @@ export function CourseCard({
 
         <div className="mb-3 grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
+            <Layers className="h-4 w-4" />
             <span>
               {totalModules} {totalModules === 1 ? "module" : "modules"}
             </span>
