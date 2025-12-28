@@ -62,15 +62,21 @@ async function seedDatabase() {
       ON CONFLICT (id) DO NOTHING;
     `);
 
-    // Clean up existing test data (in reverse order of dependencies)
+    // Clean up existing test data using TRUNCATE CASCADE for efficiency
+    // This ensures all data is removed and primary key sequences are reset
     console.log("🧹 Cleaning up existing test data...");
-    await client.query("DELETE FROM support_ticket WHERE true;");
-    await client.query("DELETE FROM course_review WHERE true;");
-    await client.query("DELETE FROM enrollment WHERE true;");
-    await client.query("DELETE FROM course_lesson WHERE true;");
-    await client.query("DELETE FROM course_module WHERE true;");
-    await client.query("DELETE FROM course WHERE true;");
-    await client.query("DELETE FROM account WHERE true;");
+    await client.query(`
+      TRUNCATE TABLE 
+        support_ticket,
+        course_review,
+        enrollment,
+        course_lesson,
+        course_module,
+        course,
+        account
+      RESTART IDENTITY CASCADE;
+    `);
+    // Delete all users except ghost
     await client.query("DELETE FROM \"user\" WHERE id != 'ghost';");
 
     // Insert users
