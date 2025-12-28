@@ -54,8 +54,7 @@ Cypress.Commands.add("loginAsAdmin", () => {
       });
 
     // DEBUG: Wait and check for any error messages
-    cy.wait(1000);
-    cy.get("body").then(($body) => {
+    cy.get("body", { timeout: 1000 }).then(($body) => {
       if ($body.text().includes("Invalid") || $body.text().includes("Error")) {
         cy.log("DEBUG: ERROR MESSAGE DETECTED ON PAGE");
         cy.log($body.text());
