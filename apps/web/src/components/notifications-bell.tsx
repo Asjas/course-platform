@@ -120,7 +120,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
               </div>
             </div>
 
-            <div className="custom-scrollbar max-h-[400px] space-y-3 overflow-y-auto">
+            <div className="custom-scrollbar max-h-100 space-y-3 overflow-y-auto">
               {activeTab === "new" ? (
                 unreadAnnouncements.length > 0 ? (
                   unreadAnnouncements.map((announcement: Announcement) => {
@@ -138,7 +138,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                       >
                         <div className="flex items-start gap-2">
                           <Icon
-                            className={`mt-0.5 h-4 w-4 flex-shrink-0 ${iconColorClass}`}
+                            className={`mt-0.5 h-4 w-4 shrink-0 ${iconColorClass}`}
                           />
                           <div className="flex-1">
                             <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
@@ -156,7 +156,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                             )}
                           </div>
                           <button
-                            className="flex-shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                            className="shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                             onClick={() => handleDismiss(announcement.id)}
                             aria-label="Dismiss notification"
                           >
@@ -180,7 +180,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                       key={announcement.id}
                     >
                       <div className="flex items-start gap-2">
-                        <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-gray-400" />
+                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
                         <div className="flex-1">
                           <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                             {announcement.title}

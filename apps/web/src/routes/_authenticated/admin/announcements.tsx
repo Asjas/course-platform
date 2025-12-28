@@ -190,7 +190,7 @@ function AnnouncementsPage() {
                 No announcements yet
               </p>
             ) : (
-              <div className="custom-scrollbar max-h-[500px] space-y-2 overflow-y-auto">
+              <div className="custom-scrollbar max-h-125 space-y-2 overflow-y-auto">
                 {announcements.map((announcement: Announcement) => (
                   <button
                     className={`w-full cursor-pointer rounded-md border p-3 text-left transition-colors ${
