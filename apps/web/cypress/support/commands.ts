@@ -27,7 +27,6 @@ Cypress.Commands.add("loginAsAdmin", () => {
     cy.get("#password").type(users.admin.password);
     cy.get('button[type="submit"]').click();
     // Wait for successful login - Dashboard link should appear in navigation
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.contains("Dashboard").should("be.visible");
   });
 });
@@ -41,7 +40,6 @@ Cypress.Commands.add("loginAsRegularUser", () => {
     cy.get("#password").type(users.regular.password);
     cy.get('button[type="submit"]').click();
     // Wait for successful login - Dashboard link should appear in navigation
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.contains("Dashboard").should("be.visible");
   });
 });
