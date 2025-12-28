@@ -235,8 +235,64 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @apps/server drizzle:migrate
 
+      # DEBUG: Verify environment variables before seeding
+      - name: Debug - Check environment variables
+        run: |
+          echo "=== DEBUG: Environment Variable Check ==="
+          echo "PEPPER_SECRET is set: ${PEPPER_SECRET:+yes}"
+          echo "PEPPER_SECRET length: ${#PEPPER_SECRET}"
+          echo "DATABASE_URL is set: ${DATABASE_URL:+yes}"
+          echo "BETTER_AUTH_SECRET is set: ${BETTER_AUTH_SECRET:+yes}"
+          echo "Current working directory: $(pwd)"
+          echo "Node version: $(node --version)"
+          echo "=== END DEBUG ==="
+
       - name: Seed test database with E2E users
         run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+
+      # DEBUG: Verify seeded data
+      - name: Debug - Verify seeded users and passwords
+        run: |
+          echo "=== DEBUG: Checking Seeded Data ==="
+          pnpm tsx << 'EOF'
+          import pg from 'pg';
+          const { Pool } = pg;
+          
+          const databaseUrl = process.env.DATABASE_URL || 'postgresql://localhost:5432/course_platform';
+          const connectionString = databaseUrl.includes('?') 
+            ? `${databaseUrl}&options=-c%20search_path%3Dmy_schema`
+            : `${databaseUrl}?options=-c%20search_path%3Dmy_schema`;
+          
+          const pool = new Pool({ connectionString });
+          
+          async function checkData() {
+            const client = await pool.connect();
+            try {
+              // Check users
+              const usersResult = await client.query('SELECT id, email, name, role FROM "user" WHERE id != \'ghost\' ORDER BY created_at LIMIT 5');
+              console.log('Users in database:', usersResult.rows);
+              
+              // Check accounts (with passwords)
+              const accountsResult = await client.query('SELECT id, account_id, provider_id, user_id, LEFT(password, 20) as password_prefix FROM account LIMIT 5');
+              console.log('Accounts in database:', accountsResult.rows);
+              
+              // Verify test user exists
+              const testUser = await client.query('SELECT * FROM "user" WHERE email = \'test@example.com\'');
+              console.log('Test user exists:', testUser.rows.length > 0);
+              
+              // Verify test user has account
+              const testAccount = await client.query('SELECT id, account_id, provider_id FROM account WHERE account_id = \'test@example.com\'');
+              console.log('Test user account exists:', testAccount.rows.length > 0, testAccount.rows);
+              
+            } finally {
+              client.release();
+              await pool.end();
+            }
+          }
+          
+          checkData().catch(console.error);
+          EOF
+          echo "=== END DEBUG ==="
 
       - name: Install Cypress
         run: pnpx cypress install
@@ -256,11 +312,40 @@ jobs:
           cat server.log
           echo "=== Checking health endpoint ==="
           curl -v http://localhost:3000/health || echo "Health check failed"
+          echo "=== Checking auth session endpoint ==="
+          curl -v http://localhost:3000/api/auth/get-session || echo "Auth session check failed"
+
+      # DEBUG: Test authentication manually before Cypress
+      - name: Debug - Test authentication manually
+        run: |
+          echo "=== DEBUG: Manual Authentication Test ==="
+          # Try to sign in with test user
+          RESPONSE=$(curl -v -X POST http://localhost:3000/api/auth/sign-in/email \
+            -H "Content-Type: application/json" \
+            -d '{"email": "test@example.com", "password": "password123"}' \
+            -c cookies.txt \
+            2>&1)
+          echo "Sign in response:"
+          echo "$RESPONSE"
+          echo ""
+          echo "Cookies saved:"
+          cat cookies.txt || echo "No cookies saved"
+          echo ""
+          # Try to get session
+          SESSION_RESPONSE=$(curl -v http://localhost:3000/api/auth/get-session \
+            -b cookies.txt \
+            2>&1)
+          echo "Session response:"
+          echo "$SESSION_RESPONSE"
+          echo "=== END DEBUG ==="
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
           NO_DBUS: 1
+          # DEBUG: Enable Cypress debug mode
+          DEBUG: cypress:*
+          CYPRESS_DEBUG: true
         with:
           working-directory: apps/web
           install: false
