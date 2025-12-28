@@ -17,11 +17,11 @@ export function ThemeToggle() {
   return (
     <MenuTrigger>
       <AriaButton
-        className="flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-200 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+        className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
         aria-label={`Change theme. Current theme: ${theme}`}
       >
         <CurrentIcon
-          className="size-5"
+          className="h-6 w-6"
           aria-hidden="true"
         />
       </AriaButton>

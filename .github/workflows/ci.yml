@@ -58,6 +58,9 @@ env:
   SMTP_USER: ${{ secrets.SMTP_USER }}
   SMTP_PASS: ${{ secrets.SMTP_PASS }}
   SUPPORT_ASSIGNED_TO_USER_ID: ${{ vars.SUPPORT_ASSIGNED_TO_USER_ID }}
+  REDIS_HOST: ${{ secrets.REDIS_HOST }}
+  REDIS_PORT: ${{ secrets.REDIS_PORT }}
+  REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
 
 jobs:
   check-format-lint-and-type-check:
@@ -224,11 +227,35 @@ jobs:
             ${{ runner.os }}-cypress-${{ matrix.node-version }}-
 
       - name: Build
+        env:
+          VITE_BETTER_AUTH_URL: http://localhost:3000
+          VITE_TRPC_URL: http://localhost:3000/trpc
         run: pnpm build --cache=remote:rw
+
+      - name: Run database migrations
+        run: pnpm --filter @apps/server drizzle:migrate
+
+      - name: Seed test database with E2E users
+        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
 
       - name: Install Cypress
         run: pnpx cypress install
         working-directory: apps/web
+
+      - name: Start backend server in background
+        run: |
+          pnpm --filter @apps/server dev > server.log 2>&1 &
+          echo $! > server.pid
+
+      - name: Wait for backend to be ready
+        run: npx wait-on http://localhost:3000/health --timeout 60000
+
+      - name: Check server started successfully
+        run: |
+          echo "=== Backend Server Startup Logs ==="
+          cat server.log
+          echo "=== Checking health endpoint ==="
+          curl -v http://localhost:3000/health || echo "Health check failed"
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -241,3 +268,22 @@ jobs:
           wait-on: "http://localhost:4173"
           wait-on-timeout: 120
           browser: chrome
+
+      - name: Stop backend server
+        if: always()
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+          fi
+
+      - name: Show server logs on failure
+        if: failure()
+        run: |
+          if [ -f server.log ]; then
+            echo "=== Backend Server Logs ==="
+            cat server.log
+          fi
+
+      - name: Cleanup test database
+        if: always()
+        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema" || true

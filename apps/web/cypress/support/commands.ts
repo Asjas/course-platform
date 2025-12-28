@@ -1,37 +1,47 @@
 /// <reference types="cypress" />
-// ***********************************************
-// This example commands.ts shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add('drag', { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add('dismiss', { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
-//
-// declare global {
-//   namespace Cypress {
-//     interface Chainable {
-//       login(email: string, password: string): Chainable<void>
-//       drag(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       dismiss(subject: string, options?: Partial<TypeOptions>): Chainable<Element>
-//       visit(originalFn: CommandOriginalFn, url: string, options: Partial<VisitOptions>): Chainable<Element>
-//     }
-//   }
-// }
+
+/* eslint-disable @typescript-eslint/no-namespace, promise/always-return */
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      /**
+       * Custom command to log in as admin
+       * @example cy.loginAsAdmin()
+       */
+      loginAsAdmin(): Chainable<void>;
+      /**
+       * Custom command to log in as regular user
+       * @example cy.loginAsRegularUser()
+       */
+      loginAsRegularUser(): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add("loginAsAdmin", () => {
+  cy.fixture("users").then((users) => {
+    cy.visit("/signin");
+    cy.get("#email").clear();
+    cy.get("#email").type(users.admin.email);
+    cy.get("#password").clear();
+    cy.get("#password").type(users.admin.password);
+    cy.get('button[type="submit"]').click();
+    // Wait for successful login - Dashboard link should appear in navigation
+    cy.contains("Dashboard").should("be.visible");
+  });
+});
+
+Cypress.Commands.add("loginAsRegularUser", () => {
+  cy.fixture("users").then((users) => {
+    cy.visit("/signin");
+    cy.get("#email").clear();
+    cy.get("#email").type(users.regular.email);
+    cy.get("#password").clear();
+    cy.get("#password").type(users.regular.password);
+    cy.get('button[type="submit"]').click();
+    // Wait for successful login - Dashboard link should appear in navigation
+    cy.contains("Dashboard").should("be.visible");
+  });
+});
+
+export {};

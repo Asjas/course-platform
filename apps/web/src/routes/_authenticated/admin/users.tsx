@@ -63,7 +63,7 @@ function AdminUsersPage() {
   const usersWithUsername = data.users as ExtendedUserWithRole[];
 
   return (
-    <>
+    <div className="pb-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
@@ -290,6 +290,6 @@ function AdminUsersPage() {
         open={isEditSheetOpen}
         onOpenChange={setIsEditSheetOpen}
       />
-    </>
+    </div>
   );
 }

@@ -57,7 +57,7 @@ export async function updatePlatformAnnouncementById({
 
 export async function deletePlatformAnnouncementById(id: string) {
   try {
-    const result = db
+    const result = await db
       .delete(platformAnnouncement)
       .where(eq(platformAnnouncement.id, id))
       .returning({ id: platformAnnouncement.id });
@@ -86,6 +86,7 @@ export async function insertPlatformAnnouncementRead(
         id,
         announcementId,
         userId,
+        readAt: new Date(),
       })
       .returning();
 

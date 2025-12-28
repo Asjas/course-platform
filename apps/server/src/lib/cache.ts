@@ -1,5 +1,17 @@
 import { createCache } from "async-cache-dedupe";
 import { deserialize, serialize } from "superjson";
+import {
+  getAnnouncementStats,
+  getCouponStats,
+  getCourseStats,
+  getPlatformStats,
+  getProgressStats,
+  getRevenueStats,
+  getSupportStats,
+  getTeamLicenseStats,
+  getUserStats,
+  getWishlistStats,
+} from "~/db/queries/stats.js";
 import { ONE_HOUR } from "~/lib/constants.js";
 import { pinoLogger } from "~/lib/logging.js";
 import {
@@ -14,6 +26,7 @@ import {
   getCouponById,
 } from "~/routers/coupons/queries.js";
 import {
+  getAllAsAdminCourses,
   getAllCourses,
   getCourseById,
   getLessonById,
@@ -126,6 +139,20 @@ export const cache = createCache({
     getModulesAndLessonsByCourseId,
   )
   .define(
+    "getAllCoursesAsAdmin",
+    {
+      ttl: ONE_HOUR,
+      serialize: (args) =>
+        args && Object.keys(args).length > 0
+          ? `course~all~admin~${JSON.stringify(args)}`
+          : "course~all~admin",
+      references() {
+        return ["course~all"];
+      },
+    },
+    getAllAsAdminCourses,
+  )
+  .define(
     "getAllCourses",
     {
       ttl: ONE_HOUR,
@@ -157,4 +184,114 @@ export const cache = createCache({
       },
     },
     getLessonById,
+  )
+  .define(
+    "getCourseStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~courses",
+      references() {
+        return ["stats~all", "course~all", "enrollment~all"];
+      },
+    },
+    getCourseStats,
+  )
+  .define(
+    "getPlatformStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~platform",
+      references() {
+        return ["stats~all", "course~all", "enrollment~all"];
+      },
+    },
+    getPlatformStats,
+  )
+  .define(
+    "getRevenueStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~revenue",
+      references() {
+        return ["stats~all", "payment~all", "enrollment~all", "invoice~all"];
+      },
+    },
+    getRevenueStats,
+  )
+  .define(
+    "getSupportStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~support",
+      references() {
+        return ["stats~all", "support-ticket~all"];
+      },
+    },
+    getSupportStats,
+  )
+  .define(
+    "getUserStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~users",
+      references() {
+        return ["stats~all", "user~all"];
+      },
+    },
+    getUserStats,
+  )
+  .define(
+    "getCouponStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~coupons",
+      references() {
+        return ["stats~all", "coupon~all"];
+      },
+    },
+    getCouponStats,
+  )
+  .define(
+    "getTeamLicenseStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~team-licenses",
+      references() {
+        return ["stats~all", "team-license~all"];
+      },
+    },
+    getTeamLicenseStats,
+  )
+  .define(
+    "getProgressStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~progress",
+      references() {
+        return ["stats~all", "progress~all"];
+      },
+    },
+    getProgressStats,
+  )
+  .define(
+    "getWishlistStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~wishlists",
+      references() {
+        return ["stats~all", "wishlist~all", "course~all"];
+      },
+    },
+    getWishlistStats,
+  )
+  .define(
+    "getAnnouncementStats",
+    {
+      ttl: ONE_HOUR,
+      serialize: () => "stats~announcements",
+      references() {
+        return ["stats~all", "announcement~all"];
+      },
+    },
+    getAnnouncementStats,
   );

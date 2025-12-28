@@ -53,22 +53,40 @@ async function seedDatabase() {
     // Start a transaction
     await client.query("BEGIN");
 
-    // Create ghost user first (required for foreign keys)
-    console.log("👻 Creating default ghost user...");
+    // Ensure ghost user exists before any cleanup
+    // This is required because ON DELETE SET DEFAULT on support_ticket references ghost
+    console.log("👻 Ensuring ghost user exists...");
     await client.query(`
       INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
       VALUES ('ghost', 'ghost@system.local', 'System Ghost User', true, null, NOW(), NOW())
       ON CONFLICT (id) DO NOTHING;
     `);
 
+    // Clean up existing test data using TRUNCATE CASCADE for efficiency
+    // This ensures all data is removed and primary key sequences are reset
+    console.log("🧹 Cleaning up existing test data...");
+    await client.query(`
+      TRUNCATE TABLE 
+        support_ticket,
+        course_review,
+        enrollment,
+        course_lesson,
+        course_module,
+        course,
+        account
+      RESTART IDENTITY CASCADE;
+    `);
+    // Delete all users except ghost
+    await client.query("DELETE FROM \"user\" WHERE id != 'ghost';");
+
     // Insert users
     console.log("👥 Creating users...");
     for (const user of testUsers) {
+      // Insert user with role
       await client.query(
         `
-        INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
-        ON CONFLICT (id) DO NOTHING;
+        INSERT INTO "user" (id, email, name, email_verified, image, role, created_at, updated_at)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
       `,
         [
           user.id,
@@ -76,10 +94,42 @@ async function seedDatabase() {
           user.name,
           user.emailVerified,
           user.image,
+          user.role || "member",
           user.createdAt,
           user.updatedAt,
         ],
       );
+
+      // If user has a password, create an account entry with hashed password
+      if ("password" in user && user.password) {
+        // Use argon2 for password hashing with PEPPER_SECRET (same as Better Auth)
+        const argon2 = await import("argon2");
+        const pepperSecret = process.env.PEPPER_SECRET;
+        if (!pepperSecret) {
+          throw new Error(
+            "PEPPER_SECRET environment variable is required for hashing passwords",
+          );
+        }
+        const hashedPassword = await argon2.hash(user.password, {
+          secret: Buffer.from(pepperSecret),
+        });
+
+        await client.query(
+          `
+          INSERT INTO account (id, account_id, provider_id, user_id, password, created_at, updated_at)
+          VALUES ($1, $2, $3, $4, $5, $6, $7);
+        `,
+          [
+            `account:${user.id}`,
+            user.email,
+            "credential",
+            user.id,
+            hashedPassword,
+            user.createdAt,
+            user.updatedAt,
+          ],
+        );
+      }
     }
     console.log(`✅ Created ${testUsers.length} users`);
 
@@ -97,8 +147,7 @@ async function seedDatabase() {
         ) VALUES (
           $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
           $15, $16, $17, $18, $19, $20, $21, $22, $23, $24
-        )
-        ON CONFLICT (id) DO NOTHING;
+        );
       `,
         [
           course.id,
@@ -138,8 +187,7 @@ async function seedDatabase() {
         INSERT INTO course_module (
           id, course_id, title, slug, description, "order", is_preview,
           created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-        ON CONFLICT (id) DO NOTHING;
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);
       `,
         [
           module.id,
@@ -164,8 +212,7 @@ async function seedDatabase() {
         INSERT INTO course_lesson (
           id, module_id, course_id, title, slug, video_url, video_provider,
           content, transcription, duration, "order", is_preview, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-        ON CONFLICT (id) DO NOTHING;
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);
       `,
         [
           lesson.id,
@@ -196,8 +243,7 @@ async function seedDatabase() {
           id, enrollment_type, enrollment_source, status, gifted_by_user_id,
           user_id, course_id, payment_id, invoice_id, team_license_id,
           team_invite_id, gifted_at, enrolled_at, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
-        ON CONFLICT (id) DO NOTHING;
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);
       `,
         [
           enrollment.id,
@@ -228,8 +274,7 @@ async function seedDatabase() {
         INSERT INTO course_review (
           id, user_id, course_id, rating, title, comment,
           approved, reviewed_at, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-        ON CONFLICT (id) DO NOTHING;
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);
       `,
         [
           review.id,
@@ -256,8 +301,7 @@ async function seedDatabase() {
           id, title, description, repo, status, priority,
           course_id, module_id, lesson_id, user_id, assigned_to_user_id,
           assigned_at, resolved_at, closed_at, created_at, updated_at
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
-        ON CONFLICT (id) DO NOTHING;
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16);
       `,
         [
           ticket.id,
