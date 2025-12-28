@@ -71,9 +71,7 @@ function AuthenticatedDashboardPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => {
             const progress = progressMap.get(course.id) ?? 0;
-            const supportTicketCount = (
-              ticketCounts as Record<string, number> | undefined
-            )?.[course.id];
+            const supportTicketCount = ticketCounts?.[course.id];
 
             return (
               <CourseCard

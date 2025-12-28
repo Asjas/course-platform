@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-/* eslint-disable @typescript-eslint/no-namespace, promise/always-return */
+/* eslint-disable @typescript-eslint/no-namespace -- Cypress type extensions require namespace */
 declare global {
   namespace Cypress {
     interface Chainable {
@@ -17,8 +17,9 @@ declare global {
     }
   }
 }
+/* eslint-enable @typescript-eslint/no-namespace */
 
-/* eslint-disable cypress/unsafe-to-chain-command, cypress/no-unnecessary-waiting, promise/no-nesting */
+/* eslint-disable cypress/unsafe-to-chain-command, cypress/no-unnecessary-waiting, promise/no-nesting, promise/always-return -- Temporary debug logging */
 Cypress.Commands.add("loginAsAdmin", () => {
   cy.fixture("users").then((users) => {
     // DEBUG: Log the credentials being used
@@ -53,8 +54,9 @@ Cypress.Commands.add("loginAsAdmin", () => {
         cy.log("DEBUG: Submit button clicked");
       });
 
-    // DEBUG: Wait and check for any error messages
-    cy.get("body", { timeout: 1000 }).then(($body) => {
+    // DEBUG: Check for any error messages without arbitrary wait
+    cy.wait(1000); // Temporary debug wait
+    cy.get("body").then(($body) => {
       if ($body.text().includes("Invalid") || $body.text().includes("Error")) {
         cy.log("DEBUG: ERROR MESSAGE DETECTED ON PAGE");
         cy.log($body.text());

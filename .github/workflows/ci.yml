@@ -252,47 +252,7 @@ jobs:
 
       # DEBUG: Verify seeded data
       - name: Debug - Verify seeded users and passwords
-        run: |
-          echo "=== DEBUG: Checking Seeded Data ==="
-          pnpm tsx << 'EOF'
-          import pg from 'pg';
-          const { Pool } = pg;
-          
-          const databaseUrl = process.env.DATABASE_URL || 'postgresql://localhost:5432/course_platform';
-          const connectionString = databaseUrl.includes('?') 
-            ? `${databaseUrl}&options=-c%20search_path%3Dmy_schema`
-            : `${databaseUrl}?options=-c%20search_path%3Dmy_schema`;
-          
-          const pool = new Pool({ connectionString });
-          
-          async function checkData() {
-            const client = await pool.connect();
-            try {
-              // Check users
-              const usersResult = await client.query('SELECT id, email, name, role FROM "user" WHERE id != \'ghost\' ORDER BY created_at LIMIT 5');
-              console.log('Users in database:', usersResult.rows);
-              
-              // Check accounts (with passwords)
-              const accountsResult = await client.query('SELECT id, account_id, provider_id, user_id, LEFT(password, 20) as password_prefix FROM account LIMIT 5');
-              console.log('Accounts in database:', accountsResult.rows);
-              
-              // Verify test user exists
-              const testUser = await client.query('SELECT * FROM "user" WHERE email = \'test@example.com\'');
-              console.log('Test user exists:', testUser.rows.length > 0);
-              
-              // Verify test user has account
-              const testAccount = await client.query('SELECT id, account_id, provider_id FROM account WHERE account_id = \'test@example.com\'');
-              console.log('Test user account exists:', testAccount.rows.length > 0, testAccount.rows);
-              
-            } finally {
-              client.release();
-              await pool.end();
-            }
-          }
-          
-          checkData().catch(console.error);
-          EOF
-          echo "=== END DEBUG ==="
+        run: pnpm tsx scripts/debug-seeded-data.ts
 
       - name: Install Cypress
         run: pnpx cypress install
@@ -315,28 +275,38 @@ jobs:
           echo "=== Checking auth session endpoint ==="
           curl -v http://localhost:3000/api/auth/get-session || echo "Auth session check failed"
 
-      # DEBUG: Test authentication manually before Cypress
+      # DEBUG: Test authentication manually before Cypress (no sensitive data logged)
       - name: Debug - Test authentication manually
         run: |
           echo "=== DEBUG: Manual Authentication Test ==="
-          # Try to sign in with test user
-          RESPONSE=$(curl -v -X POST http://localhost:3000/api/auth/sign-in/email \
+          echo "This step logs only HTTP status codes and non-sensitive headers."
+          # Try to sign in with test user (do not log response body or cookies)
+          SIGN_IN_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            -X POST http://localhost:3000/api/auth/sign-in/email \
             -H "Content-Type: application/json" \
             -d '{"email": "test@example.com", "password": "password123"}' \
             -c cookies.txt \
-            2>&1)
-          echo "Sign in response:"
-          echo "$RESPONSE"
+            -D signin_headers.txt)
+          echo "Sign in status code: $SIGN_IN_STATUS"
+          if [ -f signin_headers.txt ]; then
+            echo "Sign in response headers (Set-Cookie stripped):"
+            grep -v -i '^set-cookie:' signin_headers.txt || true
+          else
+            echo "No sign in headers captured."
+          fi
           echo ""
-          echo "Cookies saved:"
-          cat cookies.txt || echo "No cookies saved"
-          echo ""
-          # Try to get session
-          SESSION_RESPONSE=$(curl -v http://localhost:3000/api/auth/get-session \
+          # Try to get session using saved cookies (again, no body or raw cookies logged)
+          SESSION_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
+            http://localhost:3000/api/auth/get-session \
             -b cookies.txt \
-            2>&1)
-          echo "Session response:"
-          echo "$SESSION_RESPONSE"
+            -D session_headers.txt || echo "000")
+          echo "Session status code: $SESSION_STATUS"
+          if [ -f session_headers.txt ]; then
+            echo "Session response headers (Set-Cookie stripped):"
+            grep -v -i '^set-cookie:' session_headers.txt || true
+          else
+            echo "No session headers captured."
+          fi
           echo "=== END DEBUG ==="
 
       - name: Cypress run

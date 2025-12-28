@@ -1,17 +1,18 @@
+import { cn } from "~/lib/utils.js";
+
 interface EmptyStateProps {
   title: string;
   description?: string;
   className?: string;
 }
 
-export function EmptyState({
-  title,
-  description,
-  className = "",
-}: EmptyStateProps) {
+export function EmptyState({ title, description, className }: EmptyStateProps) {
   return (
     <div
-      className={`mt-12 flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 ${className}`}
+      className={cn(
+        "mt-12 flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800",
+        className,
+      )}
     >
       <div className="text-center">
         <p className="text-lg text-gray-600 dark:text-gray-400">{title}</p>
