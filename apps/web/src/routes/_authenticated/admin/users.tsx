@@ -9,6 +9,7 @@ import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import EditUserSheet from "~/components/edit-user-sheet";
+import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -278,11 +279,7 @@ function AdminUsersPage() {
           </div>
         </div>
       ) : (
-        <div className="mt-20 flex justify-center">
-          <p className="text-md text-gray-600 dark:text-gray-300">
-            No users found.
-          </p>
-        </div>
+        <EmptyState title="No users found." />
       )}
 
       <EditUserSheet

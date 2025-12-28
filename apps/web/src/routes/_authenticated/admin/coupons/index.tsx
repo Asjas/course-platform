@@ -10,6 +10,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import CreateCouponSheet from "~/components/create-coupon-sheet";
 import EditCouponSheet from "~/components/edit-coupon-sheet";
+import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -269,14 +270,10 @@ function AdminCouponsPage() {
           </div>
         </div>
       ) : (
-        <div className="flex h-full flex-col items-center justify-center text-center">
-          <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
-            No coupons found
-          </p>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Get started by creating a new coupon.
-          </p>
-        </div>
+        <EmptyState
+          title="No coupons found"
+          description="Get started by creating a new coupon."
+        />
       )}
 
       <EditCouponSheet

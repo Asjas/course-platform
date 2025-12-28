@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -222,17 +223,10 @@ function AdminCoursesPage() {
           </div>
         </section>
       ) : (
-        <section
-          className="flex h-full flex-col items-center justify-center text-center"
-          aria-label="Empty state"
-        >
-          <p className="mt-4 text-lg text-gray-500 dark:text-gray-400">
-            No courses found
-          </p>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Get started by creating a new course.
-          </p>
-        </section>
+        <EmptyState
+          title="No courses found"
+          description="Get started by creating a new course."
+        />
       )}
     </div>
   );
