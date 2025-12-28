@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
   Table,
@@ -239,11 +240,7 @@ function SupportIndexPage() {
           </div>
         </div>
       ) : (
-        <div className="flex h-full items-center justify-center">
-          <p className="text-md text-gray-600 dark:text-gray-300">
-            No support tickets created yet.
-          </p>
-        </div>
+        <EmptyState title="No support tickets created yet." />
       )}
     </div>
   );

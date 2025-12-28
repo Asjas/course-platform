@@ -2,6 +2,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
 import { CourseCard } from "~/components/course-card";
+import { EmptyState } from "~/components/empty-state";
 import { useAuth } from "~/lib/auth.context";
 import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
@@ -92,16 +93,10 @@ function AuthenticatedDashboardPage() {
           })}
         </div>
       ) : (
-        <div className="mt-12 flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <div className="text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-400">
-              No courses available yet.
-            </p>
-            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
-              Courses will appear here once you enroll.
-            </p>
-          </div>
-        </div>
+        <EmptyState
+          title="No courses available yet."
+          description="Courses will appear here once you enroll."
+        />
       )}
     </div>
   );
