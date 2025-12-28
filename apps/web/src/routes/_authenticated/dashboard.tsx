@@ -1,4 +1,4 @@
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
 import { CourseCard } from "~/components/course-card";
@@ -24,6 +24,11 @@ function AuthenticatedDashboardPage() {
       trpc.courses.getCourseProgress.queryOptions({ courseId }),
     ),
   });
+
+  // Fetch support ticket counts
+  const { data: ticketCounts } = useQuery(
+    trpc.supportTickets.getSupportTicketCountsByCourse.queryOptions(),
+  );
 
   if (isLoading) {
     return (
@@ -58,6 +63,7 @@ function AuthenticatedDashboardPage() {
           {courses.map((course, index) => {
             const progressData = progressQueries[index]?.data;
             const progress = progressData?.progress ?? 0;
+            const supportTicketCount = ticketCounts?.[course.id];
 
             return (
               <CourseCard
@@ -71,6 +77,7 @@ function AuthenticatedDashboardPage() {
                 totalDuration={course.totalDuration}
                 totalEnrollments={course.totalEnrollments}
                 progress={progress}
+                supportTicketCount={supportTicketCount}
               />
             );
           })}

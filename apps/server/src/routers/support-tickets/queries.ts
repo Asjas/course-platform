@@ -1,5 +1,6 @@
-import { asc, eq, sql } from "drizzle-orm";
+import { asc, count, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
+import { supportTicket } from "~/db/schema/support-tickets.js";
 
 export type AllSupportTickets = Awaited<
   ReturnType<typeof getAllSupportTickets>
@@ -9,6 +10,9 @@ export type SupportTicketById = Awaited<
 >;
 export type SupportTicketCommentById = Awaited<
   ReturnType<typeof getSupportTicketCommentById>
+>;
+export type SupportTicketCountsByCourse = Awaited<
+  ReturnType<typeof getSupportTicketCountsByCourse>
 >;
 
 const preparedGetAllSupportTickets = db.query.supportTicket
@@ -77,4 +81,23 @@ export async function getSupportTicketCommentById({
   });
 
   return supportTicketComment;
+}
+
+export async function getSupportTicketCountsByCourse() {
+  const counts = await db
+    .select({
+      courseId: supportTicket.courseId,
+      count: count(),
+    })
+    .from(supportTicket)
+    .groupBy(supportTicket.courseId);
+
+  // Convert to a map for easier lookup, filtering out null courseIds
+  const countsMap = new Map(
+    counts
+      .filter((c) => c.courseId !== null)
+      .map((c) => [c.courseId as string, Number(c.count)]),
+  );
+
+  return countsMap;
 }

@@ -13,9 +13,10 @@ import {
   insertSupportTicket,
   insertSupportTicketComment,
 } from "~/routers/support-tickets/mutations.js";
-import type {
-  AllSupportTickets,
-  SupportTicketById,
+import {
+  type AllSupportTickets,
+  type SupportTicketById,
+  getSupportTicketCountsByCourse,
 } from "~/routers/support-tickets/queries.js";
 
 export const supportTicketsRouter = router({
@@ -43,6 +44,25 @@ export const supportTicketsRouter = router({
       return tickets;
     },
   ),
+  getSupportTicketCountsByCourse: publicProcedure.query(async ({ ctx }) => {
+    const fastify = ctx.reply.server;
+
+    const [err, counts] = await fastify.to(getSupportTicketCountsByCourse());
+
+    if (err) {
+      ctx.request.log.error(err, "Failed to get support ticket counts");
+
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+      });
+    }
+
+    ctx.request.log.debug(`Retrieved support ticket counts for courses`);
+
+    // Convert Map to plain object for JSON serialization
+    return Object.fromEntries(counts);
+  }),
   getSupportTicketById: publicProcedure
     .input(z.object({ ticketId: z.string() }))
     .query(
