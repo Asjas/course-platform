@@ -336,8 +336,8 @@ importers:
         specifier: 1.0.8
         version: 1.0.8(@tanstack/query-core@5.90.12)(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: 0.1.56
-        version: 0.1.56(react@19.2.3)(typescript@5.9.3)
+        specifier: 0.1.60
+        version: 0.1.60(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-form':
         specifier: 1.27.6
         version: 1.27.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4332,8 +4332,8 @@ packages:
   '@tanstack/query-persist-client-core@5.91.11':
     resolution: {integrity: sha512-NNpRGxQY/nVOdzfs5QbevPjGsUVoEiFwqxxaopLyu6todwtDOCfIOfhXSmpMVXBiCxUn7kqaUB1iwaBKqoAVRQ==}
 
-  '@tanstack/react-db@0.1.56':
-    resolution: {integrity: sha512-7vfwx3tD6tgcUBu6tzpYVMFuYUGzYX7GHw8AtsW/P24eBhr7RR/dyF2ucoUGW6TZzdm8/bN/ql+8ftAV3iFsfA==}
+  '@tanstack/react-db@0.1.60':
+    resolution: {integrity: sha512-Pz3pwH4vgRxlS/L3+BszINjNlIUXahJ6EqSEsYBMBT19G36GzTzyd5Qq98JaOXuu8V0dkiFWEoyEoTv3BiHcrg==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -9475,6 +9475,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -14698,9 +14699,9 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.90.12
 
-  '@tanstack/react-db@0.1.56(react@19.2.3)(typescript@5.9.3)':
+  '@tanstack/react-db@0.1.60(react@19.2.3)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.5.12(typescript@5.9.3)
+      '@tanstack/db': 0.5.16(typescript@5.9.3)
       react: 19.2.3
       use-sync-external-store: 1.6.0(react@19.2.3)
     transitivePeerDependencies:
