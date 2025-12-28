@@ -146,6 +146,7 @@ function StatsPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* Divider */}
