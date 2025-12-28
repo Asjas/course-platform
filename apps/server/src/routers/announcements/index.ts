@@ -13,7 +13,7 @@ import {
   getReadAnnouncementsForUser,
   getUnreadAnnouncementsForUser,
 } from "~/db/queries/platformAnnouncements.js";
-import { publicProcedure, router } from "~/router.js";
+import { isAdmin, publicProcedure, router } from "~/router.js";
 
 const announcementTypeEnum = z.enum([
   "platform_update",
@@ -112,6 +112,7 @@ export const announcementsRouter = router({
 
   create: publicProcedure
     .input(createAnnouncementSchema)
+    .use(isAdmin)
     .mutation(async ({ input }) => {
       try {
         const result = await insertPlatformAnnouncement({
@@ -136,6 +137,7 @@ export const announcementsRouter = router({
         updates: updateAnnouncementSchema,
       }),
     )
+    .use(isAdmin)
     .mutation(async ({ input }) => {
       try {
         const updates: Record<string, unknown> = { ...input.updates };
@@ -166,7 +168,10 @@ export const announcementsRouter = router({
       }
     }),
 
-  delete: publicProcedure.input(z.string()).mutation(async ({ input }) => {
+  delete: publicProcedure
+    .input(z.string())
+    .use(isAdmin)
+    .mutation(async ({ input }) => {
     try {
       await deletePlatformAnnouncementById(input);
       return { success: true };
