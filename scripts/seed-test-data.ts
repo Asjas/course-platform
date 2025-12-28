@@ -53,6 +53,15 @@ async function seedDatabase() {
     // Start a transaction
     await client.query("BEGIN");
 
+    // Ensure ghost user exists before any cleanup
+    // This is required because ON DELETE SET DEFAULT on support_ticket references ghost
+    console.log("👻 Ensuring ghost user exists...");
+    await client.query(`
+      INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
+      VALUES ('ghost', 'ghost@system.local', 'System Ghost User', true, null, NOW(), NOW())
+      ON CONFLICT (id) DO NOTHING;
+    `);
+
     // Clean up existing test data (in reverse order of dependencies)
     console.log("🧹 Cleaning up existing test data...");
     await client.query("DELETE FROM support_ticket WHERE true;");
@@ -62,14 +71,7 @@ async function seedDatabase() {
     await client.query("DELETE FROM course_module WHERE true;");
     await client.query("DELETE FROM course WHERE true;");
     await client.query("DELETE FROM account WHERE true;");
-    await client.query('DELETE FROM "user" WHERE true;');
-
-    // Create ghost user first (required for foreign keys)
-    console.log("👻 Creating default ghost user...");
-    await client.query(`
-      INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
-      VALUES ('ghost', 'ghost@system.local', 'System Ghost User', true, null, NOW(), NOW());
-    `);
+    await client.query('DELETE FROM "user" WHERE id != \'ghost\';');
 
     // Insert users
     console.log("👥 Creating users...");
