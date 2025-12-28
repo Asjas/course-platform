@@ -71,7 +71,7 @@ async function seedDatabase() {
     await client.query("DELETE FROM course_module WHERE true;");
     await client.query("DELETE FROM course WHERE true;");
     await client.query("DELETE FROM account WHERE true;");
-    await client.query('DELETE FROM "user" WHERE id != \'ghost\';');
+    await client.query("DELETE FROM \"user\" WHERE id != 'ghost';");
 
     // Insert users
     console.log("👥 Creating users...");
