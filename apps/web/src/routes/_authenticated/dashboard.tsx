@@ -70,7 +70,9 @@ function AuthenticatedDashboardPage() {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map((course) => {
             const progress = progressMap.get(course.id) ?? 0;
-            const supportTicketCount = ticketCounts?.[course.id];
+            const supportTicketCount = (
+              ticketCounts as Record<string, number> | undefined
+            )?.[course.id];
 
             return (
               <CourseCard
@@ -90,10 +92,15 @@ function AuthenticatedDashboardPage() {
           })}
         </div>
       ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-600 dark:text-gray-400">
-            No courses available yet.
-          </p>
+        <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+          <div className="text-center">
+            <p className="text-lg text-gray-600 dark:text-gray-400">
+              No courses available yet.
+            </p>
+            <p className="mt-2 text-sm text-gray-500 dark:text-gray-500">
+              Courses will appear here once you enroll.
+            </p>
+          </div>
         </div>
       )}
     </div>
