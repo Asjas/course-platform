@@ -235,24 +235,8 @@ jobs:
       - name: Run database migrations
         run: pnpm --filter @apps/server drizzle:migrate
 
-      # DEBUG: Verify environment variables before seeding
-      - name: Debug - Check environment variables
-        run: |
-          echo "=== DEBUG: Environment Variable Check ==="
-          echo "PEPPER_SECRET is set: ${PEPPER_SECRET:+yes}"
-          echo "PEPPER_SECRET length: ${#PEPPER_SECRET}"
-          echo "DATABASE_URL is set: ${DATABASE_URL:+yes}"
-          echo "BETTER_AUTH_SECRET is set: ${BETTER_AUTH_SECRET:+yes}"
-          echo "Current working directory: $(pwd)"
-          echo "Node version: $(node --version)"
-          echo "=== END DEBUG ==="
-
       - name: Seed test database with E2E users
         run: pnpm tsx scripts/seed-test-data.ts "my_schema"
-
-      # DEBUG: Verify seeded data
-      - name: Debug - Verify seeded users and passwords
-        run: pnpm tsx scripts/debug-seeded-data.ts
 
       - name: Install Cypress
         run: pnpx cypress install
@@ -272,50 +256,11 @@ jobs:
           cat server.log
           echo "=== Checking health endpoint ==="
           curl -v http://localhost:3000/health || echo "Health check failed"
-          echo "=== Checking auth session endpoint ==="
-          curl -v http://localhost:3000/api/auth/get-session || echo "Auth session check failed"
-
-      # DEBUG: Test authentication manually before Cypress (no sensitive data logged)
-      - name: Debug - Test authentication manually
-        run: |
-          echo "=== DEBUG: Manual Authentication Test ==="
-          echo "This step logs only HTTP status codes and non-sensitive headers."
-          # Try to sign in with test user (do not log response body or cookies)
-          SIGN_IN_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            -X POST http://localhost:3000/api/auth/sign-in/email \
-            -H "Content-Type: application/json" \
-            -d '{"email": "test@example.com", "password": "password123"}' \
-            -c cookies.txt \
-            -D signin_headers.txt)
-          echo "Sign in status code: $SIGN_IN_STATUS"
-          if [ -f signin_headers.txt ]; then
-            echo "Sign in response headers (Set-Cookie stripped):"
-            grep -v -i '^set-cookie:' signin_headers.txt || true
-          else
-            echo "No sign in headers captured."
-          fi
-          echo ""
-          # Try to get session using saved cookies (again, no body or raw cookies logged)
-          SESSION_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" \
-            http://localhost:3000/api/auth/get-session \
-            -b cookies.txt \
-            -D session_headers.txt || echo "000")
-          echo "Session status code: $SESSION_STATUS"
-          if [ -f session_headers.txt ]; then
-            echo "Session response headers (Set-Cookie stripped):"
-            grep -v -i '^set-cookie:' session_headers.txt || true
-          else
-            echo "No session headers captured."
-          fi
-          echo "=== END DEBUG ==="
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
         env:
           NO_DBUS: 1
-          # DEBUG: Enable Cypress debug mode
-          DEBUG: cypress:*
-          CYPRESS_DEBUG: true
         with:
           working-directory: apps/web
           install: false
