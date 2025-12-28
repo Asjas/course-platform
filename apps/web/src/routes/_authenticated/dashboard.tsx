@@ -40,12 +40,12 @@ function AuthenticatedDashboardPage() {
 
   if (isLoading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
             My Courses
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
             Loading courses...
           </p>
         </div>
@@ -54,14 +54,14 @@ function AuthenticatedDashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
       {session?.user?.id && <AnnouncementsBanner userId={session.user.id} />}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+        <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
           My Courses
         </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
+        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
           Continue learning where you left off
         </p>
       </div>
@@ -92,7 +92,7 @@ function AuthenticatedDashboardPage() {
           })}
         </div>
       ) : (
-        <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+        <div className="mt-12 flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="text-center">
             <p className="text-lg text-gray-600 dark:text-gray-400">
               No courses available yet.
