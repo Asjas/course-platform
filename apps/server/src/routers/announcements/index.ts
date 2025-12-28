@@ -113,11 +113,12 @@ export const announcementsRouter = router({
   create: publicProcedure
     .input(createAnnouncementSchema)
     .use(isAdmin)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         const result = await insertPlatformAnnouncement({
           newPlatformAnnouncement: {
             ...input,
+            authorId: ctx.user.id,
             publishedAt: input.publishedAt ? new Date(input.publishedAt) : null,
           },
         });

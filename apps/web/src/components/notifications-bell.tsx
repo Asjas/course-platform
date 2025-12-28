@@ -120,7 +120,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
               </div>
             </div>
 
-            <div className="custom-scrollbar max-h-96 space-y-3 overflow-y-auto">
+            <div className="custom-scrollbar max-h-[400px] space-y-3 overflow-y-auto">
               {activeTab === "new" ? (
                 unreadAnnouncements.length > 0 ? (
                   unreadAnnouncements.map((announcement: Announcement) => {
@@ -156,7 +156,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                             )}
                           </div>
                           <button
-                            className="flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                            className="flex-shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                             onClick={() => handleDismiss(announcement.id)}
                             aria-label="Dismiss notification"
                           >

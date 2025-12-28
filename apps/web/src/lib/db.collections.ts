@@ -196,7 +196,11 @@ export function useAnnouncements() {
 
 //Announcements Collection - User-specific queries
 export function useUnreadAnnouncements({ userId }: { userId: string }) {
-  return useQuery(trpc.announcements.getUnreadForUser.queryOptions(userId));
+  return useQuery({
+    ...trpc.announcements.getUnreadForUser.queryOptions(userId),
+    refetchInterval: 30000, // Poll every 30 seconds for new announcements
+    refetchIntervalInBackground: true,
+  });
 }
 
 export function useReadAnnouncements({ userId }: { userId: string }) {
@@ -217,10 +221,18 @@ export async function markAnnouncementAsRead({
       userId,
     });
 
-    // Update the collection locally
-    await queryClient.invalidateQueries({
-      queryKey: trpc.announcements.getPublished.queryKey(),
-    });
+    // Invalidate both the published collection and user-specific queries
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: trpc.announcements.getPublished.queryKey(),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: trpc.announcements.getUnreadForUser.queryKey(userId),
+      }),
+      queryClient.invalidateQueries({
+        queryKey: trpc.announcements.getReadForUser.queryKey(userId),
+      }),
+    ]);
 
     toast.success("Announcement dismissed");
   } catch (error) {

@@ -73,6 +73,11 @@ function AnnouncementsPage() {
     },
     onSubmit: async ({ value }) => {
       try {
+        // Convert datetime-local format to full ISO 8601 format with timezone
+        const publishedAtISO = value.publishedAt
+          ? new Date(value.publishedAt).toISOString()
+          : null;
+
         if (selectedAnnouncement) {
           await updateMutation.mutateAsync({
             id: selectedAnnouncement.id,
@@ -80,7 +85,7 @@ function AnnouncementsPage() {
               title: value.title,
               message: value.message,
               type: value.type,
-              publishedAt: value.publishedAt || null,
+              publishedAt: publishedAtISO,
             },
           });
           toast.success("Announcement updated successfully");
@@ -90,7 +95,7 @@ function AnnouncementsPage() {
             title: value.title,
             message: value.message,
             type: value.type,
-            publishedAt: value.publishedAt || null,
+            publishedAt: publishedAtISO,
           });
           toast.success("Announcement created successfully");
         }
@@ -150,7 +155,7 @@ function AnnouncementsPage() {
   const announcements = announcementsData?.announcements || [];
 
   return (
-    <>
+    <div className="pb-10">
       <header className="mb-6 flex items-center justify-between pb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Announcements
@@ -185,7 +190,7 @@ function AnnouncementsPage() {
                 No announcements yet
               </p>
             ) : (
-              <div className="space-y-2">
+              <div className="custom-scrollbar max-h-[500px] space-y-2 overflow-y-auto">
                 {announcements.map((announcement: Announcement) => (
                   <button
                     className={`w-full cursor-pointer rounded-md border p-3 text-left transition-colors ${
@@ -346,17 +351,41 @@ function AnnouncementsPage() {
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                           htmlFor="publishedAt"
                         >
-                          Publish Date (Optional)
+                          Publish Date
                         </label>
-                        <input
-                          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-                          id="publishedAt"
-                          type="datetime-local"
-                          value={field.state.value}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                        />
+                        <div className="mt-1 flex gap-2">
+                          <input
+                            className="block flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                            id="publishedAt"
+                            type="datetime-local"
+                            value={field.state.value}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                          />
+                          <button
+                            className="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-blue-700"
+                            type="button"
+                            onClick={() =>
+                              field.handleChange(
+                                new Date().toISOString().slice(0, 16),
+                              )
+                            }
+                          >
+                            Publish Now
+                          </button>
+                          {field.state.value && (
+                            <button
+                              className="cursor-pointer rounded-md border border-gray-300 px-3 py-2 text-sm font-medium whitespace-nowrap text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
+                              type="button"
+                              onClick={() => field.handleChange("")}
+                            >
+                              Clear
+                            </button>
+                          )}
+                        </div>
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                          Leave empty for draft
+                          {field.state.value
+                            ? "Announcement will be visible to users"
+                            : "Leave empty to save as draft (not visible to users)"}
                         </p>
                       </>
                     )}
@@ -403,6 +432,6 @@ function AnnouncementsPage() {
           )}
         </section>
       </div>
-    </>
+    </div>
   );
 }
