@@ -84,17 +84,21 @@ function StatsPage() {
 
   return (
     <div className="space-y-6 pb-8">
-      <div>
+      <header>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
           Platform Statistics
         </h1>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
           Overview of course enrollments and platform activity
         </p>
-      </div>
+      </header>
 
       {/* Platform Overview Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <section aria-labelledby="platform-overview-heading">
+        <h2 id="platform-overview-heading" className="sr-only">
+          Platform Overview
+        </h2>
+        <div className="grid gap-6 md:grid-cols-3">
         <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
           <div className="flex items-center">
             <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -142,14 +146,14 @@ function StatsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Divider */}
-      <div className="border-t border-gray-200 dark:border-gray-700" />
+      <div className="border-t border-gray-200 dark:border-gray-700" aria-hidden="true" />
 
       {/* Revenue & Purchase Statistics */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="revenue-heading">
+        <h2 id="revenue-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Revenue & Purchases
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -230,11 +234,11 @@ function StatsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Enrollment Type Breakdown */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="enrollment-breakdown-heading">
+        <h2 id="enrollment-breakdown-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Enrollment Breakdown
         </h2>
         <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-5">
@@ -348,14 +352,14 @@ function StatsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Divider */}
-      <div className="border-t border-gray-200 dark:border-gray-700" />
+      <div className="border-t border-gray-200 dark:border-gray-700" aria-hidden="true" />
 
       {/* User Statistics */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="user-activity-heading">
+        <h2 id="user-activity-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           User Activity
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -429,11 +433,11 @@ function StatsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Support Tickets */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="support-tickets-heading">
+        <h2 id="support-tickets-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Support Tickets
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -513,11 +517,11 @@ function StatsPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Learning Progress */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="learning-progress-heading">
+        <h2 id="learning-progress-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Learning Progress
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -568,11 +572,11 @@ function StatsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Additional Metrics */}
-      <div>
-        <h2 className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
+      <section aria-labelledby="additional-metrics-heading">
+        <h2 id="additional-metrics-heading" className="mb-4 text-xl font-semibold text-gray-900 dark:text-white">
           Additional Metrics
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -637,20 +641,24 @@ function StatsPage() {
             </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Divider */}
-      <div className="border-t border-gray-200 dark:border-gray-700" />
+      <div className="border-t border-gray-200 dark:border-gray-700" aria-hidden="true" />
 
       {/* Course Statistics Table */}
-      <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
-        <div className="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            Course Statistics
-          </h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+      <section aria-labelledby="course-stats-heading">
+        <div className="rounded-lg border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+          <div className="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+            <h2 id="course-stats-heading" className="text-xl font-semibold text-gray-900 dark:text-white">
+              Course Statistics
+            </h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <caption className="sr-only">
+                Detailed statistics for all courses including enrollments, completion rates, and content metrics
+              </caption>
             <thead className="border-b border-gray-200 bg-gray-50 text-xs text-gray-700 uppercase dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
               <tr>
                 <th
@@ -785,6 +793,7 @@ function StatsPage() {
           </table>
         </div>
       </div>
-    </div>
-  );
+    </section>
+  </div>
+);
 }
