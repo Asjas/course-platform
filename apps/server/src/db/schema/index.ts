@@ -7,3 +7,4 @@ export * from "~/db/schema/support-tickets.js";
 export * from "~/db/schema/teamLicense.js";
 export * from "~/db/schema/progress.js";
 export * from "~/db/schema/platformAnnouncements.js";
+export * from "~/db/schema/userNotifications.js";

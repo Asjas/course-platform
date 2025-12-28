@@ -1,6 +1,8 @@
 import { TRPCError } from "@trpc/server";
+import { ulid } from "ulid";
 import * as z from "zod";
 import config from "~/config.js";
+import { insertUserNotification } from "~/db/mutations/userNotifications.js";
 import type {
   NewSupportTicket,
   NewSupportTicketComment,
@@ -16,6 +18,7 @@ import {
 import {
   type AllSupportTickets,
   type SupportTicketById,
+  getSupportTicketById,
   getSupportTicketCountsByCourse,
 } from "~/routers/support-tickets/queries.js";
 
@@ -181,6 +184,42 @@ export const supportTicketsRouter = router({
       ctx.request.log.debug(
         `Created new support comment with ID ${newComment.id} for ticket ID ${input.ticketId}`,
       );
+
+      // Create notification for ticket owner if the commenter is not the owner
+      try {
+        const ticket = await getSupportTicketById({ ticketId: input.ticketId });
+
+        if (ticket && ticket.userId !== ctx.user.id) {
+          // Truncate comment for notification message (max 100 chars)
+          const truncatedComment =
+            input.comment.length > 100
+              ? input.comment.slice(0, 100) + "..."
+              : input.comment;
+
+          await insertUserNotification({
+            newNotification: {
+              id: `notif:${ulid()}`,
+              userId: ticket.userId,
+              type: "support_ticket_comment",
+              title: `New comment on your ticket: ${ticket.title}`,
+              message: `${ctx.user.name} commented: "${truncatedComment}"`,
+              link: `/support/${input.ticketId}`,
+              supportTicketId: input.ticketId,
+              actorId: ctx.user.id,
+            },
+          });
+
+          ctx.request.log.debug(
+            `Created notification for ticket owner ${ticket.userId} about comment on ticket ${input.ticketId}`,
+          );
+        }
+      } catch (notificationErr) {
+        // Log but don't fail the request if notification creation fails
+        ctx.request.log.error(
+          notificationErr,
+          "Failed to create notification for ticket comment",
+        );
+      }
 
       return newComment;
     }),

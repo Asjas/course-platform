@@ -1,18 +1,24 @@
 import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { Link } from "@tanstack/react-router";
 import {
   AlertCircle,
   Bell,
   CheckCircle,
   Info,
   type LucideIcon,
+  MessageSquare,
   X,
 } from "lucide-react";
 import { useState } from "react";
 import {
   type Announcement,
+  type UserNotification,
   markAnnouncementAsRead,
+  markUserNotificationAsRead,
   useReadAnnouncements,
+  useReadUserNotifications,
   useUnreadAnnouncements,
+  useUnreadUserNotifications,
 } from "~/lib/db.collections";
 
 interface NotificationsBellProps {
@@ -20,6 +26,7 @@ interface NotificationsBellProps {
 }
 
 type AnnouncementType = Announcement["type"];
+type NotificationType = UserNotification["type"];
 
 const announcementIcons: Record<AnnouncementType, LucideIcon> = {
   platform_update: Info,
@@ -28,6 +35,13 @@ const announcementIcons: Record<AnnouncementType, LucideIcon> = {
   new_course: Bell,
   general: Info,
   warning: AlertCircle,
+};
+
+const userNotificationIcons: Record<NotificationType, LucideIcon> = {
+  support_ticket_comment: MessageSquare,
+  support_ticket_status_change: AlertCircle,
+  course_enrollment: Bell,
+  general: Info,
 };
 
 const announcementColors: Record<AnnouncementType, string> = {
@@ -45,6 +59,17 @@ const announcementColors: Record<AnnouncementType, string> = {
     "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
 };
 
+const userNotificationColors: Record<NotificationType, string> = {
+  support_ticket_comment:
+    "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800",
+  support_ticket_status_change:
+    "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
+  course_enrollment:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  general:
+    "bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-700",
+};
+
 const announcementIconColors: Record<AnnouncementType, string> = {
   platform_update: "text-blue-600 dark:text-blue-400",
   platform_warning: "text-red-600 dark:text-red-400",
@@ -54,17 +79,145 @@ const announcementIconColors: Record<AnnouncementType, string> = {
   warning: "text-yellow-600 dark:text-yellow-400",
 };
 
+const userNotificationIconColors: Record<NotificationType, string> = {
+  support_ticket_comment: "text-orange-600 dark:text-orange-400",
+  support_ticket_status_change: "text-blue-600 dark:text-blue-400",
+  course_enrollment: "text-green-600 dark:text-green-400",
+  general: "text-gray-600 dark:text-gray-400",
+};
+
+// Combined notification item type for rendering
+interface CombinedNotificationItem {
+  id: string;
+  title: string;
+  message: string;
+  createdAt: Date;
+  type: "announcement" | "user_notification";
+  subType: AnnouncementType | NotificationType;
+  link?: string | null;
+  readAt?: Date | string | null;
+}
+
 export function NotificationsBell({ userId }: NotificationsBellProps) {
   const [activeTab, setActiveTab] = useState<"new" | "read">("new");
-  const { data: unreadData } = useUnreadAnnouncements({ userId });
-  const { data: readData } = useReadAnnouncements({ userId });
 
-  const unreadCount = unreadData?.length || 0;
-  const unreadAnnouncements = unreadData || [];
-  const readAnnouncements = readData || [];
+  // Announcements
+  const { data: unreadAnnouncementsData } = useUnreadAnnouncements({ userId });
+  const { data: readAnnouncementsData } = useReadAnnouncements({ userId });
 
-  async function handleDismiss(announcementId: string) {
-    await markAnnouncementAsRead({ announcementId, userId });
+  // User notifications
+  const { data: unreadUserNotificationsData } = useUnreadUserNotifications({
+    userId,
+  });
+  const { data: readUserNotificationsData } = useReadUserNotifications({
+    userId,
+  });
+
+  // Combine and sort unread notifications
+  const unreadAnnouncements: CombinedNotificationItem[] = (
+    unreadAnnouncementsData || []
+  ).map((a) => ({
+    id: a.id,
+    title: a.title,
+    message: a.message,
+    createdAt: new Date(a.publishedAt || a.createdAt),
+    type: "announcement" as const,
+    subType: a.type,
+    link: null,
+  }));
+
+  const unreadUserNotifications: CombinedNotificationItem[] = (
+    unreadUserNotificationsData || []
+  ).map((n) => ({
+    id: n.id,
+    title: n.title,
+    message: n.message,
+    createdAt: new Date(n.createdAt),
+    type: "user_notification" as const,
+    subType: n.type,
+    link: n.link,
+  }));
+
+  const allUnread = [...unreadAnnouncements, ...unreadUserNotifications].sort(
+    (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+  );
+
+  // Combine and sort read notifications
+  const readAnnouncements: CombinedNotificationItem[] = (
+    readAnnouncementsData || []
+  ).map((a) => ({
+    id: a.id,
+    title: a.title,
+    message: a.message,
+    createdAt: new Date(a.publishedAt || a.createdAt),
+    type: "announcement" as const,
+    subType: a.type,
+    link: null,
+    readAt: a.readAt,
+  }));
+
+  const readUserNotifications: CombinedNotificationItem[] = (
+    readUserNotificationsData || []
+  ).map((n) => ({
+    id: n.id,
+    title: n.title,
+    message: n.message,
+    createdAt: new Date(n.createdAt),
+    type: "user_notification" as const,
+    subType: n.type,
+    link: n.link,
+    readAt: n.readAt,
+  }));
+
+  const allRead = [...readAnnouncements, ...readUserNotifications].sort(
+    (a, b) => {
+      const aReadAt = a.readAt ? new Date(a.readAt).getTime() : 0;
+      const bReadAt = b.readAt ? new Date(b.readAt).getTime() : 0;
+      return bReadAt - aReadAt;
+    },
+  );
+
+  const unreadCount = allUnread.length;
+
+  async function handleDismiss(item: CombinedNotificationItem) {
+    if (item.type === "announcement") {
+      await markAnnouncementAsRead({ announcementId: item.id, userId });
+    } else {
+      await markUserNotificationAsRead({ notificationId: item.id, userId });
+    }
+  }
+
+  function getIcon(item: CombinedNotificationItem): LucideIcon {
+    if (item.type === "announcement") {
+      return announcementIcons[item.subType as AnnouncementType] || Info;
+    }
+    return userNotificationIcons[item.subType as NotificationType] || Info;
+  }
+
+  function getColorClass(item: CombinedNotificationItem): string {
+    if (item.type === "announcement") {
+      return (
+        announcementColors[item.subType as AnnouncementType] ||
+        announcementColors.general
+      );
+    }
+    return (
+      userNotificationColors[item.subType as NotificationType] ||
+      userNotificationColors.general
+    );
+  }
+
+  function getIconColorClass(item: CombinedNotificationItem): string {
+    if (item.type === "announcement") {
+      return (
+        announcementIconColors[item.subType as AnnouncementType] ||
+        announcementIconColors.general
+      );
+    }
+    return (
+      userNotificationIconColors[item.subType as NotificationType] ||
+      userNotificationIconColors.general
+    );
   }
 
   return (
@@ -122,47 +275,62 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
 
             <div className="custom-scrollbar max-h-100 space-y-3 overflow-y-auto">
               {activeTab === "new" ? (
-                unreadAnnouncements.length > 0 ? (
-                  unreadAnnouncements.map((announcement: Announcement) => {
-                    const Icon = announcementIcons[announcement.type] || Info;
-                    const colorClass =
-                      announcementColors[announcement.type] ||
-                      announcementColors.general;
-                    const iconColorClass =
-                      announcementIconColors[announcement.type] ||
-                      announcementIconColors.general;
+                allUnread.length > 0 ? (
+                  allUnread.map((item) => {
+                    const Icon = getIcon(item);
+                    const colorClass = getColorClass(item);
+                    const iconColorClass = getIconColorClass(item);
+
+                    const content = (
+                      <div className="flex items-start gap-2">
+                        <Icon
+                          className={`mt-0.5 h-4 w-4 shrink-0 ${iconColorClass}`}
+                        />
+                        <div className="flex-1">
+                          <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {item.title}
+                          </h4>
+                          <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
+                            {item.message}
+                          </p>
+                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            {item.createdAt.toLocaleDateString()}
+                          </p>
+                        </div>
+                        <button
+                          className="shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleDismiss(item);
+                          }}
+                          aria-label="Dismiss notification"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    );
+
+                    // If the notification has a link, wrap it in a Link component
+                    if (item.link) {
+                      return (
+                        <Link
+                          className={`block rounded-lg border p-3 transition-colors hover:opacity-80 ${colorClass}`}
+                          key={item.id}
+                          to={item.link}
+                          onClick={() => close()}
+                        >
+                          {content}
+                        </Link>
+                      );
+                    }
+
                     return (
                       <div
                         className={`rounded-lg border p-3 ${colorClass}`}
-                        key={announcement.id}
+                        key={item.id}
                       >
-                        <div className="flex items-start gap-2">
-                          <Icon
-                            className={`mt-0.5 h-4 w-4 shrink-0 ${iconColorClass}`}
-                          />
-                          <div className="flex-1">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                              {announcement.title}
-                            </h4>
-                            <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
-                              {announcement.message}
-                            </p>
-                            {announcement.publishedAt && (
-                              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                {new Date(
-                                  announcement.publishedAt,
-                                ).toLocaleDateString()}
-                              </p>
-                            )}
-                          </div>
-                          <button
-                            className="shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                            onClick={() => handleDismiss(announcement.id)}
-                            aria-label="Dismiss notification"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
+                        {content}
                       </div>
                     );
                   })
@@ -171,36 +339,53 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                     No new notifications
                   </p>
                 )
-              ) : readAnnouncements.length > 0 ? (
-                readAnnouncements.map((announcement: Announcement) => {
-                  const Icon = announcementIcons[announcement.type] || Info;
+              ) : allRead.length > 0 ? (
+                allRead.map((item) => {
+                  const Icon = getIcon(item);
+
+                  const content = (
+                    <div className="flex items-start gap-2">
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
+                      <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {item.title}
+                        </h4>
+                        <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
+                          {item.message}
+                        </p>
+                        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                          <CheckCircle className="h-3 w-3" />
+                          <span>
+                            Dismissed{" "}
+                            {item.readAt
+                              ? new Date(item.readAt).toLocaleDateString()
+                              : ""}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+
+                  // If the notification has a link, wrap it in a Link component
+                  if (item.link) {
+                    return (
+                      <Link
+                        className="block rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 transition-colors hover:opacity-80 dark:border-gray-700 dark:bg-gray-900/50"
+                        key={item.id}
+                        to={item.link}
+                        onClick={() => close()}
+                      >
+                        {content}
+                      </Link>
+                    );
+                  }
+
                   return (
                     <div
                       className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 dark:border-gray-700 dark:bg-gray-900/50"
-                      key={announcement.id}
+                      key={item.id}
                     >
-                      <div className="flex items-start gap-2">
-                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
-                        <div className="flex-1">
-                          <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                            {announcement.title}
-                          </h4>
-                          <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
-                            {announcement.message}
-                          </p>
-                          <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                            <CheckCircle className="h-3 w-3" />
-                            <span>
-                              Dismissed{" "}
-                              {announcement.readAt
-                                ? new Date(
-                                    announcement.readAt,
-                                  ).toLocaleDateString()
-                                : ""}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
+                      {content}
                     </div>
                   );
                 })
