@@ -65,7 +65,9 @@ These commands ensure code quality and catch errors early. Never commit without 
 
 ### Database (Drizzle)
 ```bash
-pnpm --filter @apps/server drizzle:generate      # Generate migration from schema
+# Generate migration from schema (use this command in apps/server folder)
+cd apps/server && pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
+
 pnpm --filter @apps/server drizzle:migrate       # Apply migrations
 pnpm --filter @apps/server drizzle:studio        # Open Drizzle Studio GUI
 ```
