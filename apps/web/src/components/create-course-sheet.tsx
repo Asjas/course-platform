@@ -14,6 +14,7 @@ import { useAuth } from "~/lib/auth.context";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
+import { createCourseSchema } from "~/schema/course";
 
 interface CreateCourseSheetProps {
   open: boolean;
@@ -52,6 +53,10 @@ export default function CreateCourseSheet({
       saleExpiresAt: null as Date | null,
       trialModuleLimit: 0,
       authorId: userId || "",
+    },
+    validators: {
+      onSubmit: createCourseSchema,
+      onBlur: createCourseSchema,
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading(`Creating course ${value.name}...`);

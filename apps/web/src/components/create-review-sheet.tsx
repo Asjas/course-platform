@@ -16,6 +16,7 @@ import { authClient } from "~/lib/auth.client";
 import { ReviewsCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
+import { createReviewSchema } from "~/schema/create-review";
 
 interface CreateReviewSheetProps {
   open: boolean;
@@ -64,6 +65,10 @@ export default function CreateReviewSheet({
       comment: "",
       externalLink: "",
       approved: true,
+    },
+    validators: {
+      onSubmit: createReviewSchema,
+      onBlur: createReviewSchema,
     },
     onSubmit: async ({ value }) => {
       const toastId = toast.loading("Creating review...");
