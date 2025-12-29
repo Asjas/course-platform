@@ -1,0 +1,24 @@
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'payment_completed';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'payment_refunded';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'payment_failed';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'coupon_redeemed';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'coupon_expired';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'team_license_purchased';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'team_license_invite_received';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'team_license_invite_accepted';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'team_license_invite_revoked';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'team_license_seat_claimed';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'course_published';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'certificate_issued';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'support_ticket_assigned';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'support_ticket_resolved';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_new_review';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_new_support_ticket';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_support_ticket_comment';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_new_purchase';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_refund_requested';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_coupon_usage_threshold';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_team_license_created';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_course_review_milestone';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_enrollment_milestone';--> statement-breakpoint
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_new_user_registration';
