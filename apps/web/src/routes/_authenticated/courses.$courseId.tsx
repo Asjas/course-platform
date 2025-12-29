@@ -139,6 +139,12 @@ function CourseDetailPage() {
   )[0];
 
   async function handleRatingSubmit() {
+    // Validate rating for user-submitted reviews
+    if (rating === 0 || rating === null) {
+      toast.error("Please select a rating before submitting your review.");
+      return;
+    }
+
     const toastId = toast.loading(
       isEditing ? "Updating your review..." : "Submitting your review...",
     );
