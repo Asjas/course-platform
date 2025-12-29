@@ -11,7 +11,12 @@ import {
   getReviewWithCourse,
   updateReview,
 } from "~/routers/reviews/mutations.js";
-import { getAllReviews, getReviewById } from "~/routers/reviews/queries.js";
+import {
+  type AllReviews,
+  type ReviewById,
+  getAllReviews,
+  getReviewById,
+} from "~/routers/reviews/queries.js";
 
 export const reviewsRouter = router({
   // Create a new review (authenticated users only)
@@ -56,22 +61,24 @@ export const reviewsRouter = router({
     }),
 
   // Get all reviews (admin only)
-  getAllReviews: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
-    const fastify = ctx.reply.server;
+  getAllReviews: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<AllReviews> => {
+      const fastify = ctx.reply.server;
 
-    const [err, reviews] = await fastify.to(getAllReviews());
+      const [err, reviews] = await fastify.to(getAllReviews());
 
-    if (err) {
-      fastify.log.error(err);
+      if (err) {
+        fastify.log.error(err);
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-      });
-    }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
 
-    return reviews;
-  }),
+      return reviews;
+    }),
 
   // Create a review as admin (for external social media reviews)
   createAdminReview: publicProcedure
@@ -140,7 +147,7 @@ export const reviewsRouter = router({
       }),
     )
     .use(isAdmin)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<NonNullable<ReviewById>> => {
       const { reviewId } = input;
       const fastify = ctx.reply.server;
 

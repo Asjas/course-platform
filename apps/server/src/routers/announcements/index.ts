@@ -7,6 +7,11 @@ import {
   updatePlatformAnnouncementById,
 } from "~/db/mutations/platformAnnouncements.js";
 import {
+  type AllAnnouncements,
+  type AnnouncementById,
+  type PublishedAnnouncements,
+  type ReadAnnouncementsForUser,
+  type UnreadAnnouncementsForUser,
   getAllAnnouncements,
   getAnnouncementById,
   getPublishedAnnouncements,
@@ -41,7 +46,7 @@ const updateAnnouncementSchema = z.object({
 });
 
 export const announcementsRouter = router({
-  getAll: publicProcedure.query(async () => {
+  getAll: publicProcedure.query(async (): Promise<AllAnnouncements> => {
     try {
       const result = await getAllAnnouncements();
       return result;
@@ -53,21 +58,23 @@ export const announcementsRouter = router({
     }
   }),
 
-  getPublished: publicProcedure.query(async () => {
-    try {
-      const announcements = await getPublishedAnnouncements();
-      return announcements;
-    } catch {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch published announcements",
-      });
-    }
-  }),
+  getPublished: publicProcedure.query(
+    async (): Promise<PublishedAnnouncements> => {
+      try {
+        const announcements = await getPublishedAnnouncements();
+        return announcements;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch published announcements",
+        });
+      }
+    },
+  ),
 
   getUnreadForUser: publicProcedure
     .input(z.string())
-    .query(async ({ input }) => {
+    .query(async ({ input }): Promise<UnreadAnnouncementsForUser> => {
       try {
         const announcements = await getUnreadAnnouncementsForUser(input);
         return announcements;
@@ -79,36 +86,40 @@ export const announcementsRouter = router({
       }
     }),
 
-  getReadForUser: publicProcedure.input(z.string()).query(async ({ input }) => {
-    try {
-      const announcements = await getReadAnnouncementsForUser(input);
-      return announcements;
-    } catch {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch read announcements",
-      });
-    }
-  }),
-
-  getById: publicProcedure.input(z.string()).query(async ({ input }) => {
-    try {
-      const announcement = await getAnnouncementById(input);
-      if (!announcement) {
+  getReadForUser: publicProcedure
+    .input(z.string())
+    .query(async ({ input }): Promise<ReadAnnouncementsForUser> => {
+      try {
+        const announcements = await getReadAnnouncementsForUser(input);
+        return announcements;
+      } catch {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Announcement not found",
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch read announcements",
         });
       }
-      return announcement;
-    } catch (error) {
-      if (error instanceof TRPCError) throw error;
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to fetch announcement",
-      });
-    }
-  }),
+    }),
+
+  getById: publicProcedure
+    .input(z.string())
+    .query(async ({ input }): Promise<NonNullable<AnnouncementById>> => {
+      try {
+        const announcement = await getAnnouncementById(input);
+        if (!announcement) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Announcement not found",
+          });
+        }
+        return announcement;
+      } catch (error) {
+        if (error instanceof TRPCError) throw error;
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch announcement",
+        });
+      }
+    }),
 
   create: publicProcedure
     .input(createAnnouncementSchema)

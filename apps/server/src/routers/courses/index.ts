@@ -25,7 +25,16 @@ import {
   getEnrollmentStatus,
   getLessonProgress,
 } from "~/routers/courses/queries.js";
-import type { AllCoursesAsAdmin } from "~/routers/courses/queries.js";
+import type {
+  AllCourses,
+  AllCoursesAsAdmin,
+  CourseById,
+  CourseProgress,
+  EnrollmentStatus,
+  LessonById,
+  LessonProgress,
+  ModulesAndLessonsByCourseId,
+} from "~/routers/courses/queries.js";
 
 export const coursesRouter = router({
   // Admin query to get all courses with full details
@@ -50,7 +59,7 @@ export const coursesRouter = router({
       return courses;
     }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }): Promise<AllCourses> => {
     const fastify = ctx.reply.server;
 
     const [err, courses] = await fastify.to(fastify.cache.getAllCourses());
@@ -73,7 +82,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<NonNullable<CourseById>> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
 
@@ -106,7 +115,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<ModulesAndLessonsByCourseId> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
 
@@ -132,7 +141,7 @@ export const coursesRouter = router({
         lessonId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<NonNullable<LessonById>> => {
       const { lessonId } = input;
       const fastify = ctx.reply.server;
 
@@ -165,7 +174,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<CourseProgress> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;
@@ -192,7 +201,7 @@ export const coursesRouter = router({
         lessonId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<LessonProgress> => {
       const { lessonId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;
@@ -219,7 +228,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<EnrollmentStatus> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;

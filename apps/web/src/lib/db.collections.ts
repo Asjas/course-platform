@@ -1,3 +1,4 @@
+import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
   AllCourses,
@@ -18,22 +19,8 @@ type SupportTicket = AllSupportTickets[number];
 type Coupon = CouponsReturnType[number];
 type Review = AllReviews[number];
 
-// Announcement types
-export interface Announcement {
-  id: string;
-  title: string;
-  message: string;
-  type:
-    | "platform_update"
-    | "platform_warning"
-    | "course_update"
-    | "new_course"
-    | "general"
-    | "warning";
-  publishedAt: Date | string | null;
-  readAt?: Date | string | null;
-  authorId?: string | null;
-}
+// Announcement type from server - exported for use in components
+export type Announcement = PublishedAnnouncements[number];
 
 // Course type that supports both list (getAllCourses) and detail (getCourseById) data
 // The collection starts with getAllCourses data, but may be updated with getCourseById data

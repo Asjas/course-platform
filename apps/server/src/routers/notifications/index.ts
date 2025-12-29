@@ -4,6 +4,9 @@ import {
   markNotificationAsRead,
 } from "./mutations.js";
 import {
+  type NotificationById,
+  type ReadNotifications,
+  type UnreadNotifications,
   getNotificationById,
   getReadNotificationsForUser,
   getUnreadNotificationsForUser,
@@ -19,7 +22,7 @@ export const notificationsRouter = router({
   getUnreadForUser: publicProcedure
     .input(z.string())
     .use(isAuthenticated)
-    .query(async ({ input: userId }) => {
+    .query(async ({ input: userId }): Promise<UnreadNotifications> => {
       try {
         const notifications = await getUnreadNotificationsForUser(userId);
 
@@ -36,7 +39,7 @@ export const notificationsRouter = router({
   getReadForUser: publicProcedure
     .input(z.string())
     .use(isAuthenticated)
-    .query(async ({ input: userId }) => {
+    .query(async ({ input: userId }): Promise<ReadNotifications> => {
       try {
         const notifications = await getReadNotificationsForUser(userId);
 
@@ -53,27 +56,31 @@ export const notificationsRouter = router({
   getById: publicProcedure
     .input(z.string())
     .use(isAuthenticated)
-    .query(async ({ input: notificationId }) => {
-      try {
-        const notification = await getNotificationById(notificationId);
+    .query(
+      async ({
+        input: notificationId,
+      }): Promise<NonNullable<NotificationById>> => {
+        try {
+          const notification = await getNotificationById(notificationId);
 
-        if (!notification) {
+          if (!notification) {
+            throw new TRPCError({
+              code: "NOT_FOUND",
+              message: "Notification not found",
+            });
+          }
+
+          return notification;
+        } catch (error) {
+          if (error instanceof TRPCError) throw error;
+
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Notification not found",
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to fetch notification",
           });
         }
-
-        return notification;
-      } catch (error) {
-        if (error instanceof TRPCError) throw error;
-
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to fetch notification",
-        });
-      }
-    }),
+      },
+    ),
   markAsRead: publicProcedure
     .input(
       z.object({

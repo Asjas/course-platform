@@ -8,6 +8,19 @@ import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:queries:platform" });
 
+// Type exports for announcement queries
+export type AllAnnouncements = Awaited<ReturnType<typeof getAllAnnouncements>>;
+export type AnnouncementById = Awaited<ReturnType<typeof getAnnouncementById>>;
+export type PublishedAnnouncements = Awaited<
+  ReturnType<typeof getPublishedAnnouncements>
+>;
+export type UnreadAnnouncementsForUser = Awaited<
+  ReturnType<typeof getUnreadAnnouncementsForUser>
+>;
+export type ReadAnnouncementsForUser = Awaited<
+  ReturnType<typeof getReadAnnouncementsForUser>
+>;
+
 // All platform announcements are accessible by admins only
 // This query is used in the admin dashboard
 export async function getAllAnnouncements() {

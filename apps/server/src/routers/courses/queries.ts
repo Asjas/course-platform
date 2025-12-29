@@ -7,6 +7,12 @@ export type AllCoursesAsAdmin = Awaited<
 >;
 export type CourseById = Awaited<ReturnType<typeof getCourseById>>;
 export type LessonById = Awaited<ReturnType<typeof getLessonById>>;
+export type ModulesAndLessonsByCourseId = Awaited<
+  ReturnType<typeof getModulesAndLessonsByCourseId>
+>;
+export type CourseProgress = Awaited<ReturnType<typeof getCourseProgress>>;
+export type LessonProgress = Awaited<ReturnType<typeof getLessonProgress>>;
+export type EnrollmentStatus = Awaited<ReturnType<typeof getEnrollmentStatus>>;
 
 const preparedGetAllCoursesAsAdminStatement = db.query.course
   .findMany({
