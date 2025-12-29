@@ -7,7 +7,8 @@ import { user } from "~/db/schema/user.js";
 import { userNotification } from "~/db/schema/userNotifications.js";
 
 // Integration tests - no mocking, tests run against real database in CI
-describe("Notification Helpers Integration Tests", () => {
+// Use sequential to prevent database deadlocks from concurrent test execution
+describe.sequential("Notification Helpers Integration Tests", () => {
   const testUserIds: string[] = [];
   const testNotificationIds: string[] = [];
   let testUserId: string;
@@ -37,7 +38,7 @@ describe("Notification Helpers Integration Tests", () => {
     }
   });
 
-  describe.sequential("Payment Notifications", () => {
+  describe("Payment Notifications", () => {
     it("should create a payment_completed notification", async () => {
       await notificationHelpers.notifyPaymentCompleted({
         userId: testUserId,
@@ -64,7 +65,7 @@ describe("Notification Helpers Integration Tests", () => {
     }, 15000); // 15 second timeout for database operations
   });
 
-  describe.sequential("Admin Notifications", () => {
+  describe("Admin Notifications", () => {
     it("should create notifications for all admin users", async () => {
       // Get actual admin user IDs from database
       const admins = await db
