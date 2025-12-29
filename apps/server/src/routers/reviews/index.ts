@@ -14,8 +14,11 @@ import {
 import {
   type AllReviews,
   type ReviewById,
+  type UserReviewForCourse,
+  getAdminUsers,
   getAllReviews,
   getReviewById,
+  getUserReviewForCourse,
 } from "~/routers/reviews/queries.js";
 
 export const reviewsRouter = router({
@@ -288,6 +291,136 @@ export const reviewsRouter = router({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
         });
+      }
+
+      return review;
+    }),
+
+  // Get user's own review for a course (authenticated users)
+  getUserReviewForCourse: publicProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ ctx, input }): Promise<UserReviewForCourse> => {
+      const { courseId } = input;
+      const userId = ctx.user.id;
+      const fastify = ctx.reply.server;
+
+      const [err, review] = await fastify.to(
+        getUserReviewForCourse({ userId, courseId }),
+      );
+
+      if (err) {
+        fastify.log.error(err);
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get review",
+        });
+      }
+
+      return review;
+    }),
+
+  // Update user's own review (authenticated users)
+  // This resets approval status and notifies admins
+  updateUserReview: publicProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+        rating: z.number().min(1).max(5),
+        title: z.string().min(1).max(100),
+        comment: z.string().max(2000),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      const { reviewId, rating, title, comment } = input;
+      const userId = ctx.user.id;
+      const fastify = ctx.reply.server;
+
+      // First get the review to verify ownership and get course info
+      const [fetchErr, existingReview] = await fastify.to(
+        getReviewWithCourse({ reviewId }),
+      );
+
+      if (fetchErr || !existingReview) {
+        fastify.log.error(fetchErr || "Review not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Verify the user owns this review
+      if (existingReview.userId !== userId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only update your own reviews",
+        });
+      }
+
+      // Update the review and reset approval status
+      const [err, review] = await fastify.to(
+        updateReview({
+          reviewId,
+          updates: {
+            rating,
+            title,
+            comment,
+            approved: false,
+            reviewedAt: null,
+          },
+        }),
+      );
+
+      if (err) {
+        fastify.log.error(err);
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to update review",
+        });
+      }
+
+      // Notify all admin users about the updated review
+      const [adminErr, admins] = await fastify.to(getAdminUsers());
+
+      if (adminErr) {
+        fastify.log.error(
+          adminErr,
+          "Failed to get admin users for notification",
+        );
+      } else if (admins && admins.length > 0) {
+        // Send notification to each admin
+        const notificationPromises = admins.map((admin) =>
+          insertUserNotification({
+            newNotification: {
+              id: ulid(),
+              userId: admin.id,
+              type: "general",
+              title: "Review Updated - Needs Approval",
+              message: `${ctx.user.name} has updated their review for "${existingReview.course.name}" and it requires re-approval.`,
+              link: "/admin/reviews",
+              actorId: userId,
+            },
+          }),
+        );
+
+        const notificationResults =
+          await Promise.allSettled(notificationPromises);
+        const failures = notificationResults.filter(
+          (r) => r.status === "rejected",
+        );
+        if (failures.length > 0) {
+          fastify.log.error(
+            { failures },
+            "Some admin notifications failed to send",
+          );
+        }
       }
 
       return review;

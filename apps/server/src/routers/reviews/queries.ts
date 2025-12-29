@@ -4,6 +4,10 @@ import { courseReview, supportTicket } from "~/db/schema/index.js";
 
 export type AllReviews = Awaited<ReturnType<typeof getAllReviews>>;
 export type ReviewById = Awaited<ReturnType<typeof getReviewById>>;
+export type UserReviewForCourse = Awaited<
+  ReturnType<typeof getUserReviewForCourse>
+>;
+export type AdminUsers = Awaited<ReturnType<typeof getAdminUsers>>;
 
 const preparedGetAllReviewsStatement = db.query.courseReview
   .findMany({
@@ -66,4 +70,41 @@ export async function getReviewById({ reviewId }: { reviewId: string }) {
     courseProgress,
     openTicketsCount,
   };
+}
+
+export async function getUserReviewForCourse({
+  userId,
+  courseId,
+}: {
+  userId: string;
+  courseId: string;
+}) {
+  const review = await db.query.courseReview.findFirst({
+    where: (reviews) =>
+      and(eq(reviews.userId, userId), eq(reviews.courseId, courseId)),
+    with: {
+      course: {
+        columns: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  return review;
+}
+
+export async function getAdminUsers() {
+  const admins = await db.query.user.findMany({
+    where: (users) => eq(users.role, "admin"),
+    columns: {
+      id: true,
+      name: true,
+      email: true,
+    },
+  });
+
+  return admins;
 }

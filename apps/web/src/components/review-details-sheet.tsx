@@ -143,7 +143,7 @@ export default function ReviewDetailsSheet({
           </div>
         ) : reviewDetails ? (
           <div className="flex min-h-0 flex-1 flex-col">
-            <div className="flex-1 space-y-6 overflow-y-auto p-4">
+            <div className="custom-scrollbar flex-1 space-y-6 overflow-y-auto p-4">
               {/* Review Status */}
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-700 dark:bg-gray-800/50">
                 <h3 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
