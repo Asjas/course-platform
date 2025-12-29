@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
@@ -31,39 +33,43 @@ export const Route = createFileRoute("/_authenticated/admin/courses/")({
 
 function AdminCoursesPage() {
   const { data: courses, isLoading } = useCoursesAdmin();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [courseToDelete, setCourseToDelete] =
+    useState<AdminCourseDetail | null>(null);
 
   const deleteCourseMutation = useMutation(
     trpc.courses.deleteCourse.mutationOptions(),
   );
 
-  async function handleDeleteCourse(course: AdminCourseDetail) {
-    if (
-      !confirm(
-        `Are you sure you want to delete "${course.name}"? This will also delete all modules and lessons. This action cannot be undone.`,
-      )
-    ) {
-      return;
-    }
+  function handleDeleteClick(course: AdminCourseDetail) {
+    setCourseToDelete(course);
+    setDeleteConfirmOpen(true);
+  }
 
-    const toastId = toast.loading(`Deleting course ${course.name}...`);
+  async function handleConfirmDelete() {
+    if (!courseToDelete) return;
+
+    const toastId = toast.loading(`Deleting course ${courseToDelete.name}...`);
 
     try {
-      await deleteCourseMutation.mutateAsync({ courseId: course.id });
+      await deleteCourseMutation.mutateAsync({ courseId: courseToDelete.id });
 
       queryClient.invalidateQueries({
         queryKey: ["admin", "courses"],
       });
 
-      toast.success(`Course ${course.name} deleted successfully.`, {
+      toast.success(`Course ${courseToDelete.name} deleted successfully.`, {
         id: toastId,
       });
     } catch (error) {
       console.error("Error deleting course:", error);
 
       toast.error(
-        `An error occurred while deleting the course ${course.name}. Please try again.`,
+        `An error occurred while deleting the course ${courseToDelete.name}. Please try again.`,
         { id: toastId },
       );
+    } finally {
+      setCourseToDelete(null);
     }
   }
 
@@ -203,7 +209,7 @@ function AdminCoursesPage() {
                           </Link>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
-                            onClick={() => handleDeleteCourse(course)}
+                            onClick={() => handleDeleteClick(course)}
                           >
                             <Trash2Icon
                               className="h-4 w-4"
@@ -228,6 +234,17 @@ function AdminCoursesPage() {
           description="Get started by creating a new course."
         />
       )}
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Course"
+        description={`Are you sure you want to delete "${courseToDelete?.name}"? This will also delete all modules and lessons. This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

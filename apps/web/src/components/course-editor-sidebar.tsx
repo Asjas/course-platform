@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 
@@ -237,6 +238,11 @@ export default function CourseEditorSidebar({
     new Set(modules.map((m) => m.id)),
   );
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [moduleToDelete, setModuleToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
   const reorderModulesMutation = useMutation(
     trpc.courses.reorderModules.mutationOptions(),
@@ -448,24 +454,23 @@ export default function CourseEditorSidebar({
     }
   }
 
-  async function handleDeleteModule(moduleId: string, moduleName: string) {
-    if (
-      !confirm(
-        `Delete module "${moduleName}"? This will also delete all lessons in this module.`,
-      )
-    ) {
-      return;
-    }
+  function handleDeleteModuleClick(moduleId: string, moduleName: string) {
+    setModuleToDelete({ id: moduleId, name: moduleName });
+    setDeleteConfirmOpen(true);
+  }
 
-    const toastId = toast.loading(`Deleting module ${moduleName}...`);
+  async function handleConfirmDeleteModule() {
+    if (!moduleToDelete) return;
+
+    const toastId = toast.loading(`Deleting module ${moduleToDelete.name}...`);
     try {
-      await deleteModuleMutation.mutateAsync({ moduleId });
+      await deleteModuleMutation.mutateAsync({ moduleId: moduleToDelete.id });
 
       queryClient.invalidateQueries({
         queryKey: ["admin", "courses"],
       });
 
-      toast.success(`Module ${moduleName} deleted successfully!`, {
+      toast.success(`Module ${moduleToDelete.name} deleted successfully!`, {
         id: toastId,
       });
     } catch (error) {
@@ -473,6 +478,8 @@ export default function CourseEditorSidebar({
       toast.error("Failed to delete module. Please try again.", {
         id: toastId,
       });
+    } finally {
+      setModuleToDelete(null);
     }
   }
 
@@ -514,7 +521,9 @@ export default function CourseEditorSidebar({
                 key={module.id}
                 lessons={lessons}
                 module={module}
-                onDelete={() => handleDeleteModule(module.id, module.title)}
+                onDelete={() =>
+                  handleDeleteModuleClick(module.id, module.title)
+                }
                 onSelect={() => onSelectItem(module.id, "module")}
                 onSelectLesson={(lessonId) => onSelectItem(lessonId, "lesson")}
                 onToggle={() => toggleModule(module.id)}
@@ -561,6 +570,17 @@ export default function CourseEditorSidebar({
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDeleteModule}
+        title="Delete Module"
+        description={`Are you sure you want to delete "${moduleToDelete?.name}"? This will also delete all lessons in this module. This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

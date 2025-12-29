@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/admin/announcements")({
@@ -48,6 +49,10 @@ function AnnouncementsPage() {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [announcementToDelete, setAnnouncementToDelete] = useState<
+    string | null
+  >(null);
 
   const {
     data: announcementsData,
@@ -131,18 +136,25 @@ function AnnouncementsPage() {
     form.reset();
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this announcement?")) return;
+  function handleDeleteClick(id: string) {
+    setAnnouncementToDelete(id);
+    setDeleteConfirmOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!announcementToDelete) return;
 
     try {
-      await deleteMutation.mutateAsync(id);
+      await deleteMutation.mutateAsync(announcementToDelete);
       toast.success("Announcement deleted successfully");
       refetch();
-      if (selectedAnnouncement?.id === id) {
+      if (selectedAnnouncement?.id === announcementToDelete) {
         handleCancel();
       }
     } catch {
       toast.error("Failed to delete announcement");
+    } finally {
+      setAnnouncementToDelete(null);
     }
   }
 
@@ -413,7 +425,7 @@ function AnnouncementsPage() {
                     <button
                       className="ml-auto cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
                       type="button"
-                      onClick={() => handleDelete(selectedAnnouncement.id)}
+                      onClick={() => handleDeleteClick(selectedAnnouncement.id)}
                       disabled={deleteMutation.isPending}
                       aria-label={`Delete announcement: ${selectedAnnouncement.title}`}
                     >
@@ -432,6 +444,17 @@ function AnnouncementsPage() {
           )}
         </section>
       </div>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Announcement"
+        description="Are you sure you want to delete this announcement? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }
