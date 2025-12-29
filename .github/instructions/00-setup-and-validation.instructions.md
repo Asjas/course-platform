@@ -10,6 +10,21 @@ priority: 1
 
 You MUST run these validation steps BEFORE committing ANY changes. CI failures due to skipped validation are unacceptable.
 
+## **CRITICAL RULE: NEVER EDIT MIGRATION FILES**
+
+**DO NOT EVER EDIT, MODIFY, OR TOUCH DATABASE MIGRATION FILES (.sql files in drizzle/ directories)**
+
+Migration files are immutable once created. Editing them will cause catastrophic database issues.
+
+If a migration is wrong:
+1. Create a NEW migration file to fix it
+2. Use `cd apps/server && pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts`
+3. NEVER edit existing .sql migration files
+
+**Files you must NEVER edit:**
+- `apps/server/drizzle/*.sql`
+- Any `.sql` files in migration directories
+
 ## Initial Setup (First Time Only)
 
 ### 1. Install pnpm globally

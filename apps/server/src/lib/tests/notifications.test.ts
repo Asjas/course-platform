@@ -1,6 +1,7 @@
 import * as notificationHelpers from "../notifications.js";
 import { eq, inArray } from "drizzle-orm";
-import { afterAll, describe, expect, it } from "vitest";
+import { ulid } from "ulid";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { db } from "~/db/index.js";
 import { user } from "~/db/schema/user.js";
 import { userNotification } from "~/db/schema/userNotifications.js";
@@ -9,6 +10,20 @@ import { userNotification } from "~/db/schema/userNotifications.js";
 describe("Notification Helpers Integration Tests", () => {
   const testUserIds: string[] = [];
   const testNotificationIds: string[] = [];
+  let testUserId: string;
+
+  // Create a test user before all tests
+  beforeAll(async () => {
+    testUserId = ulid();
+    await db.insert(user).values({
+      id: testUserId,
+      email: `test-notifications-${Date.now()}@example.com`,
+      emailVerified: false,
+      name: "Test User",
+      role: "member",
+    });
+    testUserIds.push(testUserId);
+  });
 
   // Clean up all test data after all tests
   afterAll(async () => {
@@ -17,15 +32,15 @@ describe("Notification Helpers Integration Tests", () => {
         .delete(userNotification)
         .where(inArray(userNotification.id, testNotificationIds));
     }
+    if (testUserIds.length > 0) {
+      await db.delete(user).where(inArray(user.id, testUserIds));
+    }
   });
 
   describe("Payment Notifications", () => {
     it("should create a payment_completed notification", async () => {
-      const userId = "test:user:payment:1";
-      testUserIds.push(userId);
-
       await notificationHelpers.notifyPaymentCompleted({
-        userId,
+        userId: testUserId,
         courseName: "Test Course",
         courseSlug: "test-course",
         amount: 1999,
@@ -35,7 +50,7 @@ describe("Notification Helpers Integration Tests", () => {
       const notifications = await db
         .select()
         .from(userNotification)
-        .where(eq(userNotification.userId, userId));
+        .where(eq(userNotification.userId, testUserId));
 
       expect(notifications.length).toBeGreaterThan(0);
       const notification = notifications[0];
