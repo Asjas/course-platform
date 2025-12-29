@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import type { NewCoupon } from "~/db/schema/coupon.js";
+import { notifyAdminCouponUsageThreshold } from "~/lib/notifications.js";
 import { isAdmin, publicProcedure, router } from "~/router.js";
 import {
   deleteCouponById,
@@ -294,6 +295,31 @@ export const couponsRouter = router({
       ctx.request.log.debug(
         `Redeemed coupon with redemption ${redemption.id} successfully`,
       );
+
+      // Check if coupon is approaching redemption limit and notify admins
+      try {
+        const currentRedemptions = coupon.currentRedemptions || 0;
+        const limit = coupon.redemptionLimit;
+
+        // Notify when reaching 80%, 90%, or 100% of limit
+        if (
+          (limit > 0 && currentRedemptions === limit) ||
+          (limit >= 10 && currentRedemptions === Math.floor(limit * 0.9)) ||
+          (limit >= 5 && currentRedemptions === Math.floor(limit * 0.8))
+        ) {
+          await notifyAdminCouponUsageThreshold({
+            couponCode: coupon.code,
+            redemptionCount: currentRedemptions,
+            redemptionLimit: limit,
+          });
+        }
+      } catch (notificationErr) {
+        // Log but don't fail the request
+        ctx.request.log.error(
+          notificationErr,
+          "Failed to send admin notification for coupon usage threshold",
+        );
+      }
 
       return redemption;
     }),

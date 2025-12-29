@@ -142,6 +142,21 @@ export const supportTicketsRouter = router({
         `Created new support ticket with ID ${newTicket.id}`,
       );
 
+      // Send notification to admins after ticket is created
+      try {
+        await notifyAdminNewSupportTicket({
+          ticketId: newTicket.id,
+          ticketTitle: newTicket.title,
+          submittedByName: ctx.user.name,
+        });
+      } catch (notificationErr) {
+        // Log but don't fail the request
+        ctx.request.log.error(
+          notificationErr,
+          "Failed to send admin notification for new support ticket",
+        );
+      }
+
       return newTicket;
     }),
   createSupportTicketComment: publicProcedure

@@ -16,6 +16,7 @@ import { db } from "~/db/index.js";
 import { ONE_DAY, ONE_HOUR, ONE_YEAR } from "~/lib/constants.js";
 import { betterAuthLogger } from "~/lib/logging.js";
 import mailer from "~/lib/mailer.js";
+import { notifyAdminNewUserRegistration } from "~/lib/notifications.js";
 import { redis } from "~/lib/redis.js";
 
 const baseUrl =
@@ -202,4 +203,33 @@ export const auth = betterAuth({
     }),
   ],
   logger: betterAuthLogger,
+  hooks: {
+    after: [
+      {
+        matcher: () => true,
+        handler: async (ctx) => {
+          // Notify admins when a new user registers
+          if (ctx.path === "/sign-up/email" && ctx.method === "POST") {
+            try {
+              const body = ctx.body as {
+                user?: { name: string; email: string };
+              };
+              if (body.user) {
+                await notifyAdminNewUserRegistration({
+                  userName: body.user.name,
+                  userEmail: body.user.email,
+                });
+              }
+            } catch (error) {
+              // Log but don't fail the request
+              betterAuthLogger.error(
+                error,
+                "Failed to send admin notification for new user registration",
+              );
+            }
+          }
+        },
+      },
+    ],
+  },
 }) as ReturnType<typeof betterAuth>;
