@@ -265,8 +265,10 @@ export const coursesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const fastify = ctx.reply.server;
 
+      // Force trialModuleLimit to 0 on creation since totalModules starts at 0
+      // The constraint requires trialModuleLimit <= totalModules
       const [err, course] = await fastify.to(
-        insertCourse({ newCourse: input }),
+        insertCourse({ newCourse: { ...input, trialModuleLimit: 0 } }),
       );
 
       if (err) {
