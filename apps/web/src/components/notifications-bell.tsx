@@ -2,13 +2,26 @@ import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { Link } from "@tanstack/react-router";
 import {
   AlertCircle,
+  AlertTriangle,
+  Award,
   Bell,
   CheckCircle,
+  CircleDollarSign,
+  CreditCard,
   Info,
   type LucideIcon,
+  Mail,
   MessageSquare,
+  RefreshCw,
   Star,
+  Tag,
+  Ticket,
+  TrendingUp,
+  UserCheck,
+  UserPlus,
+  Users,
   X,
+  XCircle,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -39,11 +52,42 @@ const announcementIcons: Record<AnnouncementType, LucideIcon> = {
 };
 
 const userNotificationIcons: Record<NotificationType, LucideIcon> = {
+  // Existing types
   support_ticket_comment: MessageSquare,
   support_ticket_status_change: AlertCircle,
   course_enrollment: Bell,
   review_approved: Star,
   general: Info,
+  // Payment-related notifications
+  payment_completed: CheckCircle,
+  payment_refunded: RefreshCw,
+  payment_failed: XCircle,
+  // Coupon-related notifications
+  coupon_redeemed: Tag,
+  coupon_expired: AlertTriangle,
+  // Team license notifications
+  team_license_purchased: Users,
+  team_license_invite_received: Mail,
+  team_license_invite_accepted: UserCheck,
+  team_license_invite_revoked: XCircle,
+  team_license_seat_claimed: UserPlus,
+  // Course-related notifications
+  course_published: Bell,
+  certificate_issued: Award,
+  // Support ticket updates
+  support_ticket_assigned: Ticket,
+  support_ticket_resolved: CheckCircle,
+  // Admin notifications
+  admin_new_review: Star,
+  admin_new_support_ticket: MessageSquare,
+  admin_support_ticket_comment: MessageSquare,
+  admin_new_purchase: CreditCard,
+  admin_refund_requested: CircleDollarSign,
+  admin_coupon_usage_threshold: Tag,
+  admin_team_license_created: Users,
+  admin_course_review_milestone: TrendingUp,
+  admin_enrollment_milestone: TrendingUp,
+  admin_new_user_registration: UserPlus,
 };
 
 const announcementColors: Record<AnnouncementType, string> = {
@@ -62,6 +106,7 @@ const announcementColors: Record<AnnouncementType, string> = {
 };
 
 const userNotificationColors: Record<NotificationType, string> = {
+  // Existing types
   support_ticket_comment:
     "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800",
   support_ticket_status_change:
@@ -72,6 +117,60 @@ const userNotificationColors: Record<NotificationType, string> = {
     "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
   general:
     "bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-700",
+  // Payment-related notifications
+  payment_completed:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  payment_refunded:
+    "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
+  payment_failed:
+    "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
+  // Coupon-related notifications
+  coupon_redeemed:
+    "bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800",
+  coupon_expired:
+    "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800",
+  // Team license notifications
+  team_license_purchased:
+    "bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800",
+  team_license_invite_received:
+    "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
+  team_license_invite_accepted:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  team_license_invite_revoked:
+    "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
+  team_license_seat_claimed:
+    "bg-teal-50 border-teal-200 dark:bg-teal-900/20 dark:border-teal-800",
+  // Course-related notifications
+  course_published:
+    "bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800",
+  certificate_issued:
+    "bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800",
+  // Support ticket updates
+  support_ticket_assigned:
+    "bg-cyan-50 border-cyan-200 dark:bg-cyan-900/20 dark:border-cyan-800",
+  support_ticket_resolved:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  // Admin notifications
+  admin_new_review:
+    "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
+  admin_new_support_ticket:
+    "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800",
+  admin_support_ticket_comment:
+    "bg-orange-50 border-orange-200 dark:bg-orange-900/20 dark:border-orange-800",
+  admin_new_purchase:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  admin_refund_requested:
+    "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
+  admin_coupon_usage_threshold:
+    "bg-purple-50 border-purple-200 dark:bg-purple-900/20 dark:border-purple-800",
+  admin_team_license_created:
+    "bg-indigo-50 border-indigo-200 dark:bg-indigo-900/20 dark:border-indigo-800",
+  admin_course_review_milestone:
+    "bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-800",
+  admin_enrollment_milestone:
+    "bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-800",
+  admin_new_user_registration:
+    "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
 };
 
 const announcementIconColors: Record<AnnouncementType, string> = {
@@ -84,11 +183,42 @@ const announcementIconColors: Record<AnnouncementType, string> = {
 };
 
 const userNotificationIconColors: Record<NotificationType, string> = {
+  // Existing types
   support_ticket_comment: "text-orange-600 dark:text-orange-400",
   support_ticket_status_change: "text-blue-600 dark:text-blue-400",
   course_enrollment: "text-green-600 dark:text-green-400",
   review_approved: "text-yellow-600 dark:text-yellow-400",
   general: "text-gray-600 dark:text-gray-400",
+  // Payment-related notifications
+  payment_completed: "text-green-600 dark:text-green-400",
+  payment_refunded: "text-yellow-600 dark:text-yellow-400",
+  payment_failed: "text-red-600 dark:text-red-400",
+  // Coupon-related notifications
+  coupon_redeemed: "text-purple-600 dark:text-purple-400",
+  coupon_expired: "text-orange-600 dark:text-orange-400",
+  // Team license notifications
+  team_license_purchased: "text-indigo-600 dark:text-indigo-400",
+  team_license_invite_received: "text-blue-600 dark:text-blue-400",
+  team_license_invite_accepted: "text-green-600 dark:text-green-400",
+  team_license_invite_revoked: "text-red-600 dark:text-red-400",
+  team_license_seat_claimed: "text-teal-600 dark:text-teal-400",
+  // Course-related notifications
+  course_published: "text-purple-600 dark:text-purple-400",
+  certificate_issued: "text-amber-600 dark:text-amber-400",
+  // Support ticket updates
+  support_ticket_assigned: "text-cyan-600 dark:text-cyan-400",
+  support_ticket_resolved: "text-green-600 dark:text-green-400",
+  // Admin notifications
+  admin_new_review: "text-yellow-600 dark:text-yellow-400",
+  admin_new_support_ticket: "text-orange-600 dark:text-orange-400",
+  admin_support_ticket_comment: "text-orange-600 dark:text-orange-400",
+  admin_new_purchase: "text-green-600 dark:text-green-400",
+  admin_refund_requested: "text-red-600 dark:text-red-400",
+  admin_coupon_usage_threshold: "text-purple-600 dark:text-purple-400",
+  admin_team_license_created: "text-indigo-600 dark:text-indigo-400",
+  admin_course_review_milestone: "text-pink-600 dark:text-pink-400",
+  admin_enrollment_milestone: "text-pink-600 dark:text-pink-400",
+  admin_new_user_registration: "text-blue-600 dark:text-blue-400",
 };
 
 // Combined notification item type for rendering
