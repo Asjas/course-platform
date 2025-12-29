@@ -1,9 +1,9 @@
 import * as notificationHelpers from "../notifications.js";
+import { eq, inArray } from "drizzle-orm";
 import { afterAll, describe, expect, it } from "vitest";
 import { db } from "~/db/index.js";
-import { userNotification } from "~/db/schema/userNotifications.js";
 import { user } from "~/db/schema/user.js";
-import { eq, inArray } from "drizzle-orm";
+import { userNotification } from "~/db/schema/userNotifications.js";
 
 // Integration tests - no mocking, tests run against real database in CI
 describe("Notification Helpers Integration Tests", () => {
