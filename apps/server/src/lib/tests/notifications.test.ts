@@ -15,11 +15,11 @@ describe.sequential("Notification Helpers Integration Tests", () => {
 
   // Create a test user before all tests
   beforeAll(async () => {
-    testUserId = ulid();
+    const userId = ulid();
     const [createdUser] = await db
       .insert(user)
       .values({
-        id: testUserId,
+        id: userId,
         email: `test-notifications-${Date.now()}@example.com`,
         emailVerified: false,
         name: "Test User",
@@ -27,10 +27,13 @@ describe.sequential("Notification Helpers Integration Tests", () => {
       })
       .returning();
 
-    // Verify user was created successfully
-    expect(createdUser).toBeDefined();
-    expect(createdUser.id).toBe(testUserId);
-    testUserIds.push(testUserId);
+    // Single validation point - capture and verify in one step
+    if (!createdUser?.id) {
+      throw new Error("Failed to create test user");
+    }
+    
+    testUserId = createdUser.id;
+    testUserIds.push(createdUser.id);
   });
 
   // Clean up all test data after all tests
@@ -55,24 +58,17 @@ describe.sequential("Notification Helpers Integration Tests", () => {
         currency: "USD",
       });
 
-      // Verify the insert returned a result
-      expect(result).toBeDefined();
-      expect(result.id).toBeDefined();
+      // Single validation point - use the returned result
+      if (!result?.id) {
+        throw new Error("Failed to create notification");
+      }
       testNotificationIds.push(result.id);
 
-      const notifications = await db
-        .select()
-        .from(userNotification)
-        .where(eq(userNotification.userId, testUserId));
-
-      expect(notifications.length).toBeGreaterThan(0);
-      const notification = notifications[0];
-
-      expect(notification.type).toBe("payment_completed");
-      expect(notification.title).toBe("Payment Successful");
-      expect(notification.message).toContain("Test Course");
-      expect(notification.message).toContain("USD 19.99");
-      expect(notification.link).toBe("/courses/test-course");
+      expect(result.type).toBe("payment_completed");
+      expect(result.title).toBe("Payment Successful");
+      expect(result.message).toContain("Test Course");
+      expect(result.message).toContain("USD 19.99");
+      expect(result.link).toBe("/courses/test-course");
     }, 15000); // 15 second timeout for database operations
   });
 
@@ -98,27 +94,18 @@ describe.sequential("Notification Helpers Integration Tests", () => {
         reviewId: "test:review:123",
       });
 
-      // Verify the inserts returned results
-      expect(results).toBeDefined();
-      expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBeGreaterThanOrEqual(admins.length);
+      // Single validation point - use the returned results directly
+      if (!results || !Array.isArray(results) || results.length === 0) {
+        throw new Error("Failed to create admin notifications");
+      }
 
+      expect(results.length).toBeGreaterThanOrEqual(admins.length);
+      
       // Add notification IDs to cleanup list
       testNotificationIds.push(...results.map((r) => r.id));
 
-      // Verify notifications were created for admin users
-      const adminIds = admins.map((a) => a.id);
-      const notifications = await db
-        .select()
-        .from(userNotification)
-        .where(inArray(userNotification.userId, adminIds));
-
-      // Should have at least one notification per admin
-      expect(notifications.length).toBeGreaterThanOrEqual(admins.length);
-
-      const adminNotif = notifications.find(
-        (n) => n.type === "admin_new_review",
-      );
+      // Verify content from returned results (no duplicate query)
+      const adminNotif = results.find((n) => n.type === "admin_new_review");
       expect(adminNotif).toBeDefined();
       expect(adminNotif?.message).toContain("Integration Test Course");
       expect(adminNotif?.message).toContain("Test Reviewer");
