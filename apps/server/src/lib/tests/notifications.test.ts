@@ -3,23 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as userQueries from "~/db/queries/user.js";
 import * as notificationMutations from "~/routers/notifications/mutations.js";
 
-// Mock database with proper structure for prepared statements
-vi.mock("~/db/index.js", () => ({
-  db: {
-    query: {
-      user: {
-        findMany: vi.fn(() => ({
-          prepare: vi.fn(() => ({
-            execute: vi.fn(),
-          })),
-        })),
-      },
-    },
-  },
-  pool: {},
-}));
-
-// Mock the dependencies
+// Mock only the mutation and query functions, not the database itself
 vi.mock("~/routers/notifications/mutations.js");
 vi.mock("~/db/queries/user.js");
 
