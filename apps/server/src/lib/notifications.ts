@@ -337,13 +337,17 @@ async function notifyAllAdmins(
   createNotification: (userId: string) => NewUserNotification,
 ) {
   const adminUserIds = await getAdminUserIds();
-  const notifications = adminUserIds.map((userId) =>
-    insertUserNotification({
-      newNotification: createNotification(userId),
-    }),
-  );
+  const results = [];
 
-  return Promise.all(notifications);
+  // Execute inserts sequentially to avoid database deadlocks
+  for (const userId of adminUserIds) {
+    const result = await insertUserNotification({
+      newNotification: createNotification(userId),
+    });
+    results.push(result);
+  }
+
+  return results;
 }
 
 export async function notifyAdminNewReview({
