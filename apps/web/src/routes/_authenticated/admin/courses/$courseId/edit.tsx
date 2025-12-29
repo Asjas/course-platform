@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
@@ -7,8 +7,9 @@ import { toast } from "sonner";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
+import { CoursesAdminCollection, useCoursesAdmin } from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
-import { trpc, trpcClient } from "~/lib/trpc.client";
+import { trpc } from "~/lib/trpc.client";
 import {
   type CreateLessonFormData,
   type UpdateLessonFormData,
@@ -28,7 +29,7 @@ export const Route = createFileRoute(
   component: EditCoursePage,
   loader: async () => {
     // Preload course data
-    await trpcClient.courses.getAllAsAdmin.query();
+    await CoursesAdminCollection.preload();
   },
 });
 
@@ -39,12 +40,9 @@ function EditCoursePage() {
     "module" | "lesson" | null
   >(null);
 
-  // Using TanStack Query instead of collections for now
-  const { data: courses, isLoading } = useQuery(
-    trpc.courses.getAllAsAdmin.queryOptions(),
-  );
+  const { data: courses, isLoading } = useCoursesAdmin();
 
-  const course = courses?.find((c) => c.id === courseId);
+  const course = courses.find((c) => c.id === courseId);
 
   function handleSelectItem(itemId: string, type: "module" | "lesson") {
     setSelectedItemId(itemId);
@@ -89,32 +87,30 @@ function EditCoursePage() {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-full flex-col pb-10">
       {/* Header */}
-      <div className="border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
-        <div className="flex items-center justify-between">
-          <div>
-            <Link
-              className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-              to="/admin/courses"
-            >
-              <ArrowLeftIcon className="mr-2 h-4 w-4" />
-              Back to Courses
-            </Link>
-            <h1 className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
-              {course.name}
-            </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              Edit course structure, modules, and lessons
-            </p>
-          </div>
+      <header className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <Link
+            className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+            to="/admin/courses"
+          >
+            <ArrowLeftIcon className="mr-2 h-4 w-4" />
+            Back to Courses
+          </Link>
+          <h1 className="mt-2 text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
+            {course.name}
+          </h1>
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+            Edit course structure, modules, and lessons
+          </p>
         </div>
-      </div>
+      </header>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="mt-8 flex flex-1 gap-6 overflow-hidden">
         {/* Sidebar */}
-        <div className="w-80 flex-shrink-0">
+        <div className="w-80 shrink-0 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
           <CourseEditorSidebar
             lessons={lessons}
             modules={modules}
@@ -126,7 +122,7 @@ function EditCoursePage() {
         </div>
 
         {/* Content Editor */}
-        <div className="flex-1 overflow-y-auto bg-gray-50 p-8 dark:bg-gray-900">
+        <div className="flex-1 overflow-y-auto">
           {selectedItemId && selectedItemType === "module" ? (
             <ModuleEditor
               courseId={courseId}
@@ -167,8 +163,8 @@ interface ModuleEditorProps {
 }
 
 function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
-  const { data: courses } = useQuery(trpc.courses.getAllAsAdmin.queryOptions());
-  const course = courses?.find((c) => c.id === courseId);
+  const { data: courses } = useCoursesAdmin();
+  const course = courses.find((c) => c.id === courseId);
   const module = course?.modules?.find((m) => m.id === moduleId);
 
   const createModuleMutation = useMutation(
@@ -262,7 +258,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {moduleId ? "Edit Module" : "Create New Module"}
@@ -414,8 +410,8 @@ function LessonEditor({
   courseId,
   preselectedModuleId,
 }: LessonEditorProps) {
-  const { data: courses } = useQuery(trpc.courses.getAllAsAdmin.queryOptions());
-  const course = courses?.find((c) => c.id === courseId);
+  const { data: courses } = useCoursesAdmin();
+  const course = courses.find((c) => c.id === courseId);
   const lesson = course?.lessons?.find((l) => l.id === lessonId);
 
   const createLessonMutation = useMutation(
@@ -518,7 +514,7 @@ function LessonEditor({
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+      <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-900">
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             {lessonId ? "Edit Lesson" : "Create New Lesson"}

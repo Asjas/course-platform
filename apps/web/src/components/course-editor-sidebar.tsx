@@ -480,7 +480,7 @@ export default function CourseEditorSidebar({
   const activeLesson = lessons.find((l) => l.id === activeId);
 
   return (
-    <div className="flex h-full flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900">
+    <div className="flex h-full flex-col bg-gray-50 dark:bg-gray-900">
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3 dark:border-gray-700">
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
           Course Structure
