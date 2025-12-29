@@ -28,6 +28,8 @@ export default function Footer() {
                 <a
                   className="transition-colors hover:text-green-600"
                   href="https://uptimekuma.codewizard.training/status/codewizard-training"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   Uptime Status
                 </a>
@@ -40,6 +42,8 @@ export default function Footer() {
                 <a
                   className="hover:text-green-600"
                   href="https://typecraft.dev"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   typecraft
                 </a>

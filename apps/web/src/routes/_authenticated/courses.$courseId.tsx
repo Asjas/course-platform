@@ -406,7 +406,16 @@ function CourseDetailPage() {
             <div className="rounded-lg bg-blue-50 p-4 dark:bg-blue-900/20">
               <p className="text-sm text-blue-800 dark:text-blue-300">
                 <strong>Note:</strong> Your review may be published on our
-                marketing website at learnfastify.com to help other students.
+                marketing website at{" "}
+                <a
+                  className="text-green-400 underline"
+                  href="https://learnfastify.com"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  learnfastify.com
+                </a>{" "}
+                to help other students.
               </p>
             </div>
 

@@ -406,6 +406,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline"
                         href="https://polar.sh/legal/privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Privacy Policy
                       </a>{" "}
@@ -436,6 +438,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline"
                         href="https://proton.me/legal/privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Privacy Policy
                       </a>
@@ -466,6 +470,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline"
                         href="https://policies.google.com/privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Privacy Policy
                       </a>
@@ -830,6 +836,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline hover:no-underline"
                         href="https://polar.sh/legal/privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Polar
                       </a>
@@ -850,6 +858,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline hover:no-underline"
                         href="https://proton.me/legal/privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Proton Mail
                       </a>
@@ -864,6 +874,8 @@ function PrivacyPage() {
                       <a
                         className="text-green-400 underline hover:no-underline"
                         href="https://www.netcup.com/en/contact/data-privacy"
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         Netcup
                       </a>
@@ -922,6 +934,8 @@ function PrivacyPage() {
                 <a
                   className="text-green-400 underline hover:no-underline"
                   href="https://www.justice.gov.za/inforeg/"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   https://www.justice.gov.za/inforeg/
                 </a>
@@ -934,6 +948,8 @@ function PrivacyPage() {
                 <a
                   className="text-green-400 underline hover:no-underline"
                   href="https://ico.org.uk/"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   https://ico.org.uk/
                 </a>
@@ -943,6 +959,8 @@ function PrivacyPage() {
                 <a
                   className="text-green-400 underline hover:no-underline"
                   href="https://oag.ca.gov/privacy"
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   https://oag.ca.gov/privacy
                 </a>
