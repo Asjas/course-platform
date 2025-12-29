@@ -38,7 +38,7 @@
     "@tanstack/react-router": "1.144.0",
     "@trpc/client": "11.8.1",
     "@trpc/tanstack-react-query": "11.8.1",
-    "better-auth": "1.4.5",
+    "better-auth": "1.4.9",
     "browserslist": "4.28.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -69,7 +69,7 @@
   "devDependencies": {
     "@mdx-js/react": "3.1.1",
     "@mdx-js/rollup": "3.1.1",
-    "@polar-sh/better-auth": "1.5.0",
+    "@polar-sh/better-auth": "1.6.3",
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "4.1.18",
     "@tanstack/devtools-vite": "0.4.0",
