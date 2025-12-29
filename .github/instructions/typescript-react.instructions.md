@@ -68,6 +68,7 @@ Instructions for building high-quality React.js applications with modern pattern
 - Use double quotes (`"`) for string literals.
 - Place each prop on a new line when there are more than two props.
 - Include error and pending boundaries for all routes.
+- **NEVER use `window.confirm()` or `confirm()` for user confirmations** - use the `ConfirmDialog` component from `~/components/confirm-dialog` instead for accessible, keyboard-navigable dialogs.
 - Accessibility:
   - Use semantic HTML5 elements over generic `div` elements.
   - Follow WCAG 2.2 accessibility guidelines.
@@ -225,6 +226,56 @@ const [isSheetOpen, setIsSheetOpen] = useState(false);
   </SheetContent>
 </Sheet>
 ```
+
+## Confirmation Dialog Pattern
+
+**NEVER use `window.confirm()` or `confirm()`** - always use the accessible `ConfirmDialog` component:
+
+```tsx
+import { ConfirmDialog } from "~/components/confirm-dialog";
+
+function MyComponent() {
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{id: string; name: string} | null>(null);
+
+  function handleDeleteClick(itemId: string, itemName: string) {
+    setItemToDelete({ id: itemId, name: itemName });
+    setDeleteConfirmOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!itemToDelete) return;
+    // Perform deletion
+    await deleteItem(itemToDelete.id);
+    setItemToDelete(null);
+  }
+
+  return (
+    <>
+      <button onClick={() => handleDeleteClick(item.id, item.name)}>
+        Delete
+      </button>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Item"
+        description={`Are you sure you want to delete ${itemToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"  // Use "destructive" for dangerous actions
+      />
+    </>
+  );
+}
+```
+
+The `ConfirmDialog` component provides:
+- Keyboard navigation support (Tab, Enter, Escape)
+- Proper ARIA attributes for screen readers
+- Consistent styling with the rest of the application
+- Two variants: "default" (green) and "destructive" (red)
 
 ## Conditional UI Based on State
 

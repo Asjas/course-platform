@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import CreateReviewSheet from "~/components/create-review-sheet";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -38,6 +39,11 @@ function AdminReviewsPage() {
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [reviewToDelete, setReviewToDelete] = useState<{
+    id: string;
+    userName: string;
+  } | null>(null);
 
   function handleViewReview(reviewId: string) {
     setSelectedReviewId(reviewId);
@@ -48,6 +54,35 @@ function AdminReviewsPage() {
     setIsDetailsSheetOpen(open);
     if (!open) {
       setSelectedReviewId(null);
+    }
+  }
+
+  function handleDeleteClick(reviewId: string, userName: string) {
+    setReviewToDelete({ id: reviewId, userName });
+    setDeleteConfirmOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!reviewToDelete) return;
+
+    const toastId = toast.loading("Deleting review...");
+
+    try {
+      await ReviewsCollection.delete(reviewToDelete.id);
+
+      toast.success("Review deleted successfully.", {
+        id: toastId,
+      });
+    } catch (error) {
+      console.error("Error deleting review:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      toast.error(`Failed to delete review: ${errorMessage}`, {
+        id: toastId,
+      });
+    } finally {
+      setReviewToDelete(null);
     }
   }
 
@@ -192,37 +227,13 @@ function AdminReviewsPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
-                            onClick={async () => {
-                              if (
-                                !confirm(
-                                  `Are you sure you want to delete this review by ${review.user?.name || "Unknown User"}? This action cannot be undone.`,
-                                )
-                              ) {
-                                return;
-                              }
-
-                              const toastId =
-                                toast.loading("Deleting review...");
-
-                              try {
-                                await ReviewsCollection.delete(review.id);
-
-                                toast.success("Review deleted successfully.", {
-                                  id: toastId,
-                                });
-                              } catch (error) {
-                                console.error("Error deleting review:", error);
-
-                                const errorMessage =
-                                  error instanceof Error
-                                    ? error.message
-                                    : "Unknown error";
-                                toast.error(
-                                  `Failed to delete review: ${errorMessage}`,
-                                  { id: toastId },
-                                );
-                              }
-                            }}
+                            onClick={() =>
+                              handleDeleteClick(
+                                review.id,
+                                review.user?.name || "Unknown User",
+                              )
+                            }
+                            type="button"
                           >
                             <Trash2Icon
                               className="h-4 w-4"
@@ -258,6 +269,17 @@ function AdminReviewsPage() {
           onOpenChange={setIsCreateSheetOpen}
         />
       </Suspense>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Review"
+        description={`Are you sure you want to delete this review by ${reviewToDelete?.userName}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }
