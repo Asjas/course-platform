@@ -2,7 +2,6 @@ import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
 import config from "~/config.js";
-import { insertUserNotification } from "~/db/mutations/userNotifications.js";
 import type {
   NewSupportTicket,
   NewSupportTicketComment,
@@ -10,6 +9,7 @@ import type {
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
   deleteSupportTicketById,
   insertSupportTicket,

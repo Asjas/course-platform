@@ -9,6 +9,7 @@ import { courseProgress } from "~/db/schema/progress.js";
 import { payment } from "~/db/schema/purchase.js";
 import { supportTicket } from "~/db/schema/support-tickets.js";
 import { teamLicense } from "~/db/schema/teamLicense.js";
+import { userNotification } from "~/db/schema/userNotifications.js";
 
 // Types
 export type User = typeof user.$inferSelect;
@@ -125,6 +126,12 @@ export const userRelations = relations(user, ({ many }) => ({
   teamLicenses: many(teamLicense),
   wishlists: many(courseWishlist),
   announcements: many(platformAnnouncement),
+  notifications: many(userNotification, {
+    relationName: "user_notification_user",
+  }),
+  actedNotifications: many(userNotification, {
+    relationName: "user_notification_actor",
+  }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

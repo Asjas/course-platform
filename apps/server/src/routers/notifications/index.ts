@@ -1,67 +1,79 @@
-import { TRPCError } from "@trpc/server";
-import * as z from "zod";
 import {
   deleteNotification,
   markAllNotificationsAsRead,
   markNotificationAsRead,
-} from "~/db/mutations/userNotifications.js";
+} from "./mutations.js";
 import {
   getNotificationById,
   getReadNotificationsForUser,
   getUnreadNotificationsForUser,
-} from "~/db/queries/userNotifications.js";
+} from "./queries.js";
+import { TRPCError } from "@trpc/server";
+import * as z from "zod";
+import { pinoLogger } from "~/lib/logging.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+
+const log = pinoLogger.child({ module: "routers:notifications" });
 
 export const notificationsRouter = router({
   getUnreadForUser: publicProcedure
     .input(z.string())
+    .use(isAuthenticated)
     .query(async ({ input: userId }) => {
       try {
         const notifications = await getUnreadNotificationsForUser(userId);
+
         return notifications;
-      } catch {
+      } catch (error) {
+        log.error(error, "Failed to fetch unread notifications");
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch unread notifications",
         });
       }
     }),
-
   getReadForUser: publicProcedure
     .input(z.string())
+    .use(isAuthenticated)
     .query(async ({ input: userId }) => {
       try {
         const notifications = await getReadNotificationsForUser(userId);
+
         return notifications;
-      } catch {
+      } catch (error) {
+        log.error(error, "Failed to fetch read notifications");
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch read notifications",
         });
       }
     }),
-
   getById: publicProcedure
     .input(z.string())
+    .use(isAuthenticated)
     .query(async ({ input: notificationId }) => {
       try {
         const notification = await getNotificationById(notificationId);
+
         if (!notification) {
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "Notification not found",
           });
         }
+
         return notification;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
+
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to fetch notification",
         });
       }
     }),
-
   markAsRead: publicProcedure
     .input(
       z.object({
@@ -76,6 +88,7 @@ export const notificationsRouter = router({
           notificationId: input.notificationId,
           userId: input.userId,
         });
+
         return result;
       } catch {
         throw new TRPCError({
@@ -84,7 +97,6 @@ export const notificationsRouter = router({
         });
       }
     }),
-
   markAllAsRead: publicProcedure
     .input(z.object({ userId: z.string() }))
     .use(isAuthenticated)
@@ -93,6 +105,7 @@ export const notificationsRouter = router({
         const result = await markAllNotificationsAsRead({
           userId: input.userId,
         });
+
         return { count: result.length };
       } catch {
         throw new TRPCError({
@@ -101,7 +114,6 @@ export const notificationsRouter = router({
         });
       }
     }),
-
   delete: publicProcedure
     .input(
       z.object({
@@ -116,6 +128,7 @@ export const notificationsRouter = router({
           notificationId: input.notificationId,
           userId: input.userId,
         });
+
         return result;
       } catch {
         throw new TRPCError({

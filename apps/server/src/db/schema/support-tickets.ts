@@ -4,6 +4,7 @@ import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { course, courseLesson, courseModule } from "~/db/schema/course.js";
 import { user } from "~/db/schema/user.js";
+import { userNotification } from "~/db/schema/userNotifications.js";
 
 export type SupportTicket = typeof supportTicket.$inferSelect;
 export type NewSupportTicket = typeof supportTicket.$inferInsert;
@@ -105,6 +106,9 @@ export const supportTicketRelations = relations(
   supportTicket,
   ({ one, many }) => ({
     comments: many(supportTicketComment),
+    notifications: many(userNotification, {
+      relationName: "user_notification_support_ticket",
+    }),
     user: one(user, {
       fields: [supportTicket.userId],
       references: [user.id],
