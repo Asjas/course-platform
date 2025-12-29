@@ -10,7 +10,7 @@ export function EmptyState({ title, description, className }: EmptyStateProps) {
   return (
     <div
       className={cn(
-        "mt-12 flex min-h-[400px] items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800",
+        "mt-12 flex min-h-100 items-center justify-center rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800",
         className,
       )}
     >

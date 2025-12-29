@@ -8,6 +8,7 @@ import { intlFormat } from "date-fns";
 import { BanIcon, MailIcon, UserRoundIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import EditUserSheet from "~/components/edit-user-sheet";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -50,10 +51,49 @@ function AdminUsersPage() {
     null,
   );
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<ExtendedUserWithRole | null>(
+    null,
+  );
 
   function handleEditUser(user: ExtendedUserWithRole) {
     setEditingUser(user);
     setIsEditSheetOpen(true);
+  }
+
+  function handleDeleteClick(user: ExtendedUserWithRole) {
+    setUserToDelete(user);
+    setDeleteConfirmOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!userToDelete) return;
+
+    const toastId = toast.loading(
+      `Deleting user: ${userToDelete.username || userToDelete.name}`,
+    );
+
+    const { error } = await authClient.admin.removeUser({
+      userId: userToDelete.id,
+    });
+
+    if (error) {
+      toast.error(
+        `Failed to delete user: ${userToDelete.username || userToDelete.name}`,
+        { id: toastId },
+      );
+      console.error(error);
+      setUserToDelete(null);
+      return;
+    }
+
+    toast.success(
+      `Deleted user: ${userToDelete.username || userToDelete.name}`,
+      { id: toastId },
+    );
+
+    setUserToDelete(null);
+    router.invalidate();
   }
 
   if (!data) {
@@ -232,40 +272,7 @@ function AdminUsersPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 no-underline hover:text-red-300 hover:underline"
-                            onClick={async () => {
-                              if (
-                                !confirm(
-                                  `Are you sure you want to delete user: ${user.username || user.name}? This action cannot be undone.`,
-                                )
-                              ) {
-                                return;
-                              }
-
-                              const toastId = toast.loading(
-                                `Deleting user: ${user.username || user.name}`,
-                              );
-
-                              const { error } =
-                                await authClient.admin.removeUser({
-                                  userId: user.id,
-                                });
-
-                              if (error) {
-                                toast.error(
-                                  `Failed to delete user: ${user.username || user.name}`,
-                                  { id: toastId },
-                                );
-                                console.error(error);
-                                return;
-                              }
-
-                              toast.success(
-                                `Deleted user: ${user.username || user.name}`,
-                                { id: toastId },
-                              );
-
-                              router.invalidate();
-                            }}
+                            onClick={() => handleDeleteClick(user)}
                           >
                             Delete
                           </button>
@@ -286,6 +293,17 @@ function AdminUsersPage() {
         user={editingUser}
         open={isEditSheetOpen}
         onOpenChange={setIsEditSheetOpen}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete User"
+        description={`Are you sure you want to delete user: ${userToDelete?.username || userToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
       />
     </div>
   );

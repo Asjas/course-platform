@@ -1,0 +1,1 @@
+ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'review_approved' BEFORE 'general';

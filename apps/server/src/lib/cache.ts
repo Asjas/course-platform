@@ -26,8 +26,8 @@ import {
   getCouponById,
 } from "~/routers/coupons/queries.js";
 import {
-  getAllAsAdminCourses,
   getAllCourses,
+  getAllCoursesAsAdmin,
   getCourseById,
   getLessonById,
   getModulesAndLessonsByCourseId,
@@ -150,7 +150,7 @@ export const cache = createCache({
         return ["course~all"];
       },
     },
-    getAllAsAdminCourses,
+    getAllCoursesAsAdmin,
   )
   .define(
     "getAllCourses",

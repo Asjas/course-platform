@@ -151,9 +151,10 @@ export const courseReview = mySchema.table(
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
-    rating: smallint().notNull(),
+    rating: smallint(),
     title: text().notNull(),
     comment: text().notNull(),
+    externalLink: text(),
     approved: boolean().default(false).notNull(),
     reviewedAt: timestamp({ withTimezone: true }),
     ...timestamps,
@@ -164,7 +165,7 @@ export const courseReview = mySchema.table(
     index("course_review_course_idx").on(table.courseId),
     check(
       "course_review_rating_check",
-      sql`${table.rating} >= 1 AND ${table.rating} <= 5`,
+      sql`${table.rating} IS NULL OR (${table.rating} >= 1 AND ${table.rating} <= 5)`,
     ),
     check(
       "course_review_approval_check",

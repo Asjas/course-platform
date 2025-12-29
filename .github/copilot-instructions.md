@@ -19,6 +19,17 @@ Full-stack TypeScript monorepo for a course platform:
 
 ## Commands Reference
 
+### Initial Setup (First Time Only)
+If pnpm is not installed globally, install it:
+```bash
+npm install -g pnpm@10.26.2
+```
+
+Then install dependencies:
+```bash
+pnpm install --frozen-lockfile  # NEVER use npm or yarn
+```
+
 ### Package Manager
 Always use pnpm with frozen lockfile:
 ```bash
@@ -32,18 +43,31 @@ pnpm --filter @apps/web dev                      # Frontend only (port 4173)
 pnpm --filter @apps/server dev                   # Backend only (port 5000)
 ```
 
-### Validation (Run Before Any PR)
+**Important**: When creating new routes in `apps/web/src/routes/`, you MUST run the dev server at least once to generate the route types:
 ```bash
-pnpm check-format                                # Prettier check
-pnpm lint                                        # ESLint
+cd apps/web && pnpm run dev
+# Wait for server to start (routes will be generated)
+# Then stop the server (Ctrl+C)
+```
+
+This generates `src/routeTree.gen.ts` which TypeScript needs for route type safety.
+
+### Validation (Run Before Every Commit)
+**ALWAYS** run these commands before committing code:
+```bash
+pnpm format                                      # Auto-fix formatting issues
+pnpm lint                                        # ESLint (auto-fix when possible)
 pnpm typecheck                                   # TypeScript strict mode
 pnpm build                                       # Full Turborepo build
-pnpm test                                        # All Vitest tests
 ```
+
+These commands ensure code quality and catch errors early. Never commit without running all validation steps.
 
 ### Database (Drizzle)
 ```bash
-pnpm --filter @apps/server drizzle:generate      # Generate migration from schema
+# Generate migration from schema (use this command in apps/server folder)
+cd apps/server && pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
+
 pnpm --filter @apps/server drizzle:migrate       # Apply migrations
 pnpm --filter @apps/server drizzle:studio        # Open Drizzle Studio GUI
 ```

@@ -73,6 +73,19 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   "aria-current": "page",
                 }}
                 activeOptions={{ exact: true }}
+                to="/admin/reviews"
+              >
+                Reviews
+              </Link>
+            </li>
+            <li>
+              <Link
+                className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
+                activeProps={{
+                  "className": "bg-gray-200 dark:bg-gray-800",
+                  "aria-current": "page",
+                }}
+                activeOptions={{ exact: true }}
                 to="/admin/announcements"
               >
                 Announcements

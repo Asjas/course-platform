@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import CreateCouponSheet from "~/components/create-coupon-sheet";
 import EditCouponSheet from "~/components/edit-coupon-sheet";
 import { EmptyState } from "~/components/empty-state";
@@ -39,6 +40,11 @@ function AdminCouponsPage() {
   >(null);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [couponToDelete, setCouponToDelete] = useState<{
+    id: string;
+    code: string;
+  } | null>(null);
 
   function handleEditCoupon(coupon: (typeof coupons)[number]) {
     setEditingCoupon(coupon);
@@ -49,6 +55,34 @@ function AdminCouponsPage() {
     setIsEditSheetOpen(open);
     if (!open) {
       setEditingCoupon(null);
+    }
+  }
+
+  function handleDeleteClick(couponId: string, couponCode: string) {
+    setCouponToDelete({ id: couponId, code: couponCode });
+    setDeleteConfirmOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    if (!couponToDelete) return;
+
+    const toastId = toast.loading(`Deleting coupon ${couponToDelete.code}...`);
+
+    try {
+      CouponsCollection.delete(couponToDelete.id);
+
+      toast.success(`Coupon ${couponToDelete.code} deleted successfully.`, {
+        id: toastId,
+      });
+    } catch (error) {
+      console.error("Error deleting coupon:", error);
+
+      toast.error(
+        `An error occurred while deleting the coupon ${couponToDelete.code}. Please try again.`,
+        { id: toastId },
+      );
+    } finally {
+      setCouponToDelete(null);
     }
   }
 
@@ -222,35 +256,9 @@ function AdminCouponsPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
-                            onClick={() => {
-                              if (
-                                !confirm(
-                                  `Are you sure you want to delete the coupon ${coupon.code}? This action cannot be undone.`,
-                                )
-                              ) {
-                                return;
-                              }
-
-                              const toastId = toast.loading(
-                                `Deleting coupon ${coupon.code}...`,
-                              );
-
-                              try {
-                                CouponsCollection.delete(coupon.id);
-
-                                toast.success(
-                                  `Coupon ${coupon.code} deleted successfully.`,
-                                  { id: toastId },
-                                );
-                              } catch (error) {
-                                console.error("Error deleting coupon:", error);
-
-                                toast.error(
-                                  `An error occurred while deleting the coupon ${coupon.code}. Please try again.`,
-                                  { id: toastId },
-                                );
-                              }
-                            }}
+                            onClick={() =>
+                              handleDeleteClick(coupon.id, coupon.code)
+                            }
                           >
                             <Trash2Icon
                               className="h-4 w-4"
@@ -285,6 +293,17 @@ function AdminCouponsPage() {
       <CreateCouponSheet
         open={isCreateSheetOpen}
         onOpenChange={setIsCreateSheetOpen}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Coupon"
+        description={`Are you sure you want to delete the coupon ${couponToDelete?.code}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
       />
     </div>
   );

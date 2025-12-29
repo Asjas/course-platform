@@ -1,9 +1,11 @@
+import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
   AllCourses,
+  AllCoursesAsAdmin,
   CourseById,
-  getAllAsAdminCourses,
 } from "@apps/server/src/routers/courses/queries";
+import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
@@ -15,23 +17,10 @@ import { trpc, trpcClient } from "~/lib/trpc.client";
 
 type SupportTicket = AllSupportTickets[number];
 type Coupon = CouponsReturnType[number];
+type Review = AllReviews[number];
 
-// Announcement types
-export interface Announcement {
-  id: string;
-  title: string;
-  message: string;
-  type:
-    | "platform_update"
-    | "platform_warning"
-    | "course_update"
-    | "new_course"
-    | "general"
-    | "warning";
-  publishedAt: Date | string | null;
-  readAt?: Date | string | null;
-  authorId?: string | null;
-}
+// Announcement type from server - exported for use in components
+export type Announcement = PublishedAnnouncements[number];
 
 // Course type that supports both list (getAllCourses) and detail (getCourseById) data
 // The collection starts with getAllCourses data, but may be updated with getCourseById data
@@ -45,9 +34,7 @@ export type CourseWithModulesAndLessons = NonNullable<CourseById>;
 type Course = CourseFromList | CourseWithModulesAndLessons;
 
 // Type for admin queries that always return full course details
-export type AdminCourseDetail = Awaited<
-  ReturnType<typeof getAllAsAdminCourses>
->[number];
+export type AdminCourseDetail = AllCoursesAsAdmin[number];
 
 export const SupportTicketsCollection = createCollection(
   queryCollectionOptions<SupportTicket>({
@@ -305,7 +292,7 @@ export const CoursesAdminCollection = createCollection(
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
-    queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
+    queryFn: () => trpcClient.courses.getAllCoursesAsAdmin.query(),
   }),
 );
 
@@ -350,5 +337,89 @@ export function useCourseById({ courseId }: { courseId: string }) {
         .findOne();
     },
     [courseId],
+  );
+}
+
+// Reviews Collection
+export const ReviewsCollection = createCollection(
+  queryCollectionOptions<Review>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.reviews.getAllReviews.queryKey(),
+    queryFn: () => trpcClient.reviews.getAllReviews.query(),
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        // User reviews always require a rating (admin reviews use createAdminReview)
+        if (modified.rating === null) {
+          throw new Error("Rating is required for user reviews");
+        }
+
+        await trpcClient.reviews.createReview.mutate({
+          courseId: modified.courseId,
+          rating: modified.rating,
+          title: modified.title,
+          comment: modified.comment,
+        });
+      } catch (error) {
+        console.error("Error inserting review: ", error);
+        throw error;
+      }
+    },
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.reviews.updateReview.mutate({
+          reviewId: modified.id,
+          rating: modified.rating ?? undefined,
+          title: modified.title,
+          comment: modified.comment,
+          externalLink: modified.externalLink,
+          approved: modified.approved,
+          reviewedAt: modified.reviewedAt
+            ? new Date(modified.reviewedAt)
+            : null,
+        });
+      } catch (error) {
+        console.error("Error updating review: ", error);
+        toast.error(
+          "An error occurred while updating the review. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.reviews.deleteReview.mutate({
+          reviewId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting review: ", error);
+        toast.error(
+          "An error occurred while deleting the review. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
+export function useReviews() {
+  return useLiveQuery(ReviewsCollection);
+}
+
+export function useReviewById({ reviewId }: { reviewId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ review: ReviewsCollection })
+        .where(({ review }) => eq(review.id, reviewId))
+        .findOne();
+    },
+    [reviewId],
   );
 }

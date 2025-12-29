@@ -4,6 +4,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { ArrowLeftIcon, SaveIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
@@ -166,6 +167,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
   const { data: courses } = useCoursesAdmin();
   const course = courses.find((c) => c.id === courseId);
   const module = course?.modules?.find((m) => m.id === moduleId);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const createModuleMutation = useMutation(
     trpc.courses.createModule.mutationOptions(),
@@ -232,13 +234,13 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
     },
   });
 
-  async function handleDelete() {
+  function handleDeleteClick() {
     if (!moduleId) return;
+    setDeleteConfirmOpen(true);
+  }
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this module? This will also delete all lessons in this module.",
-    );
-    if (!confirmed) return;
+  async function handleConfirmDelete() {
+    if (!moduleId) return;
 
     const toastId = toast.loading("Deleting module...");
 
@@ -266,7 +268,7 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
           {moduleId && (
             <button
               className="inline-flex cursor-pointer items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               type="button"
             >
               <Trash2Icon className="mr-2 h-4 w-4" />
@@ -274,6 +276,17 @@ function ModuleEditor({ moduleId, courseId }: ModuleEditorProps) {
             </button>
           )}
         </div>
+
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          onConfirm={handleConfirmDelete}
+          title="Delete Module"
+          description="Are you sure you want to delete this module? This will also delete all lessons in this module. This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="destructive"
+        />
 
         <form
           className="space-y-6"
@@ -413,6 +426,7 @@ function LessonEditor({
   const { data: courses } = useCoursesAdmin();
   const course = courses.find((c) => c.id === courseId);
   const lesson = course?.lessons?.find((l) => l.id === lessonId);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const createLessonMutation = useMutation(
     trpc.courses.createLesson.mutationOptions(),
@@ -488,13 +502,13 @@ function LessonEditor({
     },
   });
 
-  async function handleDelete() {
+  function handleDeleteClick() {
     if (!lessonId) return;
+    setDeleteConfirmOpen(true);
+  }
 
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this lesson?",
-    );
-    if (!confirmed) return;
+  async function handleConfirmDelete() {
+    if (!lessonId) return;
 
     const toastId = toast.loading("Deleting lesson...");
 
@@ -522,7 +536,7 @@ function LessonEditor({
           {lessonId && (
             <button
               className="inline-flex cursor-pointer items-center rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700"
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               type="button"
             >
               <Trash2Icon className="mr-2 h-4 w-4" />
@@ -530,6 +544,17 @@ function LessonEditor({
             </button>
           )}
         </div>
+
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          onConfirm={handleConfirmDelete}
+          title="Delete Lesson"
+          description="Are you sure you want to delete this lesson? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          variant="destructive"
+        />
 
         <form
           className="space-y-6"

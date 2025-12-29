@@ -2,9 +2,14 @@ import { and, desc, eq, isNotNull, isNull, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { userNotification } from "~/db/schema/userNotifications.js";
 
-export type UserNotificationWithRelations = Awaited<
+export type UnreadNotifications = Awaited<
   ReturnType<typeof getUnreadNotificationsForUser>
->[number];
+>;
+export type ReadNotifications = Awaited<
+  ReturnType<typeof getReadNotificationsForUser>
+>;
+export type NotificationById = Awaited<ReturnType<typeof getNotificationById>>;
+export type UserNotificationWithRelations = UnreadNotifications[number];
 
 const preparedGetUnreadNotificationsForUser = db.query.userNotification
   .findMany({

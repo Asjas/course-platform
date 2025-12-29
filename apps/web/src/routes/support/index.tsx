@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
@@ -28,6 +30,39 @@ export const Route = createFileRoute("/support/")({
 function SupportIndexPage() {
   const auth = useAuth();
   const { data: tickets, isLoading } = useSupportTickets();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [ticketToDelete, setTicketToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+
+  function handleDeleteClick(ticketId: string, ticketTitle: string) {
+    setTicketToDelete({ id: ticketId, title: ticketTitle });
+    setDeleteConfirmOpen(true);
+  }
+
+  function handleConfirmDelete() {
+    if (!ticketToDelete) return;
+
+    const toastId = toast.loading(
+      `Deleting ticket "${ticketToDelete.title}"...`,
+    );
+
+    try {
+      SupportTicketsCollection.delete(ticketToDelete.id);
+
+      toast.success("Ticket deleted successfully.", { id: toastId });
+    } catch (error) {
+      console.error("Error deleting ticket:", error);
+
+      toast.error(
+        "An error occurred while deleting the ticket. Please try again.",
+        { id: toastId },
+      );
+    } finally {
+      setTicketToDelete(null);
+    }
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -168,38 +203,9 @@ function SupportIndexPage() {
                           <div className="flex justify-end gap-4">
                             <button
                               className="cursor-pointer text-red-400 no-underline hover:text-red-300 hover:underline"
-                              onClick={() => {
-                                if (
-                                  !confirm(
-                                    `Are you sure you want to delete the ticket titled "${ticket.title}"? This action cannot be undone.`,
-                                  )
-                                ) {
-                                  return;
-                                }
-
-                                const toastId = toast.loading(
-                                  `Deleting ticket "${ticket.title}"...`,
-                                );
-
-                                try {
-                                  SupportTicketsCollection.delete(ticket.id);
-
-                                  toast.success(
-                                    "Ticket deleted successfully.",
-                                    { id: toastId },
-                                  );
-                                } catch (error) {
-                                  console.error(
-                                    "Error deleting ticket:",
-                                    error,
-                                  );
-
-                                  toast.error(
-                                    "An error occurred while deleting the ticket. Please try again.",
-                                    { id: toastId },
-                                  );
-                                }
-                              }}
+                              onClick={() =>
+                                handleDeleteClick(ticket.id, ticket.title)
+                              }
                             >
                               Delete
                               <span className="sr-only">, {ticket.title}</span>
@@ -242,6 +248,17 @@ function SupportIndexPage() {
       ) : (
         <EmptyState title="No support tickets created yet." />
       )}
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Ticket"
+        description={`Are you sure you want to delete the ticket titled "${ticketToDelete?.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }

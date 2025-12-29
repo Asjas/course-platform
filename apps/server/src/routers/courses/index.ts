@@ -25,29 +25,41 @@ import {
   getEnrollmentStatus,
   getLessonProgress,
 } from "~/routers/courses/queries.js";
+import type {
+  AllCourses,
+  AllCoursesAsAdmin,
+  CourseById,
+  CourseProgress,
+  EnrollmentStatus,
+  LessonById,
+  LessonProgress,
+  ModulesAndLessonsByCourseId,
+} from "~/routers/courses/queries.js";
 
 export const coursesRouter = router({
   // Admin query to get all courses with full details
-  getAllAsAdmin: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
-    const fastify = ctx.reply.server;
+  getAllCoursesAsAdmin: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<AllCoursesAsAdmin> => {
+      const fastify = ctx.reply.server;
 
-    const [err, courses] = await fastify.to(
-      fastify.cache.getAllCoursesAsAdmin(),
-    );
+      const [err, courses] = await fastify.to(
+        fastify.cache.getAllCoursesAsAdmin(),
+      );
 
-    if (err) {
-      fastify.log.error(err);
+      if (err) {
+        fastify.log.error(err);
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-      });
-    }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
 
-    return courses;
-  }),
+      return courses;
+    }),
 
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAll: publicProcedure.query(async ({ ctx }): Promise<AllCourses> => {
     const fastify = ctx.reply.server;
 
     const [err, courses] = await fastify.to(fastify.cache.getAllCourses());
@@ -70,7 +82,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<NonNullable<CourseById>> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
 
@@ -103,7 +115,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<ModulesAndLessonsByCourseId> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
 
@@ -129,7 +141,7 @@ export const coursesRouter = router({
         lessonId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<NonNullable<LessonById>> => {
       const { lessonId } = input;
       const fastify = ctx.reply.server;
 
@@ -162,7 +174,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<CourseProgress> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;
@@ -189,7 +201,7 @@ export const coursesRouter = router({
         lessonId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<LessonProgress> => {
       const { lessonId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;
@@ -216,7 +228,7 @@ export const coursesRouter = router({
         courseId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<EnrollmentStatus> => {
       const { courseId } = input;
       const fastify = ctx.reply.server;
       const userId = ctx.user.id;

@@ -1,6 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { BookOpen, Clock, Play, Star, TrendingUp } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Clock, Edit3, Play, Star, TrendingUp } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
@@ -11,9 +13,10 @@ import {
 import {
   type CourseWithModulesAndLessons,
   CoursesCollection,
+  ReviewsCollection,
   useCourseById,
 } from "~/lib/db.collections";
-import { trpcClient } from "~/lib/trpc.client";
+import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/courses/$courseId")({
@@ -74,6 +77,31 @@ function CourseDetailPage() {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewComment, setReviewComment] = useState("");
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch user's existing review for this course
+  const { data: existingReview, refetch: refetchReview } = useQuery({
+    ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
+    enabled: !!courseId,
+  });
+
+  // Determine if we're editing an existing review
+  const isEditing = !!existingReview;
+
+  // Populate form when opening sheet with existing review data
+  useEffect(() => {
+    if (isRatingSheetOpen && existingReview) {
+      setRating(existingReview.rating ?? 0);
+      setReviewTitle(existingReview.title);
+      setReviewComment(existingReview.comment);
+    } else if (isRatingSheetOpen && !existingReview) {
+      // Reset form for new review
+      setRating(0);
+      setReviewTitle("");
+      setReviewComment("");
+    }
+  }, [isRatingSheetOpen, existingReview]);
 
   if (isLoading) {
     return (
@@ -110,13 +138,67 @@ function CourseDetailPage() {
     (a, b) => a.order - b.order,
   )[0];
 
-  const handleRatingSubmit = () => {
-    // TODO: Implement rating submission via tRPC
-    console.log("Rating:", rating, "Comment:", reviewComment);
-    setIsRatingSheetOpen(false);
-    setRating(0);
-    setReviewComment("");
-  };
+  async function handleRatingSubmit() {
+    // Validate rating for user-submitted reviews
+    if (rating === 0 || rating === null) {
+      toast.error("Please select a rating before submitting your review.");
+      return;
+    }
+
+    const toastId = toast.loading(
+      isEditing ? "Updating your review..." : "Submitting your review...",
+    );
+    setIsSubmitting(true);
+
+    try {
+      if (isEditing && existingReview) {
+        // Update existing review
+        await trpcClient.reviews.updateUserReview.mutate({
+          reviewId: existingReview.id,
+          rating,
+          title: reviewTitle || `${rating}-star review`,
+          comment: reviewComment,
+        });
+
+        // Refetch to update local state
+        await refetchReview();
+
+        toast.success(
+          "Your review has been updated and sent for approval. We'll notify you once it's approved!",
+          { id: toastId },
+        );
+      } else {
+        // Create new review via tRPC mutation
+        await trpcClient.reviews.createReview.mutate({
+          courseId: fullCourse.id,
+          rating,
+          title: reviewTitle || `${rating}-star review`,
+          comment: reviewComment,
+        });
+
+        await ReviewsCollection.utils.refetch();
+        await refetchReview();
+
+        toast.success(
+          "Thank you for your review! It will be visible once approved.",
+          { id: toastId },
+        );
+      }
+
+      setIsRatingSheetOpen(false);
+      setRating(0);
+      setReviewTitle("");
+      setReviewComment("");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.includes("already")
+          ? "You have already reviewed this course"
+          : `Failed to ${isEditing ? "update" : "submit"} review. Please try again.`;
+      toast.error(message, { id: toastId });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">
@@ -317,12 +399,40 @@ function CourseDetailPage() {
 
                 {/* Leave Rating Button */}
                 <button
-                  className="w-full cursor-pointer rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
                   onClick={() => setIsRatingSheetOpen(true)}
                   type="button"
                 >
-                  Leave a Rating
+                  {isEditing ? (
+                    <>
+                      <Edit3 className="h-4 w-4" />
+                      Edit Your Review
+                    </>
+                  ) : (
+                    "Leave a Rating"
+                  )}
                 </button>
+
+                {/* Show existing review status */}
+                {existingReview && (
+                  <div className="mt-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Your review:{" "}
+                      <span className="font-medium">
+                        {existingReview.rating} ★
+                      </span>
+                      {existingReview.approved ? (
+                        <span className="ml-2 text-green-600 dark:text-green-400">
+                          (Approved)
+                        </span>
+                      ) : (
+                        <span className="ml-2 text-yellow-600 dark:text-yellow-400">
+                          (Pending approval)
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -336,10 +446,13 @@ function CourseDetailPage() {
       >
         <SheetContent side="right">
           <SheetHeader>
-            <SheetTitle>Rate this Course</SheetTitle>
+            <SheetTitle>
+              {isEditing ? "Edit Your Review" : "Rate this Course"}
+            </SheetTitle>
             <SheetDescription>
-              Share your experience with this course. Your review may be
-              published on learnfastify.com.
+              {isEditing
+                ? "Update your review. It will be sent for approval again before being published."
+                : "Share your experience with this course. Your review may be published on learnfastify.com."}
             </SheetDescription>
           </SheetHeader>
 
@@ -384,6 +497,25 @@ function CourseDetailPage() {
               )}
             </div>
 
+            {/* Title */}
+            <div>
+              <label
+                className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                htmlFor="review-title"
+              >
+                Title (Optional)
+              </label>
+              <input
+                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-hidden dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500"
+                id="review-title"
+                type="text"
+                maxLength={100}
+                value={reviewTitle}
+                onChange={(e) => setReviewTitle(e.target.value)}
+                placeholder="Give your review a title..."
+              />
+            </div>
+
             {/* Comment */}
             <div>
               <label
@@ -423,10 +555,16 @@ function CourseDetailPage() {
             <button
               className="w-full cursor-pointer rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               onClick={handleRatingSubmit}
-              disabled={rating === 0}
+              disabled={rating === 0 || isSubmitting}
               type="button"
             >
-              Submit Rating
+              {isSubmitting
+                ? isEditing
+                  ? "Updating..."
+                  : "Submitting..."
+                : isEditing
+                  ? "Update Review"
+                  : "Submit Rating"}
             </button>
           </div>
         </SheetContent>

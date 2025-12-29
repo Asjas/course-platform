@@ -13,6 +13,20 @@ import { supportTicket } from "~/db/schema/support-tickets.js";
 import { teamLicense, teamLicenseInvite } from "~/db/schema/teamLicense.js";
 import { user } from "~/db/schema/user.js";
 
+// Type exports for stats queries
+export type CourseStats = Awaited<ReturnType<typeof getCourseStats>>;
+export type PlatformStats = Awaited<ReturnType<typeof getPlatformStats>>;
+export type RevenueStats = Awaited<ReturnType<typeof getRevenueStats>>;
+export type SupportStats = Awaited<ReturnType<typeof getSupportStats>>;
+export type UserStats = Awaited<ReturnType<typeof getUserStats>>;
+export type CouponStats = Awaited<ReturnType<typeof getCouponStats>>;
+export type TeamLicenseStats = Awaited<ReturnType<typeof getTeamLicenseStats>>;
+export type ProgressStats = Awaited<ReturnType<typeof getProgressStats>>;
+export type WishlistStats = Awaited<ReturnType<typeof getWishlistStats>>;
+export type AnnouncementStats = Awaited<
+  ReturnType<typeof getAnnouncementStats>
+>;
+
 /**
  * Get basic course statistics for admin dashboard
  */

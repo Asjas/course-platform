@@ -68,6 +68,7 @@ Instructions for building high-quality React.js applications with modern pattern
 - Use double quotes (`"`) for string literals.
 - Place each prop on a new line when there are more than two props.
 - Include error and pending boundaries for all routes.
+- **NEVER use `window.confirm()` or `confirm()` for user confirmations** - use the `ConfirmDialog` component from `~/components/confirm-dialog` instead for accessible, keyboard-navigable dialogs.
 - Accessibility:
   - Use semantic HTML5 elements over generic `div` elements.
   - Follow WCAG 2.2 accessibility guidelines.
@@ -81,6 +82,229 @@ Instructions for building high-quality React.js applications with modern pattern
 - Dynamic params: `$param.tsx` (e.g., `verify-email.$token.tsx`).
 - Route groups: `(group)/` for layout grouping.
 - Protected routes: `_authenticated/` layout prefix.
+
+## Data Fetching Patterns
+
+### tRPC with TanStack Query
+
+Use `trpc.<router>.<method>.queryOptions()` with `useQuery` for queries:
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import { trpc, trpcClient } from "~/lib/trpc.client";
+
+// Fetching data with useQuery
+const { data, isLoading, refetch } = useQuery({
+  ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
+  enabled: !!courseId, // Conditional fetching
+});
+```
+
+Use `trpcClient` directly for mutations (not `useMutation`):
+
+```tsx
+// Direct mutation call
+await trpcClient.reviews.updateUserReview.mutate({
+  reviewId: existingReview.id,
+  rating,
+  title,
+  comment,
+});
+```
+
+### Collections with TanStack Query DB
+
+Use collections from `~/lib/db.collections` for reactive data:
+
+```tsx
+import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+
+// Preload in route loader
+export const Route = createFileRoute("/_authenticated/courses/$courseId")({
+  loader: async ({ params }) => {
+    await CoursesCollection.preload();
+  },
+});
+
+// Use reactive query in component
+const { data: course, isLoading } = useCourseById({ courseId });
+```
+
+Insert with optimistic updates:
+
+```tsx
+const tx = ReviewsCollection.insert(newReview);
+await tx.isPersisted.promise;
+await ReviewsCollection.utils.refetch();
+```
+
+## Form Patterns
+
+### Create/Edit Mode Pattern
+
+For forms that handle both create and update operations:
+
+```tsx
+// Fetch existing data
+const { data: existingItem, refetch } = useQuery({
+  ...trpc.items.getById.queryOptions({ id }),
+  enabled: !!id,
+});
+
+// Determine mode
+const isEditing = !!existingItem;
+
+// Pre-populate form when opening
+useEffect(() => {
+  if (isSheetOpen && existingItem) {
+    setTitle(existingItem.title);
+    setContent(existingItem.content);
+  } else if (isSheetOpen && !existingItem) {
+    // Reset for new item
+    setTitle("");
+    setContent("");
+  }
+}, [isSheetOpen, existingItem]);
+
+// Handle submit with mode-aware logic
+async function handleSubmit() {
+  setIsSubmitting(true);
+  const toastId = toast.loading(isEditing ? "Updating..." : "Creating...");
+
+  try {
+    if (isEditing && existingItem) {
+      await trpcClient.items.update.mutate({ id: existingItem.id, title, content });
+      await refetch();
+      toast.success("Updated successfully!", { id: toastId });
+    } else {
+      // Create new item
+      const tx = ItemsCollection.insert({ id: ulid(), title, content });
+      await tx.isPersisted.promise;
+      toast.success("Created successfully!", { id: toastId });
+    }
+    setIsSheetOpen(false);
+  } catch (error) {
+    toast.error(`Failed to ${isEditing ? "update" : "create"}`, { id: toastId });
+  } finally {
+    setIsSubmitting(false);
+  }
+}
+```
+
+### Toast Notifications
+
+Use `sonner` for user feedback with loading states:
+
+```tsx
+import { toast } from "sonner";
+
+const toastId = toast.loading("Processing...");
+try {
+  await doSomething();
+  toast.success("Done!", { id: toastId });
+} catch (error) {
+  toast.error("Failed", { id: toastId });
+}
+```
+
+## Sheet/Modal Pattern
+
+Use Sheet components for side panel forms:
+
+```tsx
+const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+<Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>{isEditing ? "Edit Item" : "Create Item"}</SheetTitle>
+      <SheetDescription>
+        {isEditing ? "Update your item." : "Add a new item."}
+      </SheetDescription>
+    </SheetHeader>
+    {/* Form content */}
+  </SheetContent>
+</Sheet>
+```
+
+## Confirmation Dialog Pattern
+
+**NEVER use `window.confirm()` or `confirm()`** - always use the accessible `ConfirmDialog` component:
+
+```tsx
+import { ConfirmDialog } from "~/components/confirm-dialog";
+
+function MyComponent() {
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{id: string; name: string} | null>(null);
+
+  function handleDeleteClick(itemId: string, itemName: string) {
+    setItemToDelete({ id: itemId, name: itemName });
+    setDeleteConfirmOpen(true);
+  }
+
+  async function handleConfirmDelete() {
+    if (!itemToDelete) return;
+    // Perform deletion
+    await deleteItem(itemToDelete.id);
+    setItemToDelete(null);
+  }
+
+  return (
+    <>
+      <button onClick={() => handleDeleteClick(item.id, item.name)}>
+        Delete
+      </button>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        onConfirm={handleConfirmDelete}
+        title="Delete Item"
+        description={`Are you sure you want to delete ${itemToDelete?.name}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"  // Use "destructive" for dangerous actions
+      />
+    </>
+  );
+}
+```
+
+The `ConfirmDialog` component provides:
+- Keyboard navigation support (Tab, Enter, Escape)
+- Proper ARIA attributes for screen readers
+- Consistent styling with the rest of the application
+- Two variants: "default" (green) and "destructive" (red)
+
+## Conditional UI Based on State
+
+Show different UI based on data state:
+
+```tsx
+{/* Button text changes based on mode */}
+<button onClick={() => setIsSheetOpen(true)}>
+  {isEditing ? (
+    <>
+      <Edit3 className="h-4 w-4" />
+      Edit Item
+    </>
+  ) : (
+    "Add Item"
+  )}
+</button>
+
+{/* Show status badge when item exists */}
+{existingItem && (
+  <p className="text-xs text-gray-500">
+    Status:{" "}
+    {existingItem.approved ? (
+      <span className="text-green-600">(Approved)</span>
+    ) : (
+      <span className="text-yellow-600">(Pending)</span>
+    )}
+  </p>
+)}
 
 ## Example
 
