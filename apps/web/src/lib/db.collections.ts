@@ -4,6 +4,7 @@ import type {
   CourseById,
   getAllAsAdminCourses,
 } from "@apps/server/src/routers/courses/queries";
+import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
@@ -15,6 +16,7 @@ import { trpc, trpcClient } from "~/lib/trpc.client";
 
 type SupportTicket = AllSupportTickets[number];
 type Coupon = CouponsReturnType[number];
+type Review = AllReviews[number];
 
 // Announcement types
 export interface Announcement {
@@ -350,5 +352,67 @@ export function useCourseById({ courseId }: { courseId: string }) {
         .findOne();
     },
     [courseId],
+  );
+}
+
+// Reviews Collection
+export const ReviewsCollection = createCollection(
+  queryCollectionOptions<Review>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.reviews.getAllReviews.queryKey(),
+    queryFn: () => trpcClient.reviews.getAllReviews.query(),
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.reviews.updateReview.mutate({
+          reviewId: modified.id,
+          title: modified.title,
+          comment: modified.comment,
+          approved: modified.approved,
+          reviewedAt: modified.reviewedAt
+            ? new Date(modified.reviewedAt)
+            : null,
+        });
+      } catch (error) {
+        console.error("Error updating review: ", error);
+        toast.error(
+          "An error occurred while updating the review. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.reviews.deleteReview.mutate({
+          reviewId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting review: ", error);
+        toast.error(
+          "An error occurred while deleting the review. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
+export function useReviews() {
+  return useLiveQuery(ReviewsCollection);
+}
+
+export function useReviewById({ reviewId }: { reviewId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ review: ReviewsCollection })
+        .where(({ review }) => eq(review.id, reviewId))
+        .findOne();
+    },
+    [reviewId],
   );
 }
