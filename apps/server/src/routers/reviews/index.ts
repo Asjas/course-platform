@@ -1,14 +1,56 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import { isAdmin, publicProcedure, router } from "~/router.js";
+import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
 import {
   approveReview,
+  createReview,
   deleteReview,
   updateReview,
 } from "~/routers/reviews/mutations.js";
 import { getAllReviews, getReviewById } from "~/routers/reviews/queries.js";
 
 export const reviewsRouter = router({
+  // Create a new review (authenticated users only)
+  createReview: publicProcedure
+    .input(
+      z.object({
+        courseId: z.string(),
+        rating: z.number().min(1).max(5),
+        title: z.string().min(1).max(100),
+        comment: z.string().max(2000),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      const { courseId, rating, title, comment } = input;
+      const userId = ctx.user.id;
+      const fastify = ctx.reply.server;
+
+      const [err, review] = await fastify.to(
+        createReview({ userId, courseId, rating, title, comment }),
+      );
+
+      if (err) {
+        fastify.log.error(err);
+
+        // Check for unique constraint violation (user already reviewed this course)
+        const errorCode = (err as { code?: string }).code;
+        if (err.message?.includes("unique") || errorCode === "23505") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "You have already reviewed this course",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create review",
+        });
+      }
+
+      return review;
+    }),
+
   // Get all reviews (admin only)
   getAllReviews: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
     const fastify = ctx.reply.server;

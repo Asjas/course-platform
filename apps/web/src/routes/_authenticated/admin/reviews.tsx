@@ -153,7 +153,7 @@ function AdminReviewsPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
-                            onClick={() => {
+                            onClick={async () => {
                               if (
                                 !confirm(
                                   `Are you sure you want to delete this review by ${review.user?.name || "Unknown User"}? This action cannot be undone.`,
@@ -166,7 +166,7 @@ function AdminReviewsPage() {
                                 toast.loading("Deleting review...");
 
                               try {
-                                ReviewsCollection.delete(review.id);
+                                await ReviewsCollection.delete(review.id);
 
                                 toast.success("Review deleted successfully.", {
                                   id: toastId,

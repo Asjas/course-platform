@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Clock, Play, Star, TrendingUp } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { ulid } from "ulid";
 import {
   Sheet,
   SheetContent,
@@ -11,6 +13,7 @@ import {
 import {
   type CourseWithModulesAndLessons,
   CoursesCollection,
+  ReviewsCollection,
   useCourseById,
 } from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
@@ -110,13 +113,36 @@ function CourseDetailPage() {
     (a, b) => a.order - b.order,
   )[0];
 
-  const handleRatingSubmit = () => {
-    // TODO: Implement rating submission via tRPC
-    console.log("Rating:", rating, "Comment:", reviewComment);
-    setIsRatingSheetOpen(false);
-    setRating(0);
-    setReviewComment("");
-  };
+  async function handleRatingSubmit() {
+    const toastId = toast.loading("Submitting your review...");
+
+    try {
+      const id = `review:${ulid()}`;
+      const newReview = {
+        id,
+        courseId: fullCourse.id,
+        rating,
+        title: `${rating}-star review`,
+        comment: reviewComment,
+      };
+
+      // @ts-expect-error must use any to satisfy the type system for partial review data
+      const tx = ReviewsCollection.insert(newReview);
+      await tx.isPersisted.promise;
+      await ReviewsCollection.utils.refetch();
+
+      toast.success("Thank you for your review!", { id: toastId });
+      setIsRatingSheetOpen(false);
+      setRating(0);
+      setReviewComment("");
+    } catch (error) {
+      const message =
+        error instanceof Error && error.message.includes("already")
+          ? "You have already reviewed this course"
+          : "Failed to submit review. Please try again.";
+      toast.error(message, { id: toastId });
+    }
+  }
 
   return (
     <div className="px-4 py-8 sm:px-6 lg:px-8">

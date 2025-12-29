@@ -362,6 +362,21 @@ export const ReviewsCollection = createCollection(
     getKey: (item) => item.id,
     queryKey: trpc.reviews.getAllReviews.queryKey(),
     queryFn: () => trpcClient.reviews.getAllReviews.query(),
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.reviews.createReview.mutate({
+          courseId: modified.courseId,
+          rating: modified.rating,
+          title: modified.title,
+          comment: modified.comment,
+        });
+      } catch (error) {
+        console.error("Error inserting review: ", error);
+        throw error;
+      }
+    },
     onUpdate: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
