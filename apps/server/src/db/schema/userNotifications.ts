@@ -13,6 +13,7 @@ export const userNotificationType = mySchema.enum("user_notification_type", [
   "support_ticket_comment",
   "support_ticket_status_change",
   "course_enrollment",
+  "review_approved",
   "general",
 ]);
 

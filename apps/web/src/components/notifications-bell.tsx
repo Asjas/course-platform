@@ -7,6 +7,7 @@ import {
   Info,
   type LucideIcon,
   MessageSquare,
+  Star,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -41,6 +42,7 @@ const userNotificationIcons: Record<NotificationType, LucideIcon> = {
   support_ticket_comment: MessageSquare,
   support_ticket_status_change: AlertCircle,
   course_enrollment: Bell,
+  review_approved: Star,
   general: Info,
 };
 
@@ -66,6 +68,8 @@ const userNotificationColors: Record<NotificationType, string> = {
     "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
   course_enrollment:
     "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  review_approved:
+    "bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800",
   general:
     "bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-700",
 };
@@ -83,6 +87,7 @@ const userNotificationIconColors: Record<NotificationType, string> = {
   support_ticket_comment: "text-orange-600 dark:text-orange-400",
   support_ticket_status_change: "text-blue-600 dark:text-blue-400",
   course_enrollment: "text-green-600 dark:text-green-400",
+  review_approved: "text-yellow-600 dark:text-yellow-400",
   general: "text-gray-600 dark:text-gray-400",
 };
 

@@ -1,10 +1,13 @@
 import { TRPCError } from "@trpc/server";
+import { ulid } from "ulid";
 import * as z from "zod";
 import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
+import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
   approveReview,
   createReview,
   deleteReview,
+  getReviewWithCourse,
   updateReview,
 } from "~/routers/reviews/mutations.js";
 import { getAllReviews, getReviewById } from "~/routers/reviews/queries.js";
@@ -146,6 +149,19 @@ export const reviewsRouter = router({
       const { reviewId } = input;
       const fastify = ctx.reply.server;
 
+      // First get the review with course info for the notification
+      const [fetchErr, reviewWithCourse] = await fastify.to(
+        getReviewWithCourse({ reviewId }),
+      );
+
+      if (fetchErr || !reviewWithCourse) {
+        fastify.log.error(fetchErr || "Review not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
       const [err, review] = await fastify.to(approveReview({ reviewId }));
 
       if (err) {
@@ -155,6 +171,28 @@ export const reviewsRouter = router({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
         });
+      }
+
+      // Send notification to the user
+      const [notificationErr] = await fastify.to(
+        insertUserNotification({
+          newNotification: {
+            id: ulid(),
+            userId: reviewWithCourse.userId,
+            type: "review_approved",
+            title: "Review Approved",
+            message: `Your review for "${reviewWithCourse.course.name}" has been approved and is now visible to others.`,
+            link: `/courses/${reviewWithCourse.course.slug}`,
+          },
+        }),
+      );
+
+      if (notificationErr) {
+        // Log but don't fail the request - the review was approved successfully
+        fastify.log.error(
+          notificationErr,
+          "Failed to send review approval notification",
+        );
       }
 
       return review;

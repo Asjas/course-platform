@@ -78,3 +78,20 @@ export async function approveReview({ reviewId }: { reviewId: string }) {
 
   return review;
 }
+
+export async function getReviewWithCourse({ reviewId }: { reviewId: string }) {
+  const review = await db.query.courseReview.findFirst({
+    where: eq(courseReview.id, reviewId),
+    with: {
+      course: {
+        columns: {
+          id: true,
+          name: true,
+          slug: true,
+        },
+      },
+    },
+  });
+
+  return review;
+}
