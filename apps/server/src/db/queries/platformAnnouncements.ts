@@ -21,20 +21,64 @@ export type ReadAnnouncementsForUser = Awaited<
   ReturnType<typeof getReadAnnouncementsForUser>
 >;
 
+// Module-scoped prepared statements
+const preparedGetAllAnnouncements = db.query.platformAnnouncement
+  .findMany({
+    with: {
+      author: true,
+      reads: true,
+    },
+  })
+  .prepare("getAllAnnouncements");
+
+const preparedGetAnnouncementById = db.query.platformAnnouncement
+  .findFirst({
+    where: (announcement) => eq(announcement.id, sql.placeholder("id")),
+    with: {
+      author: true,
+      reads: true,
+    },
+  })
+  .prepare("getAnnouncementById");
+
+const preparedGetUnreadAnnouncementsForUser = db
+  .select()
+  .from(platformAnnouncement)
+  .leftJoin(
+    platformAnnouncementRead,
+    and(
+      eq(platformAnnouncementRead.announcementId, platformAnnouncement.id),
+      eq(platformAnnouncementRead.userId, sql.placeholder("userId")),
+    ),
+  )
+  .where(
+    and(
+      isNotNull(platformAnnouncement.publishedAt),
+      isNull(platformAnnouncementRead.id),
+    ),
+  )
+  .orderBy(platformAnnouncement.publishedAt)
+  .prepare("getUnreadAnnouncementsForUser");
+
+const preparedGetReadAnnouncementsForUser = db
+  .select()
+  .from(platformAnnouncement)
+  .innerJoin(
+    platformAnnouncementRead,
+    and(
+      eq(platformAnnouncementRead.announcementId, platformAnnouncement.id),
+      eq(platformAnnouncementRead.userId, sql.placeholder("userId")),
+    ),
+  )
+  .where(isNotNull(platformAnnouncement.publishedAt))
+  .orderBy(platformAnnouncementRead.readAt)
+  .prepare("getReadAnnouncementsForUser");
+
 // All platform announcements are accessible by admins only
 // This query is used in the admin dashboard
 export async function getAllAnnouncements() {
-  const preparedStatement = db.query.platformAnnouncement
-    .findMany({
-      with: {
-        author: true,
-        reads: true,
-      },
-    })
-    .prepare("getAllAnnouncements");
-
   try {
-    const announcements = await preparedStatement.execute();
+    const announcements = await preparedGetAllAnnouncements.execute();
 
     return { announcements, count: announcements.length };
   } catch (err) {
@@ -46,18 +90,8 @@ export async function getAllAnnouncements() {
 // Individual platform announcements are accessible by admins only
 // This query is used in the admin dashboard
 export async function getAnnouncementById(id: string) {
-  const preparedStatement = db.query.platformAnnouncement
-    .findFirst({
-      where: (announcement) => eq(announcement.id, sql.placeholder("id")),
-      with: {
-        author: true,
-        reads: true,
-      },
-    })
-    .prepare("getAnnouncementById");
-
   try {
-    const announcement = await preparedStatement.execute({ id });
+    const announcement = await preparedGetAnnouncementById.execute({ id });
 
     return announcement;
   } catch (err) {
@@ -86,27 +120,10 @@ export async function getPublishedAnnouncements() {
 
 // Get unread published announcements for a specific user
 export async function getUnreadAnnouncementsForUser(userId: string) {
-  const preparedStatement = db
-    .select()
-    .from(platformAnnouncement)
-    .leftJoin(
-      platformAnnouncementRead,
-      and(
-        eq(platformAnnouncementRead.announcementId, platformAnnouncement.id),
-        eq(platformAnnouncementRead.userId, sql.placeholder("userId")),
-      ),
-    )
-    .where(
-      and(
-        isNotNull(platformAnnouncement.publishedAt),
-        isNull(platformAnnouncementRead.id),
-      ),
-    )
-    .orderBy(platformAnnouncement.publishedAt)
-    .prepare("getUnreadAnnouncementsForUser");
-
   try {
-    const result = await preparedStatement.execute({ userId });
+    const result = await preparedGetUnreadAnnouncementsForUser.execute({
+      userId,
+    });
     return result.map((row) => row.platform_announcement);
   } catch (err) {
     log.error(err, `Failed to get unread announcements for user ${userId}`);
@@ -116,22 +133,10 @@ export async function getUnreadAnnouncementsForUser(userId: string) {
 
 // Get read announcements for a specific user
 export async function getReadAnnouncementsForUser(userId: string) {
-  const preparedStatement = db
-    .select()
-    .from(platformAnnouncement)
-    .innerJoin(
-      platformAnnouncementRead,
-      and(
-        eq(platformAnnouncementRead.announcementId, platformAnnouncement.id),
-        eq(platformAnnouncementRead.userId, sql.placeholder("userId")),
-      ),
-    )
-    .where(isNotNull(platformAnnouncement.publishedAt))
-    .orderBy(platformAnnouncementRead.readAt)
-    .prepare("getReadAnnouncementsForUser");
-
   try {
-    const result = await preparedStatement.execute({ userId });
+    const result = await preparedGetReadAnnouncementsForUser.execute({
+      userId,
+    });
     return result.map((row) => ({
       ...row.platform_announcement,
       readAt: row.platform_announcement_read.readAt,

@@ -10,11 +10,42 @@ export type NewUserNotification = typeof userNotification.$inferInsert;
 
 // Notification types
 export const userNotificationType = mySchema.enum("user_notification_type", [
+  // Existing types
   "support_ticket_comment",
   "support_ticket_status_change",
   "course_enrollment",
   "review_approved",
   "general",
+  // Payment-related notifications
+  "payment_completed",
+  "payment_refunded",
+  "payment_failed",
+  // Coupon-related notifications
+  "coupon_redeemed",
+  "coupon_expired",
+  // Team license notifications (user perspective)
+  "team_license_purchased",
+  "team_license_invite_received",
+  "team_license_invite_accepted",
+  "team_license_invite_revoked",
+  "team_license_seat_claimed",
+  // Course-related notifications
+  "course_published",
+  "certificate_issued",
+  // Support ticket updates
+  "support_ticket_assigned",
+  "support_ticket_resolved",
+  // Admin notifications
+  "admin_new_review",
+  "admin_new_support_ticket",
+  "admin_support_ticket_comment",
+  "admin_new_purchase",
+  "admin_refund_requested",
+  "admin_coupon_usage_threshold",
+  "admin_team_license_created",
+  "admin_course_review_milestone",
+  "admin_enrollment_milestone",
+  "admin_new_user_registration",
 ]);
 
 // User notifications table

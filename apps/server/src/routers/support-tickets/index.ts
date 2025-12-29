@@ -8,6 +8,7 @@ import type {
   SupportTicket,
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
+import { notifyAdminNewSupportTicket } from "~/lib/notifications.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
@@ -141,6 +142,21 @@ export const supportTicketsRouter = router({
       ctx.request.log.debug(
         `Created new support ticket with ID ${newTicket.id}`,
       );
+
+      // Send notification to admins after ticket is created
+      try {
+        await notifyAdminNewSupportTicket({
+          ticketId: newTicket.id,
+          ticketTitle: newTicket.title,
+          submittedByName: ctx.user.name,
+        });
+      } catch (notificationErr) {
+        // Log but don't fail the request
+        ctx.request.log.error(
+          notificationErr,
+          "Failed to send admin notification for new support ticket",
+        );
+      }
 
       return newTicket;
     }),

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import { notifyAdminNewReview } from "~/lib/notifications.js";
 import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
@@ -58,6 +59,27 @@ export const reviewsRouter = router({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create review",
         });
+      }
+
+      // Send notification to admins after review is created
+      try {
+        const [reviewWithCourseErr, reviewWithCourse] = await fastify.to(
+          getReviewWithCourse({ reviewId: review.id }),
+        );
+
+        if (!reviewWithCourseErr && reviewWithCourse) {
+          await notifyAdminNewReview({
+            courseName: reviewWithCourse.course.name,
+            reviewerName: ctx.user.name,
+            reviewId: review.id,
+          });
+        }
+      } catch (notificationErr) {
+        // Log but don't fail the request - the review was created successfully
+        fastify.log.error(
+          notificationErr,
+          "Failed to send admin notification for new review",
+        );
       }
 
       return review;

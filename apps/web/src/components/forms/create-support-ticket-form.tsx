@@ -68,49 +68,9 @@ export default function NewSupportTicketForm() {
         children={([isDirty]) => <BlockerComponent formIsDirty={isDirty} />}
       />
 
-      <div className="flex">
-        <div className="flex w-full flex-col justify-between">
-          <form.Subscribe
-            selector={(state) => [state.isDirty, state.isSubmitting]}
-            children={([isDirty, isSubmitting]) => (
-              <div className="flex gap-2">
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
-                    isDirty
-                      ? "hover:bg-green-700 active:bg-green-800"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="submit"
-                  disabled={!isDirty}
-                >
-                  {isSubmitting ? "Saving..." : "Save"}
-                </button>
-                <button
-                  className={cn(
-                    "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
-                    isDirty
-                      ? "hover:bg-gray-200 dark:hover:bg-gray-700"
-                      : "cursor-not-allowed opacity-50",
-                  )}
-                  type="reset"
-                  disabled={!isDirty}
-                  onClick={(event) => {
-                    event.preventDefault();
-                    form.reset();
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          />
-        </div>
-      </div>
-
       <div className="flex flex-col justify-between gap-6">
         <div className="w-full lg:pb-12">
-          <div className="mt-10 flex flex-col gap-x-6 gap-y-8">
+          <div className="flex flex-col gap-x-6 gap-y-8">
             {/* Title Field */}
             <form.Field
               name="title"
@@ -198,6 +158,42 @@ export default function NewSupportTicketForm() {
           </div>
         </div>
       </div>
+
+      <form.Subscribe
+        selector={(state) => [state.isDirty, state.isSubmitting]}
+        children={([isDirty, isSubmitting]) => (
+          <div className="flex justify-end gap-2">
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600",
+                isDirty
+                  ? "hover:bg-green-700 active:bg-green-800"
+                  : "cursor-not-allowed opacity-50",
+              )}
+              type="submit"
+              disabled={!isDirty}
+            >
+              {isSubmitting ? "Saving..." : "Save"}
+            </button>
+            <button
+              className={cn(
+                "h-10 cursor-pointer rounded-md px-3 py-2 text-sm/6 font-semibold text-gray-900 dark:text-white",
+                isDirty
+                  ? "hover:bg-gray-200 dark:hover:bg-gray-700"
+                  : "cursor-not-allowed opacity-50",
+              )}
+              type="reset"
+              disabled={!isDirty}
+              onClick={(event) => {
+                event.preventDefault();
+                form.reset();
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        )}
+      />
     </form>
   );
 }

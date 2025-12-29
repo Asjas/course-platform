@@ -4,15 +4,30 @@ import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:queries:invoice" });
 
+// Module-scoped prepared statements
+const preparedGetAllInvoices = db.query.invoice
+  .findMany({ with: { payment: true } })
+  .prepare("getAllInvoices");
+
+const preparedGetInvoiceById = db.query.invoice
+  .findFirst({
+    where: (invoice) => eq(invoice.id, sql.placeholder("id")),
+    with: { payment: true },
+  })
+  .prepare("getInvoiceById");
+
+const preparedGetInvoiceByNumber = db.query.invoice
+  .findFirst({
+    where: (invoice) => eq(invoice.invoiceNumber, sql.placeholder("number")),
+    with: { payment: true },
+  })
+  .prepare("getInvoiceByNumber");
+
 // All invoices are admin only
 // This query is used in the admin dashboard
 export async function getAllInvoices() {
-  const preparedStatement = db.query.invoice
-    .findMany({ with: { payment: true } })
-    .prepare("getAllInvoices");
-
   try {
-    const invoices = await preparedStatement.execute();
+    const invoices = await preparedGetAllInvoices.execute();
 
     return { invoices, count: invoices.length };
   } catch (err) {
@@ -23,15 +38,8 @@ export async function getAllInvoices() {
 
 // Individual invoices are accessible by admin and the user themselves
 export async function getInvoiceById(id: string) {
-  const preparedStatement = db.query.invoice
-    .findFirst({
-      where: (invoice) => eq(invoice.id, sql.placeholder("id")),
-      with: { payment: true },
-    })
-    .prepare("getInvoiceById");
-
   try {
-    const invoice = await preparedStatement.execute({ id });
+    const invoice = await preparedGetInvoiceById.execute({ id });
 
     return invoice ?? null;
   } catch (err) {
@@ -42,15 +50,8 @@ export async function getInvoiceById(id: string) {
 
 // Individual invoices are accessible by admin and the user themselves
 export async function getInvoiceByNumber(number: string) {
-  const preparedStatement = db.query.invoice
-    .findFirst({
-      where: (invoice) => eq(invoice.invoiceNumber, sql.placeholder("number")),
-      with: { payment: true },
-    })
-    .prepare("getInvoiceByNumber");
-
   try {
-    const invoice = await preparedStatement.execute({ number });
+    const invoice = await preparedGetInvoiceByNumber.execute({ number });
 
     return invoice ?? null;
   } catch (err) {
