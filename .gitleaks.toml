@@ -1,0 +1,96 @@
+# Gitleaks configuration for the course platform
+# This configuration helps detect accidentally committed secrets
+
+[extend]
+# Use the default gitleaks rules as a base
+useDefault = true
+
+[[rules]]
+id = "google-api-key"
+description = "Detected a Google API Key"
+regex = '''AIza[0-9A-Za-z\\-_]{35}'''
+keywords = [
+    "AIza",
+]
+
+[[rules]]
+id = "google-oauth-client-secret"
+description = "Detected a Google OAuth Client Secret"
+regex = '''GOCSPX-[0-9A-Za-z_-]{28}'''
+keywords = [
+    "GOCSPX-",
+]
+
+[[rules]]
+id = "polar-access-token"
+description = "Detected a Polar Access Token"
+regex = '''polar_[a-zA-Z0-9_]{32,}'''
+keywords = [
+    "polar_",
+]
+
+[[rules]]
+id = "better-auth-secret"
+description = "Detected a Better Auth Secret (likely dev/test)"
+regex = '''(?i)(better[-_]?auth[-_]?secret|pepper[-_]?secret)[\s]*[=:][\s]*['\"]?([a-zA-Z0-9+/]{32,})['\"]?'''
+keywords = [
+    "better_auth_secret",
+    "better-auth-secret",
+    "pepper_secret",
+    "pepper-secret",
+]
+
+[[rules]]
+id = "aws-access-key"
+description = "Detected an AWS Access Key"
+regex = '''AKIA[0-9A-Z]{16}'''
+keywords = [
+    "AKIA",
+]
+
+[[rules]]
+id = "generic-api-key"
+description = "Detected a generic API key"
+regex = '''(?i)(api[_-]?key|apikey|access[_-]?token|secret[_-]?key)[\s]*[=:][\s]*['\"]?([a-zA-Z0-9_\-]{20,})['\"]?'''
+keywords = [
+    "api_key",
+    "api-key",
+    "apikey",
+    "access_token",
+    "access-token",
+    "secret_key",
+    "secret-key",
+]
+
+# Allowlist for false positives
+[allowlist]
+description = "Global allowlist for false positives"
+paths = [
+    '''\.env\.sample$''',
+    '''\.env\.example$''',
+    '''^docs/''',
+    '''^\.github/instructions/''',
+    '''gitleaks\.toml$''',
+    '''package-lock\.json$''',
+    '''pnpm-lock\.yaml$''',
+]
+
+# Allowlist specific patterns that are not actual secrets
+regexes = [
+    '''your-api-key-here''',
+    '''your-secret-key-here''',
+    '''your-.*-token''',
+    '''<your-.*>''',
+    '''example\.com''',
+    '''AIzaSy[A-Za-z0-9_-]{35}.*example''',  # Example keys in docs
+    '''test[_-]?api[_-]?key''',  # Test placeholders
+]
+
+# Stopwords - if these are in the line, don't flag it
+stopwords = [
+    "example",
+    "placeholder",
+    "your-key-here",
+    "xxx",
+    "redacted",
+]
