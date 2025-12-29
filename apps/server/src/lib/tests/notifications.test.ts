@@ -40,13 +40,18 @@ describe.sequential("Notification Helpers Integration Tests", () => {
 
   describe("Payment Notifications", () => {
     it("should create a payment_completed notification", async () => {
-      await notificationHelpers.notifyPaymentCompleted({
+      const result = await notificationHelpers.notifyPaymentCompleted({
         userId: testUserId,
         courseName: "Test Course",
         courseSlug: "test-course",
         amount: 1999,
         currency: "USD",
       });
+
+      // Verify the insert returned a result
+      expect(result).toBeDefined();
+      expect(result.id).toBeDefined();
+      testNotificationIds.push(result.id);
 
       const notifications = await db
         .select()
@@ -55,7 +60,6 @@ describe.sequential("Notification Helpers Integration Tests", () => {
 
       expect(notifications.length).toBeGreaterThan(0);
       const notification = notifications[0];
-      testNotificationIds.push(notification.id);
 
       expect(notification.type).toBe("payment_completed");
       expect(notification.title).toBe("Payment Successful");
@@ -81,11 +85,19 @@ describe.sequential("Notification Helpers Integration Tests", () => {
         return;
       }
 
-      await notificationHelpers.notifyAdminNewReview({
+      const results = await notificationHelpers.notifyAdminNewReview({
         courseName: "Integration Test Course",
         reviewerName: "Test Reviewer",
         reviewId: "test:review:123",
       });
+
+      // Verify the inserts returned results
+      expect(results).toBeDefined();
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBeGreaterThanOrEqual(admins.length);
+
+      // Add notification IDs to cleanup list
+      testNotificationIds.push(...results.map((r) => r.id));
 
       // Verify notifications were created for admin users
       const adminIds = admins.map((a) => a.id);
@@ -96,9 +108,6 @@ describe.sequential("Notification Helpers Integration Tests", () => {
 
       // Should have at least one notification per admin
       expect(notifications.length).toBeGreaterThanOrEqual(admins.length);
-
-      // Add notification IDs to cleanup list
-      testNotificationIds.push(...notifications.map((n) => n.id));
 
       const adminNotif = notifications.find(
         (n) => n.type === "admin_new_review",
