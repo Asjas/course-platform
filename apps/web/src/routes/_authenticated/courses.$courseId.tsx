@@ -1,12 +1,5 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
-import {
-  BookOpen,
-  ChevronRight,
-  Clock,
-  Play,
-  Star,
-  TrendingUp,
-} from "lucide-react";
+import { BookOpen, Clock, Play, Star, TrendingUp } from "lucide-react";
 import { useState } from "react";
 import {
   Sheet,
@@ -106,10 +99,16 @@ function CourseDetailPage() {
   const moduleCount = modules.length;
   const lessonCount = fullCourse.totalLessons || 0;
 
-  // Mock data for now - these would come from the backend
-  const courseProgress = 45; // percentage
-  const currentRating = 4.5; // out of 5
-  const ratingCount = 127;
+  // TODO: Fetch real progress and reviews from the backend
+  const courseProgress = 0;
+  const currentRating = 0;
+  const ratingCount = 0;
+
+  // Get first lesson for "Continue Course" link
+  const firstModule = modules.sort((a, b) => a.order - b.order)[0];
+  const firstLesson = firstModule?.lessons?.sort(
+    (a, b) => a.order - b.order,
+  )[0];
 
   const handleRatingSubmit = () => {
     // TODO: Implement rating submission via tRPC
@@ -120,34 +119,39 @@ function CourseDetailPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <Link
-        className="mb-4 inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
-        to="/dashboard"
-      >
-        <ChevronRight className="mr-1 h-4 w-4 rotate-180" />
-        Back to Courses
-      </Link>
-
-      <h1 className="mb-6 text-4xl font-bold text-gray-900 dark:text-white">
-        {fullCourse.name}
-      </h1>
-
-      {fullCourse.description && (
-        <p className="mb-8 text-lg text-gray-600 dark:text-gray-400">
-          {fullCourse.description}
-        </p>
-      )}
+    <div className="px-4 py-8 sm:px-6 lg:px-8">
+      {/* Header */}
+      <header className="mb-8 sm:flex sm:items-center sm:justify-between">
+        <div className="sm:flex-auto">
+          <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
+            {fullCourse.name}
+          </h1>
+          {fullCourse.description && (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+              {fullCourse.description}
+            </p>
+          )}
+        </div>
+        <div className="mt-4 sm:mt-0 sm:ml-16">
+          <Link
+            className="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 active:bg-green-800"
+            to="/dashboard"
+          >
+            Back to Courses
+          </Link>
+        </div>
+      </header>
 
       {/* Main Layout with Sidebar */}
-      <div className="sidebar grid gap-6 lg:grid-cols-[1fr_400px]">
-        {/* Left: Modules and Lessons (Scrollable) */}
-        <div className="flex flex-col overflow-hidden">
-          <h2 className="mb-4 text-2xl font-bold text-gray-900 dark:text-white">
-            Course Content
-          </h2>
-
-          <div className="overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Left: Modules and Lessons */}
+        <div className="order-2 lg:order-1 lg:col-span-2">
+          <div className="rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+            <div className="border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+              <h2 className="font-semibold text-gray-900 dark:text-white">
+                Course Content
+              </h2>
+            </div>
             {modules.length > 0 ? (
               <div>
                 {modules
@@ -210,8 +214,23 @@ function CourseDetailPage() {
           </div>
         </div>
 
-        {/* Right: Course Info Card (Static) */}
-        <div className="flex flex-col gap-6">
+        {/* Right: Course Info Card */}
+        <div className="order-1 flex flex-col gap-6 lg:order-2">
+          {/* Continue Course Button */}
+          {firstLesson && (
+            <Link
+              className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-3 text-base font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
+              to="/courses/$courseId/lessons/$lessonId"
+              params={{
+                courseId: fullCourse.id,
+                lessonId: firstLesson.id,
+              }}
+            >
+              <Play className="h-5 w-5" />
+              {courseProgress > 0 ? "Continue Course" : "Start Course"}
+            </Link>
+          )}
+
           {/* Course Thumbnail */}
           {fullCourse.thumbnailUrl && (
             <div className="overflow-hidden rounded-lg">
@@ -225,9 +244,9 @@ function CourseDetailPage() {
 
           {/* Course Stats Card */}
           <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-            <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <h2 className="mb-4 font-semibold text-gray-900 dark:text-white">
               Course Details
-            </h3>
+            </h2>
 
             <div className="space-y-4">
               {/* Modules and Lessons Count */}
@@ -263,7 +282,7 @@ function CourseDetailPage() {
               </div>
 
               {/* Progress */}
-              <div className="pt-2">
+              <div>
                 <div className="mb-2 flex items-center justify-between">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <TrendingUp className="h-5 w-5" />
@@ -286,22 +305,21 @@ function CourseDetailPage() {
                 {/* TODO: Create /certificate/$courseId route for certificate feature */}
 
                 {/* Rating */}
-                <div className="mb-3 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                    <span className="font-semibold text-gray-900 dark:text-white">
-                      {currentRating.toFixed(1)}
-                    </span>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      ({ratingCount} reviews)
-                    </span>
-                  </div>
+                <div className="mb-4 flex items-center gap-2">
+                  <Star className="h-5 w-5 shrink-0 fill-yellow-400 text-yellow-400" />
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {currentRating.toFixed(1)}
+                  </span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    ({ratingCount} reviews)
+                  </span>
                 </div>
 
                 {/* Leave Rating Button */}
                 <button
-                  className="w-full rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
+                  className="w-full cursor-pointer rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700 active:bg-green-800"
                   onClick={() => setIsRatingSheetOpen(true)}
+                  type="button"
                 >
                   Leave a Rating
                 </button>
@@ -325,7 +343,7 @@ function CourseDetailPage() {
             </SheetDescription>
           </SheetHeader>
 
-          <div className="mt-6 space-y-6">
+          <div className="mt-2 space-y-6 px-4 pb-4">
             {/* Star Rating */}
             <div>
               <span
@@ -341,7 +359,7 @@ function CourseDetailPage() {
               >
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
-                    className="transition-transform hover:scale-110"
+                    className="cursor-pointer transition-transform hover:scale-110"
                     key={star}
                     type="button"
                     onClick={() => setRating(star)}
@@ -394,9 +412,10 @@ function CourseDetailPage() {
 
             {/* Submit Button */}
             <button
-              className="w-full rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
+              className="w-full cursor-pointer rounded-lg bg-green-600 px-4 py-2 font-semibold text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-700 dark:disabled:text-gray-500"
               onClick={handleRatingSubmit}
               disabled={rating === 0}
+              type="button"
             >
               Submit Rating
             </button>
