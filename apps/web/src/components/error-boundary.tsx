@@ -13,7 +13,7 @@ export default function ErrorBoundaryComponent({ error }: { error: Error }) {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-red-600">
       <p className="text-lg">{error.message}</p>
-      <p className="max-w-md text-sm text-gray-600">
+      <p className="max-w-md text-sm text-gray-400">
         This error has been logged automatically. If the issue continues, please
         reach out to our support team.
       </p>
