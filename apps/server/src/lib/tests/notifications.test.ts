@@ -1,7 +1,7 @@
 import * as notificationHelpers from "../notifications.js";
 import { afterAll, describe, expect, it } from "vitest";
 import { db } from "~/db/index.js";
-import { userNotification } from "~/db/schema/userNotification.js";
+import { userNotification } from "~/db/schema/userNotifications.js";
 import { user } from "~/db/schema/user.js";
 import { eq, inArray } from "drizzle-orm";
 
