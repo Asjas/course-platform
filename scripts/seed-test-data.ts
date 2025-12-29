@@ -67,6 +67,7 @@ async function seedDatabase() {
     console.log("🧹 Cleaning up existing test data...");
     await client.query(`
       TRUNCATE TABLE 
+        user_notification,
         support_ticket,
         course_review,
         enrollment,
