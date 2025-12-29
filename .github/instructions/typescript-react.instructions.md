@@ -82,6 +82,179 @@ Instructions for building high-quality React.js applications with modern pattern
 - Route groups: `(group)/` for layout grouping.
 - Protected routes: `_authenticated/` layout prefix.
 
+## Data Fetching Patterns
+
+### tRPC with TanStack Query
+
+Use `trpc.<router>.<method>.queryOptions()` with `useQuery` for queries:
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import { trpc, trpcClient } from "~/lib/trpc.client";
+
+// Fetching data with useQuery
+const { data, isLoading, refetch } = useQuery({
+  ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
+  enabled: !!courseId, // Conditional fetching
+});
+```
+
+Use `trpcClient` directly for mutations (not `useMutation`):
+
+```tsx
+// Direct mutation call
+await trpcClient.reviews.updateUserReview.mutate({
+  reviewId: existingReview.id,
+  rating,
+  title,
+  comment,
+});
+```
+
+### Collections with TanStack Query DB
+
+Use collections from `~/lib/db.collections` for reactive data:
+
+```tsx
+import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+
+// Preload in route loader
+export const Route = createFileRoute("/_authenticated/courses/$courseId")({
+  loader: async ({ params }) => {
+    await CoursesCollection.preload();
+  },
+});
+
+// Use reactive query in component
+const { data: course, isLoading } = useCourseById({ courseId });
+```
+
+Insert with optimistic updates:
+
+```tsx
+const tx = ReviewsCollection.insert(newReview);
+await tx.isPersisted.promise;
+await ReviewsCollection.utils.refetch();
+```
+
+## Form Patterns
+
+### Create/Edit Mode Pattern
+
+For forms that handle both create and update operations:
+
+```tsx
+// Fetch existing data
+const { data: existingItem, refetch } = useQuery({
+  ...trpc.items.getById.queryOptions({ id }),
+  enabled: !!id,
+});
+
+// Determine mode
+const isEditing = !!existingItem;
+
+// Pre-populate form when opening
+useEffect(() => {
+  if (isSheetOpen && existingItem) {
+    setTitle(existingItem.title);
+    setContent(existingItem.content);
+  } else if (isSheetOpen && !existingItem) {
+    // Reset for new item
+    setTitle("");
+    setContent("");
+  }
+}, [isSheetOpen, existingItem]);
+
+// Handle submit with mode-aware logic
+async function handleSubmit() {
+  setIsSubmitting(true);
+  const toastId = toast.loading(isEditing ? "Updating..." : "Creating...");
+
+  try {
+    if (isEditing && existingItem) {
+      await trpcClient.items.update.mutate({ id: existingItem.id, title, content });
+      await refetch();
+      toast.success("Updated successfully!", { id: toastId });
+    } else {
+      // Create new item
+      const tx = ItemsCollection.insert({ id: ulid(), title, content });
+      await tx.isPersisted.promise;
+      toast.success("Created successfully!", { id: toastId });
+    }
+    setIsSheetOpen(false);
+  } catch (error) {
+    toast.error(`Failed to ${isEditing ? "update" : "create"}`, { id: toastId });
+  } finally {
+    setIsSubmitting(false);
+  }
+}
+```
+
+### Toast Notifications
+
+Use `sonner` for user feedback with loading states:
+
+```tsx
+import { toast } from "sonner";
+
+const toastId = toast.loading("Processing...");
+try {
+  await doSomething();
+  toast.success("Done!", { id: toastId });
+} catch (error) {
+  toast.error("Failed", { id: toastId });
+}
+```
+
+## Sheet/Modal Pattern
+
+Use Sheet components for side panel forms:
+
+```tsx
+const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+<Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+  <SheetContent side="right">
+    <SheetHeader>
+      <SheetTitle>{isEditing ? "Edit Item" : "Create Item"}</SheetTitle>
+      <SheetDescription>
+        {isEditing ? "Update your item." : "Add a new item."}
+      </SheetDescription>
+    </SheetHeader>
+    {/* Form content */}
+  </SheetContent>
+</Sheet>
+```
+
+## Conditional UI Based on State
+
+Show different UI based on data state:
+
+```tsx
+{/* Button text changes based on mode */}
+<button onClick={() => setIsSheetOpen(true)}>
+  {isEditing ? (
+    <>
+      <Edit3 className="h-4 w-4" />
+      Edit Item
+    </>
+  ) : (
+    "Add Item"
+  )}
+</button>
+
+{/* Show status badge when item exists */}
+{existingItem && (
+  <p className="text-xs text-gray-500">
+    Status:{" "}
+    {existingItem.approved ? (
+      <span className="text-green-600">(Approved)</span>
+    ) : (
+      <span className="text-yellow-600">(Pending)</span>
+    )}
+  </p>
+)}
+
 ## Example
 
 ```tsx
