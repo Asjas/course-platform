@@ -213,8 +213,12 @@ function AdminReviewsPage() {
                               } catch (error) {
                                 console.error("Error deleting review:", error);
 
+                                const errorMessage =
+                                  error instanceof Error
+                                    ? error.message
+                                    : "Unknown error";
                                 toast.error(
-                                  "An error occurred while deleting the review. Please try again.",
+                                  `Failed to delete review: ${errorMessage}`,
                                   { id: toastId },
                                 );
                               }

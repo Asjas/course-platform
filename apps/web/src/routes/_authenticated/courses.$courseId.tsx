@@ -3,7 +3,6 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { BookOpen, Clock, Edit3, Play, Star, TrendingUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { ulid } from "ulid";
 import {
   Sheet,
   SheetContent,
@@ -163,19 +162,14 @@ function CourseDetailPage() {
           { id: toastId },
         );
       } else {
-        // Create new review
-        const id = `review:${ulid()}`;
-        const newReview = {
-          id,
+        // Create new review via tRPC mutation
+        await trpcClient.reviews.createReview.mutate({
           courseId: fullCourse.id,
           rating,
           title: reviewTitle || `${rating}-star review`,
           comment: reviewComment,
-        };
+        });
 
-        // @ts-expect-error must use any to satisfy the type system for partial review data
-        const tx = ReviewsCollection.insert(newReview);
-        await tx.isPersisted.promise;
         await ReviewsCollection.utils.refetch();
         await refetchReview();
 
