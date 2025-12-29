@@ -16,13 +16,20 @@ describe.sequential("Notification Helpers Integration Tests", () => {
   // Create a test user before all tests
   beforeAll(async () => {
     testUserId = ulid();
-    await db.insert(user).values({
-      id: testUserId,
-      email: `test-notifications-${Date.now()}@example.com`,
-      emailVerified: false,
-      name: "Test User",
-      role: "member",
-    });
+    const [createdUser] = await db
+      .insert(user)
+      .values({
+        id: testUserId,
+        email: `test-notifications-${Date.now()}@example.com`,
+        emailVerified: false,
+        name: "Test User",
+        role: "member",
+      })
+      .returning();
+
+    // Verify user was created successfully
+    expect(createdUser).toBeDefined();
+    expect(createdUser.id).toBe(testUserId);
     testUserIds.push(testUserId);
   });
 
