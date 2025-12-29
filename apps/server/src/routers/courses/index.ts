@@ -25,27 +25,30 @@ import {
   getEnrollmentStatus,
   getLessonProgress,
 } from "~/routers/courses/queries.js";
+import type { AllCoursesAsAdmin } from "~/routers/courses/queries.js";
 
 export const coursesRouter = router({
   // Admin query to get all courses with full details
-  getAllAsAdmin: publicProcedure.use(isAdmin).query(async ({ ctx }) => {
-    const fastify = ctx.reply.server;
+  getAllCoursesAsAdmin: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<AllCoursesAsAdmin> => {
+      const fastify = ctx.reply.server;
 
-    const [err, courses] = await fastify.to(
-      fastify.cache.getAllCoursesAsAdmin(),
-    );
+      const [err, courses] = await fastify.to(
+        fastify.cache.getAllCoursesAsAdmin(),
+      );
 
-    if (err) {
-      fastify.log.error(err);
+      if (err) {
+        fastify.log.error(err);
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-      });
-    }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
 
-    return courses;
-  }),
+      return courses;
+    }),
 
   getAll: publicProcedure.query(async ({ ctx }) => {
     const fastify = ctx.reply.server;

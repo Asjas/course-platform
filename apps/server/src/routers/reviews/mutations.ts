@@ -32,14 +32,51 @@ export async function createReview({
   return review;
 }
 
+export async function createAdminReview({
+  userId,
+  courseId,
+  rating,
+  title,
+  comment,
+  externalLink,
+  approved,
+}: {
+  userId: string;
+  courseId: string;
+  rating: number | null;
+  title: string;
+  comment: string;
+  externalLink: string | null;
+  approved: boolean;
+}) {
+  const [review] = await db
+    .insert(courseReview)
+    .values({
+      id: ulid(),
+      userId,
+      courseId,
+      rating,
+      title,
+      comment,
+      externalLink,
+      approved,
+      reviewedAt: approved ? new Date() : null,
+    })
+    .returning();
+
+  return review;
+}
+
 export async function updateReview({
   reviewId,
   updates,
 }: {
   reviewId: string;
   updates: {
+    rating?: number | null;
     title?: string;
     comment?: string;
+    externalLink?: string | null;
     approved?: boolean;
     reviewedAt?: Date | null;
   };

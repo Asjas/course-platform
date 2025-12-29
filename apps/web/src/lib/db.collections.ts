@@ -1,8 +1,8 @@
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
   AllCourses,
+  AllCoursesAsAdmin,
   CourseById,
-  getAllAsAdminCourses,
 } from "@apps/server/src/routers/courses/queries";
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
@@ -47,9 +47,7 @@ export type CourseWithModulesAndLessons = NonNullable<CourseById>;
 type Course = CourseFromList | CourseWithModulesAndLessons;
 
 // Type for admin queries that always return full course details
-export type AdminCourseDetail = Awaited<
-  ReturnType<typeof getAllAsAdminCourses>
->[number];
+export type AdminCourseDetail = AllCoursesAsAdmin[number];
 
 export const SupportTicketsCollection = createCollection(
   queryCollectionOptions<SupportTicket>({
@@ -307,7 +305,7 @@ export const CoursesAdminCollection = createCollection(
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
-    queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
+    queryFn: () => trpcClient.courses.getAllCoursesAsAdmin.query(),
   }),
 );
 
@@ -366,6 +364,11 @@ export const ReviewsCollection = createCollection(
       try {
         const { modified } = transaction.mutations[0];
 
+        // User reviews always require a rating (admin reviews use createAdminReview)
+        if (modified.rating === null) {
+          throw new Error("Rating is required for user reviews");
+        }
+
         await trpcClient.reviews.createReview.mutate({
           courseId: modified.courseId,
           rating: modified.rating,
@@ -383,8 +386,10 @@ export const ReviewsCollection = createCollection(
 
         await trpcClient.reviews.updateReview.mutate({
           reviewId: modified.id,
+          rating: modified.rating ?? undefined,
           title: modified.title,
           comment: modified.comment,
+          externalLink: modified.externalLink,
           approved: modified.approved,
           reviewedAt: modified.reviewedAt
             ? new Date(modified.reviewedAt)

@@ -2,12 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import {
   CheckCircle2Icon,
+  ExternalLinkIcon,
   EyeIcon,
+  PlusIcon,
   Trash2Icon,
   XCircleIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { toast } from "sonner";
+import CreateReviewSheet from "~/components/create-review-sheet";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import ReviewDetailsSheet from "~/components/review-details-sheet";
@@ -34,6 +37,7 @@ function AdminReviewsPage() {
   const { data: reviews, isLoading } = useReviews();
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
+  const [isCreateSheetOpen, setIsCreateSheetOpen] = useState(false);
 
   function handleViewReview(reviewId: string) {
     setSelectedReviewId(reviewId);
@@ -63,6 +67,20 @@ function AdminReviewsPage() {
             Manage and moderate course reviews. Review, approve, edit, or delete
             user feedback.
           </p>
+        </div>
+
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          <button
+            className="inline-flex cursor-pointer items-center gap-x-1.5 rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            type="button"
+            onClick={() => setIsCreateSheetOpen(true)}
+          >
+            <PlusIcon
+              className="-ml-0.5 h-5 w-5"
+              aria-hidden="true"
+            />
+            Add Review
+          </button>
         </div>
       </div>
 
@@ -97,14 +115,35 @@ function AdminReviewsPage() {
                       </TableBodyCell>
 
                       <TableBodyCell className="text-gray-600 dark:text-gray-300">
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">{review.rating}</span>
-                          <span className="text-yellow-500">★</span>
-                        </div>
+                        {review.rating ? (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">{review.rating}</span>
+                            <span className="text-yellow-500">★</span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
                       </TableBodyCell>
 
                       <TableBodyCell className="text-gray-600 dark:text-gray-300">
-                        {review.title}
+                        <div className="flex items-center gap-1">
+                          {review.title}
+                          {review.externalLink && (
+                            <a
+                              className="text-blue-400 hover:text-blue-300"
+                              href={review.externalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="View external review"
+                            >
+                              <ExternalLinkIcon
+                                className="h-3.5 w-3.5"
+                                aria-hidden="true"
+                              />
+                              <span className="sr-only">External review</span>
+                            </a>
+                          )}
+                        </div>
                       </TableBodyCell>
 
                       <TableBodyCell>
@@ -208,6 +247,13 @@ function AdminReviewsPage() {
         open={isDetailsSheetOpen}
         onOpenChange={handleDetailsSheetOpenChange}
       />
+
+      <Suspense fallback={null}>
+        <CreateReviewSheet
+          open={isCreateSheetOpen}
+          onOpenChange={setIsCreateSheetOpen}
+        />
+      </Suspense>
     </div>
   );
 }

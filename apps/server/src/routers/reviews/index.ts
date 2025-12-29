@@ -5,6 +5,7 @@ import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
   approveReview,
+  createAdminReview,
   createReview,
   deleteReview,
   getReviewWithCourse,
@@ -72,6 +73,65 @@ export const reviewsRouter = router({
     return reviews;
   }),
 
+  // Create a review as admin (for external social media reviews)
+  createAdminReview: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        courseId: z.string(),
+        rating: z.number().min(1).max(5).nullable(),
+        title: z.string().min(1).max(100),
+        comment: z.string().max(2000),
+        externalLink: z.string().url().nullable(),
+        approved: z.boolean(),
+      }),
+    )
+    .use(isAdmin)
+    .mutation(async ({ ctx, input }) => {
+      const {
+        userId,
+        courseId,
+        rating,
+        title,
+        comment,
+        externalLink,
+        approved,
+      } = input;
+      const fastify = ctx.reply.server;
+
+      const [err, review] = await fastify.to(
+        createAdminReview({
+          userId,
+          courseId,
+          rating,
+          title,
+          comment,
+          externalLink,
+          approved,
+        }),
+      );
+
+      if (err) {
+        fastify.log.error(err);
+
+        // Check for unique constraint violation (user already reviewed this course)
+        const errorCode = (err as { code?: string }).code;
+        if (err.message?.includes("unique") || errorCode === "23505") {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "This user has already reviewed this course",
+          });
+        }
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create review",
+        });
+      }
+
+      return review;
+    }),
+
   // Get single review by ID with extended details (admin only)
   getReviewById: publicProcedure
     .input(
@@ -110,8 +170,10 @@ export const reviewsRouter = router({
     .input(
       z.object({
         reviewId: z.string(),
+        rating: z.number().min(1).max(5).nullable().optional(),
         title: z.string().optional(),
         comment: z.string().optional(),
+        externalLink: z.string().url().nullable().optional(),
         approved: z.boolean().optional(),
         reviewedAt: z.date().nullable().optional(),
       }),

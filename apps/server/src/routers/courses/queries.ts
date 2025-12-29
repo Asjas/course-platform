@@ -2,6 +2,9 @@ import { and, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 
 export type AllCourses = Awaited<ReturnType<typeof getAllCourses>>;
+export type AllCoursesAsAdmin = Awaited<
+  ReturnType<typeof getAllCoursesAsAdmin>
+>;
 export type CourseById = Awaited<ReturnType<typeof getCourseById>>;
 export type LessonById = Awaited<ReturnType<typeof getLessonById>>;
 
@@ -84,7 +87,7 @@ const preparedGetModulesAndLessonsByCourseIdStatement = db.query.course
   })
   .prepare("getModulesAndLessonsByCourseId");
 
-export async function getAllAsAdminCourses() {
+export async function getAllCoursesAsAdmin() {
   const courses = await preparedGetAllCoursesAsAdminStatement.execute();
 
   return courses;
