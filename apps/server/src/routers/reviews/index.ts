@@ -425,4 +425,52 @@ export const reviewsRouter = router({
 
       return review;
     }),
+
+  // Delete user's own review (authenticated users)
+  deleteUserReview: publicProcedure
+    .input(
+      z.object({
+        reviewId: z.string(),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      const { reviewId } = input;
+      const userId = ctx.user.id;
+      const fastify = ctx.reply.server;
+
+      // First get the review to verify ownership
+      const [fetchErr, existingReview] = await fastify.to(
+        getReviewWithCourse({ reviewId }),
+      );
+
+      if (fetchErr || !existingReview) {
+        fastify.log.error(fetchErr || "Review not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Review not found",
+        });
+      }
+
+      // Verify the user owns this review
+      if (existingReview.userId !== userId) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You can only delete your own reviews",
+        });
+      }
+
+      const [err, review] = await fastify.to(deleteReview({ reviewId }));
+
+      if (err) {
+        fastify.log.error(err);
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to delete review",
+        });
+      }
+
+      return review;
+    }),
 });

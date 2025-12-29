@@ -1,8 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { BookOpen, Clock, Edit3, Play, Star, TrendingUp } from "lucide-react";
+import {
+  BookOpen,
+  Clock,
+  Edit3,
+  Play,
+  Star,
+  Trash2,
+  TrendingUp,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "~/components/confirm-dialog";
 import {
   Sheet,
   SheetContent,
@@ -16,6 +25,7 @@ import {
   ReviewsCollection,
   useCourseById,
 } from "~/lib/db.collections";
+import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -79,6 +89,7 @@ function CourseDetailPage() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewTitle, setReviewTitle] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   // Fetch user's existing review for this course
   const { data: existingReview, refetch: refetchReview } = useQuery({
@@ -197,6 +208,33 @@ function CourseDetailPage() {
       toast.error(message, { id: toastId });
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDeleteReview() {
+    if (!existingReview) return;
+
+    const toastId = toast.loading("Deleting your review...");
+
+    try {
+      await trpcClient.reviews.deleteUserReview.mutate({
+        reviewId: existingReview.id,
+      });
+
+      // Invalidate the user review query to clear the cached data
+      await queryClient.invalidateQueries({
+        queryKey: trpc.reviews.getUserReviewForCourse.queryKey({ courseId }),
+      });
+
+      // Also refetch the admin reviews collection if it's loaded
+      await ReviewsCollection.utils.refetch();
+
+      toast.success("Your review has been deleted.", { id: toastId });
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+      toast.error("Failed to delete review. Please try again.", {
+        id: toastId,
+      });
     }
   }
 
@@ -431,6 +469,16 @@ function CourseDetailPage() {
                         </span>
                       )}
                     </p>
+
+                    {/* Delete Review Button */}
+                    <button
+                      className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border border-red-600 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 active:bg-red-100 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-900/20 dark:active:bg-red-900/30"
+                      onClick={() => setIsDeleteDialogOpen(true)}
+                      type="button"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      Delete Review
+                    </button>
                   </div>
                 )}
               </div>
@@ -569,6 +617,18 @@ function CourseDetailPage() {
           </div>
         </SheetContent>
       </Sheet>
+
+      {/* Delete Review Confirmation Dialog */}
+      <ConfirmDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        onConfirm={handleDeleteReview}
+        title="Delete Review"
+        description="Are you sure you want to delete your review? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="destructive"
+      />
     </div>
   );
 }
