@@ -2,20 +2,27 @@ import { eq } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { user } from "~/db/schema/user.js";
 
+// Module-scoped prepared statements for optimal performance
+const preparedGetAdminUserIds = db.query.user
+  .findMany({
+    where: eq(user.role, "admin"),
+    columns: {
+      id: true,
+    },
+  })
+  .prepare("getAdminUserIds");
+
+const preparedGetAdminUsers = db.query.user
+  .findMany({
+    where: eq(user.role, "admin"),
+  })
+  .prepare("getAdminUsers");
+
 /**
  * Get all admin user IDs
  */
 export async function getAdminUserIds(): Promise<string[]> {
-  const preparedStatement = db.query.user
-    .findMany({
-      where: eq(user.role, "admin"),
-      columns: {
-        id: true,
-      },
-    })
-    .prepare("getAdminUserIds");
-
-  const admins = await preparedStatement.execute();
+  const admins = await preparedGetAdminUserIds.execute();
   return admins.map((admin) => admin.id);
 }
 
@@ -23,13 +30,7 @@ export async function getAdminUserIds(): Promise<string[]> {
  * Get all admin users
  */
 export async function getAdminUsers() {
-  const preparedStatement = db.query.user
-    .findMany({
-      where: eq(user.role, "admin"),
-    })
-    .prepare("getAdminUsers");
-
-  return preparedStatement.execute();
+  return preparedGetAdminUsers.execute();
 }
 
 export type AdminUsers = Awaited<ReturnType<typeof getAdminUsers>>;

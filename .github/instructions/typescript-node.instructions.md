@@ -50,6 +50,8 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, t
 - Mutations: Place in `/src/db/mutations/` directory.
 - Use TypeScript's inferred types (e.g., `typeof user.$inferSelect`).
 - Define relations using Drizzle's `relations()` function.
+- **CRITICAL: ALL prepared statements MUST be module-scoped (defined at the top level of the file), NOT function-scoped. This is essential for performance as prepared statements are compiled once and reused.**
+- Use the high-level `db.query` API with `.prepare("name")` at the end of the query chain.
 
 ### Testing
 - Write tests using Vitest in `/tests/` directory.
