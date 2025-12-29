@@ -37,7 +37,7 @@ describe("Notification Helpers Integration Tests", () => {
     }
   });
 
-  describe("Payment Notifications", () => {
+  describe.sequential("Payment Notifications", () => {
     it("should create a payment_completed notification", async () => {
       await notificationHelpers.notifyPaymentCompleted({
         userId: testUserId,
@@ -64,7 +64,7 @@ describe("Notification Helpers Integration Tests", () => {
     }, 15000); // 15 second timeout for database operations
   });
 
-  describe("Admin Notifications", () => {
+  describe.sequential("Admin Notifications", () => {
     it("should create notifications for all admin users", async () => {
       // Get actual admin user IDs from database
       const admins = await db
