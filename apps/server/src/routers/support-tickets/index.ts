@@ -8,6 +8,7 @@ import type {
   SupportTicket,
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
+import { notifyAdminNewSupportTicket } from "~/lib/notifications.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {

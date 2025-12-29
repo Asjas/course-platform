@@ -298,7 +298,7 @@ export const couponsRouter = router({
 
       // Check if coupon is approaching redemption limit and notify admins
       try {
-        const currentRedemptions = coupon.currentRedemptions || 0;
+        const currentRedemptions = coupon.redemptions?.length || 0;
         const limit = coupon.redemptionLimit;
 
         // Notify when reaching 80%, 90%, or 100% of limit
