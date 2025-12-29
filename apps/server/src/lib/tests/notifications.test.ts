@@ -46,7 +46,7 @@ describe("Notification Helpers Integration Tests", () => {
       expect(notification.message).toContain("Test Course");
       expect(notification.message).toContain("USD 19.99");
       expect(notification.link).toBe("/courses/test-course");
-    });
+    }, 15000); // 15 second timeout for database operations
   });
 
   describe("Admin Notifications", () => {
@@ -59,7 +59,9 @@ describe("Notification Helpers Integration Tests", () => {
         .limit(5);
 
       if (admins.length === 0) {
-        console.warn("No admin users found in database, skipping admin notification test");
+        console.warn(
+          "No admin users found in database, skipping admin notification test",
+        );
         return;
       }
 
@@ -82,10 +84,12 @@ describe("Notification Helpers Integration Tests", () => {
       // Add notification IDs to cleanup list
       testNotificationIds.push(...notifications.map((n) => n.id));
 
-      const adminNotif = notifications.find((n) => n.type === "admin_new_review");
+      const adminNotif = notifications.find(
+        (n) => n.type === "admin_new_review",
+      );
       expect(adminNotif).toBeDefined();
       expect(adminNotif?.message).toContain("Integration Test Course");
       expect(adminNotif?.message).toContain("Test Reviewer");
-    });
+    }, 15000); // 15 second timeout for database operations
   });
 });
