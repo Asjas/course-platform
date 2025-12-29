@@ -639,6 +639,8 @@ function TermsPage() {
               <a
                 className="text-green-400 underline"
                 href="https://ec.europa.eu/odr"
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 European ODR platform
               </a>
