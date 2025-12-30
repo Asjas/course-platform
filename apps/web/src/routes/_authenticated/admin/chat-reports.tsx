@@ -1,3 +1,9 @@
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import {
@@ -5,6 +11,7 @@ import {
   EyeIcon,
   Trash2Icon,
   XCircleIcon,
+  XIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -292,50 +299,121 @@ function AdminChatReportsPage() {
 
       {/* View Report Dialog */}
       {viewingReportData && (
-        <ConfirmDialog
+        <Dialog
+          className="relative z-50"
           open={!!viewingReport}
-          onOpenChange={(open) => !open && setViewingReport(null)}
-          onConfirm={() => setViewingReport(null)}
-          title="Report Details"
-          description={
-            <div className="space-y-3 text-left">
-              <div>
-                <span className="font-semibold">Channel:</span> #
-                {viewingReportData.channelId}
-              </div>
-              <div>
-                <span className="font-semibold">Message Author:</span>{" "}
-                {viewingReportData.messageAuthor}
-              </div>
-              <div>
-                <span className="font-semibold">Reason:</span>{" "}
-                {viewingReportData.reason}
-              </div>
-              <div className="rounded-md bg-gray-100 p-3 dark:bg-gray-800">
-                <span className="font-semibold">Message Content:</span>
-                <p className="mt-1 text-sm">
-                  {viewingReportData.messageContent}
-                </p>
-              </div>
-              <div>
-                <span className="font-semibold">Status:</span>{" "}
-                <span
-                  className={cn(
-                    viewingReportData.status === "pending"
-                      ? "text-yellow-600"
-                      : viewingReportData.status === "reviewed"
-                        ? "text-green-600"
-                        : "text-gray-600",
-                  )}
+          onClose={() => setViewingReport(null)}
+        >
+          <DialogBackdrop className="fixed inset-0 bg-black/30" />
+
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <DialogPanel className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <DialogTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Report Details
+                  </DialogTitle>
+                </div>
+                <button
+                  className="cursor-pointer rounded-md p-1 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={() => setViewingReport(null)}
+                  type="button"
+                  aria-label="Close dialog"
                 >
-                  {viewingReportData.status}
-                </span>
+                  <XIcon
+                    className="text-gray-500 dark:text-gray-400"
+                    size={20}
+                  />
+                </button>
               </div>
-            </div>
-          }
-          confirmText="Close"
-          variant="default"
-        />
+
+              <div className="mt-4 space-y-4">
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Channel:
+                  </span>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    #{viewingReportData.channelId}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Message Author:
+                  </span>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {viewingReportData.messageAuthor}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Reason:
+                  </span>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {viewingReportData.reason}
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Message Content:
+                  </span>
+                  <div className="mt-1 rounded-md bg-gray-100 p-3 dark:bg-gray-900">
+                    <p className="text-sm text-gray-900 dark:text-white">
+                      {viewingReportData.messageContent}
+                    </p>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Status:
+                  </span>
+                  <p className="mt-1">
+                    <span
+                      className={cn(
+                        "inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium",
+                        viewingReportData.status === "pending"
+                          ? "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-500/50 ring-inset dark:bg-yellow-900/30 dark:text-yellow-400"
+                          : viewingReportData.status === "reviewed"
+                            ? "bg-green-100 text-green-700 ring-1 ring-green-500/50 ring-inset dark:bg-green-900/30 dark:text-green-400"
+                            : "bg-gray-100 text-gray-700 ring-1 ring-gray-500/50 ring-inset dark:bg-gray-900/30 dark:text-gray-400",
+                      )}
+                    >
+                      {viewingReportData.status}
+                    </span>
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                    Reported At:
+                  </span>
+                  <p className="mt-1 text-sm text-gray-900 dark:text-white">
+                    {intlFormat(new Date(viewingReportData.createdAt), {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  className="cursor-pointer rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+                  onClick={() => setViewingReport(null)}
+                  type="button"
+                >
+                  Close
+                </button>
+              </div>
+            </DialogPanel>
+          </div>
+        </Dialog>
       )}
 
       <ConfirmDialog
