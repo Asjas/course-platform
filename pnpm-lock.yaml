@@ -303,8 +303,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       '@giphy/react-components':
-        specifier: 9.3.0
-        version: 9.3.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
+        specifier: 9.8.0
+        version: 9.8.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))
       '@headlessui/react':
         specifier: 2.2.9
         version: 2.2.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -2141,8 +2141,8 @@ packages:
   '@giphy/js-util@5.2.0':
     resolution: {integrity: sha512-Qt7pGh2cqiNmXLeWAgb459wK8+BuMLtIxTfg4ZksnPHPsLthiHT9hhzs2QhqUh7Pp/HOq+Cbv2etGDfnq+xiKA==}
 
-  '@giphy/react-components@9.3.0':
-    resolution: {integrity: sha512-lQaL3fjuW2LJTTu4dbG981QUaz8Bb+/bKQC911C2BzwUgkuBF1ZWt0z9CJjL9A1i4LqUupUueFrvMYq70WS3Ig==}
+  '@giphy/react-components@9.8.0':
+    resolution: {integrity: sha512-rtx3HBa+cHKen+lMuvSH/rPX+fYvFuZWXP9i9i6nVBkPakd5niZC4ZD9NjM09LJpmUw69eUdqDVhoUgqfLEB2A==}
     peerDependencies:
       react: 16.10.2 - 18
       styled-components: '>= 5'
@@ -11677,7 +11677,7 @@ snapshots:
       '@giphy/js-types': 5.1.0
       uuid: 9.0.1
 
-  '@giphy/react-components@9.3.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))':
+  '@giphy/react-components@9.8.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(styled-components@6.1.19(react-dom@19.2.3(react@19.2.3))(react@19.2.3))':
     dependencies:
       '@giphy/colors': 1.0.1
       '@giphy/js-analytics': 5.0.0
