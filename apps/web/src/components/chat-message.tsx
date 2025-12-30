@@ -2,7 +2,7 @@ import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { EllipsisIcon, FlagIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Menu,
   Button as MenuButton,
@@ -18,31 +18,8 @@ import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 
-// Slack-like color palette for usernames
-const USERNAME_COLORS = [
-  "rgb(143, 74, 43)", // Warm brown
-  "rgb(67, 118, 27)", // Green
-  "rgb(77, 94, 38)", // Olive
-  "rgb(125, 65, 76)", // Mauve
-  "rgb(59, 134, 134)", // Teal
-  "rgb(142, 68, 173)", // Purple
-  "rgb(41, 128, 185)", // Blue
-  "rgb(192, 57, 43)", // Red
-  "rgb(211, 84, 0)", // Orange
-  "rgb(22, 160, 133)", // Cyan
-];
-
-// Generate a consistent color based on username hash
-function getUsernameColor(name: string): string {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) {
-    const char = name.charCodeAt(i);
-    // Force 32-bit integer arithmetic to avoid precision issues for long usernames
-    hash = ((hash << 5) - hash + char) | 0;
-  }
-  const index = (hash >>> 0) % USERNAME_COLORS.length;
-  return USERNAME_COLORS[index];
-}
+// Default color for users without a precomputed color
+const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
 
 export default function ChatMessage({
   msg,
@@ -56,8 +33,8 @@ export default function ChatMessage({
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
   const auth = useAuth();
 
-  // Memoize username color to avoid recalculating hash on every render
-  const usernameColor = useMemo(() => getUsernameColor(msg.name), [msg.name]);
+  // Use the precomputed color from the user's database record, with a fallback
+  const usernameColor = msg.color || DEFAULT_USERNAME_COLOR;
 
   const deleteMessageMutation = useMutation(
     trpc.chat.deleteMessage.mutationOptions({ keyPrefix: undefined }),

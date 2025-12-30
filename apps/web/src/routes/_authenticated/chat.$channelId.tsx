@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useRef } from "react";
-import ChatDateDivider from "~/components/chat-date-divider";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessage from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
@@ -28,6 +28,7 @@ interface ChatMessage {
   message: string;
   name: string;
   username: string | null;
+  color: string | null;
   timestamp: number;
   createdAt: number;
   editedAt?: number;
@@ -95,8 +96,8 @@ function AuthenticatedChatChannelPage() {
     }
   }, [cachedMessages]);
 
-  // Group messages with date dividers
-  function renderMessagesWithDividers() {
+  // Memoize messages with date dividers to avoid recreation on every render
+  const messagesWithDividers = useMemo(() => {
     if (!cachedMessages || cachedMessages.length === 0) {
       return null;
     }
@@ -128,7 +129,7 @@ function AuthenticatedChatChannelPage() {
     }
 
     return elements;
-  }
+  }, [cachedMessages, channelId]);
 
   return (
     <div className="grid-container">
@@ -149,9 +150,7 @@ function AuthenticatedChatChannelPage() {
             </p>
           </div>
         ) : (
-          <div className="flex flex-col py-2">
-            {renderMessagesWithDividers()}
-          </div>
+          <div className="flex flex-col py-2">{messagesWithDividers}</div>
         )}
       </section>
 

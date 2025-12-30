@@ -15,7 +15,7 @@ function formatDateLabel(d: Date): string {
   return format(d, "MMMM do, yyyy");
 }
 
-export default function ChatDateDivider({ date }: ChatDateDividerProps) {
+export function ChatDateDivider({ date }: ChatDateDividerProps) {
   return (
     <div
       className="relative my-3 flex items-center"

@@ -25,7 +25,14 @@ declare module "fastify" {
     normalizedRoute: string;
     user: Pick<
       User,
-      "id" | "email" | "emailVerified" | "name" | "username" | "role" | "banned"
+      | "id"
+      | "email"
+      | "emailVerified"
+      | "name"
+      | "username"
+      | "color"
+      | "role"
+      | "banned"
     > | null;
   }
 }
