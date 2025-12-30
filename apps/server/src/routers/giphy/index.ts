@@ -1,3 +1,4 @@
+import { GiphyFetch } from "@giphy/js-fetch-api";
 import * as z from "zod";
 import config from "~/config.js";
 import {
@@ -7,55 +8,11 @@ import {
 } from "~/lib/external-metrics.js";
 import { publicProcedure, router } from "~/router.js";
 
-const GIPHY_API_BASE = "https://api.giphy.com/v1/gifs";
+// Initialize Giphy SDK client
+const giphyClient = new GiphyFetch(config.GIPHY_API_KEY);
 
-export interface GiphyGif {
-  id: string;
-  images: {
-    fixed_width: {
-      url: string;
-      width: string;
-      height: string;
-    };
-    original: {
-      url: string;
-      width: string;
-      height: string;
-    };
-  };
-}
-
-export interface GiphyResponse {
-  data: GiphyGif[];
-  pagination: {
-    total_count: number;
-    count: number;
-    offset: number;
-  };
-}
-
-async function fetchGiphy(
-  endpoint: string,
-  params: Record<string, string | number>,
-): Promise<GiphyResponse> {
-  const url = new URL(`${GIPHY_API_BASE}/${endpoint}`);
-  url.searchParams.set("api_key", config.GIPHY_API_KEY);
-
-  for (const [key, value] of Object.entries(params)) {
-    url.searchParams.set(key, String(value));
-  }
-
-  const response = await fetch(url.toString());
-
-  if (!response.ok) {
-    const responseText = await response.text();
-    throw new Error(
-      `Giphy API error: ${response.status} ${response.statusText}. URL: ${url.toString().replace(config.GIPHY_API_KEY, "***")}. Response: ${responseText.slice(0, 200)}`,
-    );
-  }
-
-  return response.json() as Promise<GiphyResponse>;
-}
+// Using types from @giphy/js-fetch-api instead of custom interfaces
+// The SDK returns GifsResult which contains IGif[] with proper types
 
 export const giphyRouter = router({
   trending: publicProcedure
@@ -70,7 +27,8 @@ export const giphyRouter = router({
       const start = process.hrtime.bigint();
 
       try {
-        const data = await fetchGiphy("trending", {
+        // Use official Giphy SDK to fetch trending GIFs
+        const result = await giphyClient.trending({
           offset: input.offset,
           limit: input.limit,
           rating: input.rating,
@@ -87,7 +45,8 @@ export const giphyRouter = router({
           status: "success",
         });
 
-        return data;
+        // Return the GifsResult from the SDK (contains data and pagination)
+        return result;
       } catch (error) {
         externalServiceCount.inc({
           service: "giphy",
@@ -116,8 +75,8 @@ export const giphyRouter = router({
       const start = process.hrtime.bigint();
 
       try {
-        const data = await fetchGiphy("search", {
-          q: input.query,
+        // Use official Giphy SDK to search for GIFs
+        const result = await giphyClient.search(input.query, {
           offset: input.offset,
           limit: input.limit,
           rating: input.rating,
@@ -134,7 +93,8 @@ export const giphyRouter = router({
           status: "success",
         });
 
-        return data;
+        // Return the GifsResult from the SDK (contains data and pagination)
+        return result;
       } catch (error) {
         externalServiceCount.inc({
           service: "giphy",
