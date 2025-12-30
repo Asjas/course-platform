@@ -86,7 +86,7 @@ export function GiphyPicker({
             </div>
           </div>
 
-          <div className="max-h-96 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
+          <div className="custom-scrollbar max-h-96 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
             {isLoading ? (
               <div className="flex items-center justify-center p-8">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
