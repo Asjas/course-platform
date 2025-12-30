@@ -25,18 +25,18 @@ export function rehypeMediaEmbed() {
           node.properties = {
             ...node.properties,
             className: isGif
-              ? "w-full h-full object-contain"
+              ? "max-w-full max-h-64 object-contain rounded-lg"
               : "max-w-full h-auto rounded-lg",
             loading: "lazy",
           };
 
-          // Wrap in container - use aspect-video for GIFs
+          // Wrap in container
           const wrapper: Element = {
             type: "element",
             tagName: "div",
             properties: {
               className: isGif
-                ? "media-embed-gif aspect-video my-4"
+                ? "media-embed-gif my-2 inline-block"
                 : "media-embed-image my-4",
             },
             children: [node],

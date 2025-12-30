@@ -12,7 +12,9 @@
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
 }
@@ -21,19 +23,27 @@
   transform: scale(1.02);
 }
 
-/* GIF embeds with aspect-video ratio */
+/* GIF embeds with reasonable sizing */
 .chat-message-content .media-embed-gif {
-  margin: 1rem 0;
+  display: inline-block;
+  max-width: 320px;
+  margin: 0.5rem 0;
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  background: #000;
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background: #1a1a1a;
 }
 
 .chat-message-content .media-embed-gif img {
-  box-shadow: none;
-  border-radius: 0;
-  transition: none;
+  display: block;
+  max-width: 100%;
+  max-height: 256px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 0.5rem;
 }
 
 .chat-message-content .media-embed-gif img:hover {
@@ -45,7 +55,9 @@
   margin: 1rem 0;
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow:
+    0 4px 6px -1px rgb(0 0 0 / 0.1),
+    0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .chat-message-content .media-embed-video iframe {
@@ -67,23 +79,37 @@
 /* Dark mode adjustments */
 @media (prefers-color-scheme: dark) {
   .chat-message-content .media-embed-image img {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.3),
+      0 1px 2px -1px rgb(0 0 0 / 0.3);
   }
 
   .chat-message-content .media-embed-gif {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    box-shadow:
+      0 1px 3px 0 rgb(0 0 0 / 0.3),
+      0 1px 2px -1px rgb(0 0 0 / 0.3);
   }
 
   .chat-message-content .media-embed-video {
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.3),
+      0 2px 4px -2px rgb(0 0 0 / 0.3);
   }
 }
 
 /* Responsive adjustments */
 @media (max-width: 640px) {
   .chat-message-content .media-embed-image,
-  .chat-message-content .media-embed-gif,
   .chat-message-content .media-embed-video {
     margin: 0.75rem 0;
+  }
+
+  .chat-message-content .media-embed-gif {
+    max-width: 240px;
+    margin: 0.5rem 0;
+  }
+
+  .chat-message-content .media-embed-gif img {
+    max-height: 200px;
   }
 }
