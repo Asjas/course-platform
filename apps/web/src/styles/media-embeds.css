@@ -3,14 +3,17 @@
 /* Image embeds */
 .chat-message-content .media-embed-image {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
 }
 
 .chat-message-content .media-embed-image img {
-  max-width: 100%;
+  max-width: min(100%, 400px);
+  max-height: 300px;
+  width: auto;
   height: auto;
+  object-fit: contain;
   border-radius: 0.5rem;
   box-shadow:
     0 1px 3px 0 rgb(0 0 0 / 0.1),

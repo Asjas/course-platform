@@ -18,6 +18,9 @@ import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 
+// Default color for users without a precomputed color
+const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
+
 export default function ChatMessage({
   msg,
   channelId,
@@ -29,6 +32,9 @@ export default function ChatMessage({
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
   const auth = useAuth();
+
+  // Use the precomputed color from the user's database record, with a fallback
+  const usernameColor = msg.color || DEFAULT_USERNAME_COLOR;
 
   const deleteMessageMutation = useMutation(
     trpc.chat.deleteMessage.mutationOptions({ keyPrefix: undefined }),
@@ -96,53 +102,69 @@ export default function ChatMessage({
 
   return (
     <>
-      <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900/55">
-        {/* timestamp */}
-        <div className="flex w-14 justify-end">
-          <span className="text-[14px] text-gray-500 dark:text-gray-300/75">
+      <div
+        className="group relative flex items-start gap-2 rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-900/55"
+        role="article"
+        aria-label={`Message from ${msg.username || msg.name}`}
+      >
+        {/* Compact timestamp column - Slack style (always visible) */}
+        <div className="flex w-12 shrink-0 items-start justify-end pt-0.5">
+          <span
+            className="text-xs text-gray-500 dark:text-gray-400"
+            title={format(msg.timestamp, "PPpp")}
+          >
             {format(msg.timestamp, "HH:mm")}
           </span>
         </div>
 
-        {/* message body + three-dot button */}
-        <div className="flex flex-1 items-center gap-1">
+        {/* Message content area - Slack compact mode style */}
+        <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5">
+          {/* Username with unique color */}
           <button
-            className="shrink-0 cursor-pointer text-sm font-medium text-green-600 hover:underline"
+            className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
+            style={{ color: usernameColor }}
             type="button"
             onClick={() => setIsProfileSheetOpen(true)}
           >
-            {msg.username || msg.name}:
+            {msg.username || msg.name}
           </button>
 
+          {/* Message text - inline with username */}
           <div
-            className="chat-message-content flex-1 text-sm text-gray-900 dark:text-white"
+            className="chat-message-content min-w-0 flex-1 text-sm text-gray-900 dark:text-gray-100"
             dangerouslySetInnerHTML={{ __html: html }}
           />
 
           {msg.editedAt ? (
-            <span className="text-xs text-gray-400 italic dark:text-gray-500">
+            <span
+              className="text-xs text-gray-400 dark:text-gray-500"
+              title={`Edited ${format(msg.editedAt, "PPpp")}`}
+            >
               (edited)
             </span>
           ) : null}
+        </div>
 
-          {/* three-dot button – visible only on hover */}
+        {/* Action menu - appears on hover or focus, positioned at right edge */}
+        <div className="pointer-events-none absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
           <MenuTrigger>
             <MenuButton
-              className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="rounded border border-transparent bg-white p-1 shadow-sm hover:border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
               aria-label="Message actions"
+              aria-haspopup="menu"
             >
               <EllipsisIcon
-                size={18}
-                color="var(--color-gray-400)"
+                className="text-gray-500 dark:text-gray-400"
+                size={16}
               />
             </MenuButton>
 
             <Popover className="z-50">
-              <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
+              <Menu className="min-w-[140px] rounded-md border border-gray-200 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 {auth.session?.user.name === msg.name ||
                 auth.hasRole("admin") ? (
                   <MenuItem
-                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                    className="flex cursor-pointer items-center gap-2 rounded px-3 py-1.5 text-gray-700 outline-none hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                     onAction={handleEdit}
                   >
                     Edit
@@ -151,7 +173,7 @@ export default function ChatMessage({
                 {auth.session?.user.name === msg.name ||
                 auth.hasRole("admin") ? (
                   <MenuItem
-                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+                    className="flex cursor-pointer items-center gap-2 rounded px-3 py-1.5 text-red-600 outline-none hover:bg-gray-100 focus:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                     onAction={handleDelete}
                   >
                     Delete
@@ -159,7 +181,7 @@ export default function ChatMessage({
                 ) : null}
                 {auth.session?.user.name !== msg.name ? (
                   <MenuItem
-                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-orange-600 hover:bg-gray-100 dark:text-orange-400 dark:hover:bg-gray-700"
+                    className="flex cursor-pointer items-center gap-2 rounded px-3 py-1.5 text-orange-600 outline-none hover:bg-gray-100 focus:bg-gray-100 dark:text-orange-400 dark:hover:bg-gray-700 dark:focus:bg-gray-700"
                     onAction={() => setIsReportDialogOpen(true)}
                   >
                     <FlagIcon size={14} />

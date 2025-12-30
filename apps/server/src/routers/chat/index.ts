@@ -10,6 +10,7 @@ export interface ChatMessage {
   message: string;
   name: string;
   username: string | null;
+  color: string | null;
   timestamp: number;
   createdAt: number;
   editedAt?: number;
@@ -105,6 +106,7 @@ export const chatRouter = router({
         id,
         name: ctx.user.name,
         username: ctx.user.username,
+        color: ctx.user.color,
         message: input.message,
         timestamp: Date.now(),
         createdAt: Date.now(),

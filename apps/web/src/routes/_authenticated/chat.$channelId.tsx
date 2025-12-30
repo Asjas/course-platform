@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { isSameDay } from "date-fns";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessage from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
@@ -26,6 +28,7 @@ interface ChatMessage {
   message: string;
   name: string;
   username: string | null;
+  color: string | null;
   timestamp: number;
   createdAt: number;
   editedAt?: number;
@@ -93,30 +96,61 @@ function AuthenticatedChatChannelPage() {
     }
   }, [cachedMessages]);
 
+  // Memoize messages with date dividers to avoid recreation on every render
+  const messagesWithDividers = useMemo(() => {
+    if (!cachedMessages || cachedMessages.length === 0) {
+      return null;
+    }
+
+    const elements: React.ReactNode[] = [];
+    let lastDate: Date | null = null;
+
+    for (const msg of cachedMessages) {
+      const msgDate = new Date(msg.timestamp);
+
+      // Check if we need a date divider
+      if (!lastDate || !isSameDay(lastDate, msgDate)) {
+        elements.push(
+          <ChatDateDivider
+            key={`divider-${msgDate.toDateString()}`}
+            date={msgDate}
+          />,
+        );
+        lastDate = msgDate;
+      }
+
+      elements.push(
+        <ChatMessage
+          key={msg.id}
+          channelId={channelId}
+          msg={msg}
+        />,
+      );
+    }
+
+    return elements;
+  }, [cachedMessages, channelId]);
+
   return (
     <div className="grid-container">
-      <div className="border-b border-gray-200 bg-gray-50 px-4 py-1 dark:border-gray-700 dark:bg-gray-900/75">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">{`# ${channelId}`}</h1>
+      <div className="border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900/75">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white">{`# ${channelId}`}</h1>
       </div>
 
       <section
         className="scrollable-section custom-scrollbar bg-white dark:bg-gray-800"
         ref={scrollRef}
+        role="log"
+        aria-label={`${channelId} channel messages`}
       >
         {!cachedMessages || cachedMessages.length === 0 ? (
-          <div className="flex h-full items-end">
-            <p className="text-sm text-gray-400">No messages yet.</p>
+          <div className="flex h-full items-center justify-center">
+            <p className="text-sm text-gray-400">
+              No messages yet. Start the conversation!
+            </p>
           </div>
         ) : (
-          <div className="flex flex-col">
-            {cachedMessages.map((msg) => (
-              <ChatMessage
-                key={msg.id}
-                channelId={channelId}
-                msg={msg}
-              />
-            ))}
-          </div>
+          <div className="flex flex-col py-2">{messagesWithDividers}</div>
         )}
       </section>
 
