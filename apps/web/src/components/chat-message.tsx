@@ -1,8 +1,13 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { EllipsisIcon, FlagIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  EllipsisIcon,
+  FlagIcon,
+} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Menu,
   Button as MenuButton,
@@ -31,6 +36,7 @@ export default function ChatMessage({
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
+  const [isMediaVisible, setIsMediaVisible] = useState(true);
   const auth = useAuth();
 
   // Use the precomputed color from the user's database record, with a fallback
@@ -51,6 +57,64 @@ export default function ChatMessage({
         setHtml("<p>Error rendering message</p>");
       });
   }, [msg.message]);
+
+  // Parse HTML to separate text content from media
+  const { textHtml, mediaHtml, hasMedia, mediaLabel } = useMemo(() => {
+    if (!html)
+      return { textHtml: "", mediaHtml: "", hasMedia: false, mediaLabel: "" };
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    // Find all media elements (images, videos, iframes)
+    const mediaElements = doc.querySelectorAll("img, video, iframe");
+    const hasMedia = mediaElements.length > 0;
+
+    // Determine media label
+    let mediaLabel = "";
+    if (hasMedia) {
+      const firstMedia = mediaElements[0];
+      if (firstMedia.tagName === "IMG") {
+        const src = firstMedia.getAttribute("src") || "";
+        if (src.includes("giphy") || src.includes(".gif")) {
+          mediaLabel = "GIF";
+        } else {
+          mediaLabel = "image";
+        }
+      } else if (firstMedia.tagName === "VIDEO") {
+        mediaLabel = "video";
+      } else if (firstMedia.tagName === "IFRAME") {
+        mediaLabel = "embed";
+      }
+      if (mediaElements.length > 1) {
+        mediaLabel += ` +${mediaElements.length - 1}`;
+      }
+    }
+
+    // Clone and remove media from text content
+    const textDoc = doc.cloneNode(true) as Document;
+    textDoc.querySelectorAll("img, video, iframe").forEach((el) => {
+      // Also remove parent paragraph if it only contains the media
+      const parent = el.parentElement;
+      if (parent && parent.tagName === "P" && parent.childNodes.length === 1) {
+        parent.remove();
+      } else {
+        el.remove();
+      }
+    });
+
+    // Create media-only HTML
+    const mediaDoc = parser.parseFromString("<div></div>", "text/html");
+    const mediaContainer = mediaDoc.body.firstChild as HTMLElement;
+    mediaElements.forEach((el) => {
+      mediaContainer.appendChild(el.cloneNode(true));
+    });
+
+    const textHtml = textDoc.body.innerHTML.trim();
+    const mediaHtml = mediaContainer.innerHTML;
+
+    return { textHtml, mediaHtml, hasMedia, mediaLabel };
+  }, [html]);
 
   function handleEdit() {
     const newText = prompt("Edit message:", msg.message);
@@ -119,8 +183,8 @@ export default function ChatMessage({
 
         {/* Message content area */}
         <div className="min-w-0 flex-1">
-          {/* Username row - always at top */}
-          <div className="flex items-baseline gap-x-2">
+          {/* Username and text inline */}
+          <div className="flex flex-wrap items-baseline gap-x-2">
             <button
               className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
               style={{ color: usernameColor }}
@@ -129,6 +193,14 @@ export default function ChatMessage({
             >
               {msg.username || msg.name}
             </button>
+
+            {/* Inline text content */}
+            {textHtml ? (
+              <span
+                className="chat-message-content inline text-sm text-gray-900 dark:text-gray-100 [&_p]:m-0 [&_p]:inline"
+                dangerouslySetInnerHTML={{ __html: textHtml }}
+              />
+            ) : null}
 
             {msg.editedAt ? (
               <span
@@ -140,11 +212,42 @@ export default function ChatMessage({
             ) : null}
           </div>
 
-          {/* Message content - below username */}
-          <div
-            className="chat-message-content text-sm text-gray-900 dark:text-gray-100 [&_img]:mt-1 [&_img]:max-w-md [&_img]:rounded"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          {/* Media section with collapse/expand */}
+          {hasMedia ? (
+            <div className="mt-1">
+              {/* Media toggle button */}
+              <button
+                className="mb-1 flex cursor-pointer items-center gap-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                type="button"
+                onClick={() => setIsMediaVisible(!isMediaVisible)}
+                aria-expanded={isMediaVisible}
+                aria-label={
+                  isMediaVisible ? `Hide ${mediaLabel}` : `Show ${mediaLabel}`
+                }
+              >
+                {isMediaVisible ? (
+                  <ChevronDownIcon
+                    size={14}
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <ChevronRightIcon
+                    size={14}
+                    aria-hidden="true"
+                  />
+                )}
+                <span>{mediaLabel}</span>
+              </button>
+
+              {/* Collapsible media content */}
+              {isMediaVisible ? (
+                <div
+                  className="chat-message-media [&_iframe]:max-w-md [&_iframe]:rounded [&_img]:max-w-md [&_img]:rounded [&_video]:max-w-md [&_video]:rounded"
+                  dangerouslySetInnerHTML={{ __html: mediaHtml }}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
