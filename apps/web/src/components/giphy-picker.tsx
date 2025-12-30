@@ -140,7 +140,7 @@ export function GiphyPicker({
             >
               <img
                 className="h-6"
-                src="/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif"
+                src="/PoweredBy_640_Horizontal_Light-Backgrounds_With_Logo.gif"
                 alt="Powered by GIPHY"
                 loading="lazy"
               />
