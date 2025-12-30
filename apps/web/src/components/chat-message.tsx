@@ -254,7 +254,7 @@ export default function ChatMessage({
         <div className="pointer-events-none absolute -top-3 right-2 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
           <MenuTrigger>
             <MenuButton
-              className="rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
+              className="cursor-pointer rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
               aria-label="Message actions"
               aria-haspopup="menu"
             >

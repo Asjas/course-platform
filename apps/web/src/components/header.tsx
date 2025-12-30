@@ -137,7 +137,10 @@ export default function Header({ auth }: { auth: AuthState }) {
             <>
               <NotificationsBell userId={user.id} />
               <MenuTrigger>
-                <MenuButton aria-label="Menu">
+                <MenuButton
+                  className="cursor-pointer"
+                  aria-label="Menu"
+                >
                   {user.image ? (
                     <img
                       className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
@@ -290,7 +293,10 @@ export default function Header({ auth }: { auth: AuthState }) {
                   {user && <NotificationsBell userId={user.id} />}
                   {auth.isAuthenticated && user ? (
                     <MenuTrigger>
-                      <MenuButton aria-label="Menu">
+                      <MenuButton
+                        className="cursor-pointer"
+                        aria-label="Menu"
+                      >
                         {user.image ? (
                           <img
                             className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
