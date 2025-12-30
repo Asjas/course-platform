@@ -5,11 +5,7 @@ import { SearchIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-// Initialize Giphy SDK client for frontend use
-// SDK keys are designed to be used client-side and don't have CORS issues
-const giphyFetch = new GiphyFetch(
-  import.meta.env.VITE_GIPHY_API_KEY || "KnEa5aygR7OA9nOkhLnldnwDqnBXXAci",
-);
+const giphyFetch = new GiphyFetch(import.meta.env.VITE_GIPHY_API_KEY);
 
 interface GiphyPickerProps {
   isOpen: boolean;
@@ -139,7 +135,7 @@ export function GiphyPicker({
               rel="noopener noreferrer"
             >
               <img
-                className="h-6"
+                className="h-12"
                 src="/PoweredBy_640_Horizontal_Light-Backgrounds_With_Logo.gif"
                 alt="Powered by GIPHY"
                 loading="lazy"
