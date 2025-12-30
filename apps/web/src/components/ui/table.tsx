@@ -45,7 +45,7 @@ export function TableBody({ children }: { children: ReactNode }) {
 
 export function TableBodyRow({ children }: { children: ReactNode }) {
   return (
-    <tr className="odd:bg-white even:bg-gray-100/80 dark:odd:bg-gray-900 dark:even:bg-gray-700/30">
+    <tr className="border-0 odd:bg-white even:bg-gray-100/80 dark:odd:bg-gray-900 dark:even:bg-gray-700/25">
       {children}
     </tr>
   );
