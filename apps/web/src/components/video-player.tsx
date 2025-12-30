@@ -1,3 +1,4 @@
+import { type SyntheticEvent, useCallback, useRef } from "react";
 import ReactPlayer from "react-player";
 
 interface VideoPlayerProps {
@@ -12,6 +13,8 @@ interface VideoPlayerProps {
   onReady?: () => void;
   onError?: (error: unknown) => void;
   onEnded?: () => void;
+  /** Progress callback with played fraction (0-1) and playedSeconds */
+  onProgress?: (state: { played: number; playedSeconds: number }) => void;
 }
 
 /**
@@ -42,7 +45,32 @@ export function VideoPlayer({
   onReady,
   onError,
   onEnded,
+  onProgress,
 }: VideoPlayerProps) {
+  const lastProgressRef = useRef<number>(0);
+
+  // Handle timeupdate events and convert to progress format
+  const handleTimeUpdate = useCallback(
+    (event: SyntheticEvent<HTMLVideoElement>) => {
+      if (!onProgress) return;
+
+      const video = event.currentTarget;
+      const playedSeconds = video.currentTime;
+      const duration = video.duration;
+
+      if (duration && Number.isFinite(duration)) {
+        const played = playedSeconds / duration;
+
+        // Only call onProgress if there's meaningful change (avoid excessive calls)
+        if (Math.abs(played - lastProgressRef.current) >= 0.01) {
+          lastProgressRef.current = played;
+          onProgress({ played, playedSeconds });
+        }
+      }
+    },
+    [onProgress],
+  );
+
   return (
     <div
       className={`aspect-video w-full bg-gray-900 ${className}`}
@@ -62,6 +90,7 @@ export function VideoPlayer({
           onError?.(error);
         }}
         onEnded={onEnded}
+        onTimeUpdate={onProgress ? handleTimeUpdate : undefined}
       />
     </div>
   );
