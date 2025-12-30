@@ -1,6 +1,10 @@
 CREATE TYPE "my_schema"."report_reason" AS ENUM('spam', 'harassment', 'inappropriate', 'offensive', 'violence', 'illegal', 'other');--> statement-breakpoint
 CREATE TYPE "my_schema"."report_status" AS ENUM('pending', 'reviewed', 'dismissed', 'actioned');--> statement-breakpoint
-ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_chat_message_reported';--> statement-breakpoint
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_enum WHERE enumlabel = 'admin_chat_message_reported' AND enumtypid = 'my_schema.user_notification_type'::regtype) THEN
+    ALTER TYPE "my_schema"."user_notification_type" ADD VALUE 'admin_chat_message_reported';
+  END IF;
+END $$;--> statement-breakpoint
 CREATE TABLE "my_schema"."chat_message_report" (
 	"id" text PRIMARY KEY NOT NULL,
 	"message_id" text NOT NULL,
