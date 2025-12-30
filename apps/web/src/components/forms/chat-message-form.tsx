@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { CircleArrowRightIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
@@ -11,11 +12,12 @@ import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 const formSchema = z.object({
-  message: z.string(),
+  message: z.string().min(1, "Message cannot be empty"),
 });
 
 export default function ChatMessageForm() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
+  const [submitAttempted, setSubmitAttempted] = useState(false);
   const createChatMessageMutation = useMutation(
     trpc.chat.postMessage.mutationOptions({
       keyPrefix: undefined,
@@ -27,7 +29,6 @@ export default function ChatMessageForm() {
       message: "",
     } as z.infer<typeof formSchema>,
     validators: {
-      onBlur: formSchema,
       onSubmit: formSchema,
     },
     onSubmit: async ({ value: { message } }) => {
@@ -42,6 +43,7 @@ export default function ChatMessageForm() {
         });
 
         form.reset();
+        setSubmitAttempted(false);
         toast.success("Message sent successfully!");
       } catch (error) {
         console.error("Error sending message:", error);
@@ -52,12 +54,22 @@ export default function ChatMessageForm() {
     },
   });
 
+  const handleSubmit = () => {
+    const message = form.getFieldValue("message");
+    if (message.trim() === "") {
+      setSubmitAttempted(true);
+      toast.error("You can't send an empty message");
+      return;
+    }
+    form.handleSubmit();
+  };
+
   return (
     <form
       onSubmit={(event) => {
         event.preventDefault();
         event.stopPropagation();
-        form.handleSubmit();
+        handleSubmit();
       }}
       noValidate
     >
@@ -76,7 +88,8 @@ export default function ChatMessageForm() {
               id={field.name}
               onChange={field.handleChange}
               value={field.state.value}
-              onSubmit={() => form.handleSubmit()}
+              onSubmit={handleSubmit}
+              hasError={submitAttempted && field.state.value.trim() === ""}
             >
               <form.Subscribe
                 selector={(state) => [state.isDirty, state.isSubmitting]}

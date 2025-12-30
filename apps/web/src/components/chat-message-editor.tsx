@@ -22,6 +22,7 @@ interface GitHubMessageEditorProps {
   placeholder?: string;
   children: ReactNode;
   onSubmit?: () => void;
+  hasError?: boolean;
 }
 
 export default function ChatMessageEditor({
@@ -31,6 +32,7 @@ export default function ChatMessageEditor({
   placeholder = "Write your message...",
   children,
   onSubmit,
+  hasError = false,
 }: GitHubMessageEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -165,13 +167,16 @@ export default function ChatMessageEditor({
         <div className="bg-gray-100 p-2 dark:bg-gray-900">
           <textarea
             className={cn(
-              "size-to-fit block min-h-5 w-full resize-y rounded-sm border border-gray-200 bg-white px-2 py-2.5 text-sm text-gray-900",
-              "focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none",
-              "dark:border-gray-700 dark:bg-gray-900 dark:text-white",
+              "size-to-fit block min-h-5 w-full resize-y rounded-sm border bg-white px-2 py-2.5 text-sm text-gray-900",
+              "focus:ring-1 focus:outline-none",
+              "dark:bg-gray-900 dark:text-white",
               "placeholder-gray-500 dark:placeholder-gray-400",
               "box-border leading-normal",
               "custom-scrollbar",
               uploadingCount > 0 && "opacity-75",
+              hasError
+                ? "border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500"
+                : "border-gray-200 focus:border-green-500 focus:ring-green-500 dark:border-gray-700",
             )}
             id={id}
             ref={textareaRef}
