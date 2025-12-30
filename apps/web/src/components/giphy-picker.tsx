@@ -76,7 +76,7 @@ export function GiphyPicker({
               Select a GIF
             </DialogTitle>
             <button
-              className="rounded-md p-1 hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="cursor-pointer rounded-md p-1 hover:bg-gray-200 dark:hover:bg-gray-700"
               onClick={onClose}
               aria-label="Close"
             >
