@@ -1,8 +1,14 @@
+import { GiphyFetch } from "@giphy/js-fetch-api";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-import { trpcClient } from "~/lib/trpc.client";
+
+// Initialize Giphy SDK client for frontend use
+// SDK keys are designed to be used client-side and don't have CORS issues
+const giphyFetch = new GiphyFetch(
+  import.meta.env.VITE_GIPHY_API_KEY || "KnEa5aygR7OA9nOkhLnldnwDqnBXXAci",
+);
 
 interface GiphyPickerProps {
   isOpen: boolean;
@@ -21,14 +27,13 @@ export function GiphyPicker({
     queryKey: ["giphy", searchTerm] as const,
     queryFn: async () => {
       if (searchTerm) {
-        return trpcClient.giphy.search.query({
-          query: searchTerm,
+        return giphyFetch.search(searchTerm, {
           offset: 0,
           limit: 20,
           rating: "pg-13",
         });
       }
-      return trpcClient.giphy.trending.query({
+      return giphyFetch.trending({
         offset: 0,
         limit: 20,
         rating: "pg-13",
@@ -115,8 +120,16 @@ export function GiphyPicker({
             )}
           </div>
 
-          <div className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-            <p>Powered by GIPHY</p>
+          <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+            <span>Powered by</span>
+            <a
+              className="font-semibold text-gray-900 hover:underline dark:text-white"
+              href="https://giphy.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GIPHY
+            </a>
           </div>
         </DialogPanel>
       </div>
