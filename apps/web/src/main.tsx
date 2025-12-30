@@ -1,5 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
+import "highlight.js/styles/github-dark.css";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import ErrorBoundaryComponent from "~/components/error-boundary";
@@ -10,6 +11,7 @@ import { queryClient } from "~/lib/query.client";
 import { ThemeProvider } from "~/lib/theme.provider";
 import reportWebVitals from "~/reportWebVitals";
 import { routeTree } from "~/routeTree.gen";
+import "~/styles/code-blocks.css";
 import "~/tailwind.css";
 
 const router = createRouter({

@@ -1,0 +1,45 @@
+/* Code block styling for chat messages */
+.chat-message-content pre {
+  @apply relative my-3 overflow-x-auto rounded-md bg-gray-900 p-4 dark:bg-gray-950;
+}
+
+.chat-message-content pre code {
+  @apply block font-mono text-sm leading-relaxed text-gray-100;
+}
+
+.chat-message-content code {
+  @apply rounded bg-gray-200 px-1.5 py-0.5 font-mono text-sm text-gray-900 dark:bg-gray-800 dark:text-gray-100;
+}
+
+.chat-message-content pre code {
+  @apply bg-transparent p-0 text-gray-100;
+}
+
+/* Inline code should not have pre styles */
+.chat-message-content p code,
+.chat-message-content li code {
+  @apply rounded bg-gray-200 px-1.5 py-0.5 font-mono text-sm text-gray-900 dark:bg-gray-800 dark:text-gray-100;
+}
+
+/* Ensure code blocks have proper spacing */
+.chat-message-content pre + * {
+  @apply mt-4;
+}
+
+/* Override highlight.js theme for better readability */
+.chat-message-content .hljs {
+  @apply bg-transparent;
+}
+
+/* Add scrollbar styling for code blocks */
+.chat-message-content pre::-webkit-scrollbar {
+  @apply h-2;
+}
+
+.chat-message-content pre::-webkit-scrollbar-track {
+  @apply rounded-md bg-gray-800;
+}
+
+.chat-message-content pre::-webkit-scrollbar-thumb {
+  @apply rounded-md bg-gray-600 hover:bg-gray-500;
+}

@@ -109,7 +109,7 @@ export default function ChatMessage({
           </span>
 
           <div
-            className="flex-1 text-sm text-gray-900 dark:text-white"
+            className="chat-message-content flex-1 text-sm text-gray-900 dark:text-white"
             dangerouslySetInnerHTML={{ __html: html }}
           />
 
