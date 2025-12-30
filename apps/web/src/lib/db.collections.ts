@@ -1,4 +1,5 @@
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
+import type { AllReports } from "@apps/server/src/routers/chat-reports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
   AllCourses,
@@ -18,6 +19,7 @@ import { trpc, trpcClient } from "~/lib/trpc.client";
 type SupportTicket = AllSupportTickets[number];
 type Coupon = CouponsReturnType[number];
 type Review = AllReviews[number];
+type ChatReport = AllReports[number];
 
 // Announcement type from server - exported for use in components
 export type Announcement = PublishedAnnouncements[number];
@@ -421,5 +423,62 @@ export function useReviewById({ reviewId }: { reviewId: string }) {
         .findOne();
     },
     [reviewId],
+  );
+}
+
+// Chat Reports Collection
+export const ChatReportsCollection = createCollection(
+  queryCollectionOptions<ChatReport>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.chatReports.getAllReports.queryKey(),
+    queryFn: () => trpcClient.chatReports.getAllReports.query(),
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.chatReports.updateReportStatus.mutate({
+          reportId: modified.id,
+          status: modified.status as "reviewed" | "dismissed",
+        });
+      } catch (error) {
+        console.error("Error updating chat report: ", error);
+        toast.error(
+          "An error occurred while updating the report. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.chatReports.deleteReport.mutate({
+          reportId: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting chat report: ", error);
+        toast.error(
+          "An error occurred while deleting the report. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
+export function useChatReports() {
+  return useLiveQuery(ChatReportsCollection);
+}
+
+export function useChatReportById({ reportId }: { reportId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ report: ChatReportsCollection })
+        .where(({ report }) => eq(report.id, reportId))
+        .findOne();
+    },
+    [reportId],
   );
 }

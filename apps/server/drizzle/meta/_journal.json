@@ -71,6 +71,20 @@
       "when": 1767009521800,
       "tag": "0009_bright_morg",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1767079408982,
+      "tag": "0010_pink_blacklash",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1767079595486,
+      "tag": "0011_high_vulture",
+      "breakpoints": true
     }
   ]
 }
