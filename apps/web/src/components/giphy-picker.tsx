@@ -131,15 +131,19 @@ export function GiphyPicker({
             )}
           </div>
 
-          <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-600 dark:text-gray-400">
-            <span>Powered by</span>
+          <div className="mt-4 flex w-full items-center justify-center">
             <a
-              className="font-semibold text-gray-900 hover:underline dark:text-white"
+              className="inline-flex items-center justify-center"
               href="https://giphy.com"
               target="_blank"
               rel="noopener noreferrer"
             >
-              GIPHY
+              <img
+                className="h-6"
+                src="/PoweredBy_200_Horizontal_Light-Backgrounds_With_Logo.gif"
+                alt="Powered by GIPHY"
+                loading="lazy"
+              />
             </a>
           </div>
         </DialogPanel>
