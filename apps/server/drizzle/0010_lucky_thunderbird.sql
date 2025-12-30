@@ -26,7 +26,16 @@ CREATE TABLE "my_schema"."chat_message_report" (
 	CONSTRAINT "chat_message_report_reviewed_check" CHECK (("my_schema"."chat_message_report"."status" IN ('reviewed', 'dismissed', 'actioned') AND "my_schema"."chat_message_report"."reviewed_at" IS NOT NULL AND "my_schema"."chat_message_report"."reviewed_by" IS NOT NULL) OR ("my_schema"."chat_message_report"."status" = 'pending' AND "my_schema"."chat_message_report"."reviewed_at" IS NULL AND "my_schema"."chat_message_report"."reviewed_by" IS NULL))
 );
 --> statement-breakpoint
-ALTER TABLE "my_schema"."user_notification" ADD COLUMN "chat_message_report_id" text;--> statement-breakpoint
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_schema = 'my_schema' 
+    AND table_name = 'user_notification' 
+    AND column_name = 'chat_message_report_id'
+  ) THEN
+    ALTER TABLE "my_schema"."user_notification" ADD COLUMN "chat_message_report_id" text;
+  END IF;
+END $$;--> statement-breakpoint
 ALTER TABLE "my_schema"."chat_message_report" ADD CONSTRAINT "chat_message_report_reported_by_user_id_fk" FOREIGN KEY ("reported_by") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "my_schema"."chat_message_report" ADD CONSTRAINT "chat_message_report_reviewed_by_user_id_fk" FOREIGN KEY ("reviewed_by") REFERENCES "my_schema"."user"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "chat_message_report_message_id_idx" ON "my_schema"."chat_message_report" USING btree ("message_id");--> statement-breakpoint
@@ -34,4 +43,13 @@ CREATE INDEX "chat_message_report_channel_id_idx" ON "my_schema"."chat_message_r
 CREATE INDEX "chat_message_report_reported_by_idx" ON "my_schema"."chat_message_report" USING btree ("reported_by");--> statement-breakpoint
 CREATE INDEX "chat_message_report_status_idx" ON "my_schema"."chat_message_report" USING btree ("status");--> statement-breakpoint
 CREATE INDEX "chat_message_report_created_at_idx" ON "my_schema"."chat_message_report" USING btree ("created_at");--> statement-breakpoint
-ALTER TABLE "my_schema"."user_notification" ADD CONSTRAINT "user_notification_chat_message_report_id_chat_message_report_id_fk" FOREIGN KEY ("chat_message_report_id") REFERENCES "my_schema"."chat_message_report"("id") ON DELETE cascade ON UPDATE no action;
+DO $$ BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.table_constraints 
+    WHERE constraint_schema = 'my_schema' 
+    AND table_name = 'user_notification' 
+    AND constraint_name = 'user_notification_chat_message_report_id_chat_message_report_id_fk'
+  ) THEN
+    ALTER TABLE "my_schema"."user_notification" ADD CONSTRAINT "user_notification_chat_message_report_id_chat_message_report_id_fk" FOREIGN KEY ("chat_message_report_id") REFERENCES "my_schema"."chat_message_report"("id") ON DELETE cascade ON UPDATE no action;
+  END IF;
+END $$;
