@@ -31,6 +31,7 @@ export default function ChatDateDivider({ date }: ChatDateDividerProps) {
         <ChevronDownIcon
           className="text-gray-400"
           size={12}
+          aria-hidden="true"
         />
       </div>
     </div>
