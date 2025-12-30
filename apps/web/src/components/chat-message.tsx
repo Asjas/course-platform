@@ -1,7 +1,7 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { EllipsisIcon } from "lucide-react";
+import { EllipsisIcon, FlagIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Menu,
@@ -11,6 +11,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import { ReportMessageDialog } from "~/components/report-message-dialog";
 import { useAuth } from "~/lib/auth.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
@@ -24,6 +25,7 @@ export default function ChatMessage({
   channelId: string;
 }) {
   const [html, setHtml] = useState("");
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const auth = useAuth();
 
   const deleteMessageMutation = useMutation(
@@ -91,65 +93,87 @@ export default function ChatMessage({
   }
 
   return (
-    <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900/55">
-      {/* timestamp */}
-      <div className="flex w-14 justify-end">
-        <span className="text-[14px] text-gray-500 dark:text-gray-300/75">
-          {format(msg.timestamp, "HH:mm")}
-        </span>
-      </div>
-
-      {/* message body + three-dot button */}
-      <div className="flex flex-1 items-center gap-1">
-        <span className="shrink-0 text-sm font-medium text-green-600">
-          {msg.username || msg.name}:
-        </span>
-
-        <div
-          className="flex-1 text-sm text-gray-900 dark:text-white"
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
-
-        {msg.editedAt ? (
-          <span className="text-xs text-gray-400 italic dark:text-gray-500">
-            (edited)
+    <>
+      <div className="group flex items-center gap-2 rounded-md py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900/55">
+        {/* timestamp */}
+        <div className="flex w-14 justify-end">
+          <span className="text-[14px] text-gray-500 dark:text-gray-300/75">
+            {format(msg.timestamp, "HH:mm")}
           </span>
-        ) : null}
+        </div>
 
-        {/* three-dot button – visible only on hover */}
-        <MenuTrigger>
-          <MenuButton
-            className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label="Message actions"
-          >
-            <EllipsisIcon
-              size={18}
-              color="var(--color-gray-400)"
-            />
-          </MenuButton>
+        {/* message body + three-dot button */}
+        <div className="flex flex-1 items-center gap-1">
+          <span className="shrink-0 text-sm font-medium text-green-600">
+            {msg.username || msg.name}:
+          </span>
 
-          <Popover className="z-50">
-            <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
-              {auth.session?.user.name === msg.name || auth.hasRole("admin") ? (
-                <MenuItem
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
-                  onAction={handleEdit}
-                >
-                  Edit
-                </MenuItem>
-              ) : null}
-              {auth.session?.user.name === msg.name || auth.hasRole("admin") ? (
-                <MenuItem
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
-                  onAction={handleDelete}
-                >
-                  Delete
-                </MenuItem>
-              ) : null}
-            </Menu>
-          </Popover>
-        </MenuTrigger>
+          <div
+            className="flex-1 text-sm text-gray-900 dark:text-white"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+
+          {msg.editedAt ? (
+            <span className="text-xs text-gray-400 italic dark:text-gray-500">
+              (edited)
+            </span>
+          ) : null}
+
+          {/* three-dot button – visible only on hover */}
+          <MenuTrigger>
+            <MenuButton
+              className="mr-2 rounded p-1 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-gray-200 dark:hover:bg-gray-700"
+              aria-label="Message actions"
+            >
+              <EllipsisIcon
+                size={18}
+                color="var(--color-gray-400)"
+              />
+            </MenuButton>
+
+            <Popover className="z-50">
+              <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                {auth.session?.user.name === msg.name ||
+                auth.hasRole("admin") ? (
+                  <MenuItem
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+                    onAction={handleEdit}
+                  >
+                    Edit
+                  </MenuItem>
+                ) : null}
+                {auth.session?.user.name === msg.name ||
+                auth.hasRole("admin") ? (
+                  <MenuItem
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-red-600 hover:bg-gray-100 dark:text-red-400 dark:hover:bg-gray-700"
+                    onAction={handleDelete}
+                  >
+                    Delete
+                  </MenuItem>
+                ) : null}
+                {auth.session?.user.name !== msg.name ? (
+                  <MenuItem
+                    className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-orange-600 hover:bg-gray-100 dark:text-orange-400 dark:hover:bg-gray-700"
+                    onAction={() => setIsReportDialogOpen(true)}
+                  >
+                    <FlagIcon size={14} />
+                    Report
+                  </MenuItem>
+                ) : null}
+              </Menu>
+            </Popover>
+          </MenuTrigger>
+        </div>
       </div>
-    </div>
+
+      <ReportMessageDialog
+        isOpen={isReportDialogOpen}
+        onClose={() => setIsReportDialogOpen(false)}
+        messageId={msg.id}
+        channelId={channelId}
+        messageContent={msg.message}
+        messageAuthor={msg.name}
+      />
+    </>
   );
 }
