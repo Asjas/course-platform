@@ -83,6 +83,9 @@ const schema = z.object({
 
   // Support Ticket variables
   SUPPORT_ASSIGNED_TO_USER_ID: z.string().nonempty(),
+
+  // Giphy variables
+  GIPHY_API_KEY: z.string().nonempty(),
 });
 
 export type Config = z.infer<typeof schema>;

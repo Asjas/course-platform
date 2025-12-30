@@ -1,22 +1,8 @@
-import { GiphyFetch } from "@giphy/js-fetch-api";
-import { Grid } from "@giphy/react-components";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useState } from "react";
-
-// Initialize Giphy Fetch with API key from environment
-const GIPHY_API_KEY = import.meta.env.VITE_GIPHY_API_KEY || ""; // Using public Giphy SDK key
-const gf = new GiphyFetch(GIPHY_API_KEY);
-
-// Type for a GIF from the Giphy SDK
-interface GiphyGif {
-  id: string | number;
-  images: {
-    original: {
-      url: string;
-    };
-  };
-}
+import { trpcClient } from "~/lib/trpc.client";
 
 interface GiphyPickerProps {
   isOpen: boolean;
@@ -31,19 +17,27 @@ export function GiphyPicker({
 }: GiphyPickerProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const fetchGifs = (offset: number) => {
-    if (searchTerm) {
-      return gf.search(searchTerm, { offset, limit: 10 });
-    }
-    return gf.trending({ offset, limit: 10 });
-  };
+  const { data: gifsData, isLoading } = useQuery({
+    queryKey: ["giphy", searchTerm] as const,
+    queryFn: async () => {
+      if (searchTerm) {
+        return trpcClient.giphy.search.query({
+          query: searchTerm,
+          offset: 0,
+          limit: 20,
+          rating: "pg-13",
+        });
+      }
+      return trpcClient.giphy.trending.query({
+        offset: 0,
+        limit: 20,
+        rating: "pg-13",
+      });
+    },
+    enabled: isOpen,
+  });
 
-  function handleGifClick(
-    gif: GiphyGif,
-    e: React.SyntheticEvent<HTMLElement, Event>,
-  ) {
-    e.preventDefault();
-    const gifUrl = gif.images.original.url;
+  function handleGifClick(gifUrl: string) {
     onSelectGif(gifUrl);
     onClose();
   }
@@ -88,32 +82,35 @@ export function GiphyPicker({
           </div>
 
           <div className="max-h-96 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
-            {GIPHY_API_KEY ? (
-              <Grid
-                key={searchTerm}
-                width={560}
-                columns={3}
-                gutter={6}
-                fetchGifs={fetchGifs}
-                onGifClick={handleGifClick}
-              />
-            ) : (
-              <div className="p-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                <p className="mb-2 font-medium">Giphy API Key Not Configured</p>
-                <p className="text-xs">
-                  Set VITE_GIPHY_API_KEY in your .env file to enable GIF search.
-                </p>
-                <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-                  Get a free API key at{" "}
-                  <a
-                    className="text-green-600 hover:underline dark:text-green-400"
-                    href="https://developers.giphy.com/"
-                    target="_blank"
-                    rel="noopener noreferrer"
+            {isLoading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Loading GIFs...
+                </div>
+              </div>
+            ) : gifsData && gifsData.data.length > 0 ? (
+              <div className="grid grid-cols-3 gap-2 p-2">
+                {gifsData.data.map((gif) => (
+                  <button
+                    className="overflow-hidden rounded-md transition-transform hover:scale-105"
+                    key={gif.id}
+                    onClick={() => handleGifClick(gif.images.original.url)}
+                    type="button"
                   >
-                    developers.giphy.com
-                  </a>
-                </p>
+                    <img
+                      className="size-full object-cover"
+                      src={gif.images.fixed_width.url}
+                      alt="GIF"
+                      loading="lazy"
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  No GIFs found
+                </div>
               </div>
             )}
           </div>
