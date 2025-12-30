@@ -2,7 +2,7 @@ import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { EllipsisIcon, FlagIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Menu,
   Button as MenuButton,
@@ -56,7 +56,8 @@ export default function ChatMessage({
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
   const auth = useAuth();
 
-  const usernameColor = getUsernameColor(msg.name);
+  // Memoize username color to avoid recalculating hash on every render
+  const usernameColor = useMemo(() => getUsernameColor(msg.name), [msg.name]);
 
   const deleteMessageMutation = useMutation(
     trpc.chat.deleteMessage.mutationOptions({ keyPrefix: undefined }),
@@ -168,11 +169,12 @@ export default function ChatMessage({
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
-        <div className="pointer-events-none absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto focus-within:opacity-100 focus-within:pointer-events-auto">
+        <div className="pointer-events-none absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
           <MenuTrigger>
             <MenuButton
               className="rounded border border-transparent bg-white p-1 shadow-sm hover:border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
               aria-label="Message actions"
+              aria-haspopup="menu"
             >
               <EllipsisIcon
                 className="text-gray-500 dark:text-gray-400"
