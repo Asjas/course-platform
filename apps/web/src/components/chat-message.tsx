@@ -166,8 +166,8 @@ export default function ChatMessage({
           ) : null}
         </div>
 
-        {/* Action menu - appears on hover, positioned at right edge */}
-        <div className="absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+        {/* Action menu - appears on hover or focus, positioned at right edge */}
+        <div className="pointer-events-none absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:opacity-100 group-hover:pointer-events-auto focus-within:opacity-100 focus-within:pointer-events-auto">
           <MenuTrigger>
             <MenuButton
               className="rounded border border-transparent bg-white p-1 shadow-sm hover:border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
