@@ -396,8 +396,8 @@ importers:
         specifier: 7.69.0
         version: 7.69.0(react@19.2.3)
       react-player:
-        specifier: 2.16.0
-        version: 2.16.0(react@19.2.3)
+        specifier: 2.16.1
+        version: 2.16.1(react@19.2.3)
       rehype-autolink-headings:
         specifier: 7.1.0
         version: 7.1.0
@@ -8151,8 +8151,8 @@ packages:
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
 
-  react-player@2.16.0:
-    resolution: {integrity: sha512-mAIPHfioD7yxO0GNYVFD1303QFtI3lyyQZLY229UEAp/a10cSW+hPcakg0Keq8uWJxT2OiT/4Gt+Lc9bD6bJmQ==}
+  react-player@2.16.1:
+    resolution: {integrity: sha512-mxP6CqjSWjidtyDoMOSHVPdhX0pY16aSvw5fVr44EMaT7X5Xz46uQ4b/YBm1v2x+3hHkB9PmjEEkmbHb9PXQ4w==}
     peerDependencies:
       react: '>=16.6.0'
 
@@ -13686,7 +13686,7 @@ snapshots:
       '@react-types/shared': 3.32.1(react@19.2.3)
       react: 19.2.3
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.2.3)(redux@5.0.1))(react@19.2.3)':
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -19010,7 +19010,7 @@ snapshots:
 
   react-is@17.0.2: {}
 
-  react-player@2.16.0(react@19.2.3):
+  react-player@2.16.1(react@19.2.3):
     dependencies:
       deepmerge: 4.3.1
       load-script: 1.0.0
@@ -19135,7 +19135,7 @@ snapshots:
 
   recharts@3.6.0(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react-is@17.0.2)(react@19.2.3)(redux@5.0.1):
     dependencies:
-      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(react@19.2.3)(redux@5.0.1))(react@19.2.3)
+      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(@types/react@19.2.7)(react@19.2.3)(redux@5.0.1))(react@19.2.3)
       clsx: 2.1.1
       decimal.js-light: 2.5.1
       es-toolkit: 1.43.0
