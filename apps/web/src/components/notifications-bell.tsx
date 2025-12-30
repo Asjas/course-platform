@@ -8,6 +8,7 @@ import {
   CheckCircle,
   CircleDollarSign,
   CreditCard,
+  Flag,
   Info,
   type LucideIcon,
   Mail,
@@ -88,6 +89,7 @@ const userNotificationIcons: Record<NotificationType, LucideIcon> = {
   admin_course_review_milestone: TrendingUp,
   admin_enrollment_milestone: TrendingUp,
   admin_new_user_registration: UserPlus,
+  admin_chat_message_reported: Flag,
 };
 
 const announcementColors: Record<AnnouncementType, string> = {
@@ -171,6 +173,8 @@ const userNotificationColors: Record<NotificationType, string> = {
     "bg-pink-50 border-pink-200 dark:bg-pink-900/20 dark:border-pink-800",
   admin_new_user_registration:
     "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
+  admin_chat_message_reported:
+    "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
 };
 
 const announcementIconColors: Record<AnnouncementType, string> = {
@@ -219,6 +223,7 @@ const userNotificationIconColors: Record<NotificationType, string> = {
   admin_course_review_milestone: "text-pink-600 dark:text-pink-400",
   admin_enrollment_milestone: "text-pink-600 dark:text-pink-400",
   admin_new_user_registration: "text-blue-600 dark:text-blue-400",
+  admin_chat_message_reported: "text-red-600 dark:text-red-400",
 };
 
 // Combined notification item type for rendering

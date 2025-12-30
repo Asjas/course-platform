@@ -1,6 +1,7 @@
 import { relations, sql } from "drizzle-orm";
 import { check, index, text, timestamp } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/my-schema.js";
+import { chatMessageReport } from "~/db/schema/chatMessageReports.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { supportTicket } from "~/db/schema/support-tickets.js";
 import { user } from "~/db/schema/user.js";
@@ -46,6 +47,8 @@ export const userNotificationType = mySchema.enum("user_notification_type", [
   "admin_course_review_milestone",
   "admin_enrollment_milestone",
   "admin_new_user_registration",
+  // Chat message reports
+  "admin_chat_message_reported",
 ]);
 
 // User notifications table
@@ -62,6 +65,9 @@ export const userNotification = mySchema.table(
     link: text(),
     // Reference to related entities (optional)
     supportTicketId: text().references(() => supportTicket.id, {
+      onDelete: "cascade",
+    }),
+    chatMessageReportId: text().references(() => chatMessageReport.id, {
       onDelete: "cascade",
     }),
     // Who triggered this notification (optional)
@@ -96,6 +102,11 @@ export const userNotificationRelations = relations(
       fields: [userNotification.supportTicketId],
       references: [supportTicket.id],
       relationName: "user_notification_support_ticket",
+    }),
+    chatMessageReport: one(chatMessageReport, {
+      fields: [userNotification.chatMessageReportId],
+      references: [chatMessageReport.id],
+      relationName: "user_notification_chat_message_report",
     }),
   }),
 );
