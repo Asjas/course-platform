@@ -48,8 +48,9 @@ async function fetchGiphy(
   const response = await fetch(url.toString());
 
   if (!response.ok) {
+    const responseText = await response.text();
     throw new Error(
-      `Giphy API error: ${response.status} ${response.statusText}`,
+      `Giphy API error: ${response.status} ${response.statusText}. URL: ${url.toString().replace(config.GIPHY_API_KEY, "***")}. Response: ${responseText.slice(0, 200)}`,
     );
   }
 
