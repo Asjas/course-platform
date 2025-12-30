@@ -124,14 +124,14 @@ export default function ChatMessage({
   return (
     <>
       <div
-        className="group relative flex items-start gap-2 rounded py-0.5 pr-2 pl-1 hover:bg-gray-100 dark:hover:bg-gray-900/55"
+        className="group relative flex items-start gap-2 rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-900/55"
         role="article"
         aria-label={`Message from ${msg.username || msg.name}`}
       >
-        {/* Compact timestamp column - Slack style */}
+        {/* Compact timestamp column - Slack style (always visible) */}
         <div className="flex w-12 shrink-0 items-start justify-end pt-0.5">
           <span
-            className="text-xs text-gray-400 opacity-0 transition-opacity group-hover:opacity-100 dark:text-gray-500"
+            className="text-xs text-gray-500 dark:text-gray-400"
             title={format(msg.timestamp, "PPpp")}
           >
             {format(msg.timestamp, "HH:mm")}
