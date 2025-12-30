@@ -2,7 +2,8 @@ import { GiphyFetch } from "@giphy/js-fetch-api";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 // Initialize Giphy SDK client for frontend use
 // SDK keys are designed to be used client-side and don't have CORS issues
@@ -23,7 +24,11 @@ export function GiphyPicker({
 }: GiphyPickerProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: gifsData, isLoading } = useQuery({
+  const {
+    data: gifsData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["giphy", searchTerm] as const,
     queryFn: async () => {
       if (searchTerm) {
@@ -41,6 +46,12 @@ export function GiphyPicker({
     },
     enabled: isOpen,
   });
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Failed to load GIFs. Please try again.");
+    }
+  }, [error]);
 
   function handleGifClick(gifUrl: string) {
     onSelectGif(gifUrl);
