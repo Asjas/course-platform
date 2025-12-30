@@ -22,29 +22,31 @@ const channels = ["general", "random"];
 function AuthenticatedChatPage() {
   return (
     <div className="sidebar h-full">
-      <nav className="flex min-w-[180px] flex-col border-r border-gray-300 bg-gray-900 px-2 py-3 dark:border-gray-700 dark:bg-gray-900">
-        <span className="mb-2 px-2 text-sm font-bold tracking-wide text-gray-400 uppercase">
+      <nav className="flex flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900">
+        <span className="mt-2 flex px-2 py-2 text-lg font-bold text-gray-900 md:text-xl dark:text-white">
           Channels
         </span>
-        <ul className="flex flex-col gap-0.5">
-          {channels.map((channel) => (
-            <li key={channel}>
-              <Link
-                className="flex h-7 w-full items-center rounded px-2 text-sm text-gray-300 hover:bg-gray-700/50"
-                activeProps={{
-                  className: "bg-blue-600 text-white hover:bg-blue-600",
-                }}
-                activeOptions={{ exact: true }}
-                to="/chat/$channelId"
-                params={{ channelId: channel }}
-              >
-                <span className="font-normal"># {channel}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-col gap-2">
+          <ul className="flex flex-1 flex-col gap-y-1 pt-4">
+            {channels.map((channel) => (
+              <li key={channel}>
+                <Link
+                  className="flex h-8 w-full items-center rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
+                  activeProps={{
+                    className: "bg-gray-200 dark:bg-gray-800",
+                  }}
+                  activeOptions={{ exact: true }}
+                  to="/chat/$channelId"
+                  params={{ channelId: channel }}
+                >
+                  <span># {channel}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </nav>
-      <main className="bg-gray-800">
+      <main>
         <Outlet />
       </main>
     </div>
