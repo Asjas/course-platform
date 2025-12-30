@@ -1,12 +1,12 @@
 {
-  "id": "7dbd61ee-ac23-46dd-a46a-db495a6c5f79",
+  "id": "5ed5bb4a-759c-45a6-acdc-7ef5b0efeb22",
   "prevId": "972b59f4-bcd5-4f1c-b163-af2c72fdaaa9",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.chat_message_reports": {
+    "my_schema.chat_message_reports": {
       "name": "chat_message_reports",
-      "schema": "",
+      "schema": "my_schema",
       "columns": {
         "id": {
           "name": "id",
@@ -53,7 +53,7 @@
         "status": {
           "name": "status",
           "type": "report_status",
-          "typeSchema": "public",
+          "typeSchema": "my_schema",
           "primaryKey": false,
           "notNull": true,
           "default": "'pending'"
@@ -4777,6 +4777,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "chat_message_report_id": {
+          "name": "chat_message_report_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "actor_id": {
           "name": "actor_id",
           "type": "text",
@@ -4880,6 +4886,20 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
+        "user_notification_chat_message_report_id_chat_message_reports_id_fk": {
+          "name": "user_notification_chat_message_report_id_chat_message_reports_id_fk",
+          "tableFrom": "user_notification",
+          "tableTo": "chat_message_reports",
+          "schemaTo": "my_schema",
+          "columnsFrom": [
+            "chat_message_report_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
         "user_notification_actor_id_user_id_fk": {
           "name": "user_notification_actor_id_user_id_fk",
           "tableFrom": "user_notification",
@@ -4912,9 +4932,9 @@
     }
   },
   "enums": {
-    "public.report_status": {
+    "my_schema.report_status": {
       "name": "report_status",
-      "schema": "public",
+      "schema": "my_schema",
       "values": [
         "pending",
         "reviewed",
@@ -5090,7 +5110,8 @@
         "admin_team_license_created",
         "admin_course_review_milestone",
         "admin_enrollment_milestone",
-        "admin_new_user_registration"
+        "admin_new_user_registration",
+        "admin_chat_message_reported"
       ]
     }
   },

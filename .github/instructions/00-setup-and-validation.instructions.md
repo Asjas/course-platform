@@ -18,7 +18,7 @@ Migration files are immutable once created. Editing them will cause catastrophic
 
 If a migration is wrong:
 1. Create a NEW migration file to fix it
-2. Use `cd apps/server && pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts`
+2. Use `cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts`
 3. NEVER edit existing .sql migration files
 
 **Files you must NEVER edit:**

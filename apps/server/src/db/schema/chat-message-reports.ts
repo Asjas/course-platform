@@ -1,14 +1,15 @@
+import { mySchema } from "../my-schema.js";
 import { user } from "./user.js";
 import { relations } from "drizzle-orm";
-import { pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import { text, timestamp } from "drizzle-orm/pg-core";
 
-export const reportStatusEnum = pgEnum("report_status", [
+export const reportStatusEnum = mySchema.enum("report_status", [
   "pending",
   "reviewed",
   "dismissed",
 ]);
 
-export const chatMessageReport = pgTable("chat_message_reports", {
+export const chatMessageReport = mySchema.table("chat_message_reports", {
   id: text("id").primaryKey(),
   messageId: text("message_id").notNull(),
   channelId: text("channel_id").notNull(),
