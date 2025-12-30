@@ -14,10 +14,10 @@ import {
   TabList,
   TabPanel,
 } from "react-aria-components";
-import YouTube, { type YouTubeProps } from "react-youtube";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
+import { VideoPlayer } from "~/components/video-player";
 import {
   type CourseWithModulesAndLessons,
   CoursesCollection,
@@ -139,42 +139,23 @@ function LessonPage() {
     setLayoutMode((prev) => (prev === "sidebar" ? "fullscreen" : "sidebar"));
   };
 
-  // YouTube player options
-  const youtubeOpts: YouTubeProps["opts"] = {
-    width: "100%",
-    height: "100%",
-    playerVars: {
-      autoplay: 0,
-      modestbranding: 1,
-      rel: 0,
-    },
-  };
-
-  // Extract video ID from URL if it's a full URL
-  const getVideoId = (urlOrId: string): string => {
-    // If it's already just an ID (11 characters), return it
-    if (urlOrId.length === 11 && !urlOrId.includes("/")) {
-      return urlOrId;
-    }
-    // Try to extract from various YouTube URL formats
-    const patterns = [
-      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
-      /youtube\.com\/embed\/([^&\n?#]+)/,
-      /youtube\.com\/v\/([^&\n?#]+)/,
-    ];
-    for (const pattern of patterns) {
-      const match = urlOrId.match(pattern);
-      if (match && match[1]) {
-        return match[1];
+  // Get video URL - support both YouTube IDs and full URLs
+  const getVideoUrl = (urlOrId: string, provider: string): string => {
+    if (provider === "youtube") {
+      // If it's already a full URL, return it
+      if (urlOrId.startsWith("http")) {
+        return urlOrId;
       }
+      // Otherwise, construct YouTube URL from ID
+      return `https://www.youtube.com/watch?v=${urlOrId}`;
     }
-    // If no pattern matches, assume it's an ID
+    // For other providers (Vimeo, etc.), return as-is
     return urlOrId;
   };
 
-  const videoId =
-    lesson.videoProvider === "youtube" && lesson.videoUrl
-      ? getVideoId(lesson.videoUrl)
+  const videoUrl =
+    lesson.videoProvider && lesson.videoUrl
+      ? getVideoUrl(lesson.videoUrl, lesson.videoProvider)
       : null;
 
   return (
@@ -221,20 +202,13 @@ function LessonPage() {
           <div className="sidebar grid h-full lg:grid-cols-[1fr_400px]">
             {/* Video Player */}
             <div className="flex flex-col bg-black">
-              <div className="aspect-video w-full bg-gray-900">
-                {videoId ? (
-                  <YouTube
-                    className="h-full w-full"
-                    videoId={videoId}
-                    opts={youtubeOpts}
-                    iframeClassName="h-full w-full"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-white">
-                    <p>No video available</p>
-                  </div>
-                )}
-              </div>
+              {videoUrl ? (
+                <VideoPlayer url={videoUrl} />
+              ) : (
+                <div className="flex aspect-video w-full items-center justify-center bg-gray-900 text-white">
+                  <p>No video available</p>
+                </div>
+              )}
             </div>
 
             {/* Lesson Playlist */}
@@ -310,20 +284,13 @@ function LessonPage() {
           <div className="flex h-full flex-col overflow-hidden">
             {/* Fullscreen Video Player */}
             <div className="w-full shrink-0 bg-black">
-              <div className="aspect-video w-full bg-gray-900">
-                {videoId ? (
-                  <YouTube
-                    className="h-full w-full"
-                    videoId={videoId}
-                    opts={youtubeOpts}
-                    iframeClassName="h-full w-full"
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center text-white">
-                    <p>No video available</p>
-                  </div>
-                )}
-              </div>
+              {videoUrl ? (
+                <VideoPlayer url={videoUrl} />
+              ) : (
+                <div className="flex aspect-video w-full items-center justify-center bg-gray-900 text-white">
+                  <p>No video available</p>
+                </div>
+              )}
             </div>
 
             {/* Notes and Playlist Side by Side */}

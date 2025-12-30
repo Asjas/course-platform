@@ -12,6 +12,7 @@ import { ThemeProvider } from "~/lib/theme.provider";
 import reportWebVitals from "~/reportWebVitals";
 import { routeTree } from "~/routeTree.gen";
 import "~/styles/code-blocks.css";
+import "~/styles/media-embeds.css";
 import "~/tailwind.css";
 
 const router = createRouter({

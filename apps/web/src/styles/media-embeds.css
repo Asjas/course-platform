@@ -1,0 +1,89 @@
+/* Media Embed Styles for Chat Messages */
+
+/* Image embeds */
+.chat-message-content .media-embed-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.chat-message-content .media-embed-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.chat-message-content .media-embed-image img:hover {
+  transform: scale(1.02);
+}
+
+/* GIF embeds with aspect-video ratio */
+.chat-message-content .media-embed-gif {
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  background: #000;
+}
+
+.chat-message-content .media-embed-gif img {
+  box-shadow: none;
+  border-radius: 0;
+  transition: none;
+}
+
+.chat-message-content .media-embed-gif img:hover {
+  transform: none;
+}
+
+/* Video embeds */
+.chat-message-content .media-embed-video {
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.chat-message-content .media-embed-video iframe {
+  border: 0;
+  border-radius: 0.5rem;
+}
+
+/* Links that weren't converted to embeds */
+.chat-message-content a {
+  color: #22c55e;
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.chat-message-content a:hover {
+  color: #16a34a;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .chat-message-content .media-embed-image img {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  }
+
+  .chat-message-content .media-embed-gif {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  }
+
+  .chat-message-content .media-embed-video {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .chat-message-content .media-embed-image,
+  .chat-message-content .media-embed-gif,
+  .chat-message-content .media-embed-video {
+    margin: 0.75rem 0;
+  }
+}
