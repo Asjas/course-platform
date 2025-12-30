@@ -9,6 +9,7 @@ import { notificationsRouter } from "~/routers/notifications/index.js";
 import { reviewsRouter } from "~/routers/reviews/index.js";
 import { statsRouter } from "~/routers/stats/index.js";
 import { supportTicketsRouter } from "~/routers/support-tickets/index.js";
+import { usersRouter } from "~/routers/users/index.js";
 
 export const appRouter = router({
   announcements: announcementsRouter,
@@ -21,6 +22,7 @@ export const appRouter = router({
   supportTickets: supportTicketsRouter,
   chat: chatRouter,
   chatReports: chatReportsRouter,
+  users: usersRouter,
 });
 
 export type AppRouter = typeof appRouter;

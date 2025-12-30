@@ -12,6 +12,7 @@ import {
 } from "react-aria-components";
 import { toast } from "sonner";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
+import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
@@ -26,6 +27,7 @@ export default function ChatMessage({
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
   const auth = useAuth();
 
   const deleteMessageMutation = useMutation(
@@ -104,9 +106,13 @@ export default function ChatMessage({
 
         {/* message body + three-dot button */}
         <div className="flex flex-1 items-center gap-1">
-          <span className="shrink-0 text-sm font-medium text-green-600">
+          <button
+            className="shrink-0 cursor-pointer text-sm font-medium text-green-600 hover:underline"
+            type="button"
+            onClick={() => setIsProfileSheetOpen(true)}
+          >
             {msg.username || msg.name}:
-          </span>
+          </button>
 
           <div
             className="chat-message-content flex-1 text-sm text-gray-900 dark:text-white"
@@ -173,6 +179,12 @@ export default function ChatMessage({
         channelId={channelId}
         messageContent={msg.message}
         messageAuthor={msg.name}
+      />
+
+      <UserProfileSheet
+        userName={msg.name}
+        open={isProfileSheetOpen}
+        onOpenChange={setIsProfileSheetOpen}
       />
     </>
   );
