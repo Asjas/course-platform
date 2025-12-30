@@ -1,4 +1,4 @@
-import ReactPlayer from "react-player/lazy";
+import ReactPlayer from "react-player";
 
 interface VideoPlayerProps {
   url: string;
@@ -10,8 +10,7 @@ interface VideoPlayerProps {
   width?: string | number;
   height?: string | number;
   onReady?: () => void;
-  onError?: (error: Error) => void;
-  onProgress?: (state: { played: number; playedSeconds: number }) => void;
+  onError?: (error: unknown) => void;
   onEnded?: () => void;
 }
 
@@ -42,41 +41,27 @@ export function VideoPlayer({
   height = "100%",
   onReady,
   onError,
-  onProgress,
   onEnded,
 }: VideoPlayerProps) {
   return (
-    <div className={`aspect-video w-full bg-gray-900 ${className}`}>
+    <div
+      className={`aspect-video w-full bg-gray-900 ${className}`}
+      style={{ width, height }}
+    >
       <ReactPlayer
-        url={url}
+        src={url}
         controls={controls}
         playing={playing}
         muted={muted}
         loop={loop}
-        width={width}
-        height={height}
+        width="100%"
+        height="100%"
         onReady={onReady}
         onError={(error) => {
           console.error("Video player error:", error);
-          onError?.(error as Error);
+          onError?.(error);
         }}
-        onProgress={onProgress}
         onEnded={onEnded}
-        config={{
-          youtube: {
-            playerVars: {
-              modestbranding: 1,
-              rel: 0,
-            },
-          },
-          vimeo: {
-            playerOptions: {
-              byline: false,
-              portrait: false,
-              title: false,
-            },
-          },
-        }}
       />
     </div>
   );
