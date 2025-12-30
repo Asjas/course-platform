@@ -1,9 +1,14 @@
-import { desc } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { chatMessageReport } from "~/db/schema/chatMessageReports.js";
 
-export async function getAllChatReports() {
-  return db.query.chatMessageReport.findMany({
+// Type exports
+export type AllChatReports = Awaited<ReturnType<typeof getAllChatReports>>;
+export type ChatReportById = Awaited<ReturnType<typeof getChatReportById>>;
+
+// Module-scoped prepared statements
+const preparedGetAllChatReports = db.query.chatMessageReport
+  .findMany({
     orderBy: [desc(chatMessageReport.createdAt)],
     with: {
       reporter: {
@@ -21,12 +26,12 @@ export async function getAllChatReports() {
         },
       },
     },
-  });
-}
+  })
+  .prepare("getAllChatReports");
 
-export async function getChatReportById(reportId: string) {
-  return db.query.chatMessageReport.findFirst({
-    where: (reports, { eq }) => eq(reports.id, reportId),
+const preparedGetChatReportById = db.query.chatMessageReport
+  .findFirst({
+    where: (reports) => eq(reports.id, sql.placeholder("reportId")),
     with: {
       reporter: {
         columns: {
@@ -43,9 +48,13 @@ export async function getChatReportById(reportId: string) {
         },
       },
     },
-  });
+  })
+  .prepare("getChatReportById");
+
+export async function getAllChatReports() {
+  return preparedGetAllChatReports.execute();
 }
 
-// Type exports
-export type AllChatReports = Awaited<ReturnType<typeof getAllChatReports>>;
-export type ChatReportById = Awaited<ReturnType<typeof getChatReportById>>;
+export async function getChatReportById(reportId: string) {
+  return preparedGetChatReportById.execute({ reportId });
+}
