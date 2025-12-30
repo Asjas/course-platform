@@ -5,17 +5,17 @@ interface ChatDateDividerProps {
   date: Date;
 }
 
-export default function ChatDateDivider({ date }: ChatDateDividerProps) {
-  function formatDateLabel(d: Date): string {
-    if (isToday(d)) {
-      return "Today";
-    }
-    if (isYesterday(d)) {
-      return "Yesterday";
-    }
-    return format(d, "MMMM do, yyyy");
+function formatDateLabel(d: Date): string {
+  if (isToday(d)) {
+    return "Today";
   }
+  if (isYesterday(d)) {
+    return "Yesterday";
+  }
+  return format(d, "MMMM do, yyyy");
+}
 
+export default function ChatDateDivider({ date }: ChatDateDividerProps) {
   return (
     <div
       className="relative my-3 flex items-center"
