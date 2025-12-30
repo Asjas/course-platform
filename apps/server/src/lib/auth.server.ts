@@ -170,9 +170,6 @@ export const auth = betterAuth({
   }),
   plugins: [
     admin({ defaultRole: "member" }),
-    // TODO: Re-enable haveIBeenPwned() once the BigInt issue is fixed
-    // See: "Cannot mix BigInt and other types" error during sign-up
-    // haveIBeenPwned(),
     organization({ allowUserToCreateOrganization: false }),
     username({
       usernameValidator: (username) => {
