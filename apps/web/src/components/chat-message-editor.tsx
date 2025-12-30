@@ -8,10 +8,12 @@ import {
   ListIcon,
   ListOrderedIcon,
   PlusCircleIcon,
+  SmileIcon,
   TextQuoteIcon,
 } from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 import { toast } from "sonner";
+import { GiphyPicker } from "~/components/giphy-picker";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -37,10 +39,30 @@ export default function ChatMessageEditor({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingCount, setUploadingCount] = useState(0);
+  const [isGiphyPickerOpen, setIsGiphyPickerOpen] = useState(false);
 
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
+
+  function handleGifSelect(gifUrl: string) {
+    const textarea = textareaRef.current;
+    const cursorPos = textarea?.selectionStart ?? value.length;
+    const gifMarkdown = `\n![GIF](${gifUrl})\n`;
+
+    onChange(
+      (prev) => prev.slice(0, cursorPos) + gifMarkdown + prev.slice(cursorPos),
+    );
+
+    requestAnimationFrame(() => {
+      if (!textarea) return;
+      textarea.focus();
+      const newPos = cursorPos + gifMarkdown.length;
+      textarea.setSelectionRange(newPos, newPos);
+    });
+
+    toast.success("GIF added to message!");
+  }
 
   const handleImageUpload = async (
     file: File,
@@ -851,9 +873,26 @@ export default function ChatMessageEditor({
               aria-hidden="true"
             />
           </button>
+          <button
+            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            type="button"
+            aria-label="Add a GIF"
+            onClick={() => setIsGiphyPickerOpen(true)}
+          >
+            <SmileIcon
+              size={16}
+              aria-hidden="true"
+            />
+          </button>
         </div>
         {children}
       </div>
+
+      <GiphyPicker
+        isOpen={isGiphyPickerOpen}
+        onClose={() => setIsGiphyPickerOpen(false)}
+        onSelectGif={handleGifSelect}
+      />
     </div>
   );
 }

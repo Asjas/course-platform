@@ -20,6 +20,8 @@
     "@dnd-kit/sortable": "10.0.0",
     "@dnd-kit/utilities": "3.2.2",
     "@epic-web/invariant": "1.0.0",
+    "@giphy/js-fetch-api": "5.7.0",
+    "@giphy/react-components": "9.3.0",
     "@headlessui/react": "2.2.9",
     "@hookform/resolvers": "5.2.2",
     "@packages/shared-ui": "workspace:^",
