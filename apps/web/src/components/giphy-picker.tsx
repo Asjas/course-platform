@@ -135,7 +135,7 @@ export function GiphyPicker({
               rel="noopener noreferrer"
             >
               <img
-                className="h-12"
+                className="h-10"
                 src="/PoweredBy_640_Horizontal_Light-Backgrounds_With_Logo.gif"
                 alt="Powered by GIPHY"
                 loading="lazy"
