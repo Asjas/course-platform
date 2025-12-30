@@ -119,9 +119,8 @@ export default function ChatMessage({
 
         {/* Message content area */}
         <div className="min-w-0 flex-1">
-          {/* Username and message on same line for text */}
-          <div className="flex flex-wrap items-baseline gap-x-2">
-            {/* Username with unique color */}
+          {/* Username row - always at top */}
+          <div className="flex items-baseline gap-x-2">
             <button
               className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
               style={{ color: usernameColor }}
@@ -130,12 +129,6 @@ export default function ChatMessage({
             >
               {msg.username || msg.name}
             </button>
-
-            {/* Message text */}
-            <div
-              className="chat-message-content min-w-0 flex-1 text-sm text-gray-900 dark:text-gray-100 [&_img]:mt-1 [&_img]:max-w-md [&_img]:rounded [&_p]:inline"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
 
             {msg.editedAt ? (
               <span
@@ -146,6 +139,12 @@ export default function ChatMessage({
               </span>
             ) : null}
           </div>
+
+          {/* Message content - below username */}
+          <div
+            className="chat-message-content text-sm text-gray-900 dark:text-gray-100 [&_img]:mt-1 [&_img]:max-w-md [&_img]:rounded"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
