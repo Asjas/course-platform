@@ -3,12 +3,7 @@ import { Polar } from "@polar-sh/sdk";
 import argon2 from "argon2";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import {
-  admin,
-  haveIBeenPwned,
-  organization,
-  username,
-} from "better-auth/plugins";
+import { admin, organization, username } from "better-auth/plugins";
 import { ulid } from "ulid";
 import { Pool, setGlobalDispatcher } from "undici";
 import config from "~/config.js";
@@ -175,7 +170,6 @@ export const auth = betterAuth({
   }),
   plugins: [
     admin({ defaultRole: "member" }),
-    haveIBeenPwned(),
     organization({ allowUserToCreateOrganization: false }),
     username({
       usernameValidator: (username) => {

@@ -539,3 +539,25 @@ export async function notifyAdminNewUserRegistration({
     link: `/admin/users`,
   }));
 }
+
+export async function notifyAdminChatMessageReported({
+  reportId,
+  channelId,
+  reporterName,
+  reason,
+}: {
+  reportId: string;
+  channelId: string;
+  reporterName: string;
+  reason: string;
+}) {
+  return notifyAllAdmins((userId) => ({
+    id: ulid(),
+    userId,
+    type: "admin_chat_message_reported",
+    title: "Chat Message Reported",
+    message: `${reporterName} reported a message in #${channelId} for: ${reason}`,
+    link: `/admin/chat-reports`,
+    chatMessageReportId: reportId,
+  }));
+}

@@ -39,6 +39,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authentic
 import { Route as AuthenticatedAdminStatsRouteImport } from "./routes/_authenticated/admin/stats"
 import { Route as AuthenticatedAdminReviewsRouteImport } from "./routes/_authenticated/admin/reviews"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
+import { Route as AuthenticatedAdminChatReportsRouteImport } from "./routes/_authenticated/admin/chat-reports"
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from "./routes/_authenticated/admin/announcements"
 import { Route as authVerifyEmailTokenRouteImport } from "./routes/(auth)/verify-email.$token"
 import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/support/$supportTicket/edit/route"
@@ -207,6 +208,12 @@ const AuthenticatedAdminPurchasesRoute =
     path: "/purchases",
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminChatReportsRoute =
+  AuthenticatedAdminChatReportsRouteImport.update({
+    id: "/chat-reports",
+    path: "/chat-reports",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminAnnouncementsRoute =
   AuthenticatedAdminAnnouncementsRouteImport.update({
     id: "/announcements",
@@ -316,6 +323,7 @@ export interface FileRoutesByFullPath {
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
   "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
+  "/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -356,6 +364,7 @@ export interface FileRoutesByTo {
   "/support": typeof SupportIndexRoute
   "/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
+  "/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -403,6 +412,7 @@ export interface FileRoutesById {
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
   "/(auth)/verify-email/$token": typeof authVerifyEmailTokenRoute
   "/_authenticated/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
+  "/_authenticated/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/_authenticated/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -449,6 +459,7 @@ export interface FileRouteTypes {
     | "/support/$supportTicket/edit"
     | "/verify-email/$token"
     | "/admin/announcements"
+    | "/admin/chat-reports"
     | "/admin/purchases"
     | "/admin/reviews"
     | "/admin/stats"
@@ -489,6 +500,7 @@ export interface FileRouteTypes {
     | "/support"
     | "/verify-email/$token"
     | "/admin/announcements"
+    | "/admin/chat-reports"
     | "/admin/purchases"
     | "/admin/reviews"
     | "/admin/stats"
@@ -535,6 +547,7 @@ export interface FileRouteTypes {
     | "/support/$supportTicket/edit"
     | "/(auth)/verify-email/$token"
     | "/_authenticated/admin/announcements"
+    | "/_authenticated/admin/chat-reports"
     | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/reviews"
     | "/_authenticated/admin/stats"
@@ -781,6 +794,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/_authenticated/admin/chat-reports": {
+      id: "/_authenticated/admin/chat-reports"
+      path: "/chat-reports"
+      fullPath: "/admin/chat-reports"
+      preLoaderRoute: typeof AuthenticatedAdminChatReportsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     "/_authenticated/admin/announcements": {
       id: "/_authenticated/admin/announcements"
       path: "/announcements"
@@ -902,6 +922,7 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 
 interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAnnouncementsRoute: typeof AuthenticatedAdminAnnouncementsRoute
+  AuthenticatedAdminChatReportsRoute: typeof AuthenticatedAdminChatReportsRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminStatsRoute: typeof AuthenticatedAdminStatsRoute
@@ -917,6 +938,7 @@ interface AuthenticatedAdminRouteRouteChildren {
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
     AuthenticatedAdminAnnouncementsRoute: AuthenticatedAdminAnnouncementsRoute,
+    AuthenticatedAdminChatReportsRoute: AuthenticatedAdminChatReportsRoute,
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
     AuthenticatedAdminStatsRoute: AuthenticatedAdminStatsRoute,
