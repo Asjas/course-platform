@@ -245,7 +245,7 @@ importers:
         version: 4.2.1
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: 1.51.4
+        specifier: ^1.51.4
         version: 1.51.4
       '@total-typescript/ts-reset':
         specifier: 0.6.1
