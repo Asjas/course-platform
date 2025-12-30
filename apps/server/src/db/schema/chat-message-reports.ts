@@ -1,7 +1,7 @@
-import { mySchema } from "../my-schema.js";
 import { user } from "./user.js";
 import { relations } from "drizzle-orm";
 import { text, timestamp } from "drizzle-orm/pg-core";
+import { mySchema } from "~/db/my-schema.js";
 
 export const reportStatusEnum = mySchema.enum("report_status", [
   "pending",
