@@ -37,9 +37,10 @@ function getUsernameColor(name: string): string {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     const char = name.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
+    // Force 32-bit integer arithmetic to avoid precision issues for long usernames
+    hash = ((hash << 5) - hash + char) | 0;
   }
-  const index = Math.abs(hash) % USERNAME_COLORS.length;
+  const index = (hash >>> 0) % USERNAME_COLORS.length;
   return USERNAME_COLORS[index];
 }
 
