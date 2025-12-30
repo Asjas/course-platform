@@ -103,58 +103,61 @@ export default function ChatMessage({
   return (
     <>
       <div
-        className="group relative flex items-start gap-2 rounded px-2 py-1 hover:bg-gray-100 dark:hover:bg-gray-900/55"
+        className="group relative flex gap-3 rounded-sm px-4 py-1.5 hover:bg-gray-50 dark:hover:bg-gray-700/30"
         role="article"
         aria-label={`Message from ${msg.username || msg.name}`}
       >
-        {/* Compact timestamp column - Slack style (always visible) */}
-        <div className="flex w-12 shrink-0 items-start justify-end pt-0.5">
+        {/* Timestamp column - Slack style */}
+        <div className="flex w-10 shrink-0 pt-0.5">
           <span
-            className="text-xs text-gray-500 dark:text-gray-400"
+            className="text-xs text-gray-500 dark:text-gray-500"
             title={format(msg.timestamp, "PPpp")}
           >
             {format(msg.timestamp, "HH:mm")}
           </span>
         </div>
 
-        {/* Message content area - Slack compact mode style */}
-        <div className="flex min-w-0 flex-1 flex-wrap items-baseline gap-x-1.5">
-          {/* Username with unique color */}
-          <button
-            className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
-            style={{ color: usernameColor }}
-            type="button"
-            onClick={() => setIsProfileSheetOpen(true)}
-          >
-            {msg.username || msg.name}
-          </button>
-
-          {/* Message text - inline with username */}
-          <div
-            className="chat-message-content min-w-0 flex-1 text-sm text-gray-900 dark:text-gray-100"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
-
-          {msg.editedAt ? (
-            <span
-              className="text-xs text-gray-400 dark:text-gray-500"
-              title={`Edited ${format(msg.editedAt, "PPpp")}`}
+        {/* Message content area */}
+        <div className="min-w-0 flex-1">
+          {/* Username and message on same line for text */}
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            {/* Username with unique color */}
+            <button
+              className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
+              style={{ color: usernameColor }}
+              type="button"
+              onClick={() => setIsProfileSheetOpen(true)}
             >
-              (edited)
-            </span>
-          ) : null}
+              {msg.username || msg.name}
+            </button>
+
+            {/* Message text */}
+            <div
+              className="chat-message-content min-w-0 flex-1 text-sm text-gray-900 dark:text-gray-100 [&_img]:mt-1 [&_img]:max-w-md [&_img]:rounded [&_p]:inline"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+
+            {msg.editedAt ? (
+              <span
+                className="text-xs text-gray-400 dark:text-gray-500"
+                title={`Edited ${format(msg.editedAt, "PPpp")}`}
+              >
+                (edited)
+              </span>
+            ) : null}
+          </div>
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
-        <div className="pointer-events-none absolute top-0 right-1 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
+        <div className="pointer-events-none absolute -top-3 right-2 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
           <MenuTrigger>
             <MenuButton
-              className="rounded border border-transparent bg-white p-1 shadow-sm hover:border-gray-200 hover:bg-gray-50 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+              className="rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
               aria-label="Message actions"
               aria-haspopup="menu"
             >
               <EllipsisIcon
-                className="text-gray-500 dark:text-gray-400"
+                className="text-gray-600 dark:text-gray-300"
                 size={16}
               />
             </MenuButton>

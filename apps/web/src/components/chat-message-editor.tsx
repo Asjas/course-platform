@@ -170,7 +170,7 @@ export default function ChatMessageEditor({
   };
 
   return (
-    <div className="overflow-hidden rounded-md border border-gray-300 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
+    <div className="mx-4 mb-4 overflow-hidden rounded-lg border border-gray-300 bg-white shadow-sm dark:border-gray-600 dark:bg-gray-800">
       {/* Hidden file input */}
       <input
         className="hidden"
@@ -188,19 +188,17 @@ export default function ChatMessageEditor({
         onDrop={handleDrop}
       >
         {/* Comment Box */}
-        <div className="bg-gray-100 p-2 dark:bg-gray-900">
+        <div className="bg-white p-2 dark:bg-gray-800">
           <textarea
             className={cn(
-              "size-to-fit block min-h-5 w-full resize-y rounded-sm border bg-white px-2 py-2.5 text-sm text-gray-900",
-              "focus:ring-1 focus:outline-none",
-              "dark:bg-gray-900 dark:text-white",
+              "size-to-fit block min-h-10 w-full resize-y border-0 bg-transparent px-2 py-2 text-sm text-gray-900",
+              "focus:ring-0 focus:outline-none",
+              "dark:text-white",
               "placeholder-gray-500 dark:placeholder-gray-400",
               "box-border leading-normal",
               "custom-scrollbar",
               uploadingCount > 0 && "opacity-75",
-              hasError
-                ? "border-red-500 focus:border-red-500 focus:ring-red-500 dark:border-red-500"
-                : "border-gray-200 focus:border-green-500 focus:ring-green-500 dark:border-gray-700",
+              hasError && "ring-1 ring-red-500",
             )}
             id={id}
             ref={textareaRef}
@@ -219,9 +217,9 @@ export default function ChatMessageEditor({
           />
         </div>
       </div>
-      <div className="flex justify-between border-t border-gray-200 bg-gray-100 px-2 dark:border-gray-700 dark:bg-gray-800">
+      <div className="flex justify-between border-t border-gray-200 bg-gray-50 px-2 py-1 dark:border-gray-700 dark:bg-gray-700/50">
         <div
-          className="mr-3 flex items-center text-xs text-gray-700 dark:text-gray-200"
+          className="flex items-center gap-0.5 text-gray-600 dark:text-gray-300"
           role="toolbar"
           aria-label="Formatting tools"
         >

@@ -133,28 +133,28 @@ function AuthenticatedChatChannelPage() {
 
   return (
     <div className="grid-container">
-      <div className="border-b border-gray-200 bg-gray-50 px-4 py-2 dark:border-gray-700 dark:bg-gray-900/75">
-        <h1 className="text-lg font-bold text-gray-900 dark:text-white">{`# ${channelId}`}</h1>
+      <div className="border-b border-gray-300 bg-gray-800 px-4 py-3 dark:border-gray-700">
+        <h1 className="text-lg font-bold text-white">{`# ${channelId}`}</h1>
       </div>
 
       <section
-        className="scrollable-section custom-scrollbar bg-white dark:bg-gray-800"
+        className="scrollable-section custom-scrollbar bg-gray-800"
         ref={scrollRef}
         role="log"
         aria-label={`${channelId} channel messages`}
       >
         {!cachedMessages || cachedMessages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-500">
               No messages yet. Start the conversation!
             </p>
           </div>
         ) : (
-          <div className="flex flex-col py-2">{messagesWithDividers}</div>
+          <div className="flex flex-col">{messagesWithDividers}</div>
         )}
       </section>
 
-      <section>
+      <section className="bg-gray-800">
         <ChatMessageForm />
       </section>
     </div>
