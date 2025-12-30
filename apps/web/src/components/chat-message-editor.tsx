@@ -48,7 +48,11 @@ export default function ChatMessageEditor({
   function handleGifSelect(gifUrl: string) {
     const textarea = textareaRef.current;
     const cursorPos = textarea?.selectionStart ?? value.length;
-    const gifMarkdown = `\n![GIF](${gifUrl})\n`;
+    // Only add leading newline if cursor is not at start and previous char is not a newline
+    const needsLeadingNewline = cursorPos > 0 && value[cursorPos - 1] !== "\n";
+    const gifMarkdown = needsLeadingNewline
+      ? `\n![GIF](${gifUrl})\n`
+      : `![GIF](${gifUrl})\n`;
 
     onChange(
       (prev) => prev.slice(0, cursorPos) + gifMarkdown + prev.slice(cursorPos),
