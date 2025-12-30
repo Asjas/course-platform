@@ -64,8 +64,6 @@ export default function ChatMessageEditor({
       const newPos = cursorPos + gifMarkdown.length;
       textarea.setSelectionRange(newPos, newPos);
     });
-
-    toast.success("GIF added to message!");
   }
 
   const handleImageUpload = async (
