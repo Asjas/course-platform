@@ -281,16 +281,30 @@ export default function UserProfileSheet({
                 )}
 
                 {/* Request DM Button */}
-                {!isOwnProfile && (
-                  <button
-                    className="mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600"
-                    onClick={() => setIsDMRequestModalOpen(true)}
-                    type="button"
-                  >
-                    <MessageCircleIcon className="h-4 w-4" />
-                    Request Direct Message
-                  </button>
-                )}
+                <button
+                  className={cn(
+                    "mt-2 flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white",
+                    "bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600",
+                    isOwnProfile && "cursor-not-allowed opacity-60 hover:bg-green-600 dark:hover:bg-green-700"
+                  )}
+                  type="button"
+                  disabled={isOwnProfile}
+                  aria-disabled={isOwnProfile}
+                  title={
+                    isOwnProfile
+                      ? "You cannot request a direct message with yourself."
+                      : "Request a direct message"
+                  }
+                  onClick={() => {
+                    if (isOwnProfile) {
+                      return;
+                    }
+                    setIsDMRequestModalOpen(true);
+                  }}
+                >
+                  <MessageCircleIcon className="h-4 w-4" />
+                  Request Direct Message
+                </button>
               </div>
 
               {/* User Details */}
