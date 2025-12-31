@@ -6,7 +6,7 @@ import {
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import { CircleIcon, MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
+import { MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DMRequestModal } from "~/components/dm-request-modal";
@@ -174,7 +174,7 @@ function AuthenticatedChatPage() {
         </div>
 
         {/* Support Team Section - positioned near bottom */}
-        <div className="mt-auto mb-4 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <div className="mt-auto mb-10 flex flex-col gap-4 border-t border-gray-200 pt-4 dark:border-gray-700">
           <span className="px-2 text-sm font-semibold text-gray-900 dark:text-white">
             Support team
           </span>
@@ -201,19 +201,15 @@ function AuthenticatedChatPage() {
                       {member.username || member.name}
                     </span>
                   </div>
-                  <div
-                    className="flex items-center"
-                    title={member.status === "online" ? "Online" : "Offline"}
+                  <span
+                    className={`text-xs font-medium ${
+                      member.status === "online"
+                        ? "text-green-500"
+                        : "text-red-500"
+                    }`}
                   >
-                    <CircleIcon
-                      className={`h-3 w-3 ${
-                        member.status === "online"
-                          ? "fill-green-500 text-green-500"
-                          : "fill-gray-400 text-gray-400"
-                      }`}
-                      aria-hidden="true"
-                    />
-                  </div>
+                    {member.status === "online" ? "online" : "offline"}
+                  </span>
                 </li>
               ))}
             </ul>
