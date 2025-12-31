@@ -288,7 +288,12 @@ export const chatRouter = router({
    * The frontend updates its local cache with the returned reactions.
    */
   toggleReaction: publicProcedure
-    .input(z.object({ messageId: z.string(), emoji: z.string() }))
+    .input(
+      z.object({
+        messageId: z.string(),
+        emoji: z.string().min(1).max(10),
+      }),
+    )
     .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const reactionKey = getReactionKey(input.messageId);
