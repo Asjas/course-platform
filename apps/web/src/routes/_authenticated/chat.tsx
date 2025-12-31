@@ -133,7 +133,7 @@ function AuthenticatedChatPage() {
         </div>
 
         {/* Direct Messages Section */}
-        <div className="mt-4 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <div className="mt-8 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
           <div className="flex items-center justify-between px-2">
             <span className="text-lg font-bold text-gray-900 md:text-xl dark:text-white">
               Direct Messages
@@ -186,7 +186,7 @@ function AuthenticatedChatPage() {
         </div>
 
         {/* Support Section */}
-        <div className="mt-4 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+        <div className="mt-8 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
           <div className="flex items-center px-2">
             <span className="text-lg font-bold text-gray-900 md:text-xl dark:text-white">
               Support
