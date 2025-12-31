@@ -70,13 +70,3 @@ export function setMediaCollapsed(messageId: string, collapsed: boolean): void {
 
   saveCollapsedMessageIds(ids);
 }
-
-/**
- * Toggle the collapsed state for a specific message's media.
- * Returns the new collapsed state.
- */
-export function toggleMediaCollapsed(messageId: string): boolean {
-  const isCollapsed = isMediaCollapsed(messageId);
-  setMediaCollapsed(messageId, !isCollapsed);
-  return !isCollapsed;
-}
