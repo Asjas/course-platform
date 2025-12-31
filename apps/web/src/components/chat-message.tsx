@@ -20,6 +20,7 @@ import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
 import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
+import { useToggleReaction } from "~/hooks/use-toggle-reaction";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
 import { renderMarkdown } from "~/lib/markdown";
@@ -54,28 +55,12 @@ export default function ChatMessage({
   const editMessageMutation = useMutation(
     trpc.chat.editMessage.mutationOptions({ keyPrefix: undefined }),
   );
-  const toggleReactionMutation = useMutation(
-    trpc.chat.toggleReaction.mutationOptions({ keyPrefix: undefined }),
-  );
 
-  async function handleToggleReaction(emoji: string) {
-    try {
-      const result = await toggleReactionMutation.mutateAsync({
-        messageId: msg.id,
-        emoji,
-      });
+  // Use the shared hook for toggling reactions
+  const { toggleReaction } = useToggleReaction(channelId);
 
-      // Update the message in the cache with the new reactions
-      const cacheKey = getChannelCacheKey(channelId);
-      queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-        return prev.map((message) =>
-          message.id === msg.id ? { ...message, reactions: result } : message,
-        );
-      });
-    } catch (error) {
-      console.error("Error toggling reaction:", error);
-      toast.error("Failed to update reaction.");
-    }
+  function handleToggleReaction(emoji: string) {
+    toggleReaction(msg.id, emoji);
   }
 
   useEffect(() => {

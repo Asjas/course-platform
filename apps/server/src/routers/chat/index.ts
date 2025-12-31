@@ -41,6 +41,18 @@ function getReactionKey(messageId: string): string {
 }
 
 /**
+ * Safely parse JSON with error handling.
+ * Returns null if parsing fails instead of throwing.
+ */
+function safeJsonParse<T>(json: string): T | null {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Get all reactions for a message from the separate Redis hash.
  * Reactions are stored separately from messages to avoid race conditions
  * and the need to republish messages when reactions change.
@@ -51,8 +63,11 @@ async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
 
   const reactions: Reaction[] = [];
   for (const [emoji, usersJson] of Object.entries(allReactions)) {
-    const users = JSON.parse(usersJson) as ReactionUser[];
-    reactions.push({ emoji, users });
+    const users = safeJsonParse<ReactionUser[]>(usersJson);
+    // Skip corrupted data instead of crashing
+    if (users && Array.isArray(users)) {
+      reactions.push({ emoji, users });
+    }
   }
 
   return reactions;
@@ -150,16 +165,23 @@ export const chatRouter = router({
 
       // Combine messages with their reactions
       const messagesWithReactions = messages.map((msg, index) => {
-        const reactionData = reactionResults?.[index]?.[1] as Record<
-          string,
-          string
-        > | null;
+        const pipelineResult = reactionResults?.[index];
         const reactions: Reaction[] = [];
 
-        if (reactionData) {
-          for (const [emoji, usersJson] of Object.entries(reactionData)) {
-            const users = JSON.parse(usersJson) as ReactionUser[];
-            reactions.push({ emoji, users });
+        // Check for pipeline errors before processing
+        if (pipelineResult && !pipelineResult[0]) {
+          const reactionData = pipelineResult[1] as Record<
+            string,
+            string
+          > | null;
+          if (reactionData) {
+            for (const [emoji, usersJson] of Object.entries(reactionData)) {
+              const users = safeJsonParse<ReactionUser[]>(usersJson);
+              // Skip corrupted data instead of crashing
+              if (users && Array.isArray(users)) {
+                reactions.push({ emoji, users });
+              }
+            }
           }
         }
 
@@ -300,10 +322,10 @@ export const chatRouter = router({
       const userId = ctx.user.id;
       const userName = ctx.user.name;
 
-      // Get current reactions for this emoji
+      // Get current reactions for this emoji with safe parsing
       const currentData = await redis.hget(reactionKey, input.emoji);
       const users: ReactionUser[] = currentData
-        ? (JSON.parse(currentData) as ReactionUser[])
+        ? (safeJsonParse<ReactionUser[]>(currentData) ?? [])
         : [];
 
       // Check if user already reacted with this emoji

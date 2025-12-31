@@ -1,11 +1,8 @@
-import type { ChatMessage, Reaction } from "@apps/server/src/routers/chat";
-import { useMutation } from "@tanstack/react-query";
+import type { Reaction } from "@apps/server/src/routers/chat";
 import { Tooltip, TooltipTrigger } from "react-aria-components";
-import { toast } from "sonner";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
+import { useToggleReaction } from "~/hooks/use-toggle-reaction";
 import { useAuth } from "~/lib/auth.context";
-import { getChannelCacheKey, queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
 
 interface MessageReactionsProps {
   messageId: string;
@@ -26,32 +23,11 @@ export function MessageReactions({
   const auth = useAuth();
   const currentUserId = auth.session?.user.id;
 
-  const toggleReactionMutation = useMutation(
-    trpc.chat.toggleReaction.mutationOptions({
-      keyPrefix: undefined,
-    }),
-  );
+  // Use the shared hook for toggling reactions
+  const { toggleReaction } = useToggleReaction(channelId);
 
-  async function handleToggleReaction(emoji: string) {
-    try {
-      const result = await toggleReactionMutation.mutateAsync({
-        messageId,
-        emoji,
-      });
-
-      // Update the message in the cache with the new reactions
-      const cacheKey = getChannelCacheKey(channelId);
-      queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-        return prev.map((message) =>
-          message.id === messageId
-            ? { ...message, reactions: result }
-            : message,
-        );
-      });
-    } catch (error) {
-      console.error("Error toggling reaction:", error);
-      toast.error("Failed to update reaction.");
-    }
+  function handleToggleReaction(emoji: string) {
+    toggleReaction(messageId, emoji);
   }
 
   // Check if the current user has reacted with a specific emoji
