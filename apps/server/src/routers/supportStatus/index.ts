@@ -50,20 +50,29 @@ export const supportStatusRouter = router({
         }[]
       > => {
         const admins = await getAdminUsers();
+        const adminIds = admins.map((admin) => admin.id);
 
-        const supportTeam = await Promise.all(
-          admins.map(async (admin) => {
-            const status = await getSupportStatusFromRedis(admin.id);
-            return {
-              id: admin.id,
-              name: admin.name,
-              username: admin.username,
-              image: admin.image,
-              status,
-            };
-          }),
-        );
+        if (adminIds.length === 0) {
+          return [];
+        }
 
+        const statuses = await redis.hmget(SUPPORT_STATUS_KEY, ...adminIds);
+
+        const supportTeam = admins.map((admin, index) => {
+          const rawStatus = statuses[index];
+          const normalizedStatus: SupportStatus =
+            rawStatus === "online" || rawStatus === "offline"
+              ? rawStatus
+              : "offline";
+
+          return {
+            id: admin.id,
+            name: admin.name,
+            username: admin.username,
+            image: admin.image,
+            status: normalizedStatus,
+          };
+        });
         return supportTeam;
       },
     ),
