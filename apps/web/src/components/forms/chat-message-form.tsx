@@ -18,17 +18,26 @@ const formSchema = z.object({
 interface ChatMessageFormProps {
   onMessageSent?: () => void;
   channelId?: string;
+  conversationId?: string;
   isDM?: boolean;
 }
 
 export default function ChatMessageForm({
   onMessageSent,
   channelId: propChannelId,
+  conversationId: propConversationId,
   isDM = false,
 }: ChatMessageFormProps = {}) {
   const params = useParams({ strict: false });
   const channelId = propChannelId || params.channelId;
-  const conversationId = isDM ? channelId?.replace("dm:", "") : undefined;
+  const conversationId =
+    isDM
+      ? propConversationId ||
+        (params as { conversationId?: string }).conversationId ||
+        (propChannelId && propChannelId.startsWith("dm:")
+          ? propChannelId.slice("dm:".length)
+          : undefined)
+      : undefined;
 
   const [submitAttempted, setSubmitAttempted] = useState(false);
 
