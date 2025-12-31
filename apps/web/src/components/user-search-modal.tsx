@@ -2,6 +2,7 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "~/lib/auth.context";
 import { trpc } from "~/lib/trpc.client";
 
 interface UserSearchModalProps {
@@ -15,12 +16,16 @@ export function UserSearchModal({
   onClose,
   onSelectUser,
 }: UserSearchModalProps) {
+  const auth = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
 
   const { data: users, isLoading } = useQuery({
     ...trpc.directMessages.searchUsers.queryOptions({ searchTerm }),
     enabled: isOpen && searchTerm.length >= 2,
   });
+
+  // Filter out current user from search results
+  const filteredUsers = users?.filter((u) => u.id !== auth.session?.user.id);
 
   function handleUserClick(userId: string, userName: string) {
     onSelectUser(userId, userName);
@@ -75,9 +80,9 @@ export function UserSearchModal({
                   Searching...
                 </div>
               </div>
-            ) : searchTerm && users && users.length > 0 ? (
+            ) : searchTerm && filteredUsers && filteredUsers.length > 0 ? (
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                   <button
                     className="flex w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
                     key={user.id}

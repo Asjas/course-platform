@@ -1,12 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Link,
   Outlet,
   createFileRoute,
   redirect,
+  useNavigate,
 } from "@tanstack/react-router";
 import { MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { DMRequestModal } from "~/components/dm-request-modal";
 import { UserSearchModal } from "~/components/user-search-modal";
 import { trpc } from "~/lib/trpc.client";
 
@@ -25,26 +28,61 @@ export const Route = createFileRoute("/_authenticated/chat")({
 const channels = ["general", "random"];
 
 function AuthenticatedChatPage() {
+  const navigate = useNavigate();
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
+  const [isDMRequestModalOpen, setIsDMRequestModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedUserName, setSelectedUserName] = useState<string>("");
 
   // Fetch active DM conversations
-  const { data: dmConversations } = useQuery(
+  const { data: dmConversations, refetch: refetchDmConversations } = useQuery(
     trpc.directMessages.getActiveConversations.queryOptions(),
   );
 
-  function handleSelectUser(userId: string, userName: string) {
-    // This would navigate to DM or trigger request flow
-    // For now, we'll just close the modal
-    // The actual DM flow would be:
-    // 1. Check if conversation exists
-    // 2. If yes, navigate to it
-    // 3. If no, show DM request modal
-    console.log("Selected user:", userId, userName);
+  const closeConversationMutation = useMutation(
+    trpc.directMessages.closeConversation.mutationOptions({
+      keyPrefix: undefined,
+    }),
+  );
+
+  async function handleSelectUser(userId: string, userName: string) {
+    // Check if conversation already exists
+    const existingConversation = dmConversations?.find(
+      (conv) => conv.user1Id === userId || conv.user2Id === userId,
+    );
+
+    if (existingConversation) {
+      // Navigate to existing conversation
+      navigate({
+        to: "/chat/dm/$conversationId",
+        params: { conversationId: existingConversation.id },
+      });
+    } else {
+      // Show DM request modal
+      setSelectedUserId(userId);
+      setSelectedUserName(userName);
+      setIsUserSearchOpen(false);
+      setIsDMRequestModalOpen(true);
+    }
   }
 
-  function handleCloseDM(conversationId: string) {
-    // Close the DM conversation
-    console.log("Close DM:", conversationId);
+  async function handleCloseDM(conversationId: string) {
+    try {
+      await closeConversationMutation.mutateAsync({ conversationId });
+      await refetchDmConversations();
+      toast.success("Conversation closed");
+    } catch (error) {
+      console.error("Failed to close DM conversation:", conversationId, error);
+      toast.error("Failed to close conversation");
+    }
+  }
+
+  function handleDMRequestClose() {
+    setIsDMRequestModalOpen(false);
+    setSelectedUserId("");
+    setSelectedUserName("");
+    // Refetch conversations in case a new one was created
+    refetchDmConversations();
   }
 
   return (
@@ -138,6 +176,13 @@ function AuthenticatedChatPage() {
         isOpen={isUserSearchOpen}
         onClose={() => setIsUserSearchOpen(false)}
         onSelectUser={handleSelectUser}
+      />
+
+      <DMRequestModal
+        isOpen={isDMRequestModalOpen}
+        onClose={handleDMRequestClose}
+        recipientId={selectedUserId}
+        recipientName={selectedUserName}
       />
     </div>
   );

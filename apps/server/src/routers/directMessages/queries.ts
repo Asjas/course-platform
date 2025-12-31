@@ -1,4 +1,4 @@
-import { and, desc, eq, isNull, not, or } from "drizzle-orm";
+import { and, desc, eq, ilike, isNull, not, or } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import {
   directMessageConversation,
@@ -217,9 +217,15 @@ export async function findDMRequestBetweenUsers(
  * Search users by username
  */
 export async function searchUsersByUsername(searchTerm: string, limit = 20) {
-  // Search by username or name containing the term
+  // Search by username or name containing the term using SQL pattern matching
   const users = await db.query.user.findMany({
-    where: and(not(isNull(user.username))),
+    where: and(
+      not(isNull(user.username)),
+      or(
+        ilike(user.username, `%${searchTerm}%`),
+        ilike(user.name, `%${searchTerm}%`),
+      ),
+    ),
     columns: {
       id: true,
       name: true,
@@ -228,18 +234,10 @@ export async function searchUsersByUsername(searchTerm: string, limit = 20) {
       color: true,
       image: true,
     },
-    limit: limit * 3, // Get more to filter on the application side
+    limit,
   });
 
-  // Filter by search term in JavaScript (case-insensitive)
-  const searchLower = searchTerm.toLowerCase();
-  return users
-    .filter(
-      (u) =>
-        (u.username && u.username.toLowerCase().includes(searchLower)) ||
-        u.name.toLowerCase().includes(searchLower),
-    )
-    .slice(0, limit);
+  return users;
 }
 
 export type SearchedUsers = Awaited<ReturnType<typeof searchUsersByUsername>>;

@@ -23,7 +23,10 @@ import {
   searchUsersByUsername,
 } from "./queries.js";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 import * as z from "zod";
+import { db } from "~/db/index.js";
+import { user } from "~/db/schema/user.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
@@ -127,14 +130,16 @@ export const directMessagesRouter = router({
           });
         }
 
-        // Verify user is part of this conversation
-        if (
-          conversation.user1Id !== ctx.user.id &&
-          conversation.user2Id !== ctx.user.id
-        ) {
+        // Check authorization: only participants or admins can view
+        const isParticipant =
+          conversation.user1Id === ctx.user.id ||
+          conversation.user2Id === ctx.user.id;
+        const isAdmin = ctx.user.role === "admin";
+
+        if (!isParticipant && !isAdmin) {
           throw new TRPCError({
             code: "FORBIDDEN",
-            message: "You are not part of this conversation",
+            message: "You are not authorized to view this conversation",
           });
         }
 
@@ -198,8 +203,15 @@ export const directMessagesRouter = router({
         }
 
         // Get recipient to check if they're an admin
-        const recipient = await getDMRequestById(recipientId);
-        const autoApprove = recipient?.recipient?.role === "admin";
+        const recipient = await db.query.user.findFirst({
+          where: eq(user.id, recipientId),
+          columns: {
+            id: true,
+            name: true,
+            role: true,
+          },
+        });
+        const autoApprove = recipient?.role === "admin";
 
         // Create the request
         const result = await createDMRequest({
@@ -222,7 +234,7 @@ export const directMessagesRouter = router({
           await createDMApprovedNotification({
             requesterId,
             recipientId,
-            recipientName: recipient?.recipient?.name || "Admin",
+            recipientName: recipient?.name || "Unknown User",
             conversationId: result.conversationId,
           });
         }

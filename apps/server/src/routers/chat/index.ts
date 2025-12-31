@@ -1,4 +1,4 @@
-import { tracked } from "@trpc/server";
+import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
 import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
@@ -260,7 +260,10 @@ export const chatRouter = router({
           }
         }
       }
-      throw new Error("Message not found");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Message not found",
+      });
     }),
   deleteMessage: publicProcedure
     .input(z.object({ id: z.string() }))
@@ -290,7 +293,10 @@ export const chatRouter = router({
         }
       }
 
-      throw new Error("Message not found");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Message not found",
+      });
     }),
   /**
    * Get reactions for a specific message.
@@ -373,7 +379,10 @@ export const chatRouter = router({
       });
 
       if (!conversation) {
-        throw new Error("Conversation not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation not found",
+        });
       }
 
       const isParticipant =
@@ -382,9 +391,10 @@ export const chatRouter = router({
       const isAdmin = ctx.user.role === "admin";
 
       if (!isParticipant && !isAdmin) {
-        throw new Error(
-          "Unauthorized: You do not have access to this conversation",
-        );
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Unauthorized: You do not have access to this conversation",
+        });
       }
 
       const streamKey = `chat:dm:${input.conversationId}:messages`;
@@ -453,7 +463,10 @@ export const chatRouter = router({
       });
 
       if (!conversation) {
-        throw new Error("Conversation not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation not found",
+        });
       }
 
       const isParticipant =
@@ -462,9 +475,10 @@ export const chatRouter = router({
       const isAdmin = ctx.user.role === "admin";
 
       if (!isParticipant && !isAdmin) {
-        throw new Error(
-          "Unauthorized: You do not have access to this conversation",
-        );
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Unauthorized: You do not have access to this conversation",
+        });
       }
 
       const streamKey = `chat:dm:${input.conversationId}:messages`;
@@ -539,17 +553,23 @@ export const chatRouter = router({
       });
 
       if (!conversation) {
-        throw new Error("Conversation not found");
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation not found",
+        });
       }
 
+      // Only participants can send messages (admins are read-only)
       const isParticipant =
         conversation.user1Id === ctx.user.id ||
         conversation.user2Id === ctx.user.id;
 
       if (!isParticipant) {
-        throw new Error(
-          "Unauthorized: You can only send messages in your own conversations",
-        );
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "Unauthorized: You can only send messages in your own conversations",
+        });
       }
 
       const id = `msg:${ulid()}`;
