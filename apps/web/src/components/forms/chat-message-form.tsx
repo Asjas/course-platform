@@ -96,7 +96,7 @@ export default function ChatMessageForm() {
                 children={([isDirty, isSubmitting]) => (
                   <button
                     className={cn(
-                      "cursor-pointer font-semibold text-gray-600 shadow-xs hover:text-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:text-white dark:hover:text-green-400",
+                      "cursor-pointer font-semibold text-gray-600 hover:text-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:text-white dark:hover:text-green-400",
                       isSubmitting || !isDirty
                         ? "cursor-not-allowed opacity-50"
                         : "",
