@@ -14,7 +14,12 @@ async function getSupportStatusFromRedis(
   userId: string,
 ): Promise<SupportStatus> {
   const status = await redis.hget(SUPPORT_STATUS_KEY, userId);
-  return (status as SupportStatus) || "offline";
+
+  if (status === "online" || status === "offline") {
+    return status;
+  }
+
+  return "offline";
 }
 
 /**
