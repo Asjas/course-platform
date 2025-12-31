@@ -81,7 +81,10 @@ select[data-slot="select"]::-ms-expand {
 
 p,
 span,
-a {
+a,
+button,
+li,
+td {
   font-family: "Geist", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
