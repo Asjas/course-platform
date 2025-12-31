@@ -90,6 +90,10 @@ const userNotificationIcons: Record<NotificationType, LucideIcon> = {
   admin_enrollment_milestone: TrendingUp,
   admin_new_user_registration: UserPlus,
   admin_chat_message_reported: Flag,
+  // DM notifications
+  dm_request_received: Mail,
+  dm_request_approved: CheckCircle,
+  dm_request_denied: XCircle,
 };
 
 const announcementColors: Record<AnnouncementType, string> = {
@@ -175,6 +179,13 @@ const userNotificationColors: Record<NotificationType, string> = {
     "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
   admin_chat_message_reported:
     "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
+  // DM notifications
+  dm_request_received:
+    "bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800",
+  dm_request_approved:
+    "bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800",
+  dm_request_denied:
+    "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
 };
 
 const announcementIconColors: Record<AnnouncementType, string> = {
@@ -224,6 +235,10 @@ const userNotificationIconColors: Record<NotificationType, string> = {
   admin_enrollment_milestone: "text-pink-600 dark:text-pink-400",
   admin_new_user_registration: "text-blue-600 dark:text-blue-400",
   admin_chat_message_reported: "text-red-600 dark:text-red-400",
+  // DM notifications
+  dm_request_received: "text-blue-600 dark:text-blue-400",
+  dm_request_approved: "text-green-600 dark:text-green-400",
+  dm_request_denied: "text-red-600 dark:text-red-400",
 };
 
 // Combined notification item type for rendering
