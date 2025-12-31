@@ -16,6 +16,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
 import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
@@ -53,6 +54,29 @@ export default function ChatMessage({
   const editMessageMutation = useMutation(
     trpc.chat.editMessage.mutationOptions({ keyPrefix: undefined }),
   );
+  const toggleReactionMutation = useMutation(
+    trpc.chat.toggleReaction.mutationOptions({ keyPrefix: undefined }),
+  );
+
+  async function handleToggleReaction(emoji: string) {
+    try {
+      const result = await toggleReactionMutation.mutateAsync({
+        messageId: msg.id,
+        emoji,
+      });
+
+      // Update the message in the cache with the new reactions
+      const cacheKey = getChannelCacheKey(channelId);
+      queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
+        return prev.map((message) =>
+          message.id === msg.id ? { ...message, reactions: result } : message,
+        );
+      });
+    } catch (error) {
+      console.error("Error toggling reaction:", error);
+      toast.error("Failed to update reaction.");
+    }
+  }
 
   useEffect(() => {
     renderMarkdown(msg.message)
@@ -294,7 +318,10 @@ export default function ChatMessage({
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
-        <div className="pointer-events-none absolute -top-3 right-2 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
+        <div className="pointer-events-none absolute -top-3 right-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
+          {/* Add reaction button */}
+          <EmojiReactionPicker onEmojiSelect={handleToggleReaction} />
+
           <MenuTrigger>
             <MenuButton
               className="cursor-pointer rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"

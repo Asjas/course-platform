@@ -65,6 +65,11 @@ export function MessageReactions({
     return `${userNames[0]}, ${userNames[1]}, and ${userNames.length - 2} others`;
   }
 
+  // Only show the reactions UI if there are reactions
+  if (reactions.length === 0) {
+    return null;
+  }
+
   return (
     <div className="mt-1 flex flex-wrap items-center gap-1">
       {reactions.map((reaction) => (
@@ -73,10 +78,10 @@ export function MessageReactions({
           delay={300}
         >
           <button
-            className={`inline-flex cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-sm transition-colors ${
+            className={`inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-sm transition-colors ${
               hasUserReacted(reaction)
-                ? "border-blue-300 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-600 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-                : "border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                ? "bg-blue-600/80 text-white hover:bg-blue-600"
+                : "bg-gray-600/60 text-gray-200 hover:bg-gray-600/80"
             }`}
             type="button"
             onClick={() => handleToggleReaction(reaction.emoji)}
@@ -90,7 +95,10 @@ export function MessageReactions({
           </Tooltip>
         </TooltipTrigger>
       ))}
-      <EmojiReactionPicker onEmojiSelect={handleToggleReaction} />
+      <EmojiReactionPicker
+        onEmojiSelect={handleToggleReaction}
+        variant="inline"
+      />
     </div>
   );
 }
