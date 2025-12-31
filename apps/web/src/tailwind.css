@@ -106,7 +106,7 @@ h4,
 h5,
 h6 {
   font-family: "Arvo", serif;
-
+  font-optical-sizing: auto;
   font-style: normal;
 }
 
