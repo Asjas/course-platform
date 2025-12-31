@@ -213,6 +213,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                                 ? "fill-green-500 text-green-500"
                                 : "fill-gray-400 text-gray-400"
                             }`}
+                            aria-hidden="true"
                           />
                           {myStatus?.status === "online"
                             ? "Go Offline"
@@ -391,6 +392,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                                       ? "fill-green-500 text-green-500"
                                       : "fill-gray-400 text-gray-400"
                                   }`}
+                                  aria-hidden="true"
                                 />
                                 {myStatus?.status === "online"
                                   ? "Go Offline"

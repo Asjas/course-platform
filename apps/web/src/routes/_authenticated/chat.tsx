@@ -211,9 +211,7 @@ function AuthenticatedChatPage() {
                           ? "fill-green-500 text-green-500"
                           : "fill-gray-400 text-gray-400"
                       }`}
-                      aria-label={
-                        member.status === "online" ? "Online" : "Offline"
-                      }
+                      aria-hidden="true"
                     />
                   </div>
                 </li>
