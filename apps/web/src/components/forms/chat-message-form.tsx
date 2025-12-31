@@ -15,11 +15,39 @@ const formSchema = z.object({
   message: z.string().min(1, "Message cannot be empty"),
 });
 
-export default function ChatMessageForm() {
-  const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
+interface ChatMessageFormProps {
+  onMessageSent?: () => void;
+  channelId?: string;
+  conversationId?: string;
+  isDM?: boolean;
+}
+
+export default function ChatMessageForm({
+  onMessageSent,
+  channelId: propChannelId,
+  conversationId: propConversationId,
+  isDM = false,
+}: ChatMessageFormProps = {}) {
+  const params = useParams({ strict: false });
+  const channelId = propChannelId || params.channelId;
+  const conversationId = isDM
+    ? propConversationId ||
+      (params as { conversationId?: string }).conversationId ||
+      (propChannelId && propChannelId.startsWith("dm:")
+        ? propChannelId.slice("dm:".length)
+        : undefined)
+    : undefined;
+
   const [submitAttempted, setSubmitAttempted] = useState(false);
-  const createChatMessageMutation = useMutation(
+
+  const createChannelMessageMutation = useMutation(
     trpc.chat.postMessage.mutationOptions({
+      keyPrefix: undefined,
+    }),
+  );
+
+  const createDMMessageMutation = useMutation(
+    trpc.chat.postDMMessage.mutationOptions({
       keyPrefix: undefined,
     }),
   );
@@ -33,18 +61,30 @@ export default function ChatMessageForm() {
     },
     onSubmit: async ({ value: { message } }) => {
       try {
-        await createChatMessageMutation.mutateAsync({
-          channelId,
-          message,
-        });
+        if (isDM && conversationId) {
+          await createDMMessageMutation.mutateAsync({
+            conversationId,
+            message,
+          });
 
-        queryClient.invalidateQueries({
-          queryKey: getChannelCacheKey(channelId),
-        });
+          queryClient.invalidateQueries({
+            queryKey: ["dm", conversationId],
+          });
+        } else if (channelId) {
+          await createChannelMessageMutation.mutateAsync({
+            channelId,
+            message,
+          });
+
+          queryClient.invalidateQueries({
+            queryKey: getChannelCacheKey(channelId),
+          });
+        }
 
         form.reset();
         setSubmitAttempted(false);
         toast.success("Message sent successfully!");
+        onMessageSent?.();
       } catch (error) {
         console.error("Error sending message:", error);
         toast.error(

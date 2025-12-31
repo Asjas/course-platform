@@ -8,12 +8,14 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   CalendarIcon,
+  MessageCircleIcon,
   PencilIcon,
   ShieldCheckIcon,
   UserIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { DMRequestModal } from "~/components/dm-request-modal";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
 import {
@@ -42,6 +44,7 @@ export default function UserProfileSheet({
   const auth = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDMRequestModalOpen, setIsDMRequestModalOpen] = useState(false);
 
   // Fetch user profile data
   const {
@@ -276,6 +279,33 @@ export default function UserProfileSheet({
                     Edit Profile
                   </button>
                 )}
+
+                {/* Request DM Button */}
+                <button
+                  className={cn(
+                    "mt-2 flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white",
+                    "bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600",
+                    isOwnProfile &&
+                      "cursor-not-allowed opacity-60 hover:bg-green-600 dark:hover:bg-green-700",
+                  )}
+                  type="button"
+                  disabled={isOwnProfile}
+                  aria-disabled={isOwnProfile}
+                  title={
+                    isOwnProfile
+                      ? "You cannot request a direct message with yourself."
+                      : "Request a direct message"
+                  }
+                  onClick={() => {
+                    if (isOwnProfile) {
+                      return;
+                    }
+                    setIsDMRequestModalOpen(true);
+                  }}
+                >
+                  <MessageCircleIcon className="h-4 w-4" />
+                  Request Direct Message
+                </button>
               </div>
 
               {/* User Details */}
@@ -372,6 +402,16 @@ export default function UserProfileSheet({
           </div>
         )}
       </SheetContent>
+
+      {/* DM Request Modal */}
+      {userProfile && !isOwnProfile && (
+        <DMRequestModal
+          isOpen={isDMRequestModalOpen}
+          onClose={() => setIsDMRequestModalOpen(false)}
+          recipientId={userProfile.id}
+          recipientName={userProfile.name}
+        />
+      )}
     </Sheet>
   );
 }

@@ -3,6 +3,7 @@ import { check, index, text, timestamp } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/my-schema.js";
 import { chatMessageReport } from "~/db/schema/chatMessageReports.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
+import { directMessageRequest } from "~/db/schema/directMessages.js";
 import { supportTicket } from "~/db/schema/support-tickets.js";
 import { user } from "~/db/schema/user.js";
 
@@ -49,6 +50,10 @@ export const userNotificationType = mySchema.enum("user_notification_type", [
   "admin_new_user_registration",
   // Chat message reports
   "admin_chat_message_reported",
+  // Direct message notifications
+  "dm_request_received",
+  "dm_request_approved",
+  "dm_request_denied",
 ]);
 
 // User notifications table
@@ -68,6 +73,9 @@ export const userNotification = mySchema.table(
       onDelete: "cascade",
     }),
     chatMessageReportId: text().references(() => chatMessageReport.id, {
+      onDelete: "cascade",
+    }),
+    dmRequestId: text().references(() => directMessageRequest.id, {
       onDelete: "cascade",
     }),
     // Who triggered this notification (optional)
@@ -107,6 +115,11 @@ export const userNotificationRelations = relations(
       fields: [userNotification.chatMessageReportId],
       references: [chatMessageReport.id],
       relationName: "user_notification_chat_message_report",
+    }),
+    dmRequest: one(directMessageRequest, {
+      fields: [userNotification.dmRequestId],
+      references: [directMessageRequest.id],
+      relationName: "user_notification_dm_request",
     }),
   }),
 );

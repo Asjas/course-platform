@@ -1,4 +1,5 @@
-import { tracked } from "@trpc/server";
+import { validateDMConversationAccess } from "./dmValidation.js";
+import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
 import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
@@ -260,7 +261,10 @@ export const chatRouter = router({
           }
         }
       }
-      throw new Error("Message not found");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Message not found",
+      });
     }),
   deleteMessage: publicProcedure
     .input(z.object({ id: z.string() }))
@@ -290,7 +294,10 @@ export const chatRouter = router({
         }
       }
 
-      throw new Error("Message not found");
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "Message not found",
+      });
     }),
   /**
    * Get reactions for a specific message.
@@ -348,5 +355,180 @@ export const chatRouter = router({
       redisStreamOperations.inc({ operation: "hset", status: "success" });
 
       return getReactionsForMessage(input.messageId);
+    }),
+  /**
+   * Get DM messages (subscription)
+   */
+  getDMMessages: publicProcedure
+    .input(
+      z.object({
+        conversationId: z.string(),
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input, ctx }) {
+      // Verify user has access to this conversation
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+      );
+
+      const streamKey = `chat:dm:${input.conversationId}:messages`;
+
+      let lastId =
+        input.lastEventId ?? (input.lastEventId === undefined ? "0" : "$");
+
+      while (true) {
+        try {
+          const result = await subscriptionRedis.xread(
+            "COUNT",
+            100,
+            "BLOCK",
+            5000,
+            "STREAMS",
+            streamKey,
+            lastId,
+          );
+
+          if (!result?.length) continue;
+
+          const [[, entries]] = result;
+
+          for (const [streamId, fields] of entries) {
+            // Skip if not newer
+            if (lastId !== "$" && !isIdAfter(streamId, lastId)) continue;
+
+            const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
+            const messageId = payload.id; // ULID
+
+            // Update lastId to Redis stream ID
+            lastId = streamId;
+
+            yield tracked(messageId, payload); // tRPC tracks by ULID
+          }
+        } catch (err) {
+          if (
+            err instanceof Error &&
+            err.message.includes("Invalid stream ID")
+          ) {
+            lastId = "$"; // fallback
+            continue;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+    }),
+  /**
+   * Get DM history
+   */
+  getDMHistory: publicProcedure
+    .input(
+      z.object({ conversationId: z.string(), limit: z.number().default(50) }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input, ctx }) => {
+      // Verify user has access to this conversation
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+      );
+
+      const streamKey = `chat:dm:${input.conversationId}:messages`;
+      const entries = await redis.xrevrange(
+        streamKey,
+        "+",
+        "-",
+        "COUNT",
+        input.limit,
+      );
+
+      const messages = entries.map(
+        ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
+      );
+
+      // Fetch reactions for all messages using Redis pipeline for efficiency
+      const pipeline = redis.pipeline();
+      for (const msg of messages) {
+        pipeline.hgetall(getReactionKey(msg.id));
+      }
+      const reactionResults = await pipeline.exec();
+
+      // Combine messages with their reactions
+      const messagesWithReactions = messages.map((msg, index) => {
+        const pipelineResult = reactionResults?.[index];
+        const reactions: Reaction[] = [];
+
+        // Check for pipeline errors before processing
+        if (pipelineResult && !pipelineResult[0]) {
+          const reactionData = pipelineResult[1] as Record<
+            string,
+            string
+          > | null;
+          if (reactionData) {
+            for (const [emoji, usersJson] of Object.entries(reactionData)) {
+              const users = safeJsonParse<ReactionUser[]>(usersJson);
+              // Skip corrupted data instead of crashing
+              if (users && Array.isArray(users)) {
+                reactions.push({ emoji, users });
+              }
+            }
+          }
+        }
+
+        return { ...msg, reactions };
+      });
+
+      // Sort by creation time (ULID or createdAt field)
+      return messagesWithReactions.sort((a, b) => {
+        if ("createdAt" in a && "createdAt" in b) {
+          return (a.createdAt ?? 0) - (b.createdAt ?? 0);
+        }
+        return a.id.localeCompare(b.id);
+      });
+    }),
+  /**
+   * Post a DM message
+   */
+  postDMMessage: publicProcedure
+    .input(z.object({ conversationId: z.string(), message: z.string() }))
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      // Verify user is a participant (admins can only read, not write)
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+        true, // allowWriteOnly = true (only participants can send messages)
+      );
+
+      const id = `msg:${ulid()}`;
+
+      const payload: ChatMessage = {
+        id,
+        name: ctx.user.name,
+        username: ctx.user.username,
+        color: ctx.user.color,
+        message: input.message,
+        timestamp: Date.now(),
+        createdAt: Date.now(),
+      };
+
+      const streamId = await redis.xadd(
+        `chat:dm:${input.conversationId}:messages`,
+        "*",
+        "message",
+        JSON.stringify(payload),
+      );
+
+      chatMessageCount.inc({
+        channel: `dm:${input.conversationId}`,
+        action: "post",
+      });
+      redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
+      return { ...payload, streamId };
     }),
 });
