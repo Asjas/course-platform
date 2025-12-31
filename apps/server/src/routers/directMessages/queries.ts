@@ -228,9 +228,11 @@ export async function findDMRequestBetweenUsers(
  */
 export async function searchUsersByUsername(searchTerm: string, limit = 20) {
   // Search by username or name containing the term using SQL pattern matching
+  // Filter out users without usernames and the 'ghost' user (anonymous data holder)
   const users = await db.query.user.findMany({
     where: and(
       not(isNull(user.username)),
+      not(eq(user.username, "ghost")),
       or(
         ilike(user.username, `%${searchTerm}%`),
         ilike(user.name, `%${searchTerm}%`),

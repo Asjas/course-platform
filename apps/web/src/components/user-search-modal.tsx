@@ -24,8 +24,10 @@ export function UserSearchModal({
     enabled: isOpen && searchTerm.length >= 2,
   });
 
-  // Filter out current user from search results
-  const filteredUsers = users?.filter((u) => u.id !== auth.session?.user.id);
+  // Filter out current user and 'ghost' user (anonymous data holder) from search results
+  const filteredUsers = users?.filter(
+    (u) => u.id !== auth.session?.user.id && u.username !== "ghost",
+  );
 
   function handleUserClick(userId: string, userName: string) {
     onSelectUser(userId, userName);
