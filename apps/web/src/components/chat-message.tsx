@@ -63,62 +63,80 @@ export default function ChatMessage({
   }, [msg.message]);
 
   // Parse HTML to separate text content from media
-  const { textHtml, mediaHtml, hasMedia, mediaLabel } = useMemo(() => {
-    if (!html)
-      return { textHtml: "", mediaHtml: "", hasMedia: false, mediaLabel: "" };
+  const { textHtml, mediaHtml, hasMedia, mediaLabel, isBlockContent } =
+    useMemo(() => {
+      if (!html)
+        return {
+          textHtml: "",
+          mediaHtml: "",
+          hasMedia: false,
+          mediaLabel: "",
+          isBlockContent: false,
+        };
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
 
-    // Find all media elements (images, videos, iframes)
-    const mediaElements = doc.querySelectorAll("img, video, iframe");
-    const hasMedia = mediaElements.length > 0;
+      // Find all media elements (images, videos, iframes)
+      const mediaElements = doc.querySelectorAll("img, video, iframe");
+      const hasMedia = mediaElements.length > 0;
 
-    // Determine media label
-    let mediaLabel = "";
-    if (hasMedia) {
-      const firstMedia = mediaElements[0];
-      if (firstMedia.tagName === "IMG") {
-        const src = firstMedia.getAttribute("src") || "";
-        if (src.includes("giphy") || src.includes(".gif")) {
-          mediaLabel = "GIF";
-        } else {
-          mediaLabel = "image";
+      // Determine media label
+      let mediaLabel = "";
+      if (hasMedia) {
+        const firstMedia = mediaElements[0];
+        if (firstMedia.tagName === "IMG") {
+          const src = firstMedia.getAttribute("src") || "";
+          if (src.includes("giphy") || src.includes(".gif")) {
+            mediaLabel = "GIF";
+          } else {
+            mediaLabel = "image";
+          }
+        } else if (firstMedia.tagName === "VIDEO") {
+          mediaLabel = "video";
+        } else if (firstMedia.tagName === "IFRAME") {
+          mediaLabel = "embed";
         }
-      } else if (firstMedia.tagName === "VIDEO") {
-        mediaLabel = "video";
-      } else if (firstMedia.tagName === "IFRAME") {
-        mediaLabel = "embed";
+        if (mediaElements.length > 1) {
+          mediaLabel += ` +${mediaElements.length - 1}`;
+        }
       }
-      if (mediaElements.length > 1) {
-        mediaLabel += ` +${mediaElements.length - 1}`;
-      }
-    }
 
-    // Clone and remove media from text content
-    const textDoc = doc.cloneNode(true) as Document;
-    textDoc.querySelectorAll("img, video, iframe").forEach((el) => {
-      // Also remove parent paragraph if it only contains the media
-      const parent = el.parentElement;
-      if (parent && parent.tagName === "P" && parent.childNodes.length === 1) {
-        parent.remove();
-      } else {
-        el.remove();
-      }
-    });
+      // Clone and remove media from text content
+      const textDoc = doc.cloneNode(true) as Document;
+      textDoc.querySelectorAll("img, video, iframe").forEach((el) => {
+        // Also remove parent paragraph if it only contains the media
+        const parent = el.parentElement;
+        if (
+          parent &&
+          parent.tagName === "P" &&
+          parent.childNodes.length === 1
+        ) {
+          parent.remove();
+        } else {
+          el.remove();
+        }
+      });
 
-    // Create media-only HTML
-    const mediaDoc = parser.parseFromString("<div></div>", "text/html");
-    const mediaContainer = mediaDoc.body.firstChild as HTMLElement;
-    mediaElements.forEach((el) => {
-      mediaContainer.appendChild(el.cloneNode(true));
-    });
+      // Create media-only HTML
+      const mediaDoc = parser.parseFromString("<div></div>", "text/html");
+      const mediaContainer = mediaDoc.body.firstChild as HTMLElement;
+      mediaElements.forEach((el) => {
+        mediaContainer.appendChild(el.cloneNode(true));
+      });
 
-    const textHtml = textDoc.body.innerHTML.trim();
-    const mediaHtml = mediaContainer.innerHTML;
+      const textHtml = textDoc.body.innerHTML.trim();
+      const mediaHtml = mediaContainer.innerHTML;
 
-    return { textHtml, mediaHtml, hasMedia, mediaLabel };
-  }, [html]);
+      // Check if content contains block-level elements (pre, blockquote, ul, ol, table, h1-h6)
+      // If so, it should render below the username, not inline
+      const blockElements = textDoc.body.querySelectorAll(
+        "pre, blockquote, ul, ol, table, h1, h2, h3, h4, h5, h6",
+      );
+      const isBlockContent = blockElements.length > 0;
+
+      return { textHtml, mediaHtml, hasMedia, mediaLabel, isBlockContent };
+    }, [html]);
 
   function handleEdit() {
     const newText = prompt("Edit message:", msg.message);
@@ -187,8 +205,8 @@ export default function ChatMessage({
 
         {/* Message content area */}
         <div className="min-w-0 flex-1">
-          {/* Username row */}
-          <div className="flex items-baseline gap-x-2">
+          {/* Username and inline content (for simple text messages) */}
+          <div className="flex flex-wrap items-baseline gap-x-2">
             <button
               className="shrink-0 cursor-pointer text-sm leading-5 font-bold hover:underline"
               style={{ color: usernameColor }}
@@ -197,6 +215,14 @@ export default function ChatMessage({
             >
               {msg.username || msg.name}
             </button>
+
+            {/* Inline text content - only for simple paragraphs without block elements */}
+            {textHtml && !isBlockContent ? (
+              <span
+                className="chat-message-content inline text-sm text-gray-900 dark:text-gray-100 [&_p]:m-0 [&_p]:inline"
+                dangerouslySetInnerHTML={{ __html: textHtml }}
+              />
+            ) : null}
 
             {msg.editedAt ? (
               <span
@@ -208,20 +234,20 @@ export default function ChatMessage({
             ) : null}
           </div>
 
-          {/* Message content - renders below username */}
-          {textHtml ? (
+          {/* Block content - renders below username for code blocks, lists, etc. */}
+          {textHtml && isBlockContent ? (
             <div
-              className="chat-message-content mt-0.5 text-sm text-gray-900 dark:text-gray-100 [&_p]:my-1 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_pre]:max-w-full [&_pre]:overflow-x-auto"
+              className="chat-message-content mt-1 text-sm text-gray-900 dark:text-gray-100 [&_p]:my-1 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_pre]:max-w-full [&_pre]:overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: textHtml }}
             />
           ) : null}
 
           {/* Media section with collapse/expand */}
           {hasMedia ? (
-            <div className="mt-1">
+            <div className={textHtml ? "mt-0.5" : ""}>
               {/* Media toggle button */}
               <button
-                className="mb-1 flex cursor-pointer items-center gap-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                className="flex cursor-pointer items-center gap-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 type="button"
                 onClick={() => {
                   const newVisible = !isMediaVisible;
