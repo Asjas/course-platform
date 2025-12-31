@@ -11,12 +11,17 @@ interface MessageReactionsProps {
   messageId: string;
   channelId: string;
   reactions?: Reaction[];
+  /**
+   * Name of the message author for accessible aria-label.
+   */
+  messageAuthor?: string;
 }
 
 export function MessageReactions({
   messageId,
   channelId,
   reactions = [],
+  messageAuthor,
 }: MessageReactionsProps) {
   const auth = useAuth();
   const currentUserId = auth.session?.user.id;
@@ -98,6 +103,7 @@ export function MessageReactions({
       <EmojiReactionPicker
         onEmojiSelect={handleToggleReaction}
         variant="inline"
+        messageAuthor={messageAuthor}
       />
     </div>
   );

@@ -314,13 +314,17 @@ export default function ChatMessage({
             messageId={msg.id}
             channelId={channelId}
             reactions={msg.reactions}
+            messageAuthor={msg.name}
           />
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
         <div className="pointer-events-none absolute -top-3 right-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
           {/* Add reaction button */}
-          <EmojiReactionPicker onEmojiSelect={handleToggleReaction} />
+          <EmojiReactionPicker
+            onEmojiSelect={handleToggleReaction}
+            messageAuthor={msg.name}
+          />
 
           <MenuTrigger>
             <MenuButton

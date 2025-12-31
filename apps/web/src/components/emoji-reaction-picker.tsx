@@ -15,12 +15,18 @@ interface EmojiReactionPickerProps {
    * - "action": White background with border (used in hover action bar)
    */
   variant?: "inline" | "action";
+  /**
+   * Name of the message author for accessible aria-label.
+   * Helps screen reader users identify which message will receive the reaction.
+   */
+  messageAuthor?: string;
 }
 
 export function EmojiReactionPicker({
   onEmojiSelect,
   className = "",
   variant = "action",
+  messageAuthor,
 }: EmojiReactionPickerProps) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -41,7 +47,11 @@ export function EmojiReactionPicker({
     >
       <Button
         className={`${buttonStyles} ${className}`}
-        aria-label="Add reaction"
+        aria-label={
+          messageAuthor
+            ? `Add reaction to message from ${messageAuthor}`
+            : "Add reaction"
+        }
       >
         <SmilePlusIcon
           className={
