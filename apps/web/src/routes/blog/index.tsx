@@ -36,28 +36,34 @@ function BlogListPage() {
   }, []);
 
   return (
-    <div className="container mx-auto p-8">
-      <h2 className="mb-8 text-3xl font-bold">Blog Posts</h2>
-      {posts.length > 0 ? (
-        <ul className="space-y-4">
-          {posts.map((post) => (
-            <li
-              className="rounded-lg border border-gray-700 p-4 transition-colors"
-              key={post.slug}
-            >
-              <Link
-                className="text-xl font-medium hover:text-green-600"
-                to="/blog/$slug"
-                params={{ slug: post.slug }}
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto p-8">
+        <h1 className="mb-8 text-3xl font-bold text-gray-900 dark:text-white">
+          Blog Posts
+        </h1>
+        {posts.length > 0 ? (
+          <ul className="space-y-4">
+            {posts.map((post) => (
+              <li
+                className="rounded-lg border border-gray-200 bg-white p-4 transition-colors dark:border-gray-700 dark:bg-gray-800"
+                key={post.slug}
               >
-                {post.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Loading blog posts...</p>
-      )}
-    </div>
+                <Link
+                  className="text-xl font-medium text-gray-900 hover:text-green-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:text-white dark:hover:text-green-400"
+                  to="/blog/$slug"
+                  params={{ slug: post.slug }}
+                >
+                  {post.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-600 dark:text-gray-400">
+            Loading blog posts...
+          </p>
+        )}
+      </div>
+    </main>
   );
 }

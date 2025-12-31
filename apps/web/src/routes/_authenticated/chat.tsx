@@ -22,7 +22,11 @@ const channels = ["general", "random"];
 function AuthenticatedChatPage() {
   return (
     <div className="sidebar h-full">
-      <nav className="flex flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900">
+      <nav
+        className="flex flex-col gap-1 border-r border-gray-200 bg-gray-50 px-2 dark:border-gray-700 dark:bg-gray-900"
+        aria-label="Chat channels"
+      >
+        <h1 className="sr-only">Community Chat</h1>
         <span className="mt-2 flex px-2 py-2 text-lg font-bold text-gray-900 md:text-xl dark:text-white">
           Channels
         </span>

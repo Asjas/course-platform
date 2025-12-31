@@ -121,7 +121,7 @@ function AdminUsersPage() {
         <div className="mt-12 flow-root">
           <div className="custom-scrollbar overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <Table>
+              <Table aria-label="Platform users with name, email, username, role, status, and actions">
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHeaderCell>Name</TableHeaderCell>

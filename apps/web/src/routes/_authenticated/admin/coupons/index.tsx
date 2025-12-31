@@ -119,7 +119,7 @@ function AdminCouponsPage() {
         <div className="mt-12 flow-root">
           <div className="custom-scrollbar overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <Table>
+              <Table aria-label="Discount coupons with code, type, value, redemptions, validity dates, and actions">
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHeaderCell>Code</TableHeaderCell>

@@ -448,7 +448,7 @@ export default function CreateCouponSheet({
           </div>
 
           {/* Form Actions - Fixed Footer */}
-          <div className="flex gap-3 border-t border-gray-700 p-4">
+          <div className="flex gap-3 border-t border-gray-300 p-4 dark:border-gray-700">
             <form.Subscribe
               selector={(state) => [state.isDirty, state.isSubmitting]}
               children={([isDirty, isSubmitting]) => (

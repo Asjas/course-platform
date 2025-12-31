@@ -420,7 +420,7 @@ export default function CreateReviewSheet({
           </div>
 
           {/* Form Actions - Fixed Footer */}
-          <div className="flex gap-3 border-t border-gray-700 p-4">
+          <div className="flex gap-3 border-t border-gray-300 p-4 dark:border-gray-700">
             <form.Subscribe
               selector={(state) => [
                 state.values.userId,

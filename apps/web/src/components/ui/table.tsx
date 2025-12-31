@@ -1,11 +1,30 @@
 import type { ReactNode } from "react";
 
-export function Table({ children }: { children: ReactNode }) {
+export function Table({
+  children,
+  "aria-label": ariaLabel,
+}: {
+  "children": ReactNode;
+  "aria-label"?: string;
+}) {
   return (
-    <table className="relative min-w-full divide-y divide-gray-300 dark:divide-white/15">
+    <table
+      className="relative min-w-full divide-y divide-gray-300 dark:divide-white/15"
+      aria-label={ariaLabel}
+    >
       {children}
     </table>
   );
+}
+
+export function TableCaption({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return <caption className={`sr-only ${className}`}>{children}</caption>;
 }
 
 export function TableHeader({ children }: { children: ReactNode }) {

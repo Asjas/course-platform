@@ -41,23 +41,26 @@ function BlogPostPage() {
   const Content = blogPost.default;
 
   return (
-    <div className="container mx-auto max-w-3xl px-8 py-12">
-      <article className="prose lg:prose-xl prose-invert">
-        <Content />
-      </article>
+    <main className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto max-w-3xl px-8 py-12">
+        <article className="prose lg:prose-xl prose-gray dark:prose-invert">
+          <Content />
+        </article>
 
-      <div className="mt-12 border-t border-gray-700 pt-6">
-        <Link
-          className="flex items-center text-green-400 hover:text-green-300"
-          to="/blog"
-        >
-          <ArrowLeftIcon
-            className="mr-2"
-            size={20}
-          />
-          Back to all posts
-        </Link>
+        <div className="mt-12 border-t border-gray-300 pt-6 dark:border-gray-700">
+          <Link
+            className="flex items-center text-green-600 hover:text-green-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600 dark:text-green-400 dark:hover:text-green-300"
+            to="/blog"
+          >
+            <ArrowLeftIcon
+              className="mr-2"
+              size={20}
+              aria-hidden="true"
+            />
+            Back to all posts
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }

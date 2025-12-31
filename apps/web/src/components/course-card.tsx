@@ -51,7 +51,10 @@ export function CourseCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <BookOpen className="h-16 w-16 text-gray-400" />
+            <BookOpen
+              className="h-16 w-16 text-gray-400"
+              aria-hidden="true"
+            />
           </div>
         )}
       </div>
@@ -69,23 +72,35 @@ export function CourseCard({
 
         <div className="mb-3 grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center gap-1">
-            <Layers className="h-4 w-4" />
+            <Layers
+              className="h-4 w-4"
+              aria-hidden="true"
+            />
             <span>
               {totalModules} {totalModules === 1 ? "module" : "modules"}
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
+            <BookOpen
+              className="h-4 w-4"
+              aria-hidden="true"
+            />
             <span>
               {totalLessons} {totalLessons === 1 ? "lesson" : "lessons"}
             </span>
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
+            <Clock
+              className="h-4 w-4"
+              aria-hidden="true"
+            />
             <span>{formatDuration(totalDuration)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Users className="h-4 w-4" />
+            <Users
+              className="h-4 w-4"
+              aria-hidden="true"
+            />
             <span>
               {totalEnrollments}{" "}
               {totalEnrollments === 1 ? "student" : "students"}
@@ -93,7 +108,10 @@ export function CourseCard({
           </div>
           {supportTicketCount !== undefined && (
             <div className="flex items-center gap-1">
-              <TicketIcon className="h-4 w-4" />
+              <TicketIcon
+                className="h-4 w-4"
+                aria-hidden="true"
+              />
               <span>
                 {supportTicketCount}{" "}
                 {supportTicketCount === 1 ? "ticket" : "tickets"}

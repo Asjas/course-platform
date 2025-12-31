@@ -118,7 +118,7 @@ function AdminCoursesPage() {
           </h2>
           <div className="custom-scrollbar overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <Table>
+              <Table aria-label="Courses with name, slug, price, modules, lessons, status, and actions">
                 <TableHeader>
                   <TableHeaderRow>
                     <TableHeaderCell>Name</TableHeaderCell>

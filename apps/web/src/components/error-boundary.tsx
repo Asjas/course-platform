@@ -18,8 +18,8 @@ export default function ErrorBoundaryComponent({ error }: { error: Error }) {
         reach out to our support team.
       </p>
       <button
-        className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 active:bg-red-800"
-        type="reset"
+        className="cursor-pointer rounded-md bg-red-600 px-4 py-2 text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:bg-red-800"
+        type="button"
         onClick={(event) => {
           event.preventDefault();
           router.invalidate();

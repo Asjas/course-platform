@@ -132,7 +132,7 @@ function AdminChatReportsPage() {
                 />
               ) : (
                 <div className="ring-opacity-5 dark:ring-opacity-10 overflow-hidden shadow ring-1 ring-black sm:rounded-lg dark:ring-white">
-                  <Table>
+                  <Table aria-label="Chat message reports with status, reason, channel, reporter, author, date, and actions">
                     <TableHeader>
                       <TableHeaderRow>
                         <TableHeaderCell>Status</TableHeaderCell>
