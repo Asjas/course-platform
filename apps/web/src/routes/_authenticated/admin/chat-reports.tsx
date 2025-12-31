@@ -127,6 +127,7 @@ function AdminChatReportsPage() {
             <Suspense fallback={<Loading />}>
               {!reports || reports.length === 0 ? (
                 <EmptyState
+                  className="mt-0"
                   title="No reports found"
                   description="There are no chat message reports to review."
                 />
