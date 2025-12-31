@@ -119,7 +119,7 @@ function CourseSupportPage() {
   const filteredTickets = tickets ?? [];
 
   return (
-    <div className="px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex h-full flex-col px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
