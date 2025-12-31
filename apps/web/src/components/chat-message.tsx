@@ -172,9 +172,9 @@ export default function ChatMessage({
         aria-label={`Message from ${msg.username || msg.name}`}
       >
         {/* Timestamp column - Slack style */}
-        <div className="flex w-10 shrink-0 items-baseline">
+        <div className="flex w-10 shrink-0">
           <span
-            className="text-xs text-gray-500 dark:text-gray-500"
+            className="text-sm leading-5 text-gray-500 dark:text-gray-500"
             title={format(msg.timestamp, "PPpp")}
           >
             {format(msg.timestamp, "HH:mm")}
@@ -186,7 +186,7 @@ export default function ChatMessage({
           {/* Username and text inline */}
           <div className="flex flex-wrap items-baseline gap-x-2">
             <button
-              className="shrink-0 cursor-pointer text-sm font-bold hover:underline"
+              className="shrink-0 cursor-pointer text-sm leading-5 font-bold hover:underline"
               style={{ color: usernameColor }}
               type="button"
               onClick={() => setIsProfileSheetOpen(true)}
