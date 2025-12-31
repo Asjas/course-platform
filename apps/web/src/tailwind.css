@@ -84,7 +84,16 @@ span,
 a,
 button,
 li,
-td {
+td,
+th,
+label,
+input,
+textarea,
+select,
+blockquote,
+figcaption,
+dt,
+dd {
   font-family: "Geist", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
