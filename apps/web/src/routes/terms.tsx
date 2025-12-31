@@ -28,7 +28,7 @@ export const Route = createFileRoute("/terms")({
 function TermsPage() {
   return (
     <div className="flex-none overflow-y-auto outline-none">
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:bg-white">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
           {/* Header Section */}
           <div className="mb-12 text-center">
