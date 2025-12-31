@@ -37,45 +37,43 @@ export const supportStatusRouter = router({
    * Get support team info (admin users with their online/offline status)
    * This is a public endpoint so anyone can see the support team
    */
-  getSupportTeam: publicProcedure
-    .use(isAuthenticated)
-    .query(
-      async (): Promise<
-        {
-          id: string;
-          name: string;
-          username: string | null;
-          image: string | null;
-          status: SupportStatus;
-        }[]
-      > => {
-        const admins = await getAdminUsers();
-        const adminIds = admins.map((admin) => admin.id);
+  getSupportTeam: publicProcedure.use(isAuthenticated).query(
+    async (): Promise<
+      {
+        id: string;
+        name: string;
+        username: string | null;
+        image: string | null;
+        status: SupportStatus;
+      }[]
+    > => {
+      const admins = await getAdminUsers();
+      const adminIds = admins.map((admin) => admin.id);
 
-        if (adminIds.length === 0) {
-          return [];
-        }
+      if (adminIds.length === 0) {
+        return [];
+      }
 
-        const statuses = await redis.hmget(SUPPORT_STATUS_KEY, ...adminIds);
+      const statuses = await redis.hmget(SUPPORT_STATUS_KEY, ...adminIds);
 
-        const supportTeam = admins.map((admin, index) => {
-          const rawStatus = statuses[index];
-          const normalizedStatus: SupportStatus =
-            rawStatus === "online" || rawStatus === "offline"
-              ? rawStatus
-              : "offline";
+      const supportTeam = admins.map((admin, index) => {
+        const rawStatus = statuses[index];
+        const normalizedStatus: SupportStatus =
+          rawStatus === "online" || rawStatus === "offline"
+            ? rawStatus
+            : "offline";
 
-          return {
-            id: admin.id,
-            name: admin.name,
-            username: admin.username,
-            image: admin.image,
-            status: normalizedStatus,
-          };
-        });
-        return supportTeam;
-      },
-    ),
+        return {
+          id: admin.id,
+          name: admin.name,
+          username: admin.username,
+          image: admin.image,
+          status: normalizedStatus,
+        };
+      });
+      return supportTeam;
+    },
+  ),
 
   /**
    * Set the current user's support status (admin only)
