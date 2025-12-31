@@ -16,7 +16,6 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
     loader: async ({ context, params }) => {
       const { queryClient } = context;
       const { conversationId } = params;
-      const cacheKey = ["dm", conversationId] as const;
 
       // Fetch conversation details
       const conversation =
@@ -24,12 +23,10 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
           conversationId,
         });
 
-      // Fetch DM history
-      await queryClient.fetchQuery({
-        queryKey: cacheKey,
-        queryFn: () =>
-          trpcClient.chat.getDMHistory.query({ conversationId, limit: 50 }),
-      });
+      // Fetch DM history using tRPC query options pattern
+      await queryClient.fetchQuery(
+        trpc.chat.getDMHistory.queryOptions({ conversationId, limit: 50 }),
+      );
 
       return { conversation };
     },

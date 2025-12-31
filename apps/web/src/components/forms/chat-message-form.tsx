@@ -30,14 +30,13 @@ export default function ChatMessageForm({
 }: ChatMessageFormProps = {}) {
   const params = useParams({ strict: false });
   const channelId = propChannelId || params.channelId;
-  const conversationId =
-    isDM
-      ? propConversationId ||
-        (params as { conversationId?: string }).conversationId ||
-        (propChannelId && propChannelId.startsWith("dm:")
-          ? propChannelId.slice("dm:".length)
-          : undefined)
-      : undefined;
+  const conversationId = isDM
+    ? propConversationId ||
+      (params as { conversationId?: string }).conversationId ||
+      (propChannelId && propChannelId.startsWith("dm:")
+        ? propChannelId.slice("dm:".length)
+        : undefined)
+    : undefined;
 
   const [submitAttempted, setSubmitAttempted] = useState(false);
 

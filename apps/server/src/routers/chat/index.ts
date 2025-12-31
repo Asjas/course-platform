@@ -1,3 +1,4 @@
+import { validateDMConversationAccess } from "./dmValidation.js";
 import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
@@ -367,35 +368,12 @@ export const chatRouter = router({
     )
     .use(isAuthenticated)
     .subscription(async function* ({ input, ctx }) {
-      // Import the function to check conversation access
-      const { db } = await import("~/db/index.js");
-      const { directMessageConversation } =
-        await import("~/db/schema/directMessages.js");
-      const { eq } = await import("drizzle-orm");
-
       // Verify user has access to this conversation
-      const conversation = await db.query.directMessageConversation.findFirst({
-        where: eq(directMessageConversation.id, input.conversationId),
-      });
-
-      if (!conversation) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Conversation not found",
-        });
-      }
-
-      const isParticipant =
-        conversation.user1Id === ctx.user.id ||
-        conversation.user2Id === ctx.user.id;
-      const isAdmin = ctx.user.role === "admin";
-
-      if (!isParticipant && !isAdmin) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Unauthorized: You do not have access to this conversation",
-        });
-      }
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+      );
 
       const streamKey = `chat:dm:${input.conversationId}:messages`;
 
@@ -451,35 +429,12 @@ export const chatRouter = router({
     )
     .use(isAuthenticated)
     .query(async ({ input, ctx }) => {
-      // Import the function to check conversation access
-      const { db } = await import("~/db/index.js");
-      const { directMessageConversation } =
-        await import("~/db/schema/directMessages.js");
-      const { eq } = await import("drizzle-orm");
-
       // Verify user has access to this conversation
-      const conversation = await db.query.directMessageConversation.findFirst({
-        where: eq(directMessageConversation.id, input.conversationId),
-      });
-
-      if (!conversation) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Conversation not found",
-        });
-      }
-
-      const isParticipant =
-        conversation.user1Id === ctx.user.id ||
-        conversation.user2Id === ctx.user.id;
-      const isAdmin = ctx.user.role === "admin";
-
-      if (!isParticipant && !isAdmin) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Unauthorized: You do not have access to this conversation",
-        });
-      }
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+      );
 
       const streamKey = `chat:dm:${input.conversationId}:messages`;
       const entries = await redis.xrevrange(
@@ -541,36 +496,13 @@ export const chatRouter = router({
     .input(z.object({ conversationId: z.string(), message: z.string() }))
     .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
-      // Import the function to check conversation access
-      const { db } = await import("~/db/index.js");
-      const { directMessageConversation } =
-        await import("~/db/schema/directMessages.js");
-      const { eq } = await import("drizzle-orm");
-
-      // Verify user has access to this conversation
-      const conversation = await db.query.directMessageConversation.findFirst({
-        where: eq(directMessageConversation.id, input.conversationId),
-      });
-
-      if (!conversation) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Conversation not found",
-        });
-      }
-
-      // Only participants can send messages (admins are read-only)
-      const isParticipant =
-        conversation.user1Id === ctx.user.id ||
-        conversation.user2Id === ctx.user.id;
-
-      if (!isParticipant) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "Unauthorized: You can only send messages in your own conversations",
-        });
-      }
+      // Verify user is a participant (admins can only read, not write)
+      await validateDMConversationAccess(
+        input.conversationId,
+        ctx.user.id,
+        ctx.user.role,
+        true, // allowWriteOnly = true (only participants can send messages)
+      );
 
       const id = `msg:${ulid()}`;
 

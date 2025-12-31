@@ -217,6 +217,7 @@ export async function createDMRequestNotification(params: {
     type: "dm_request_received",
     title: "New Direct Message Request",
     message: `${requesterName} wants to send you a direct message.`,
+    link: `/dm-requests/${requestId}`,
     actorId: requesterId,
     dmRequestId: requestId,
   });

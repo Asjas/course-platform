@@ -25,6 +25,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import { DMRequestSheet } from "~/components/dm-request-sheet";
 import {
   type Announcement,
   type UserNotification,
@@ -251,10 +252,15 @@ interface CombinedNotificationItem {
   subType: AnnouncementType | NotificationType;
   link?: string | null;
   readAt?: Date | string | null;
+  dmRequestId?: string | null;
 }
 
 export function NotificationsBell({ userId }: NotificationsBellProps) {
   const [activeTab, setActiveTab] = useState<"new" | "read">("new");
+  const [dmRequestSheetOpen, setDMRequestSheetOpen] = useState(false);
+  const [selectedDMRequestId, setSelectedDMRequestId] = useState<string | null>(
+    null,
+  );
 
   // Announcements
   const { data: unreadAnnouncementsData } = useUnreadAnnouncements({ userId });
@@ -291,6 +297,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
     type: "user_notification" as const,
     subType: n.type,
     link: n.link,
+    dmRequestId: n.dmRequestId,
   }));
 
   const allUnread = [...unreadAnnouncements, ...unreadUserNotifications].sort(
@@ -322,6 +329,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
     subType: n.type,
     link: n.link,
     readAt: n.readAt,
+    dmRequestId: n.dmRequestId,
   }));
 
   const allRead = [...readAnnouncements, ...readUserNotifications].sort(
@@ -340,6 +348,27 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
     } else {
       await markUserNotificationAsRead({ notificationId: item.id, userId });
     }
+  }
+
+  function handleNotificationClick(
+    item: CombinedNotificationItem,
+    closePopover: () => void,
+  ) {
+    // Special handling for DM request notifications
+    if (
+      item.type === "user_notification" &&
+      item.subType === "dm_request_received" &&
+      item.dmRequestId
+    ) {
+      closePopover();
+      setSelectedDMRequestId(item.dmRequestId);
+      setDMRequestSheetOpen(true);
+      // Mark as read
+      handleDismiss(item);
+      return;
+    }
+
+    // For other notifications with links, they'll be handled by the Link component
   }
 
   function getIcon(item: CombinedNotificationItem): LucideIcon {
@@ -376,71 +405,149 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
   }
 
   return (
-    <Popover className="relative">
-      <PopoverButton className="relative inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
-        <Bell
-          className="h-6 w-6"
-          aria-hidden="true"
-        />
-        {unreadCount > 0 && (
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-600" />
-        )}
-        <span className="sr-only">Notifications</span>
-      </PopoverButton>
+    <>
+      <Popover className="relative">
+        <PopoverButton className="relative inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300">
+          <Bell
+            className="h-6 w-6"
+            aria-hidden="true"
+          />
+          {unreadCount > 0 && (
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-red-600" />
+          )}
+          <span className="sr-only">Notifications</span>
+        </PopoverButton>
 
-      <PopoverPanel className="absolute right-0 z-50 mt-6 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:w-full max-md:rounded-none max-md:border-x-0 md:max-w-md dark:border-gray-700 dark:bg-gray-800">
-        {({ close }) => (
-          <div className="p-4 max-md:min-h-[calc(100vh-3.5rem)]">
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Notifications
-              </h3>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-2">
+        <PopoverPanel className="absolute right-0 z-50 mt-6 w-96 origin-top-right rounded-lg border border-gray-200 bg-white shadow-lg max-md:fixed max-md:inset-x-0 max-md:top-14 max-md:w-full max-md:rounded-none max-md:border-x-0 md:max-w-md dark:border-gray-700 dark:bg-gray-800">
+          {({ close }) => (
+            <div className="p-4 max-md:min-h-[calc(100vh-3.5rem)]">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Notifications
+                </h3>
+                <div className="flex items-center gap-4">
+                  <div className="flex gap-2">
+                    <button
+                      className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        activeTab === "new"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                      }`}
+                      onClick={() => setActiveTab("new")}
+                    >
+                      New {unreadCount > 0 && `(${unreadCount})`}
+                    </button>
+                    <button
+                      className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                        activeTab === "read"
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
+                      }`}
+                      onClick={() => setActiveTab("read")}
+                    >
+                      Read
+                    </button>
+                  </div>
                   <button
-                    className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                      activeTab === "new"
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                    }`}
-                    onClick={() => setActiveTab("new")}
+                    className="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                    onClick={() => close()}
+                    aria-label="Close notifications"
                   >
-                    New {unreadCount > 0 && `(${unreadCount})`}
-                  </button>
-                  <button
-                    className={`cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                      activeTab === "read"
-                        ? "bg-green-600 text-white"
-                        : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                    }`}
-                    onClick={() => setActiveTab("read")}
-                  >
-                    Read
+                    <X className="h-5 w-5" />
                   </button>
                 </div>
-                <button
-                  className="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 md:hidden dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                  onClick={() => close()}
-                  aria-label="Close notifications"
-                >
-                  <X className="h-5 w-5" />
-                </button>
               </div>
-            </div>
 
-            <div className="custom-scrollbar max-h-100 space-y-3 overflow-y-auto">
-              {activeTab === "new" ? (
-                allUnread.length > 0 ? (
-                  allUnread.map((item) => {
+              <div className="custom-scrollbar max-h-100 space-y-3 overflow-y-auto">
+                {activeTab === "new" ? (
+                  allUnread.length > 0 ? (
+                    allUnread.map((item) => {
+                      const Icon = getIcon(item);
+                      const colorClass = getColorClass(item);
+                      const iconColorClass = getIconColorClass(item);
+
+                      const content = (
+                        <div className="flex items-start gap-2">
+                          <Icon
+                            className={`mt-0.5 h-4 w-4 shrink-0 ${iconColorClass}`}
+                          />
+                          <div className="flex-1">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                              {item.title}
+                            </h4>
+                            <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
+                              {item.message}
+                            </p>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                              {item.createdAt.toLocaleDateString()}
+                            </p>
+                          </div>
+                          <button
+                            className="shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleDismiss(item);
+                            }}
+                            aria-label="Dismiss notification"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      );
+
+                      // Special handling for DM request notifications
+                      if (
+                        item.type === "user_notification" &&
+                        item.subType === "dm_request_received"
+                      ) {
+                        return (
+                          <button
+                            className={`block w-full cursor-pointer rounded-lg border p-3 text-left transition-colors hover:opacity-80 ${colorClass}`}
+                            key={item.id}
+                            onClick={() => handleNotificationClick(item, close)}
+                            type="button"
+                          >
+                            {content}
+                          </button>
+                        );
+                      }
+
+                      // If the notification has a link, wrap it in a Link component
+                      if (item.link) {
+                        return (
+                          <Link
+                            className={`block rounded-lg border p-3 transition-colors hover:opacity-80 ${colorClass}`}
+                            key={item.id}
+                            to={item.link}
+                            onClick={() => close()}
+                          >
+                            {content}
+                          </Link>
+                        );
+                      }
+
+                      return (
+                        <div
+                          className={`rounded-lg border p-3 ${colorClass}`}
+                          key={item.id}
+                        >
+                          {content}
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
+                      No new notifications
+                    </p>
+                  )
+                ) : allRead.length > 0 ? (
+                  allRead.map((item) => {
                     const Icon = getIcon(item);
-                    const colorClass = getColorClass(item);
-                    const iconColorClass = getIconColorClass(item);
 
                     const content = (
                       <div className="flex items-start gap-2">
-                        <Icon
-                          className={`mt-0.5 h-4 w-4 shrink-0 ${iconColorClass}`}
-                        />
+                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
                         <div className="flex-1">
                           <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                             {item.title}
@@ -448,21 +555,16 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                           <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
                             {item.message}
                           </p>
-                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            {item.createdAt.toLocaleDateString()}
-                          </p>
+                          <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                            <CheckCircle className="h-3 w-3" />
+                            <span>
+                              Dismissed{" "}
+                              {item.readAt
+                                ? new Date(item.readAt).toLocaleDateString()
+                                : ""}
+                            </span>
+                          </div>
                         </div>
-                        <button
-                          className="shrink-0 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            handleDismiss(item);
-                          }}
-                          aria-label="Dismiss notification"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
                       </div>
                     );
 
@@ -470,7 +572,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                     if (item.link) {
                       return (
                         <Link
-                          className={`block rounded-lg border p-3 transition-colors hover:opacity-80 ${colorClass}`}
+                          className="block rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 transition-colors hover:opacity-80 dark:border-gray-700 dark:bg-gray-900/50"
                           key={item.id}
                           to={item.link}
                           onClick={() => close()}
@@ -482,7 +584,7 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
 
                     return (
                       <div
-                        className={`rounded-lg border p-3 ${colorClass}`}
+                        className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 dark:border-gray-700 dark:bg-gray-900/50"
                         key={item.id}
                       >
                         {content}
@@ -491,68 +593,23 @@ export function NotificationsBell({ userId }: NotificationsBellProps) {
                   })
                 ) : (
                   <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
-                    No new notifications
+                    No read notifications
                   </p>
-                )
-              ) : allRead.length > 0 ? (
-                allRead.map((item) => {
-                  const Icon = getIcon(item);
-
-                  const content = (
-                    <div className="flex items-start gap-2">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
-                      <div className="flex-1">
-                        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                          {item.title}
-                        </h4>
-                        <p className="mt-1 text-xs text-gray-700 dark:text-gray-300">
-                          {item.message}
-                        </p>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
-                          <CheckCircle className="h-3 w-3" />
-                          <span>
-                            Dismissed{" "}
-                            {item.readAt
-                              ? new Date(item.readAt).toLocaleDateString()
-                              : ""}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-
-                  // If the notification has a link, wrap it in a Link component
-                  if (item.link) {
-                    return (
-                      <Link
-                        className="block rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 transition-colors hover:opacity-80 dark:border-gray-700 dark:bg-gray-900/50"
-                        key={item.id}
-                        to={item.link}
-                        onClick={() => close()}
-                      >
-                        {content}
-                      </Link>
-                    );
-                  }
-
-                  return (
-                    <div
-                      className="rounded-lg border border-gray-200 bg-gray-50 p-3 opacity-60 dark:border-gray-700 dark:bg-gray-900/50"
-                      key={item.id}
-                    >
-                      {content}
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="py-8 text-center text-sm text-gray-600 dark:text-gray-400">
-                  No read notifications
-                </p>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        )}
-      </PopoverPanel>
-    </Popover>
+          )}
+        </PopoverPanel>
+      </Popover>
+
+      {/* DM Request Sheet */}
+      {selectedDMRequestId && (
+        <DMRequestSheet
+          requestId={selectedDMRequestId}
+          isOpen={dmRequestSheetOpen}
+          onOpenChange={setDMRequestSheetOpen}
+        />
+      )}
+    </>
   );
 }

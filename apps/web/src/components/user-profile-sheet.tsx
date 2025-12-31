@@ -285,7 +285,8 @@ export default function UserProfileSheet({
                   className={cn(
                     "mt-2 flex w-full items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white",
                     "bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600",
-                    isOwnProfile && "cursor-not-allowed opacity-60 hover:bg-green-600 dark:hover:bg-green-700"
+                    isOwnProfile &&
+                      "cursor-not-allowed opacity-60 hover:bg-green-600 dark:hover:bg-green-700",
                   )}
                   type="button"
                   disabled={isOwnProfile}

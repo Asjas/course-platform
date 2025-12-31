@@ -1,10 +1,69 @@
-import { and, desc, eq, ilike, isNull, not, or } from "drizzle-orm";
+import { and, desc, eq, ilike, isNull, not, or, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import {
   directMessageConversation,
   directMessageRequest,
 } from "~/db/schema/directMessages.js";
 import { user } from "~/db/schema/user.js";
+
+// Module-scoped prepared statements for optimal performance
+const preparedGetConversationById = db.query.directMessageConversation
+  .findFirst({
+    where: (conversation) =>
+      eq(conversation.id, sql.placeholder("conversationId")),
+    with: {
+      user1: {
+        columns: {
+          id: true,
+          name: true,
+          username: true,
+          displayUsername: true,
+          color: true,
+          image: true,
+        },
+      },
+      user2: {
+        columns: {
+          id: true,
+          name: true,
+          username: true,
+          displayUsername: true,
+          color: true,
+          image: true,
+        },
+      },
+    },
+  })
+  .prepare("getConversationById");
+
+const preparedGetDMRequestById = db.query.directMessageRequest
+  .findFirst({
+    where: (request) => eq(request.id, sql.placeholder("requestId")),
+    with: {
+      requester: {
+        columns: {
+          id: true,
+          name: true,
+          username: true,
+          displayUsername: true,
+          color: true,
+          image: true,
+        },
+      },
+      recipient: {
+        columns: {
+          id: true,
+          name: true,
+          username: true,
+          displayUsername: true,
+          color: true,
+          image: true,
+          role: true,
+        },
+      },
+    },
+  })
+  .prepare("getDMRequestById");
 
 /**
  * Get pending DM requests for a user
@@ -39,32 +98,7 @@ export type PendingDMRequests = Awaited<
  * Get a specific DM request by ID
  */
 export async function getDMRequestById(requestId: string) {
-  return db.query.directMessageRequest.findFirst({
-    where: eq(directMessageRequest.id, requestId),
-    with: {
-      requester: {
-        columns: {
-          id: true,
-          name: true,
-          username: true,
-          displayUsername: true,
-          color: true,
-          image: true,
-        },
-      },
-      recipient: {
-        columns: {
-          id: true,
-          name: true,
-          username: true,
-          displayUsername: true,
-          color: true,
-          image: true,
-          role: true,
-        },
-      },
-    },
-  });
+  return preparedGetDMRequestById.execute({ requestId });
 }
 
 export type DMRequestById = Awaited<ReturnType<typeof getDMRequestById>>;
@@ -147,31 +181,7 @@ export type ActiveConversations = Awaited<
  * Get a DM conversation by ID
  */
 export async function getConversationById(conversationId: string) {
-  return db.query.directMessageConversation.findFirst({
-    where: eq(directMessageConversation.id, conversationId),
-    with: {
-      user1: {
-        columns: {
-          id: true,
-          name: true,
-          username: true,
-          displayUsername: true,
-          color: true,
-          image: true,
-        },
-      },
-      user2: {
-        columns: {
-          id: true,
-          name: true,
-          username: true,
-          displayUsername: true,
-          color: true,
-          image: true,
-        },
-      },
-    },
-  });
+  return preparedGetConversationById.execute({ conversationId });
 }
 
 export type ConversationById = Awaited<ReturnType<typeof getConversationById>>;
