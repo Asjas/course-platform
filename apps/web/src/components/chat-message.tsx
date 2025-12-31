@@ -176,9 +176,9 @@ export default function ChatMessage({
         aria-label={`Message from ${msg.username || msg.name}`}
       >
         {/* Timestamp column - Slack style */}
-        <div className="flex w-10 shrink-0">
+        <div className="flex w-10 shrink-0 items-start">
           <span
-            className="mt-0.5 text-sm leading-5 text-gray-500 dark:text-gray-500"
+            className="mt-0.5 h-5 text-sm leading-5 text-gray-500 dark:text-gray-500"
             title={format(msg.timestamp, "PPpp")}
           >
             {format(msg.timestamp, "HH:mm")}
