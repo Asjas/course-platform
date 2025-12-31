@@ -138,19 +138,18 @@ export default function Header({ auth }: { auth: AuthState }) {
               <NotificationsBell userId={user.id} />
               <MenuTrigger>
                 <MenuButton
-                  className="cursor-pointer"
-                  aria-label="Menu"
+                  className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                  aria-label="User menu"
                 >
                   {user.image ? (
                     <img
-                      className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                      className="size-6 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                       src={user.image}
                       alt={`${user.name}'s profile`}
                     />
                   ) : (
                     <UserIcon
-                      className="hover:text-green-700"
-                      size={28}
+                      className="h-6 w-6"
                       aria-hidden="true"
                     />
                   )}
@@ -294,19 +293,18 @@ export default function Header({ auth }: { auth: AuthState }) {
                   {auth.isAuthenticated && user ? (
                     <MenuTrigger>
                       <MenuButton
-                        className="cursor-pointer"
-                        aria-label="Menu"
+                        className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+                        aria-label="User menu"
                       >
                         {user.image ? (
                           <img
-                            className="ml-2 size-10 cursor-pointer rounded-full bg-gray-50 object-cover dark:bg-gray-800"
+                            className="size-6 rounded-full bg-gray-50 object-cover dark:bg-gray-800"
                             src={user.image}
                             alt={`${user.name}'s profile`}
                           />
                         ) : (
                           <UserIcon
-                            className="hover:text-green-700"
-                            size={28}
+                            className="h-6 w-6"
                             aria-hidden="true"
                           />
                         )}
