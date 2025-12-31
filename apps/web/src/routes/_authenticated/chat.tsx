@@ -6,7 +6,7 @@ import {
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import { MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
+import { CircleIcon, MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DMRequestModal } from "~/components/dm-request-modal";
@@ -37,6 +37,11 @@ function AuthenticatedChatPage() {
   // Fetch active DM conversations
   const { data: dmConversations, refetch: refetchDmConversations } = useQuery(
     trpc.directMessages.getActiveConversations.queryOptions(),
+  );
+
+  // Fetch support team status
+  const { data: supportTeam } = useQuery(
+    trpc.supportStatus.getSupportTeam.queryOptions(),
   );
 
   const closeConversationMutation = useMutation(
@@ -164,6 +169,57 @@ function AuthenticatedChatPage() {
           ) : (
             <p className="px-2 text-xs text-gray-500 dark:text-gray-400">
               No direct messages yet
+            </p>
+          )}
+        </div>
+
+        {/* Support Team Section - positioned near bottom */}
+        <div className="mt-auto mb-4 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+          <span className="px-2 text-sm font-semibold text-gray-900 dark:text-white">
+            Support team
+          </span>
+          {supportTeam && supportTeam.length > 0 ? (
+            <ul className="flex flex-col gap-y-2">
+              {supportTeam.map((member) => (
+                <li
+                  className="flex items-center justify-between px-2"
+                  key={member.id}
+                >
+                  <div className="flex items-center gap-2">
+                    {member.image ? (
+                      <img
+                        className="size-6 rounded-full object-cover"
+                        src={member.image}
+                        alt={`${member.name}'s avatar`}
+                      />
+                    ) : (
+                      <div className="flex size-6 items-center justify-center rounded-full bg-gray-300 text-xs font-medium text-gray-700 dark:bg-gray-600 dark:text-gray-200">
+                        {member.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-sm text-gray-700 dark:text-gray-200">
+                      {member.username || member.name}
+                    </span>
+                  </div>
+                  <div
+                    className="flex items-center"
+                    title={member.status === "online" ? "Online" : "Offline"}
+                  >
+                    <CircleIcon
+                      className={`h-3 w-3 ${
+                        member.status === "online"
+                          ? "fill-green-500 text-green-500"
+                          : "fill-gray-400 text-gray-400"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-2 text-xs text-gray-500 dark:text-gray-400">
+              No support team members
             </p>
           )}
         </div>

@@ -1,6 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MenuIcon, UserIcon, XIcon } from "lucide-react";
+import { CircleIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { Button as MenuButton, MenuTrigger } from "react-aria-components";
 import { toast } from "sonner";
@@ -10,12 +11,46 @@ import { Menu, MenuItem, MenuPopover } from "~/components/ui/menu";
 import { NavLink } from "~/components/ui/nav-link";
 import { authClient } from "~/lib/auth.client";
 import type { AuthState } from "~/lib/auth.context";
+import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export default function Header({ auth }: { auth: AuthState }) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const user = auth.session?.user;
   const isImpersonating = !!auth.session?.session.impersonatedBy;
+  const isAdmin = auth.hasRole("admin");
+
+  // Fetch current support status for admins
+  const { data: myStatus } = useQuery({
+    ...trpc.supportStatus.getMyStatus.queryOptions(),
+    enabled: isAdmin,
+  });
+
+  // Mutation for setting status
+  const setStatusMutation = useMutation({
+    mutationFn: async (status: "online" | "offline") => {
+      return trpcClient.supportStatus.setStatus.mutate({ status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: trpc.supportStatus.getMyStatus.queryKey(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: trpc.supportStatus.getSupportTeam.queryKey(),
+      });
+    },
+  });
+
+  async function handleToggleStatus() {
+    const newStatus = myStatus?.status === "online" ? "offline" : "online";
+    try {
+      await setStatusMutation.mutateAsync(newStatus);
+      toast.success(`Support status set to ${newStatus}`);
+    } catch {
+      toast.error("Failed to update status");
+    }
+  }
 
   return (
     <header className="fixed top-0 z-40 flex min-h-20 w-full flex-wrap items-center border-b border-gray-200 bg-white/80 backdrop-blur transition-colors duration-300 hover:bg-white/90 dark:border-gray-50/2 dark:bg-gray-900/40 dark:hover:bg-gray-900/60">
@@ -168,6 +203,24 @@ export default function Header({ auth }: { auth: AuthState }) {
                     <MenuItem onAction={() => navigate({ to: "/purchases" })}>
                       Purchases
                     </MenuItem>
+
+                    {isAdmin ? (
+                      <MenuItem onAction={handleToggleStatus}>
+                        <span className="flex items-center gap-2">
+                          <CircleIcon
+                            className={`h-3 w-3 ${
+                              myStatus?.status === "online"
+                                ? "fill-green-500 text-green-500"
+                                : "fill-gray-400 text-gray-400"
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {myStatus?.status === "online"
+                            ? "Go Offline"
+                            : "Go Online"}
+                        </span>
+                      </MenuItem>
+                    ) : null}
 
                     {isImpersonating ? (
                       <MenuItem
@@ -329,6 +382,24 @@ export default function Header({ auth }: { auth: AuthState }) {
                           >
                             Purchases
                           </MenuItem>
+
+                          {isAdmin ? (
+                            <MenuItem onAction={handleToggleStatus}>
+                              <span className="flex items-center gap-2">
+                                <CircleIcon
+                                  className={`h-3 w-3 ${
+                                    myStatus?.status === "online"
+                                      ? "fill-green-500 text-green-500"
+                                      : "fill-gray-400 text-gray-400"
+                                  }`}
+                                  aria-hidden="true"
+                                />
+                                {myStatus?.status === "online"
+                                  ? "Go Offline"
+                                  : "Go Online"}
+                              </span>
+                            </MenuItem>
+                          ) : null}
 
                           {isImpersonating ? (
                             <MenuItem
