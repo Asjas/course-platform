@@ -41,7 +41,9 @@ function getReactionKey(messageId: string): string {
 }
 
 /**
- * Get all reactions for a message.
+ * Get all reactions for a message from the separate Redis hash.
+ * Reactions are stored separately from messages to avoid race conditions
+ * and the need to republish messages when reactions change.
  */
 async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
   const reactionKey = getReactionKey(messageId);
@@ -54,39 +56,6 @@ async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
   }
 
   return reactions;
-}
-
-/**
- * Re-publish a message to notify subscribers of changes (e.g., reaction updates).
- */
-async function republishMessageWithReactions(messageId: string): Promise<void> {
-  const streamKeyPattern = `chat:channel:*:messages`;
-  const streamKeys = await redis.keys(streamKeyPattern);
-
-  for (const key of streamKeys) {
-    const entries = await redis.xrange(key, "-", "+");
-
-    for (const [streamId, fields] of entries) {
-      const message: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
-
-      if (message.id === messageId) {
-        // Get current reactions
-        const reactions = await getReactionsForMessage(messageId);
-
-        // Update the message with reactions and re-add to stream
-        const updatedMessage: ChatMessage = {
-          ...message,
-          reactions,
-        };
-
-        // Delete old message and add updated one
-        await redis.xdel(key, streamId);
-        await redis.xadd(key, "*", "message", JSON.stringify(updatedMessage));
-
-        return;
-      }
-    }
-  }
 }
 
 function isIdAfter(current: string, previous: string): boolean {
@@ -171,17 +140,31 @@ export const chatRouter = router({
         ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
       );
 
-      // Fetch reactions for all messages (in case they weren't stored inline)
-      const messagesWithReactions = await Promise.all(
-        messages.map(async (msg) => {
-          // If reactions aren't stored inline, fetch them
-          if (!msg.reactions) {
-            const reactions = await getReactionsForMessage(msg.id);
-            return { ...msg, reactions };
+      // Fetch reactions for all messages using Redis pipeline for efficiency
+      // (reactions are stored separately to avoid race conditions)
+      const pipeline = redis.pipeline();
+      for (const msg of messages) {
+        pipeline.hgetall(getReactionKey(msg.id));
+      }
+      const reactionResults = await pipeline.exec();
+
+      // Combine messages with their reactions
+      const messagesWithReactions = messages.map((msg, index) => {
+        const reactionData = reactionResults?.[index]?.[1] as Record<
+          string,
+          string
+        > | null;
+        const reactions: Reaction[] = [];
+
+        if (reactionData) {
+          for (const [emoji, usersJson] of Object.entries(reactionData)) {
+            const users = JSON.parse(usersJson) as ReactionUser[];
+            reactions.push({ emoji, users });
           }
-          return msg;
-        }),
-      );
+        }
+
+        return { ...msg, reactions };
+      });
 
       // Sort by creation time (ULID or createdAt field)
       return messagesWithReactions.sort((a, b) => {
@@ -299,6 +282,10 @@ export const chatRouter = router({
   /**
    * Toggle a reaction on a message. If the user already has this reaction, it's removed.
    * Otherwise, it's added.
+   *
+   * Note: Reactions are stored separately from messages in Redis hashes.
+   * This avoids race conditions and the need to republish messages when reactions change.
+   * The frontend updates its local cache with the returned reactions.
    */
   toggleReaction: publicProcedure
     .input(z.object({ messageId: z.string(), emoji: z.string() }))
@@ -332,9 +319,6 @@ export const chatRouter = router({
       }
 
       redisStreamOperations.inc({ operation: "hset", status: "success" });
-
-      // Re-publish the message to notify subscribers of the reaction change
-      await republishMessageWithReactions(input.messageId);
 
       return getReactionsForMessage(input.messageId);
     }),
