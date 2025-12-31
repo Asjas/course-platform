@@ -11,7 +11,13 @@ import {
   SmileIcon,
   TextQuoteIcon,
 } from "lucide-react";
-import { type ReactNode, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { GiphyPicker } from "~/components/giphy-picker";
 import { trpc } from "~/lib/trpc.client";
@@ -44,6 +50,40 @@ export default function ChatMessageEditor({
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
   );
+
+  // Auto-resize textarea like Slack - grows with content, pushes chat up
+  const adjustTextareaHeight = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    // Reset height to auto to get the correct scrollHeight
+    textarea.style.height = "auto";
+
+    // Calculate new height - clamp between min (40px) and max (50% of viewport)
+    const minHeight = 40;
+    const maxHeight = Math.min(window.innerHeight * 0.5, 300);
+    const newHeight = Math.min(
+      Math.max(textarea.scrollHeight, minHeight),
+      maxHeight,
+    );
+
+    textarea.style.height = `${newHeight}px`;
+
+    // Only show scrollbar when content exceeds max height
+    textarea.style.overflowY =
+      textarea.scrollHeight > maxHeight ? "auto" : "hidden";
+  }, []);
+
+  // Adjust height whenever value changes
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [value, adjustTextareaHeight]);
+
+  // Also adjust on window resize
+  useEffect(() => {
+    window.addEventListener("resize", adjustTextareaHeight);
+    return () => window.removeEventListener("resize", adjustTextareaHeight);
+  }, [adjustTextareaHeight]);
 
   function handleGifSelect(gifUrl: string) {
     const textarea = textareaRef.current;
@@ -191,7 +231,7 @@ export default function ChatMessageEditor({
         <div className="bg-white p-2 dark:bg-gray-800">
           <textarea
             className={cn(
-              "size-to-fit block min-h-10 w-full resize-y border-0 bg-transparent px-2 py-2 text-sm text-gray-900",
+              "block min-h-10 w-full resize-none border-0 bg-transparent px-2 py-2 text-sm text-gray-900",
               "focus:ring-0 focus:outline-none",
               "dark:text-white",
               "placeholder-gray-500 dark:placeholder-gray-400",
