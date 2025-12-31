@@ -5,6 +5,22 @@ import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
+/**
+ * A single user's reaction to a message.
+ */
+export interface ReactionUser {
+  userId: string;
+  userName: string;
+}
+
+/**
+ * Aggregated reactions for a specific emoji on a message.
+ */
+export interface Reaction {
+  emoji: string;
+  users: ReactionUser[];
+}
+
 export interface ChatMessage {
   id: string;
   message: string;
@@ -14,6 +30,73 @@ export interface ChatMessage {
   timestamp: number;
   createdAt: number;
   editedAt?: number;
+  reactions?: Reaction[];
+}
+
+/**
+ * Get the Redis key for storing reactions for a message.
+ */
+function getReactionKey(messageId: string): string {
+  return `chat:reactions:${messageId}`;
+}
+
+/**
+ * Get all reactions for a message.
+ */
+async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
+  const reactionKey = getReactionKey(messageId);
+  const allReactions = await redis.hgetall(reactionKey);
+
+  const reactions: Reaction[] = [];
+  for (const [emoji, usersJson] of Object.entries(allReactions)) {
+    const users = JSON.parse(usersJson) as ReactionUser[];
+    reactions.push({ emoji, users });
+  }
+
+  return reactions;
+}
+
+/**
+ * Re-publish a message to notify subscribers of changes (e.g., reaction updates).
+ */
+async function republishMessageWithReactions(messageId: string): Promise<void> {
+  const streamKeyPattern = `chat:channel:*:messages`;
+  const streamKeys = await redis.keys(streamKeyPattern);
+
+  for (const key of streamKeys) {
+    const entries = await redis.xrange(key, "-", "+");
+
+    for (const [streamId, fields] of entries) {
+      const message: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
+
+      if (message.id === messageId) {
+        // Get current reactions
+        const reactions = await getReactionsForMessage(messageId);
+
+        // Update the message with reactions and re-add to stream
+        const updatedMessage: ChatMessage = {
+          ...message,
+          reactions,
+        };
+
+        // Delete old message and add updated one
+        await redis.xdel(key, streamId);
+        await redis.xadd(key, "*", "message", JSON.stringify(updatedMessage));
+
+        return;
+      }
+    }
+  }
+}
+
+function isIdAfter(current: string, previous: string): boolean {
+  if (previous === "$") return true;
+  if (previous === "0") return true;
+
+  const [cTime, cSeq] = current.split("-").map(Number);
+  const [pTime, pSeq] = previous.split("-").map(Number);
+
+  return cTime > pTime || (cTime === pTime && cSeq > pSeq);
 }
 
 export const chatRouter = router({
@@ -88,8 +171,20 @@ export const chatRouter = router({
         ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
       );
 
+      // Fetch reactions for all messages (in case they weren't stored inline)
+      const messagesWithReactions = await Promise.all(
+        messages.map(async (msg) => {
+          // If reactions aren't stored inline, fetch them
+          if (!msg.reactions) {
+            const reactions = await getReactionsForMessage(msg.id);
+            return { ...msg, reactions };
+          }
+          return msg;
+        }),
+      );
+
       // Sort by creation time (ULID or createdAt field)
-      return messages.sort((a, b) => {
+      return messagesWithReactions.sort((a, b) => {
         if ("createdAt" in a && "createdAt" in b) {
           return (a.createdAt ?? 0) - (b.createdAt ?? 0);
         }
@@ -192,14 +287,55 @@ export const chatRouter = router({
 
       throw new Error("Message not found");
     }),
+  /**
+   * Get reactions for a specific message.
+   */
+  getMessageReactions: publicProcedure
+    .input(z.object({ messageId: z.string() }))
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      return getReactionsForMessage(input.messageId);
+    }),
+  /**
+   * Toggle a reaction on a message. If the user already has this reaction, it's removed.
+   * Otherwise, it's added.
+   */
+  toggleReaction: publicProcedure
+    .input(z.object({ messageId: z.string(), emoji: z.string() }))
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      const reactionKey = getReactionKey(input.messageId);
+      const userId = ctx.user.id;
+      const userName = ctx.user.name;
+
+      // Get current reactions for this emoji
+      const currentData = await redis.hget(reactionKey, input.emoji);
+      const users: ReactionUser[] = currentData
+        ? (JSON.parse(currentData) as ReactionUser[])
+        : [];
+
+      // Check if user already reacted with this emoji
+      const userIndex = users.findIndex((u) => u.userId === userId);
+
+      if (userIndex >= 0) {
+        // Remove the reaction
+        users.splice(userIndex, 1);
+        if (users.length === 0) {
+          await redis.hdel(reactionKey, input.emoji);
+        } else {
+          await redis.hset(reactionKey, input.emoji, JSON.stringify(users));
+        }
+      } else {
+        // Add the reaction
+        users.push({ userId, userName });
+        await redis.hset(reactionKey, input.emoji, JSON.stringify(users));
+      }
+
+      redisStreamOperations.inc({ operation: "hset", status: "success" });
+
+      // Re-publish the message to notify subscribers of the reaction change
+      await republishMessageWithReactions(input.messageId);
+
+      return getReactionsForMessage(input.messageId);
+    }),
 });
-
-function isIdAfter(current: string, previous: string): boolean {
-  if (previous === "$") return true;
-  if (previous === "0") return true;
-
-  const [cTime, cSeq] = current.split("-").map(Number);
-  const [pTime, pSeq] = previous.split("-").map(Number);
-
-  return cTime > pTime || (cTime === pTime && cSeq > pSeq);
-}

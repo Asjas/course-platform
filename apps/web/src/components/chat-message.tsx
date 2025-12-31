@@ -16,6 +16,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
@@ -283,6 +284,13 @@ export default function ChatMessage({
               ) : null}
             </div>
           ) : null}
+
+          {/* Reactions */}
+          <MessageReactions
+            messageId={msg.id}
+            channelId={channelId}
+            reactions={msg.reactions}
+          />
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}

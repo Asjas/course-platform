@@ -1,10 +1,11 @@
+import type { ChatMessage } from "@apps/server/src/routers/chat";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
 import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
-import ChatMessage from "~/components/chat-message";
+import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
@@ -22,17 +23,6 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
   },
   component: AuthenticatedChatChannelPage,
 });
-
-interface ChatMessage {
-  id: string;
-  message: string;
-  name: string;
-  username: string | null;
-  color: string | null;
-  timestamp: number;
-  createdAt: number;
-  editedAt?: number;
-}
 
 function AuthenticatedChatChannelPage() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
@@ -120,7 +110,7 @@ function AuthenticatedChatChannelPage() {
       }
 
       elements.push(
-        <ChatMessage
+        <ChatMessageComponent
           key={msg.id}
           channelId={channelId}
           msg={msg}
