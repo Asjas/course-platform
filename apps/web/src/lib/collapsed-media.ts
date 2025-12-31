@@ -1,5 +1,5 @@
 /**
- * Hook for persisting collapsed media state in chat messages.
+ * Utility functions for persisting collapsed media state in chat messages.
  *
  * This module provides functionality to remember which media elements
  * (images, videos, GIFs) in chat messages have been collapsed by the user.
