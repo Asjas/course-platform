@@ -16,8 +16,11 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
+import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
+import { useToggleReaction } from "~/hooks/use-toggle-reaction";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
 import { renderMarkdown } from "~/lib/markdown";
@@ -52,6 +55,13 @@ export default function ChatMessage({
   const editMessageMutation = useMutation(
     trpc.chat.editMessage.mutationOptions({ keyPrefix: undefined }),
   );
+
+  // Use the shared hook for toggling reactions
+  const { toggleReaction } = useToggleReaction(channelId);
+
+  function handleToggleReaction(emoji: string) {
+    toggleReaction(msg.id, emoji);
+  }
 
   useEffect(() => {
     renderMarkdown(msg.message)
@@ -283,10 +293,24 @@ export default function ChatMessage({
               ) : null}
             </div>
           ) : null}
+
+          {/* Reactions */}
+          <MessageReactions
+            messageId={msg.id}
+            channelId={channelId}
+            reactions={msg.reactions}
+            messageAuthor={msg.name}
+          />
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
-        <div className="pointer-events-none absolute -top-3 right-2 flex items-center opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
+        <div className="pointer-events-none absolute -top-3 right-2 flex items-center gap-1 opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100 focus-within:pointer-events-auto focus-within:opacity-100">
+          {/* Add reaction button */}
+          <EmojiReactionPicker
+            onEmojiSelect={handleToggleReaction}
+            messageAuthor={msg.name}
+          />
+
           <MenuTrigger>
             <MenuButton
               className="cursor-pointer rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"

@@ -5,6 +5,22 @@ import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
+/**
+ * A single user's reaction to a message.
+ */
+export interface ReactionUser {
+  userId: string;
+  userName: string;
+}
+
+/**
+ * Aggregated reactions for a specific emoji on a message.
+ */
+export interface Reaction {
+  emoji: string;
+  users: ReactionUser[];
+}
+
 export interface ChatMessage {
   id: string;
   message: string;
@@ -14,6 +30,57 @@ export interface ChatMessage {
   timestamp: number;
   createdAt: number;
   editedAt?: number;
+  reactions?: Reaction[];
+}
+
+/**
+ * Get the Redis key for storing reactions for a message.
+ */
+function getReactionKey(messageId: string): string {
+  return `chat:reactions:${messageId}`;
+}
+
+/**
+ * Safely parse JSON with error handling.
+ * Returns null if parsing fails instead of throwing.
+ */
+function safeJsonParse<T>(json: string): T | null {
+  try {
+    return JSON.parse(json) as T;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Get all reactions for a message from the separate Redis hash.
+ * Reactions are stored separately from messages to avoid race conditions
+ * and the need to republish messages when reactions change.
+ */
+async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
+  const reactionKey = getReactionKey(messageId);
+  const allReactions = await redis.hgetall(reactionKey);
+
+  const reactions: Reaction[] = [];
+  for (const [emoji, usersJson] of Object.entries(allReactions)) {
+    const users = safeJsonParse<ReactionUser[]>(usersJson);
+    // Skip corrupted data instead of crashing
+    if (users && Array.isArray(users)) {
+      reactions.push({ emoji, users });
+    }
+  }
+
+  return reactions;
+}
+
+function isIdAfter(current: string, previous: string): boolean {
+  if (previous === "$") return true;
+  if (previous === "0") return true;
+
+  const [cTime, cSeq] = current.split("-").map(Number);
+  const [pTime, pSeq] = previous.split("-").map(Number);
+
+  return cTime > pTime || (cTime === pTime && cSeq > pSeq);
 }
 
 export const chatRouter = router({
@@ -88,8 +155,41 @@ export const chatRouter = router({
         ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
       );
 
+      // Fetch reactions for all messages using Redis pipeline for efficiency
+      // (reactions are stored separately to avoid race conditions)
+      const pipeline = redis.pipeline();
+      for (const msg of messages) {
+        pipeline.hgetall(getReactionKey(msg.id));
+      }
+      const reactionResults = await pipeline.exec();
+
+      // Combine messages with their reactions
+      const messagesWithReactions = messages.map((msg, index) => {
+        const pipelineResult = reactionResults?.[index];
+        const reactions: Reaction[] = [];
+
+        // Check for pipeline errors before processing
+        if (pipelineResult && !pipelineResult[0]) {
+          const reactionData = pipelineResult[1] as Record<
+            string,
+            string
+          > | null;
+          if (reactionData) {
+            for (const [emoji, usersJson] of Object.entries(reactionData)) {
+              const users = safeJsonParse<ReactionUser[]>(usersJson);
+              // Skip corrupted data instead of crashing
+              if (users && Array.isArray(users)) {
+                reactions.push({ emoji, users });
+              }
+            }
+          }
+        }
+
+        return { ...msg, reactions };
+      });
+
       // Sort by creation time (ULID or createdAt field)
-      return messages.sort((a, b) => {
+      return messagesWithReactions.sort((a, b) => {
         if ("createdAt" in a && "createdAt" in b) {
           return (a.createdAt ?? 0) - (b.createdAt ?? 0);
         }
@@ -192,14 +292,61 @@ export const chatRouter = router({
 
       throw new Error("Message not found");
     }),
+  /**
+   * Get reactions for a specific message.
+   */
+  getMessageReactions: publicProcedure
+    .input(z.object({ messageId: z.string() }))
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      return getReactionsForMessage(input.messageId);
+    }),
+  /**
+   * Toggle a reaction on a message. If the user already has this reaction, it's removed.
+   * Otherwise, it's added.
+   *
+   * Note: Reactions are stored separately from messages in Redis hashes.
+   * This avoids race conditions and the need to republish messages when reactions change.
+   * The frontend updates its local cache with the returned reactions.
+   */
+  toggleReaction: publicProcedure
+    .input(
+      z.object({
+        messageId: z.string(),
+        emoji: z.string().min(1).max(10),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }) => {
+      const reactionKey = getReactionKey(input.messageId);
+      const userId = ctx.user.id;
+      const userName = ctx.user.name;
+
+      // Get current reactions for this emoji with safe parsing
+      const currentData = await redis.hget(reactionKey, input.emoji);
+      const users: ReactionUser[] = currentData
+        ? (safeJsonParse<ReactionUser[]>(currentData) ?? [])
+        : [];
+
+      // Check if user already reacted with this emoji
+      const userIndex = users.findIndex((u) => u.userId === userId);
+
+      if (userIndex >= 0) {
+        // Remove the reaction
+        users.splice(userIndex, 1);
+        if (users.length === 0) {
+          await redis.hdel(reactionKey, input.emoji);
+        } else {
+          await redis.hset(reactionKey, input.emoji, JSON.stringify(users));
+        }
+      } else {
+        // Add the reaction
+        users.push({ userId, userName });
+        await redis.hset(reactionKey, input.emoji, JSON.stringify(users));
+      }
+
+      redisStreamOperations.inc({ operation: "hset", status: "success" });
+
+      return getReactionsForMessage(input.messageId);
+    }),
 });
-
-function isIdAfter(current: string, previous: string): boolean {
-  if (previous === "$") return true;
-  if (previous === "0") return true;
-
-  const [cTime, cSeq] = current.split("-").map(Number);
-  const [pTime, pSeq] = previous.split("-").map(Number);
-
-  return cTime > pTime || (cTime === pTime && cSeq > pSeq);
-}
