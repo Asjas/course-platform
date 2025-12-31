@@ -6,11 +6,17 @@ import {
   redirect,
   useNavigate,
 } from "@tanstack/react-router";
-import { MessageCircleIcon, PlusIcon, XIcon } from "lucide-react";
+import {
+  HelpCircleIcon,
+  MessageCircleIcon,
+  PlusIcon,
+  XIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { DMRequestModal } from "~/components/dm-request-modal";
 import { UserSearchModal } from "~/components/user-search-modal";
+import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat")({
@@ -21,6 +27,9 @@ export const Route = createFileRoute("/_authenticated/chat")({
         params: { channelId: "general" },
       });
     }
+  },
+  loader: async () => {
+    await CoursesCollection.preload();
   },
   component: AuthenticatedChatPage,
 });
@@ -43,6 +52,9 @@ function AuthenticatedChatPage() {
   const { data: supportTeam } = useQuery(
     trpc.supportStatus.getSupportTeam.queryOptions(),
   );
+
+  // Fetch courses for support section
+  const { data: courses } = useCourses();
 
   const closeConversationMutation = useMutation(
     trpc.directMessages.closeConversation.mutationOptions({
@@ -169,6 +181,40 @@ function AuthenticatedChatPage() {
           ) : (
             <p className="px-2 text-xs text-gray-500 dark:text-gray-400">
               No direct messages yet
+            </p>
+          )}
+        </div>
+
+        {/* Support Section */}
+        <div className="mt-4 flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-gray-700">
+          <div className="flex items-center px-2">
+            <span className="text-lg font-bold text-gray-900 md:text-xl dark:text-white">
+              Support
+            </span>
+          </div>
+          {courses && courses.length > 0 ? (
+            <ul className="flex flex-col gap-y-1">
+              {courses.map((course) => (
+                <li key={course.id}>
+                  <Link
+                    className="flex h-8 w-full items-center gap-2 rounded-md px-2 py-2 text-gray-700 hover:bg-gray-200 dark:text-gray-200 dark:hover:bg-gray-700"
+                    activeProps={{
+                      className: "bg-gray-200 dark:bg-gray-800",
+                    }}
+                    to="/chat/support/$courseSlug"
+                    params={{ courseSlug: course.slug }}
+                  >
+                    <HelpCircleIcon className="h-4 w-4 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">
+                      {course.name}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="px-2 text-xs text-gray-500 dark:text-gray-400">
+              No courses available
             </p>
           )}
         </div>
