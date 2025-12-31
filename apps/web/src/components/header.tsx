@@ -138,7 +138,7 @@ export default function Header({ auth }: { auth: AuthState }) {
               <NotificationsBell userId={user.id} />
               <MenuTrigger>
                 <MenuButton
-                  className={`inline-flex cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300 ${user.image ? "" : "p-2"}`}
+                  className={`inline-flex cursor-pointer items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300 ${user.image ? "rounded-full" : "rounded-md p-2"}`}
                   aria-label="User menu"
                 >
                   {user.image ? (
@@ -293,7 +293,7 @@ export default function Header({ auth }: { auth: AuthState }) {
                   {auth.isAuthenticated && user ? (
                     <MenuTrigger>
                       <MenuButton
-                        className={`inline-flex cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300 ${user.image ? "" : "p-2"}`}
+                        className={`inline-flex cursor-pointer items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:ring-2 focus:ring-green-600 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300 ${user.image ? "rounded-full" : "rounded-md p-2"}`}
                         aria-label="User menu"
                       >
                         {user.image ? (
