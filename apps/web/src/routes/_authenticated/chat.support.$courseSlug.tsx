@@ -44,12 +44,12 @@ function CourseSupportPage() {
   // Get all courses to find the current one by slug
   const { data: courses, isLoading: coursesLoading } = useCourses();
   const currentCourse = courses?.find((c) => c.slug === courseSlug);
+  const courseId = currentCourse?.id ?? "";
 
   // Get support tickets filtered by courseId
+  // When courseId is empty, the query returns an empty array (no matching tickets)
   const { data: tickets, isLoading: ticketsLoading } =
-    useSupportTicketsByCourseId({
-      courseId: currentCourse?.id ?? "",
-    });
+    useSupportTicketsByCourseId({ courseId });
 
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState<{
@@ -85,10 +85,12 @@ function CourseSupportPage() {
     }
   }
 
-  if (coursesLoading || ticketsLoading) {
+  // Show loading while courses are loading (we need to find the course first)
+  if (coursesLoading) {
     return <Loading />;
   }
 
+  // Only after courses have loaded, check if the course exists
   if (!currentCourse) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
@@ -107,6 +109,11 @@ function CourseSupportPage() {
         </Link>
       </div>
     );
+  }
+
+  // Show loading while tickets are loading (now that we have a valid course)
+  if (ticketsLoading) {
+    return <Loading />;
   }
 
   const filteredTickets = tickets ?? [];
