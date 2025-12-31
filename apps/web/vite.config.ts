@@ -74,6 +74,23 @@ export default defineConfig({
           ) {
             return "utils";
           }
+          // Video player chunks - hls.js and dashjs are large libraries loaded by react-player
+          if (id.includes("node_modules/hls.js")) {
+            return "video-hls";
+          }
+          if (id.includes("node_modules/dashjs")) {
+            return "video-dash";
+          }
+          if (
+            id.includes("node_modules/react-player") ||
+            id.includes("node_modules/@mux/") ||
+            id.includes("node_modules/hls-video-element") ||
+            id.includes("node_modules/dash-video-element") ||
+            id.includes("node_modules/media-chrome") ||
+            id.includes("node_modules/custom-media-element")
+          ) {
+            return "video-player";
+          }
           if (id.includes("node_modules/highlight.js")) {
             return "highlight";
           }
