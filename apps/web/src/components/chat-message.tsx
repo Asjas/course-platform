@@ -187,8 +187,8 @@ export default function ChatMessage({
 
         {/* Message content area */}
         <div className="min-w-0 flex-1">
-          {/* Username and text inline */}
-          <div className="flex flex-wrap items-baseline gap-x-2">
+          {/* Username row */}
+          <div className="flex items-baseline gap-x-2">
             <button
               className="shrink-0 cursor-pointer text-sm leading-5 font-bold hover:underline"
               style={{ color: usernameColor }}
@@ -197,14 +197,6 @@ export default function ChatMessage({
             >
               {msg.username || msg.name}
             </button>
-
-            {/* Inline text content */}
-            {textHtml ? (
-              <span
-                className="chat-message-content inline text-sm text-gray-900 dark:text-gray-100 [&_p]:m-0 [&_p]:inline"
-                dangerouslySetInnerHTML={{ __html: textHtml }}
-              />
-            ) : null}
 
             {msg.editedAt ? (
               <span
@@ -215,6 +207,14 @@ export default function ChatMessage({
               </span>
             ) : null}
           </div>
+
+          {/* Message content - renders below username */}
+          {textHtml ? (
+            <div
+              className="chat-message-content mt-0.5 text-sm text-gray-900 dark:text-gray-100 [&_p]:my-1 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_pre]:max-w-full [&_pre]:overflow-x-auto"
+              dangerouslySetInnerHTML={{ __html: textHtml }}
+            />
+          ) : null}
 
           {/* Media section with collapse/expand */}
           {hasMedia ? (
