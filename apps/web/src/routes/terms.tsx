@@ -516,32 +516,32 @@ function TermsPage() {
               We are not responsible for:
             </p>
             <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 System damage from following tutorials
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Lost productivity
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Issues from third-party bugs, outages, or breaches
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Losses from user-generated content
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Data loss or corruption
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Downtime or unavailability
               </li>
-              <li className="flex items-start">
-                <CrossIcon className="mt-1 mr-2 h-5 w-5 rotate-45 text-red-600" />
+              <li className="flex items-center">
+                <CrossIcon className="mr-2 h-5 w-5 shrink-0 rotate-45 text-red-600" />
                 Quality/support of free or preview content
               </li>
             </ul>
