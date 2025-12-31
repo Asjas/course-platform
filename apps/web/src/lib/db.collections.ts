@@ -6,6 +6,7 @@ import type {
   AllCoursesAsAdmin,
   CourseById,
 } from "@apps/server/src/routers/courses/queries";
+import type { SearchableUsers } from "@apps/server/src/routers/directMessages/queries";
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
@@ -451,4 +452,21 @@ export function useChatReportById({ reportId }: { reportId: string }) {
     },
     [reportId],
   );
+}
+
+// ========== Searchable Users ==========
+
+export type SearchableUser = SearchableUsers[number];
+
+export const SearchableUsersCollection = createCollection(
+  queryCollectionOptions<SearchableUser>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.directMessages.getAllSearchableUsers.queryKey(),
+    queryFn: () => trpcClient.directMessages.getAllSearchableUsers.query(),
+  }),
+);
+
+export function useSearchableUsers() {
+  return useLiveQuery(SearchableUsersCollection);
 }

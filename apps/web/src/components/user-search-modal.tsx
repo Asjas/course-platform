@@ -1,15 +1,21 @@
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { SearchIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "~/lib/auth.context";
-import { trpc } from "~/lib/trpc.client";
+import {
+  SearchableUsersCollection,
+  useSearchableUsers,
+} from "~/lib/db.collections";
 
 interface UserSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectUser: (userId: string, userName: string) => void;
 }
+
+const ROW_HEIGHT = 48;
+const MAX_HEIGHT = 80;
 
 export function UserSearchModal({
   isOpen,
@@ -18,16 +24,50 @@ export function UserSearchModal({
 }: UserSearchModalProps) {
   const auth = useAuth();
   const [searchTerm, setSearchTerm] = useState("");
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  const { data: users, isLoading } = useQuery({
-    ...trpc.directMessages.searchUsers.queryOptions({ searchTerm }),
-    enabled: isOpen && searchTerm.length >= 2,
+  // Preload users when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      SearchableUsersCollection.preload();
+    }
+  }, [isOpen]);
+
+  // Get all users from collection
+  const { data: allUsersMap, isLoading } = useSearchableUsers();
+
+  // Client-side filter the users
+  const filteredUsers = useMemo(() => {
+    if (!allUsersMap) return [];
+
+    const allUsers = Object.values(allUsersMap);
+    const lowerSearchTerm = searchTerm.toLowerCase();
+    const currentUserId = auth.session?.user.id;
+
+    return allUsers.filter((user) => {
+      // Exclude current user
+      if (currentUserId && user.id === currentUserId) {
+        return false;
+      }
+      // If no search term, include all users
+      if (!lowerSearchTerm) {
+        return true;
+      }
+      // Filter by name or username (case-insensitive)
+      const nameMatch = user.name.toLowerCase().includes(lowerSearchTerm);
+      const usernameMatch =
+        user.username?.toLowerCase().includes(lowerSearchTerm) ?? false;
+      return nameMatch || usernameMatch;
+    });
+  }, [allUsersMap, searchTerm, auth.session?.user.id]);
+
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    count: filteredUsers.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ROW_HEIGHT,
+    overscan: 5,
   });
-
-  // Filter out current user and 'ghost' user (anonymous data holder) from search results
-  const filteredUsers = users?.filter(
-    (u) => u.id !== auth.session?.user.id && u.username !== "ghost",
-  );
 
   function handleUserClick(userId: string, userName: string) {
     onSelectUser(userId, userName);
@@ -68,57 +108,66 @@ export function UserSearchModal({
               <input
                 className="w-full rounded-md border border-gray-300 bg-white py-2 pr-4 pl-10 text-sm text-gray-900 placeholder-gray-500 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none dark:border-gray-600 dark:bg-gray-900 dark:text-white dark:placeholder-gray-400"
                 type="text"
-                placeholder="Search by username or name..."
+                placeholder="Filter by username or name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="custom-scrollbar max-h-96 overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700">
+          <div
+            className="custom-scrollbar overflow-y-auto rounded-md border border-gray-200 dark:border-gray-700"
+            ref={parentRef}
+            style={{ maxHeight: `${MAX_HEIGHT}px` }}
+          >
             {isLoading ? (
-              <div className="flex items-center justify-center p-8">
+              <div className="flex items-center justify-center p-4">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Searching...
+                  Loading users...
                 </div>
               </div>
-            ) : searchTerm && filteredUsers && filteredUsers.length > 0 ? (
-              <div className="divide-y divide-gray-200 dark:divide-gray-700">
-                {filteredUsers.map((user) => (
-                  <button
-                    className="flex w-full cursor-pointer items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                    key={user.id}
-                    onClick={() =>
-                      handleUserClick(user.id, user.username || user.name)
-                    }
-                    type="button"
-                  >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-bold dark:bg-gray-700">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate font-medium text-gray-900 dark:text-white">
-                        {user.name}
-                      </div>
-                      {user.username && (
-                        <div className="truncate text-sm text-gray-500 dark:text-gray-400">
-                          @{user.username}
+            ) : filteredUsers.length > 0 ? (
+              <div
+                className="relative w-full"
+                style={{ height: `${virtualizer.getTotalSize()}px` }}
+              >
+                {virtualizer.getVirtualItems().map((virtualRow) => {
+                  const user = filteredUsers[virtualRow.index];
+                  return (
+                    <button
+                      className="absolute top-0 left-0 flex w-full cursor-pointer items-center gap-3 px-3 text-left transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      key={user.id}
+                      onClick={() =>
+                        handleUserClick(user.id, user.username || user.name)
+                      }
+                      type="button"
+                      style={{
+                        height: `${virtualRow.size}px`,
+                        transform: `translateY(${virtualRow.start}px)`,
+                      }}
+                    >
+                      {user.image ? (
+                        <img
+                          className="h-8 w-8 shrink-0 rounded-full object-cover"
+                          src={user.image}
+                          alt={`${user.name}'s avatar`}
+                        />
+                      ) : (
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gray-200 text-sm font-bold dark:bg-gray-700">
+                          {user.name.charAt(0).toUpperCase()}
                         </div>
                       )}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : searchTerm ? (
-              <div className="flex items-center justify-center p-8">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  No users found
-                </div>
+                      <span className="truncate text-base font-medium text-gray-900 dark:text-white">
+                        {user.name}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             ) : (
-              <div className="flex items-center justify-center p-8">
+              <div className="flex items-center justify-center p-4">
                 <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Start typing to search for users
+                  No users found
                 </div>
               </div>
             )}

@@ -13,14 +13,14 @@ import {
   type ConversationById,
   type DMRequestById,
   type PendingDMRequests,
-  type SearchedUsers,
+  type SearchableUsers,
   findConversationBetweenUsers,
   findDMRequestBetweenUsers,
   getActiveConversationsForUser,
+  getAllSearchableUsers,
   getConversationById,
   getDMRequestById,
   getPendingDMRequests,
-  searchUsersByUsername,
 } from "./queries.js";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
@@ -34,19 +34,18 @@ const log = pinoLogger.child({ module: "routers:directMessages" });
 
 export const directMessagesRouter = router({
   /**
-   * Search users by username
+   * Get all searchable users for client-side filtering
    */
-  searchUsers: publicProcedure
-    .input(z.object({ searchTerm: z.string().min(1) }))
+  getAllSearchableUsers: publicProcedure
     .use(isAuthenticated)
-    .query(async ({ input }): Promise<SearchedUsers> => {
+    .query(async (): Promise<SearchableUsers> => {
       try {
-        return await searchUsersByUsername(input.searchTerm);
+        return await getAllSearchableUsers();
       } catch (error) {
-        log.error(error, "Failed to search users");
+        log.error(error, "Failed to get searchable users");
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to search users",
+          message: "Failed to get searchable users",
         });
       }
     }),
