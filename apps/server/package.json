@@ -52,7 +52,7 @@
     "superjson": "2.2.6",
     "ulid": "3.0.2",
     "undici": "7.16.0",
-    "zod": "4.2.1"
+    "zod": "4.3.0"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.51.4",
