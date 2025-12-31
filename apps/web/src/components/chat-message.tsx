@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
+import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
 import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
@@ -36,7 +37,10 @@ export default function ChatMessage({
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
-  const [isMediaVisible, setIsMediaVisible] = useState(true);
+  // Initialize media visibility from persisted state (collapsed = not visible)
+  const [isMediaVisible, setIsMediaVisible] = useState(
+    () => !isMediaCollapsed(msg.id),
+  );
   const auth = useAuth();
 
   // Use the precomputed color from the user's database record, with a fallback
@@ -219,7 +223,12 @@ export default function ChatMessage({
               <button
                 className="mb-1 flex cursor-pointer items-center gap-1 text-xs text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 type="button"
-                onClick={() => setIsMediaVisible(!isMediaVisible)}
+                onClick={() => {
+                  const newVisible = !isMediaVisible;
+                  setIsMediaVisible(newVisible);
+                  // Persist the collapsed state (collapsed = not visible)
+                  setMediaCollapsed(msg.id, !newVisible);
+                }}
                 aria-expanded={isMediaVisible}
                 aria-label={
                   isMediaVisible ? `Hide ${mediaLabel}` : `Show ${mediaLabel}`
