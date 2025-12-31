@@ -99,6 +99,12 @@ dd {
   font-style: normal;
 }
 
+/* Ensure code block elements use Berkeley Mono instead of Geist */
+pre code,
+pre code * {
+  font-family: "Berkeley Mono", monospace !important;
+}
+
 h1,
 h2,
 h3,
