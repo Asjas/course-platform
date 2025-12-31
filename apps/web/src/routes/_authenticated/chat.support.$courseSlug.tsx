@@ -152,7 +152,7 @@ function CourseSupportPage() {
       </div>
 
       {filteredTickets.length !== 0 ? (
-        <div className="mt-12 flow-root">
+        <div className="mt-12 flow-root flex-1 overflow-auto">
           <div className="custom-scrollbar -mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
@@ -298,7 +298,9 @@ function CourseSupportPage() {
           </div>
         </div>
       ) : (
-        <EmptyState title="No support tickets for this course yet." />
+        <div className="mt-12 flex-1">
+          <EmptyState title="No support tickets for this course yet." />
+        </div>
       )}
 
       <ConfirmDialog
