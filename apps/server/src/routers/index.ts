@@ -5,6 +5,7 @@ import { chatRouter } from "~/routers/chat/index.js";
 import { chatReportsRouter } from "~/routers/chatReports/index.js";
 import { couponsRouter } from "~/routers/coupons/index.js";
 import { coursesRouter } from "~/routers/courses/index.js";
+import { directMessagesRouter } from "~/routers/directMessages/index.js";
 import { notificationsRouter } from "~/routers/notifications/index.js";
 import { reviewsRouter } from "~/routers/reviews/index.js";
 import { statsRouter } from "~/routers/stats/index.js";
@@ -22,6 +23,7 @@ export const appRouter = router({
   supportTickets: supportTicketsRouter,
   chat: chatRouter,
   chatReports: chatReportsRouter,
+  directMessages: directMessagesRouter,
   users: usersRouter,
 });
 

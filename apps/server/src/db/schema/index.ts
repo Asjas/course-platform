@@ -1,6 +1,7 @@
 export * from "~/db/schema/user.js";
 export * from "~/db/schema/coupon.js";
 export * from "~/db/schema/course.js";
+export * from "~/db/schema/directMessages.js";
 export * from "~/db/schema/enrollment.js";
 export * from "~/db/schema/purchase.js";
 export * from "~/db/schema/support-tickets.js";

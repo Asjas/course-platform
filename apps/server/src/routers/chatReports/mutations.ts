@@ -44,7 +44,11 @@ export async function deleteReportedMessageFromRedis({
   messageId: string;
   channelId: string;
 }) {
-  const streamKey = `chat:channel:${channelId}:messages`;
+  // Check if this is a DM (starts with "dm:" prefix) or a regular channel
+  const streamKey = channelId.startsWith("dm:")
+    ? `chat:${channelId}:messages`
+    : `chat:channel:${channelId}:messages`;
+
   const entries = await redis.xrange(streamKey, "-", "+");
 
   for (const [streamId, fields] of entries) {
