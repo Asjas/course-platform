@@ -19,7 +19,7 @@ export function UserSearchModal({
 
   const { data: users, isLoading } = useQuery({
     ...trpc.directMessages.searchUsers.queryOptions({ searchTerm }),
-    enabled: isOpen && searchTerm.length > 0,
+    enabled: isOpen && searchTerm.length >= 2,
   });
 
   function handleUserClick(userId: string, userName: string) {
