@@ -158,7 +158,9 @@ function CourseSupportPage() {
               <Table>
                 <TableHeader>
                   <TableHeaderRow>
-                    <TableHeaderCell>User</TableHeaderCell>
+                    <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white">
+                      User
+                    </TableHeaderCell>
                     <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white">
                       Title
                     </TableHeaderCell>
