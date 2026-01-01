@@ -73,7 +73,7 @@ function AdminAuditPage() {
         >
           <button
             className={cn(
-              "border-b-2 px-1 pb-4 text-sm font-medium",
+              "cursor-pointer border-b-2 px-1 pb-4 text-sm font-medium",
               activeTab === "gdpr"
                 ? "border-green-500 text-green-600 dark:text-green-400"
                 : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
