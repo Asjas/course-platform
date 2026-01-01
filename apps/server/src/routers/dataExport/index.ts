@@ -36,8 +36,8 @@ export const dataExportRouter = router({
     .query(async ({ ctx, input }): Promise<DataExportResponse> => {
       const userId = ctx.user.id;
 
-      // Rate limiting - prevent abuse
-      checkExportRateLimit(userId);
+      // Rate limiting - prevent abuse (uses Redis like Fastify's rate-limit plugin)
+      await checkExportRateLimit(userId);
 
       // Audit logging for GDPR compliance
       ctx.request.log.info(
