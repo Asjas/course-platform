@@ -46,9 +46,11 @@ import { Route as SupportSupportTicketEditRouteRouteImport } from "./routes/supp
 import { Route as EducationCoursesCourseRouteRouteImport } from "./routes/education/courses/$course/route"
 import { Route as SupportSupportTicketEditIndexRouteImport } from "./routes/support/$supportTicket/edit/index"
 import { Route as EducationCoursesCourseIndexRouteImport } from "./routes/education/courses/$course/index"
+import { Route as AuthenticatedChatSupportIndexRouteImport } from "./routes/_authenticated/chat.support.index"
 import { Route as AuthenticatedAdminCoursesIndexRouteImport } from "./routes/_authenticated/admin/courses/index"
 import { Route as AuthenticatedAdminCouponsIndexRouteImport } from "./routes/_authenticated/admin/coupons/index"
 import { Route as AuthenticatedCoursesCourseIdLessonsRouteImport } from "./routes/_authenticated/courses.$courseId.lessons"
+import { Route as AuthenticatedChatSupportNewRouteImport } from "./routes/_authenticated/chat.support.new"
 import { Route as AuthenticatedChatSupportCourseSlugRouteImport } from "./routes/_authenticated/chat.support.$courseSlug"
 import { Route as AuthenticatedChatDmConversationIdRouteImport } from "./routes/_authenticated/chat.dm.$conversationId"
 import { Route as AuthenticatedAdminCoursesInstructorNotesRouteImport } from "./routes/_authenticated/admin/courses.instructor-notes"
@@ -251,6 +253,12 @@ const EducationCoursesCourseIndexRoute =
     path: "/",
     getParentRoute: () => EducationCoursesCourseRouteRoute,
   } as any)
+const AuthenticatedChatSupportIndexRoute =
+  AuthenticatedChatSupportIndexRouteImport.update({
+    id: "/support/",
+    path: "/support/",
+    getParentRoute: () => AuthenticatedChatRoute,
+  } as any)
 const AuthenticatedAdminCoursesIndexRoute =
   AuthenticatedAdminCoursesIndexRouteImport.update({
     id: "/courses/",
@@ -268,6 +276,12 @@ const AuthenticatedCoursesCourseIdLessonsRoute =
     id: "/lessons",
     path: "/lessons",
     getParentRoute: () => AuthenticatedCoursesCourseIdRoute,
+  } as any)
+const AuthenticatedChatSupportNewRoute =
+  AuthenticatedChatSupportNewRouteImport.update({
+    id: "/support/new",
+    path: "/support/new",
+    getParentRoute: () => AuthenticatedChatRoute,
   } as any)
 const AuthenticatedChatSupportCourseSlugRoute =
   AuthenticatedChatSupportCourseSlugRouteImport.update({
@@ -351,9 +365,11 @@ export interface FileRoutesByFullPath {
   "/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/chat/dm/$conversationId": typeof AuthenticatedChatDmConversationIdRoute
   "/chat/support/$courseSlug": typeof AuthenticatedChatSupportCourseSlugRoute
+  "/chat/support/new": typeof AuthenticatedChatSupportNewRoute
   "/courses/$courseId/lessons": typeof AuthenticatedCoursesCourseIdLessonsRouteWithChildren
   "/admin/coupons": typeof AuthenticatedAdminCouponsIndexRoute
   "/admin/courses": typeof AuthenticatedAdminCoursesIndexRoute
+  "/chat/support": typeof AuthenticatedChatSupportIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
   "/admin/courses/$courseId/edit": typeof AuthenticatedAdminCoursesCourseIdEditRoute
@@ -394,9 +410,11 @@ export interface FileRoutesByTo {
   "/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/chat/dm/$conversationId": typeof AuthenticatedChatDmConversationIdRoute
   "/chat/support/$courseSlug": typeof AuthenticatedChatSupportCourseSlugRoute
+  "/chat/support/new": typeof AuthenticatedChatSupportNewRoute
   "/courses/$courseId/lessons": typeof AuthenticatedCoursesCourseIdLessonsRouteWithChildren
   "/admin/coupons": typeof AuthenticatedAdminCouponsIndexRoute
   "/admin/courses": typeof AuthenticatedAdminCoursesIndexRoute
+  "/chat/support": typeof AuthenticatedChatSupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditIndexRoute
   "/admin/courses/$courseId/edit": typeof AuthenticatedAdminCoursesCourseIdEditRoute
@@ -444,9 +462,11 @@ export interface FileRoutesById {
   "/_authenticated/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
   "/_authenticated/chat/dm/$conversationId": typeof AuthenticatedChatDmConversationIdRoute
   "/_authenticated/chat/support/$courseSlug": typeof AuthenticatedChatSupportCourseSlugRoute
+  "/_authenticated/chat/support/new": typeof AuthenticatedChatSupportNewRoute
   "/_authenticated/courses/$courseId/lessons": typeof AuthenticatedCoursesCourseIdLessonsRouteWithChildren
   "/_authenticated/admin/coupons/": typeof AuthenticatedAdminCouponsIndexRoute
   "/_authenticated/admin/courses/": typeof AuthenticatedAdminCoursesIndexRoute
+  "/_authenticated/chat/support/": typeof AuthenticatedChatSupportIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
   "/_authenticated/admin/courses/$courseId/edit": typeof AuthenticatedAdminCoursesCourseIdEditRoute
@@ -493,9 +513,11 @@ export interface FileRouteTypes {
     | "/admin/courses/instructor-notes"
     | "/chat/dm/$conversationId"
     | "/chat/support/$courseSlug"
+    | "/chat/support/new"
     | "/courses/$courseId/lessons"
     | "/admin/coupons"
     | "/admin/courses"
+    | "/chat/support"
     | "/education/courses/$course/"
     | "/support/$supportTicket/edit/"
     | "/admin/courses/$courseId/edit"
@@ -536,9 +558,11 @@ export interface FileRouteTypes {
     | "/admin/courses/instructor-notes"
     | "/chat/dm/$conversationId"
     | "/chat/support/$courseSlug"
+    | "/chat/support/new"
     | "/courses/$courseId/lessons"
     | "/admin/coupons"
     | "/admin/courses"
+    | "/chat/support"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
     | "/admin/courses/$courseId/edit"
@@ -585,9 +609,11 @@ export interface FileRouteTypes {
     | "/_authenticated/admin/courses/instructor-notes"
     | "/_authenticated/chat/dm/$conversationId"
     | "/_authenticated/chat/support/$courseSlug"
+    | "/_authenticated/chat/support/new"
     | "/_authenticated/courses/$courseId/lessons"
     | "/_authenticated/admin/coupons/"
     | "/_authenticated/admin/courses/"
+    | "/_authenticated/chat/support/"
     | "/education/courses/$course/"
     | "/support/$supportTicket/edit/"
     | "/_authenticated/admin/courses/$courseId/edit"
@@ -869,6 +895,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof EducationCoursesCourseIndexRouteImport
       parentRoute: typeof EducationCoursesCourseRouteRoute
     }
+    "/_authenticated/chat/support/": {
+      id: "/_authenticated/chat/support/"
+      path: "/support"
+      fullPath: "/chat/support"
+      preLoaderRoute: typeof AuthenticatedChatSupportIndexRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
+    }
     "/_authenticated/admin/courses/": {
       id: "/_authenticated/admin/courses/"
       path: "/courses"
@@ -889,6 +922,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/courses/$courseId/lessons"
       preLoaderRoute: typeof AuthenticatedCoursesCourseIdLessonsRouteImport
       parentRoute: typeof AuthenticatedCoursesCourseIdRoute
+    }
+    "/_authenticated/chat/support/new": {
+      id: "/_authenticated/chat/support/new"
+      path: "/support/new"
+      fullPath: "/chat/support/new"
+      preLoaderRoute: typeof AuthenticatedChatSupportNewRouteImport
+      parentRoute: typeof AuthenticatedChatRoute
     }
     "/_authenticated/chat/support/$courseSlug": {
       id: "/_authenticated/chat/support/$courseSlug"
@@ -1002,6 +1042,8 @@ interface AuthenticatedChatRouteChildren {
   AuthenticatedChatChannelIdRoute: typeof AuthenticatedChatChannelIdRoute
   AuthenticatedChatDmConversationIdRoute: typeof AuthenticatedChatDmConversationIdRoute
   AuthenticatedChatSupportCourseSlugRoute: typeof AuthenticatedChatSupportCourseSlugRoute
+  AuthenticatedChatSupportNewRoute: typeof AuthenticatedChatSupportNewRoute
+  AuthenticatedChatSupportIndexRoute: typeof AuthenticatedChatSupportIndexRoute
 }
 
 const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
@@ -1010,6 +1052,8 @@ const AuthenticatedChatRouteChildren: AuthenticatedChatRouteChildren = {
     AuthenticatedChatDmConversationIdRoute,
   AuthenticatedChatSupportCourseSlugRoute:
     AuthenticatedChatSupportCourseSlugRoute,
+  AuthenticatedChatSupportNewRoute: AuthenticatedChatSupportNewRoute,
+  AuthenticatedChatSupportIndexRoute: AuthenticatedChatSupportIndexRoute,
 }
 
 const AuthenticatedChatRouteWithChildren =

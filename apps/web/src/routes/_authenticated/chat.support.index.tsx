@@ -1,4 +1,4 @@
-import { Link, createFileRoute, useParams } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,41 +16,20 @@ import {
 } from "~/components/ui/table";
 import { useAuth } from "~/lib/auth.context";
 import {
-  CoursesCollection,
   SupportTicketsCollection,
-  useCourses,
-  useSupportTicketsByCourseId,
+  useSupportTickets,
 } from "~/lib/db.collections";
 
-export const Route = createFileRoute(
-  "/_authenticated/chat/support/$courseSlug",
-)({
+export const Route = createFileRoute("/_authenticated/chat/support/")({
   loader: async () => {
-    await Promise.all([
-      SupportTicketsCollection.preload(),
-      CoursesCollection.preload(),
-    ]);
+    await SupportTicketsCollection.preload();
   },
-  component: CourseSupportPage,
+  component: ChatSupportIndexPage,
 });
 
-function CourseSupportPage() {
+function ChatSupportIndexPage() {
   const auth = useAuth();
-  const params = useParams({
-    from: "/_authenticated/chat/support/$courseSlug",
-  });
-  const { courseSlug } = params;
-
-  // Get all courses to find the current one by slug
-  const { data: courses, isLoading: coursesLoading } = useCourses();
-  const currentCourse = courses?.find((c) => c.slug === courseSlug);
-  const courseId = currentCourse?.id ?? "";
-
-  // Get support tickets filtered by courseId
-  // When courseId is empty, the query returns an empty array (no matching tickets)
-  const { data: tickets, isLoading: ticketsLoading } =
-    useSupportTicketsByCourseId({ courseId });
-
+  const { data: tickets, isLoading } = useSupportTickets();
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState<{
     id: string;
@@ -85,49 +64,19 @@ function CourseSupportPage() {
     }
   }
 
-  // Show loading while courses are loading (we need to find the course first)
-  if (coursesLoading) {
+  if (isLoading) {
     return <Loading />;
   }
-
-  // Only after courses have loaded, check if the course exists
-  if (!currentCourse) {
-    return (
-      <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-        <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
-          Course Not Found
-        </h1>
-        <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-          The course you are looking for does not exist.
-        </p>
-        <Link
-          className="mt-4 block rounded-md bg-green-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500 active:bg-green-800"
-          to="/chat/$channelId"
-          params={{ channelId: "general" }}
-        >
-          Go back to chat
-        </Link>
-      </div>
-    );
-  }
-
-  // Show loading while tickets are loading (now that we have a valid course)
-  if (ticketsLoading) {
-    return <Loading />;
-  }
-
-  const filteredTickets = tickets ?? [];
 
   return (
     <div className="flex h-full flex-col px-4 py-8 sm:px-6 lg:px-8">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">
-            {currentCourse.name} - Support Tickets
+            Support Tickets
           </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
-            Support tickets for this course. Create a new ticket or view
-            existing ones.
+            View and manage all support tickets.
           </p>
         </div>
 
@@ -151,16 +100,14 @@ function CourseSupportPage() {
         )}
       </div>
 
-      {filteredTickets.length !== 0 ? (
+      {tickets.length !== 0 ? (
         <div className="mt-12 flow-root flex-1 overflow-auto">
           <div className="custom-scrollbar -mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <Table>
                 <TableHeader>
                   <TableHeaderRow>
-                    <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white">
-                      User
-                    </TableHeaderCell>
+                    <TableHeaderCell>User</TableHeaderCell>
                     <TableHeaderCell className="py-3.5 pr-3 pl-4 text-left text-sm font-semibold text-gray-900 sm:pl-3 dark:text-white">
                       Title
                     </TableHeaderCell>
@@ -186,7 +133,7 @@ function CourseSupportPage() {
                 </TableHeader>
 
                 <TableBody>
-                  {filteredTickets.map((ticket) => (
+                  {tickets.map((ticket) => (
                     <TableBodyRow key={ticket.id}>
                       <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap text-gray-900 sm:pl-3 dark:text-white">
                         {ticket.user.image ? (
@@ -299,7 +246,7 @@ function CourseSupportPage() {
         </div>
       ) : (
         <div className="mt-12 flex-1">
-          <EmptyState title="No support tickets for this course yet." />
+          <EmptyState title="No support tickets created yet." />
         </div>
       )}
 
