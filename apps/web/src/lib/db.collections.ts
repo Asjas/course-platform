@@ -494,16 +494,30 @@ export function useSearchableUsers() {
 // Individual message type from arrays
 export type ChannelMessage = ChannelMessages[number];
 export type DMMessage = DMMessages[number];
-export type ChatMessage = ChannelMessage | DMMessage;
+
+// Locally refined, discriminated message types for safer handling
+type ChannelChatMessage = ChannelMessage & {
+  type: "channel";
+  channelId: NonNullable<ChannelMessage["channelId"]>;
+  conversationId?: undefined;
+};
+
+type DMChatMessage = DMMessage & {
+  type: "dm";
+  conversationId: NonNullable<DMMessage["conversationId"]>;
+  channelId?: undefined;
+};
+
+export type ChatMessage = ChannelChatMessage | DMChatMessage;
 
 // Helper to determine if message is a channel message
-function isChannelMessage(msg: ChatMessage): msg is ChannelMessage {
-  return "channelId" in msg && msg.channelId !== undefined;
+function isChannelMessage(msg: ChatMessage): msg is ChannelChatMessage {
+  return msg.type === "channel";
 }
 
 // Helper to determine if message is a DM message
-function isDMMessage(msg: ChatMessage): msg is DMMessage {
-  return "conversationId" in msg && msg.conversationId !== undefined;
+function isDMMessage(msg: ChatMessage): msg is DMChatMessage {
+  return msg.type === "dm";
 }
 
 // Single unified Messages Collection for all chat messages
