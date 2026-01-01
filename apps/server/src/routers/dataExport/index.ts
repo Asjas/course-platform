@@ -1,6 +1,21 @@
+import { createCsvSection } from "./csvUtils.js";
+import { type AllUserData, getAllUserData } from "./queries.js";
+import { checkExportRateLimit } from "./rateLimit.js";
 import * as z from "zod";
-import { db } from "~/db/index.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+
+/**
+ * Data export response type
+ */
+type DataExportResponse =
+  | {
+      format: "json";
+      data: AllUserData & { exportDate: string };
+    }
+  | {
+      format: "csv";
+      data: string;
+    };
 
 /**
  * Data export router for GDPR compliance
@@ -8,8 +23,8 @@ import { isAuthenticated, publicProcedure, router } from "~/router.js";
  */
 export const dataExportRouter = router({
   /**
-   * Export user data in JSON format
-   * Includes: profile, enrollments, progress, purchases, notifications, messages
+   * Export user data in JSON or CSV format
+   * Includes: profile, enrollments, progress, purchases, notifications, reviews, messages, certificates
    */
   exportData: publicProcedure
     .input(
@@ -18,161 +33,91 @@ export const dataExportRouter = router({
       }),
     )
     .use(isAuthenticated)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<DataExportResponse> => {
       const userId = ctx.user.id;
 
-      // Fetch user profile data
-      const userProfile = await db.query.user.findFirst({
-        where: (users, { eq }) => eq(users.id, userId),
-        columns: {
-          id: true,
-          name: true,
-          username: true,
-          displayUsername: true,
-          email: true,
-          emailVerified: true,
-          image: true,
-          role: true,
-          color: true,
-          createdAt: true,
-          updatedAt: true,
+      // Rate limiting - prevent abuse
+      checkExportRateLimit(userId);
+
+      // Audit logging for GDPR compliance
+      ctx.request.log.info(
+        {
+          userId,
+          format: input.format,
+          timestamp: new Date().toISOString(),
         },
-      });
+        "User data export requested",
+      );
 
-      // Fetch enrollments
-      const enrollments = await db.query.enrollment.findMany({
-        where: (enrollments, { eq }) => eq(enrollments.userId, userId),
-        with: {
-          course: {
-            columns: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      });
+      try {
+        // Fetch all user data
+        const allUserData = await getAllUserData(userId);
 
-      // Fetch course progress
-      const courseProgress = await db.query.courseProgress.findMany({
-        where: (progress, { eq }) => eq(progress.userId, userId),
-        with: {
-          course: {
-            columns: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      });
-
-      // Fetch lesson progress
-      const lessonProgress = await db.query.lessonProgress.findMany({
-        where: (progress, { eq }) => eq(progress.userId, userId),
-        with: {
-          lesson: {
-            columns: {
-              id: true,
-              title: true,
-              slug: true,
-            },
-          },
-        },
-      });
-
-      // Fetch payments
-      const payments = await db.query.payment.findMany({
-        where: (payments, { eq }) => eq(payments.userId, userId),
-        with: {
-          course: {
-            columns: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      });
-
-      // Fetch notifications
-      const notifications = await db.query.userNotification.findMany({
-        where: (notifications, { eq }) => eq(notifications.userId, userId),
-      });
-
-      // Fetch support tickets
-      const supportTickets = await db.query.supportTicket.findMany({
-        where: (tickets, { eq }) => eq(tickets.userId, userId),
-      });
-
-      // Fetch wishlists
-      const wishlists = await db.query.courseWishlist.findMany({
-        where: (wishlists, { eq }) => eq(wishlists.userId, userId),
-        with: {
-          course: {
-            columns: {
-              id: true,
-              name: true,
-              slug: true,
-            },
-          },
-        },
-      });
-
-      const userData = {
-        exportDate: new Date().toISOString(),
-        profile: userProfile,
-        enrollments,
-        courseProgress,
-        lessonProgress,
-        payments,
-        notifications,
-        supportTickets,
-        wishlists,
-      };
-
-      if (input.format === "json") {
-        return {
-          format: "json" as const,
-          data: userData,
+        const exportData = {
+          exportDate: new Date().toISOString(),
+          ...allUserData,
         };
-      }
 
-      // CSV format - convert to CSV string
-      // For CSV, we'll create separate sections for each data type
-      const csvSections: string[] = [];
+        // JSON format - return structured data
+        if (input.format === "json") {
+          ctx.request.log.info({ userId }, "User data export completed (JSON)");
+          return {
+            format: "json" as const,
+            data: exportData,
+          };
+        }
 
-      // Profile section
-      if (userProfile) {
-        csvSections.push("### User Profile");
-        csvSections.push(
-          "ID,Name,Username,Display Username,Email,Email Verified,Role,Created At,Updated At",
-        );
-        csvSections.push(
-          [
-            userProfile.id,
-            userProfile.name,
-            userProfile.username || "",
-            userProfile.displayUsername || "",
-            userProfile.email,
-            userProfile.emailVerified,
-            userProfile.role,
-            userProfile.createdAt,
-            userProfile.updatedAt,
-          ].join(","),
-        );
-        csvSections.push("");
-      }
+        // CSV format - convert to CSV string with proper escaping
+        const csvSections: string[] = [];
 
-      // Enrollments section
-      if (enrollments.length > 0) {
-        csvSections.push("### Enrollments");
-        csvSections.push(
-          "Enrollment ID,Course Name,Course Slug,Status,Enrollment Type,Enrolled At,Created At",
-        );
-        enrollments.forEach((enrollment) => {
+        // Profile section
+        if (allUserData.userProfile) {
+          const profile = allUserData.userProfile;
           csvSections.push(
+            ...createCsvSection(
+              "User Profile",
+              [
+                "ID",
+                "Name",
+                "Username",
+                "Display Username",
+                "Email",
+                "Email Verified",
+                "Role",
+                "Created At",
+                "Updated At",
+              ],
+              [
+                [
+                  profile.id,
+                  profile.name,
+                  profile.username || "",
+                  profile.displayUsername || "",
+                  profile.email,
+                  profile.emailVerified,
+                  profile.role,
+                  profile.createdAt,
+                  profile.updatedAt,
+                ],
+              ],
+            ),
+          );
+        }
+
+        // Enrollments section
+        csvSections.push(
+          ...createCsvSection(
+            "Enrollments",
             [
+              "Enrollment ID",
+              "Course Name",
+              "Course Slug",
+              "Status",
+              "Enrollment Type",
+              "Enrolled At",
+              "Created At",
+            ],
+            allUserData.enrollments.map((enrollment) => [
               enrollment.id,
               enrollment.course.name,
               enrollment.course.slug,
@@ -180,21 +125,25 @@ export const dataExportRouter = router({
               enrollment.enrollmentType,
               enrollment.enrolledAt,
               enrollment.createdAt,
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
-
-      // Course Progress section
-      if (courseProgress.length > 0) {
-        csvSections.push("### Course Progress");
-        csvSections.push(
-          "Progress ID,Course Name,Course Slug,Progress,Completed,Started At,Completed At,Last Accessed At",
+            ]),
+          ),
         );
-        courseProgress.forEach((progress) => {
-          csvSections.push(
+
+        // Course Progress section
+        csvSections.push(
+          ...createCsvSection(
+            "Course Progress",
             [
+              "Progress ID",
+              "Course Name",
+              "Course Slug",
+              "Progress",
+              "Completed",
+              "Started At",
+              "Completed At",
+              "Last Accessed At",
+            ],
+            allUserData.courseProgress.map((progress) => [
               progress.id,
               progress.course.name,
               progress.course.slug,
@@ -203,21 +152,24 @@ export const dataExportRouter = router({
               progress.startedAt || "",
               progress.completedAt || "",
               progress.lastAccessedAt || "",
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
-
-      // Lesson Progress section
-      if (lessonProgress.length > 0) {
-        csvSections.push("### Lesson Progress");
-        csvSections.push(
-          "Progress ID,Lesson Title,Lesson Slug,Percent Complete,Completed,Completed At,Last Accessed At",
+            ]),
+          ),
         );
-        lessonProgress.forEach((progress) => {
-          csvSections.push(
+
+        // Lesson Progress section
+        csvSections.push(
+          ...createCsvSection(
+            "Lesson Progress",
             [
+              "Progress ID",
+              "Lesson Title",
+              "Lesson Slug",
+              "Percent Complete",
+              "Completed",
+              "Completed At",
+              "Last Accessed At",
+            ],
+            allUserData.lessonProgress.map((progress) => [
               progress.id,
               progress.lesson.title,
               progress.lesson.slug,
@@ -225,21 +177,25 @@ export const dataExportRouter = router({
               progress.completed,
               progress.completedAt || "",
               progress.lastAccessedAt || "",
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
-
-      // Payments section
-      if (payments.length > 0) {
-        csvSections.push("### Payments");
-        csvSections.push(
-          "Payment ID,Course Name,Amount,Currency,Status,Transaction ID,Paid At,Created At",
+            ]),
+          ),
         );
-        payments.forEach((payment) => {
-          csvSections.push(
+
+        // Payments section
+        csvSections.push(
+          ...createCsvSection(
+            "Payments",
             [
+              "Payment ID",
+              "Course Name",
+              "Amount",
+              "Currency",
+              "Status",
+              "Transaction ID",
+              "Paid At",
+              "Created At",
+            ],
+            allUserData.payments.map((payment) => [
               payment.id,
               payment.course.name,
               payment.amount,
@@ -248,73 +204,214 @@ export const dataExportRouter = router({
               payment.transactionId,
               payment.paidAt || "",
               payment.createdAt,
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
+            ]),
+          ),
+        );
 
-      // Notifications section
-      if (notifications.length > 0) {
-        csvSections.push("### Notifications");
-        csvSections.push("Notification ID,Type,Title,Read At,Created At");
-        notifications.forEach((notification) => {
-          csvSections.push(
-            [
+        // Notifications section
+        csvSections.push(
+          ...createCsvSection(
+            "Notifications",
+            ["Notification ID", "Type", "Title", "Read At", "Created At"],
+            allUserData.notifications.map((notification) => [
               notification.id,
               notification.type,
               notification.title,
               notification.readAt || "",
               notification.createdAt,
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
-
-      // Support Tickets section
-      if (supportTickets.length > 0) {
-        csvSections.push("### Support Tickets");
-        csvSections.push(
-          "Ticket ID,Title,Status,Priority,Created At,Updated At",
+            ]),
+          ),
         );
-        supportTickets.forEach((ticket) => {
-          csvSections.push(
+
+        // Support Tickets section
+        csvSections.push(
+          ...createCsvSection(
+            "Support Tickets",
             [
+              "Ticket ID",
+              "Title",
+              "Status",
+              "Priority",
+              "Created At",
+              "Updated At",
+            ],
+            allUserData.supportTickets.map((ticket) => [
               ticket.id,
               ticket.title,
               ticket.status,
               ticket.priority,
               ticket.createdAt,
               ticket.updatedAt,
-            ].join(","),
-          );
-        });
-        csvSections.push("");
-      }
+            ]),
+          ),
+        );
 
-      // Wishlist section
-      if (wishlists.length > 0) {
-        csvSections.push("### Course Wishlist");
-        csvSections.push("Wishlist ID,Course Name,Course Slug,Added At");
-        wishlists.forEach((wishlist) => {
-          csvSections.push(
-            [
+        // Wishlist section
+        csvSections.push(
+          ...createCsvSection(
+            "Course Wishlist",
+            ["Wishlist ID", "Course Name", "Course Slug", "Added At"],
+            allUserData.wishlists.map((wishlist) => [
               wishlist.id,
               wishlist.course.name,
               wishlist.course.slug,
               wishlist.createdAt,
-            ].join(","),
-          );
-        });
-        csvSections.push("");
+            ]),
+          ),
+        );
+
+        // Course Reviews section
+        csvSections.push(
+          ...createCsvSection(
+            "Course Reviews",
+            [
+              "Review ID",
+              "Course Name",
+              "Rating",
+              "Title",
+              "Comment",
+              "Approved",
+              "Created At",
+            ],
+            allUserData.reviews.map((review) => [
+              review.id,
+              review.course.name,
+              review.rating || "",
+              review.title,
+              review.comment,
+              review.approved,
+              review.createdAt,
+            ]),
+          ),
+        );
+
+        // Direct Message Requests Sent section
+        csvSections.push(
+          ...createCsvSection(
+            "Direct Message Requests Sent",
+            [
+              "Request ID",
+              "Recipient ID",
+              "Message",
+              "Status",
+              "Created At",
+              "Responded At",
+            ],
+            allUserData.dmRequestsSent.map((request) => [
+              request.id,
+              request.recipientId,
+              request.message,
+              request.status,
+              request.createdAt,
+              request.respondedAt || "",
+            ]),
+          ),
+        );
+
+        // Direct Message Requests Received section
+        csvSections.push(
+          ...createCsvSection(
+            "Direct Message Requests Received",
+            [
+              "Request ID",
+              "Requester ID",
+              "Message",
+              "Status",
+              "Created At",
+              "Responded At",
+            ],
+            allUserData.dmRequestsReceived.map((request) => [
+              request.id,
+              request.requesterId,
+              request.message,
+              request.status,
+              request.createdAt,
+              request.respondedAt || "",
+            ]),
+          ),
+        );
+
+        // Direct Message Conversations section
+        csvSections.push(
+          ...createCsvSection(
+            "Direct Message Conversations",
+            [
+              "Conversation ID",
+              "User 1 ID",
+              "User 2 ID",
+              "User 1 Closed",
+              "User 2 Closed",
+              "Created At",
+            ],
+            allUserData.dmConversations.map((conversation) => [
+              conversation.id,
+              conversation.user1Id,
+              conversation.user2Id,
+              conversation.user1Closed,
+              conversation.user2Closed,
+              conversation.createdAt,
+            ]),
+          ),
+        );
+
+        // Completion Certificates section
+        csvSections.push(
+          ...createCsvSection(
+            "Course Completion Certificates",
+            [
+              "Certificate ID",
+              "Course Name",
+              "Issued At",
+              "Certificate URL",
+              "Created At",
+            ],
+            allUserData.certificates.map((cert) => [
+              cert.id,
+              cert.course.name,
+              cert.issuedAt,
+              cert.certificateUrl,
+              cert.createdAt,
+            ]),
+          ),
+        );
+
+        // Chat Message Reports section
+        csvSections.push(
+          ...createCsvSection(
+            "Chat Message Reports",
+            [
+              "Report ID",
+              "Message ID",
+              "Channel ID",
+              "Reason",
+              "Status",
+              "Created At",
+            ],
+            allUserData.chatReports.map((report) => [
+              report.id,
+              report.messageId,
+              report.channelId,
+              report.reason,
+              report.status,
+              report.createdAt,
+            ]),
+          ),
+        );
+
+        const csvContent = csvSections.join("\n");
+
+        ctx.request.log.info({ userId }, "User data export completed (CSV)");
+
+        return {
+          format: "csv" as const,
+          data: csvContent,
+        };
+      } catch (error) {
+        ctx.request.log.error(
+          { userId, error, format: input.format },
+          "User data export failed",
+        );
+        throw error;
       }
-
-      const csvContent = csvSections.join("\n");
-
-      return {
-        format: "csv" as const,
-        data: csvContent,
-      };
     }),
 });

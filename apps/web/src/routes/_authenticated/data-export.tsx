@@ -8,6 +8,30 @@ export const Route = createFileRoute("/_authenticated/data-export")({
   component: DataExportPage,
 });
 
+/**
+ * Helper function to trigger file download
+ * Handles blob creation, download trigger, and cleanup
+ */
+function downloadFile(
+  content: string,
+  mimeType: string,
+  fileExtension: string,
+) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `my-data-${new Date().toISOString().split("T")[0]}.${fileExtension}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  // Revoke object URL after a delay to ensure download starts
+  setTimeout(() => {
+    URL.revokeObjectURL(url);
+  }, 100);
+}
+
 function DataExportPage() {
   const [isExporting, setIsExporting] = useState(false);
 
@@ -21,31 +45,13 @@ function DataExportPage() {
       const result = await trpcClient.dataExport.exportData.query({ format });
 
       if (result.format === "json") {
-        // Create JSON file
-        const blob = new Blob([JSON.stringify(result.data, null, 2)], {
-          type: "application/json",
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `my-data-${new Date().toISOString().split("T")[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        downloadFile(
+          JSON.stringify(result.data, null, 2),
+          "application/json",
+          "json",
+        );
       } else {
-        // Create CSV file
-        const blob = new Blob([result.data], {
-          type: "text/csv",
-        });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `my-data-${new Date().toISOString().split("T")[0]}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        downloadFile(result.data, "text/csv", "csv");
       }
 
       toast.success("Your data has been downloaded successfully!", {
@@ -53,9 +59,11 @@ function DataExportPage() {
       });
     } catch (error) {
       console.error("Export error:", error);
-      toast.error("Failed to export your data. Please try again.", {
-        id: toastId,
-      });
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to export your data. Please try again.";
+      toast.error(errorMessage, { id: toastId });
     } finally {
       setIsExporting(false);
     }
@@ -82,7 +90,9 @@ function DataExportPage() {
           <li>Learning progress and completed lessons</li>
           <li>Purchase history and payment records</li>
           <li>Notifications and support tickets</li>
-          <li>Course wishlist</li>
+          <li>Course wishlist and reviews</li>
+          <li>Direct messages and chat reports</li>
+          <li>Completion certificates</li>
         </ul>
 
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
@@ -94,28 +104,50 @@ function DataExportPage() {
             className="flex items-center justify-center gap-2 rounded-lg border-2 border-green-600 bg-green-50 px-6 py-4 text-green-700 transition-colors hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
             disabled={isExporting}
             onClick={() => handleExport("json")}
+            aria-busy={isExporting}
+            aria-live="polite"
           >
-            <FileJsonIcon className="h-6 w-6" />
+            <FileJsonIcon
+              className="h-6 w-6"
+              aria-hidden="true"
+            />
             <div className="text-left">
               <div className="font-semibold">JSON Format</div>
               <div className="text-sm">
                 Structured data, ideal for developers
               </div>
             </div>
-            <DownloadIcon className="ml-auto h-5 w-5" />
+            <DownloadIcon
+              className="ml-auto h-5 w-5"
+              aria-hidden="true"
+            />
+            {isExporting && (
+              <span className="sr-only">Export in progress...</span>
+            )}
           </button>
 
           <button
             className="flex items-center justify-center gap-2 rounded-lg border-2 border-blue-600 bg-blue-50 px-6 py-4 text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
             disabled={isExporting}
             onClick={() => handleExport("csv")}
+            aria-busy={isExporting}
+            aria-live="polite"
           >
-            <FileSpreadsheetIcon className="h-6 w-6" />
+            <FileSpreadsheetIcon
+              className="h-6 w-6"
+              aria-hidden="true"
+            />
             <div className="text-left">
               <div className="font-semibold">CSV Format</div>
               <div className="text-sm">Spreadsheet format, easy to read</div>
             </div>
-            <DownloadIcon className="ml-auto h-5 w-5" />
+            <DownloadIcon
+              className="ml-auto h-5 w-5"
+              aria-hidden="true"
+            />
+            {isExporting && (
+              <span className="sr-only">Export in progress...</span>
+            )}
           </button>
         </div>
 
