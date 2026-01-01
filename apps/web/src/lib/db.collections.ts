@@ -644,36 +644,10 @@ export const MessageReactionsCollection = createCollection(
       // This will be empty initially and populated as needed
       return [];
     },
-    onInsert: async ({ transaction }) => {
-      try {
-        const { modified } = transaction.mutations[0];
-
-        // Toggle reaction (add if not exists)
-        await trpcClient.chat.toggleReaction.mutate({
-          messageId: modified.messageId,
-          emoji: modified.emoji,
-        });
-      } catch (error) {
-        console.error("Error adding reaction: ", error);
-        toast.error("Failed to add reaction.");
-        throw error;
-      }
-    },
-    onDelete: async ({ transaction }) => {
-      try {
-        const { original } = transaction.mutations[0];
-
-        // Toggle reaction (remove if exists)
-        await trpcClient.chat.toggleReaction.mutate({
-          messageId: original.messageId,
-          emoji: original.emoji,
-        });
-      } catch (error) {
-        console.error("Error removing reaction: ", error);
-        toast.error("Failed to remove reaction.");
-        throw error;
-      }
-    },
+    // Intentionally no onInsert/onDelete handlers here.
+    // Server mutations for toggling reactions should be invoked explicitly
+    // from user interaction handlers to avoid double-toggling when
+    // subscription updates also write into this collection.
   }),
 );
 
