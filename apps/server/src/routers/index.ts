@@ -1,6 +1,7 @@
 import { imagesRouter } from "./images/index.js";
 import { router } from "~/router.js";
 import { announcementsRouter } from "~/routers/announcements/index.js";
+import { auditRouter } from "~/routers/audit/index.js";
 import { chatRouter } from "~/routers/chat/index.js";
 import { chatReportsRouter } from "~/routers/chatReports/index.js";
 import { couponsRouter } from "~/routers/coupons/index.js";
@@ -16,6 +17,7 @@ import { usersRouter } from "~/routers/users/index.js";
 
 export const appRouter = router({
   announcements: announcementsRouter,
+  audit: auditRouter,
   coupons: couponsRouter,
   courses: coursesRouter,
   dataExport: dataExportRouter,

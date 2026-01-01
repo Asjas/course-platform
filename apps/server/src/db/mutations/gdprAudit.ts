@@ -1,5 +1,5 @@
 import { db } from "~/db/index.js";
-import { gdprAuditLog, type NewGdprAuditLog } from "~/db/schema/gdprAudit.js";
+import { type NewGdprAuditLog, gdprAuditLog } from "~/db/schema/gdprAudit.js";
 import { pinoLogger } from "~/lib/logging.js";
 
 const log = pinoLogger.child({ module: "db:mutations:gdpr-audit" });
