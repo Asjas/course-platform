@@ -34,7 +34,7 @@ describe("Chat Support Ticket Management", () => {
     cy.get('input[name="repo"]').should("be.visible");
   });
 
-  it("should navigate to chat support index after creating a ticket", () => {
+  it("should navigate to ticket details after creating a ticket", () => {
     // Navigate directly to the create page
     cy.visit("/chat/support/new");
 
@@ -42,32 +42,17 @@ describe("Chat Support Ticket Management", () => {
     cy.get('input[name="title"]').type("Test Support Ticket");
     cy.get('input[name="repo"]').type("https://github.com/test/repo");
 
-    // Fill in the description using the markdown editor
-    // Note: The exact selector may need adjustment based on the editor implementation
-    cy.get('[data-testid="github-message-editor"]')
-      .or('textarea[name="description"]')
-      .type("This is a test support ticket description");
+    // Fill in the description - the markdown editor creates a textarea
+    cy.get("textarea").type("This is a test support ticket description");
 
     // Submit the form
     cy.contains("button", "Save").click();
 
-    // Should navigate to the support index page after creation
-    cy.url().should("eq", Cypress.config().baseUrl + "/chat/support");
+    // Should navigate to the ticket details page after creation
+    cy.url().should("include", "/support/suptick:");
 
-    // Verify we're on the support tickets page
-    cy.contains("Support Tickets").should("be.visible");
-  });
-
-  it("should display the support tickets list in chat", () => {
-    // Navigate to the chat support index
-    cy.visit("/chat/support");
-
-    // Verify the page displays correctly
-    cy.contains("Support Tickets").should("be.visible");
-    cy.contains("View and manage all support tickets").should("be.visible");
-
-    // Verify the "Create new ticket" button is visible
-    cy.contains("Create new ticket").should("be.visible");
+    // Verify we're on the support ticket details page
+    cy.contains("Test Support Ticket").should("be.visible");
   });
 
   it("should allow navigation back to chat from support pages", () => {

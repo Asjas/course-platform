@@ -29,7 +29,7 @@ function ChatSupportCreateTicketPage() {
         </div>
       </div>
 
-      <NewSupportTicketForm navigateTo="/chat/support" />
+      <NewSupportTicketForm />
     </div>
   );
 }
