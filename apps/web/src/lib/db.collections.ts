@@ -1,4 +1,10 @@
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
+// ========== Chat Messages ==========
+
+import type {
+  ChannelMessages,
+  DMMessages,
+} from "@apps/server/src/routers/chat/queries.js";
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
@@ -485,4 +491,122 @@ export const SearchableUsersCollection = createCollection(
 
 export function useSearchableUsers() {
   return useLiveQuery(SearchableUsersCollection);
+}
+
+// Individual message type from arrays
+export type ChannelMessage = ChannelMessages[number];
+export type DMMessage = DMMessages[number];
+export type ChatMessage = ChannelMessage | DMMessage;
+
+// Helper to determine if message is a channel message
+function isChannelMessage(msg: ChatMessage): msg is ChannelMessage {
+  return "channelId" in msg && msg.channelId !== undefined;
+}
+
+// Helper to determine if message is a DM message
+function isDMMessage(msg: ChatMessage): msg is DMMessage {
+  return "conversationId" in msg && msg.conversationId !== undefined;
+}
+
+// Single unified Messages Collection for all chat messages
+export const ChatMessagesCollection = createCollection(
+  queryCollectionOptions<ChatMessage>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["chat", "all", "messages"],
+    queryFn: async () => {
+      // This will be empty initially and populated by subscriptions
+      return [];
+    },
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        if (isChannelMessage(modified) && modified.channelId) {
+          await trpcClient.chat.postMessage.mutate({
+            channelId: modified.channelId,
+            message: modified.message,
+          });
+        } else if (isDMMessage(modified) && modified.conversationId) {
+          await trpcClient.chat.postDMMessage.mutate({
+            conversationId: modified.conversationId,
+            message: modified.message,
+          });
+        }
+      } catch (error) {
+        console.error("Error posting message: ", error);
+        toast.error(
+          "An error occurred while posting the message. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        await trpcClient.chat.deleteMessage.mutate({
+          id: original.id,
+        });
+      } catch (error) {
+        console.error("Error deleting message: ", error);
+        toast.error(
+          "An error occurred while deleting the message. Please try again.",
+        );
+        throw error;
+      }
+    },
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.chat.editMessage.mutate({
+          id: modified.id,
+          message: modified.message,
+        });
+      } catch (error) {
+        console.error("Error editing message: ", error);
+        toast.error(
+          "An error occurred while editing the message. Please try again.",
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
+// Helper functions for channel-specific queries
+export function useChannelMessages({ channelId }: { channelId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ message: ChatMessagesCollection })
+        .where(({ message }) => {
+          // Filter messages that have a matching channelId
+          const msg = message as ChannelMessage;
+          return msg.channelId !== undefined && eq(msg.channelId, channelId);
+        })
+        .select(({ message }) => message);
+    },
+    [channelId],
+  );
+}
+
+export function useDMMessages({ conversationId }: { conversationId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ message: ChatMessagesCollection })
+        .where(({ message }) => {
+          // Filter messages that have a matching conversationId
+          const msg = message as DMMessage;
+          return (
+            msg.conversationId !== undefined &&
+            eq(msg.conversationId, conversationId)
+          );
+        })
+        .select(({ message }) => message);
+    },
+    [conversationId],
+  );
 }

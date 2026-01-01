@@ -1,4 +1,12 @@
 import { validateDMConversationAccess } from "./dmValidation.js";
+import {
+  type ChannelMessages,
+  type DMMessages,
+  type MessageReactions,
+  getChannelHistory,
+  getDMHistory,
+  getMessageReactions,
+} from "./queries.js";
 import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
@@ -32,6 +40,8 @@ export interface ChatMessage {
   createdAt: number;
   editedAt?: number;
   reactions?: Reaction[];
+  channelId?: string; // For channel messages
+  conversationId?: string; // For DM messages
 }
 
 /**
@@ -51,27 +61,6 @@ function safeJsonParse<T>(json: string): T | null {
   } catch {
     return null;
   }
-}
-
-/**
- * Get all reactions for a message from the separate Redis hash.
- * Reactions are stored separately from messages to avoid race conditions
- * and the need to republish messages when reactions change.
- */
-async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
-  const reactionKey = getReactionKey(messageId);
-  const allReactions = await redis.hgetall(reactionKey);
-
-  const reactions: Reaction[] = [];
-  for (const [emoji, usersJson] of Object.entries(allReactions)) {
-    const users = safeJsonParse<ReactionUser[]>(usersJson);
-    // Skip corrupted data instead of crashing
-    if (users && Array.isArray(users)) {
-      reactions.push({ emoji, users });
-    }
-  }
-
-  return reactions;
 }
 
 function isIdAfter(current: string, previous: string): boolean {
@@ -142,60 +131,8 @@ export const chatRouter = router({
   getChannelHistory: publicProcedure
     .input(z.object({ channelId: z.string(), limit: z.number().default(50) }))
     .use(isAuthenticated)
-    .query(async ({ input }) => {
-      const streamKey = `chat:channel:${input.channelId}:messages`;
-      const entries = await redis.xrevrange(
-        streamKey,
-        "+",
-        "-",
-        "COUNT",
-        input.limit,
-      );
-
-      const messages = entries.map(
-        ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
-      );
-
-      // Fetch reactions for all messages using Redis pipeline for efficiency
-      // (reactions are stored separately to avoid race conditions)
-      const pipeline = redis.pipeline();
-      for (const msg of messages) {
-        pipeline.hgetall(getReactionKey(msg.id));
-      }
-      const reactionResults = await pipeline.exec();
-
-      // Combine messages with their reactions
-      const messagesWithReactions = messages.map((msg, index) => {
-        const pipelineResult = reactionResults?.[index];
-        const reactions: Reaction[] = [];
-
-        // Check for pipeline errors before processing
-        if (pipelineResult && !pipelineResult[0]) {
-          const reactionData = pipelineResult[1] as Record<
-            string,
-            string
-          > | null;
-          if (reactionData) {
-            for (const [emoji, usersJson] of Object.entries(reactionData)) {
-              const users = safeJsonParse<ReactionUser[]>(usersJson);
-              // Skip corrupted data instead of crashing
-              if (users && Array.isArray(users)) {
-                reactions.push({ emoji, users });
-              }
-            }
-          }
-        }
-
-        return { ...msg, reactions };
-      });
-
-      // Sort by creation time (ULID or createdAt field)
-      return messagesWithReactions.sort((a, b) => {
-        if ("createdAt" in a && "createdAt" in b) {
-          return (a.createdAt ?? 0) - (b.createdAt ?? 0);
-        }
-        return a.id.localeCompare(b.id);
-      });
+    .query(async ({ input }): Promise<ChannelMessages> => {
+      return getChannelHistory(input.channelId, input.limit);
     }),
   postMessage: publicProcedure
     .input(z.object({ channelId: z.string(), message: z.string() }))
@@ -305,8 +242,8 @@ export const chatRouter = router({
   getMessageReactions: publicProcedure
     .input(z.object({ messageId: z.string() }))
     .use(isAuthenticated)
-    .query(async ({ input }) => {
-      return getReactionsForMessage(input.messageId);
+    .query(async ({ input }): Promise<MessageReactions> => {
+      return getMessageReactions(input.messageId);
     }),
   /**
    * Toggle a reaction on a message. If the user already has this reaction, it's removed.
@@ -354,7 +291,7 @@ export const chatRouter = router({
 
       redisStreamOperations.inc({ operation: "hset", status: "success" });
 
-      return getReactionsForMessage(input.messageId);
+      return getMessageReactions(input.messageId);
     }),
   /**
    * Get DM messages (subscription)
@@ -428,7 +365,7 @@ export const chatRouter = router({
       z.object({ conversationId: z.string(), limit: z.number().default(50) }),
     )
     .use(isAuthenticated)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }): Promise<DMMessages> => {
       // Verify user has access to this conversation
       await validateDMConversationAccess(
         input.conversationId,
@@ -436,58 +373,7 @@ export const chatRouter = router({
         ctx.user.role,
       );
 
-      const streamKey = `chat:dm:${input.conversationId}:messages`;
-      const entries = await redis.xrevrange(
-        streamKey,
-        "+",
-        "-",
-        "COUNT",
-        input.limit,
-      );
-
-      const messages = entries.map(
-        ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
-      );
-
-      // Fetch reactions for all messages using Redis pipeline for efficiency
-      const pipeline = redis.pipeline();
-      for (const msg of messages) {
-        pipeline.hgetall(getReactionKey(msg.id));
-      }
-      const reactionResults = await pipeline.exec();
-
-      // Combine messages with their reactions
-      const messagesWithReactions = messages.map((msg, index) => {
-        const pipelineResult = reactionResults?.[index];
-        const reactions: Reaction[] = [];
-
-        // Check for pipeline errors before processing
-        if (pipelineResult && !pipelineResult[0]) {
-          const reactionData = pipelineResult[1] as Record<
-            string,
-            string
-          > | null;
-          if (reactionData) {
-            for (const [emoji, usersJson] of Object.entries(reactionData)) {
-              const users = safeJsonParse<ReactionUser[]>(usersJson);
-              // Skip corrupted data instead of crashing
-              if (users && Array.isArray(users)) {
-                reactions.push({ emoji, users });
-              }
-            }
-          }
-        }
-
-        return { ...msg, reactions };
-      });
-
-      // Sort by creation time (ULID or createdAt field)
-      return messagesWithReactions.sort((a, b) => {
-        if ("createdAt" in a && "createdAt" in b) {
-          return (a.createdAt ?? 0) - (b.createdAt ?? 0);
-        }
-        return a.id.localeCompare(b.id);
-      });
+      return getDMHistory(input.conversationId, input.limit);
     }),
   /**
    * Post a DM message
