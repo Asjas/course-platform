@@ -1,3 +1,4 @@
+import type { AllGdprAuditLogs } from "@apps/server/src/db/queries/gdprAudit";
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
@@ -485,4 +486,13 @@ export const SearchableUsersCollection = createCollection(
 
 export function useSearchableUsers() {
   return useLiveQuery(SearchableUsersCollection);
+}
+
+// ========== GDPR Audit Logs ==========
+
+export type GdprAuditLog = AllGdprAuditLogs[number];
+
+// Use regular useQuery for audit logs since they're read-only and don't need mutations
+export function useGdprAuditLogs(limit = 100, offset = 0) {
+  return useQuery(trpc.audit.getGdprAuditLogs.queryOptions({ limit, offset }));
 }

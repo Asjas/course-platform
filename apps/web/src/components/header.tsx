@@ -204,6 +204,10 @@ export default function Header({ auth }: { auth: AuthState }) {
                       Purchases
                     </MenuItem>
 
+                    <MenuItem onAction={() => navigate({ to: "/data-export" })}>
+                      Download My Data
+                    </MenuItem>
+
                     {isAdmin ? (
                       <MenuItem onAction={handleToggleStatus}>
                         <span className="flex items-center gap-2">
@@ -381,6 +385,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                             onAction={() => navigate({ to: "/purchases" })}
                           >
                             Purchases
+                          </MenuItem>
+
+                          <MenuItem
+                            onAction={() => navigate({ to: "/data-export" })}
+                          >
+                            Download My Data
                           </MenuItem>
 
                           {isAdmin ? (
