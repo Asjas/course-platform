@@ -58,14 +58,24 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
                     userId: user.userId,
                     userName: user.userName,
                   });
-                } catch {
-                  console.debug("Reaction already in collection:", reactionId);
+                } catch (error) {
+                  console.error(
+                    "Failed to insert reaction into collection",
+                    {
+                      reactionId,
+                      messageId: message.id,
+                      error,
+                    },
+                  );
                 }
               }
             }
           }
-        } catch {
-          console.debug("Message already in collection:", message.id);
+        } catch (error) {
+          console.error("Failed to insert message into collection", {
+            messageId: message.id,
+            error,
+          });
         }
       }
 
