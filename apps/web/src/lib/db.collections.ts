@@ -491,33 +491,31 @@ export function useSearchableUsers() {
   return useLiveQuery(SearchableUsersCollection);
 }
 
-// Individual message type from arrays
+// Derive single message types from array types
 export type ChannelMessage = ChannelMessages[number];
 export type DMMessage = DMMessages[number];
 
-// Locally refined, discriminated message types for safer handling
-type ChannelChatMessage = ChannelMessage & {
-  type: "channel";
-  channelId: NonNullable<ChannelMessage["channelId"]>;
-  conversationId?: undefined;
-};
-
-type DMChatMessage = DMMessage & {
-  type: "dm";
-  conversationId: NonNullable<DMMessage["conversationId"]>;
-  channelId?: undefined;
-};
-
-export type ChatMessage = ChannelChatMessage | DMChatMessage;
+// Union type for all chat messages
+export type ChatMessage = ChannelMessage | DMMessage;
 
 // Helper to determine if message is a channel message
-function isChannelMessage(msg: ChatMessage): msg is ChannelChatMessage {
-  return msg.type === "channel";
+function isChannelMessage(msg: unknown): msg is ChannelMessage {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    "channelId" in msg &&
+    msg.channelId !== undefined
+  );
 }
 
 // Helper to determine if message is a DM message
-function isDMMessage(msg: ChatMessage): msg is DMChatMessage {
-  return msg.type === "dm";
+function isDMMessage(msg: unknown): msg is DMMessage {
+  return (
+    typeof msg === "object" &&
+    msg !== null &&
+    "conversationId" in msg &&
+    msg.conversationId !== undefined
+  );
 }
 
 // Single unified Messages Collection for all chat messages
@@ -544,6 +542,15 @@ export const ChatMessagesCollection = createCollection(
             conversationId: modified.conversationId,
             message: modified.message,
           });
+        } else {
+          const error = new Error(
+            "Cannot determine message type: missing channelId or conversationId",
+          );
+          console.error("Invalid message type:", modified);
+          toast.error(
+            "Failed to send message: invalid message type. Please try again.",
+          );
+          throw error;
         }
       } catch (error) {
         console.error("Error posting message: ", error);
@@ -594,9 +601,12 @@ export function useChannelMessages({ channelId }: { channelId: string }) {
       return query
         .from({ message: ChatMessagesCollection })
         .where(({ message }) => {
-          // Filter messages that have a matching channelId
-          const msg = message as ChannelMessage;
-          return msg.channelId !== undefined && eq(msg.channelId, channelId);
+          // Use type guard and verify all required properties
+          return (
+            isChannelMessage(message) &&
+            message.channelId !== undefined &&
+            eq(message.channelId, channelId)
+          );
         })
         .select(({ message }) => message);
     },
@@ -610,11 +620,11 @@ export function useDMMessages({ conversationId }: { conversationId: string }) {
       return query
         .from({ message: ChatMessagesCollection })
         .where(({ message }) => {
-          // Filter messages that have a matching conversationId
-          const msg = message as DMMessage;
+          // Use type guard and verify all required properties
           return (
-            msg.conversationId !== undefined &&
-            eq(msg.conversationId, conversationId)
+            isDMMessage(message) &&
+            message.conversationId !== undefined &&
+            eq(message.conversationId, conversationId)
           );
         })
         .select(({ message }) => message);

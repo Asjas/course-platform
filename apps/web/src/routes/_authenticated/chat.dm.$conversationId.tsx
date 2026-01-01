@@ -59,14 +59,11 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
                     userName: user.userName,
                   });
                 } catch (error) {
-                  console.error(
-                    "Failed to insert reaction into collection",
-                    {
-                      reactionId,
-                      messageId: message.id,
-                      error,
-                    },
-                  );
+                  console.error("Failed to insert reaction into collection", {
+                    reactionId,
+                    messageId: message.id,
+                    error,
+                  });
                 }
               }
             }
@@ -120,9 +117,25 @@ function DMChatPage() {
               conversationId,
               reactions: newMessage.reactions || [],
             });
-          } catch {
-            // If already exists, skip - the subscription already has the latest
-            console.debug("Could not insert message into collection");
+          } catch (error) {
+            if (
+              error instanceof Error &&
+              /already exists|duplicate/i.test(error.message)
+            ) {
+              console.debug(
+                "Message already in collection (expected):",
+                newMessage.id,
+              );
+            } else {
+              console.error(
+                "Unexpected error inserting message into collection:",
+                {
+                  messageId: newMessage.id,
+                  conversationId,
+                  error,
+                },
+              );
+            }
           }
 
           // Update reactions collection if message has reactions

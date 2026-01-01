@@ -117,9 +117,25 @@ function AuthenticatedChatChannelPage() {
               channelId,
               reactions: newMessage.reactions || [],
             });
-          } catch {
-            // If already exists, skip - the subscription already has the latest
-            console.debug("Could not insert message into collection");
+          } catch (error) {
+            if (
+              error instanceof Error &&
+              /already exists|duplicate/i.test(error.message)
+            ) {
+              console.debug(
+                "Message already in collection (expected):",
+                newMessage.id,
+              );
+            } else {
+              console.error(
+                "Unexpected error inserting message into collection:",
+                {
+                  messageId: newMessage.id,
+                  channelId,
+                  error,
+                },
+              );
+            }
           }
 
           // Update reactions collection if message has reactions
