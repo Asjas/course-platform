@@ -2,7 +2,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
@@ -26,9 +26,10 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
 function AuthenticatedChatChannelPage() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
 
-  // Create channel-specific collection
-  const [channelCollection] = useState(() =>
-    createChannelMessagesCollection(channelId),
+  // Create channel-specific collection - recreate when channelId changes
+  const channelCollection = useMemo(
+    () => createChannelMessagesCollection(channelId),
+    [channelId],
   );
 
   // Get messages from collection using useLiveQuery

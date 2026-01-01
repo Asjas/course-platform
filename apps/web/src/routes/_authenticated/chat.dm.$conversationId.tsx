@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
@@ -39,9 +39,10 @@ function AuthenticatedChatDMPage() {
     from: "/_authenticated/chat/dm/$conversationId",
   });
 
-  // Create DM-specific collection
-  const [dmCollection] = useState(() =>
-    createDMMessagesCollection(conversationId),
+  // Create DM-specific collection - recreate when conversationId changes
+  const dmCollection = useMemo(
+    () => createDMMessagesCollection(conversationId),
+    [conversationId],
   );
 
   // Get messages from collection using useLiveQuery
