@@ -492,7 +492,17 @@ export function useSearchableUsers() {
 
 export type GdprAuditLog = AllGdprAuditLogs[number];
 
-// Use regular useQuery for audit logs since they're read-only and don't need mutations
-export function useGdprAuditLogs(limit = 100, offset = 0) {
-  return useQuery(trpc.audit.getGdprAuditLogs.queryOptions({ limit, offset }));
+// Read-only collection for viewing GDPR audit logs as admin
+export const GdprAuditLogsCollection = createCollection(
+  queryCollectionOptions<GdprAuditLog>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.audit.getGdprAuditLogs.queryKey({ limit: 100, offset: 0 }),
+    queryFn: () =>
+      trpcClient.audit.getGdprAuditLogs.query({ limit: 100, offset: 0 }),
+  }),
+);
+
+export function useGdprAuditLogs() {
+  return useLiveQuery(GdprAuditLogsCollection);
 }
