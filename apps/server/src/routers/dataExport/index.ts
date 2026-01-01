@@ -2,6 +2,8 @@ import { createCsvSection } from "./csvUtils.js";
 import { type AllUserData, getAllUserData } from "./queries.js";
 import { checkExportRateLimit } from "./rateLimit.js";
 import * as z from "zod";
+import { ulid } from "ulid";
+import { insertGdprAuditLog } from "~/db/mutations/gdprAudit.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
 /**
@@ -39,7 +41,7 @@ export const dataExportRouter = router({
       // Rate limiting - prevent abuse (uses Redis like Fastify's rate-limit plugin)
       await checkExportRateLimit(userId);
 
-      // Audit logging for GDPR compliance
+      // Audit logging for GDPR compliance (Pino)
       ctx.request.log.info(
         {
           userId,
@@ -61,6 +63,23 @@ export const dataExportRouter = router({
         // JSON format - return structured data
         if (input.format === "json") {
           ctx.request.log.info({ userId }, "User data export completed (JSON)");
+
+          // Database audit log for GDPR compliance
+          await insertGdprAuditLog({
+            id: ulid(),
+            userId,
+            actionType: "data_export",
+            status: "success",
+            exportFormat: "json",
+            ipAddress:
+              (ctx.request.headers["cf-connecting-ip"] as string) ||
+              ctx.request.ip ||
+              null,
+            userAgent: ctx.request.headers["user-agent"] || null,
+            errorMessage: null,
+            metadata: null,
+          });
+
           return {
             format: "json" as const,
             data: exportData,
@@ -402,6 +421,22 @@ export const dataExportRouter = router({
 
         ctx.request.log.info({ userId }, "User data export completed (CSV)");
 
+        // Database audit log for GDPR compliance
+        await insertGdprAuditLog({
+          id: ulid(),
+          userId,
+          actionType: "data_export",
+          status: "success",
+          exportFormat: "csv",
+          ipAddress:
+            (ctx.request.headers["cf-connecting-ip"] as string) ||
+            ctx.request.ip ||
+            null,
+          userAgent: ctx.request.headers["user-agent"] || null,
+          errorMessage: null,
+          metadata: null,
+        });
+
         return {
           format: "csv" as const,
           data: csvContent,
@@ -411,6 +446,24 @@ export const dataExportRouter = router({
           { userId, error, format: input.format },
           "User data export failed",
         );
+
+        // Database audit log for failed export
+        await insertGdprAuditLog({
+          id: ulid(),
+          userId,
+          actionType: "data_export",
+          status: "failure",
+          exportFormat: input.format,
+          ipAddress:
+            (ctx.request.headers["cf-connecting-ip"] as string) ||
+            ctx.request.ip ||
+            null,
+          userAgent: ctx.request.headers["user-agent"] || null,
+          errorMessage:
+            error instanceof Error ? error.message : "Unknown error",
+          metadata: null,
+        });
+
         throw error;
       }
     }),
