@@ -11,7 +11,7 @@ import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
 
 interface NewSupportTicketFormProps {
-  navigateTo?: string;
+  navigateTo?: "/support/$supportTicket" | "/chat/support/$courseSlug";
 }
 
 export default function NewSupportTicketForm({
