@@ -48,15 +48,42 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
                   userId: user.userId,
                   userName: user.userName,
                 });
-              } catch {
-                console.debug("Reaction already in collection:", reactionId);
+              } catch (error) {
+                if (
+                  error instanceof Error &&
+                  /already exists|duplicate/i.test(error.message)
+                ) {
+                  console.debug("Reaction already in collection:", reactionId);
+                } else {
+                  console.error(
+                    "Unexpected error inserting reaction into collection:",
+                    {
+                      reactionId,
+                      messageId: message.id,
+                      emoji: reactionGroup.emoji,
+                      userId: user.userId,
+                    },
+                    error,
+                  );
+                }
               }
             }
           }
         }
-      } catch {
-        // Message might already exist, that's okay
-        console.debug("Message already in collection:", message.id);
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          /already exists|duplicate/i.test(error.message)
+        ) {
+          // Message might already exist, that's okay
+          console.debug("Message already in collection:", message.id);
+        } else {
+          console.error(
+            "Unexpected error inserting message into collection:",
+            { messageId: message.id },
+            error,
+          );
+        }
       }
     }
   },
