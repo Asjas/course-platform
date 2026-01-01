@@ -608,3 +608,88 @@ export function useDMMessages({ conversationId }: { conversationId: string }) {
     [conversationId],
   );
 }
+
+// ========== Message Reactions ==========
+
+// Individual reaction - flattened structure for collection
+export interface MessageReaction {
+  id: string; // Unique ID: messageId:emoji:userId
+  messageId: string;
+  emoji: string;
+  userId: string;
+  userName: string;
+}
+
+// Message Reactions Collection
+export const MessageReactionsCollection = createCollection(
+  queryCollectionOptions<MessageReaction>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["chat", "reactions"],
+    queryFn: async () => {
+      // This will be empty initially and populated as needed
+      return [];
+    },
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        // Toggle reaction (add if not exists)
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: modified.messageId,
+          emoji: modified.emoji,
+        });
+      } catch (error) {
+        console.error("Error adding reaction: ", error);
+        toast.error("Failed to add reaction.");
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        // Toggle reaction (remove if exists)
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: original.messageId,
+          emoji: original.emoji,
+        });
+      } catch (error) {
+        console.error("Error removing reaction: ", error);
+        toast.error("Failed to remove reaction.");
+        throw error;
+      }
+    },
+  }),
+);
+
+// Helper to get reactions for a specific message
+export function useMessageReactions({ messageId }: { messageId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ reaction: MessageReactionsCollection })
+        .where(({ reaction }) => eq(reaction.messageId, messageId))
+        .select(({ reaction }) => reaction);
+    },
+    [messageId],
+  );
+}
+
+// Helper to aggregate reactions by emoji (for display)
+export function aggregateReactions(
+  reactions: MessageReaction[],
+): { emoji: string; users: { userId: string; userName: string }[] }[] {
+  const grouped = new Map<string, { userId: string; userName: string }[]>();
+
+  for (const reaction of reactions) {
+    const users = grouped.get(reaction.emoji) || [];
+    users.push({ userId: reaction.userId, userName: reaction.userName });
+    grouped.set(reaction.emoji, users);
+  }
+
+  return Array.from(grouped.entries()).map(([emoji, users]) => ({
+    emoji,
+    users,
+  }));
+}
