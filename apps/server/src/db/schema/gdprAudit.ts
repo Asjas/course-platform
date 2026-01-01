@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { index, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { index, text, varchar } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { user } from "~/db/schema/user.js";
