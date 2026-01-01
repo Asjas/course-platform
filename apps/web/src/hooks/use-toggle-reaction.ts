@@ -1,5 +1,5 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "~/lib/auth.context";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
@@ -13,6 +13,7 @@ export function useToggleReaction(channelId: string) {
   const auth = useAuth();
   const currentUserId = auth.session?.user.id;
   const currentUserName = auth.session?.user.name;
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleReaction = useCallback(
     async (messageId: string, emoji: string) => {
@@ -21,6 +22,7 @@ export function useToggleReaction(channelId: string) {
         return;
       }
 
+      setIsLoading(true);
       try {
         // Call the mutation which handles the toggle logic
         const result = await trpcClient.chat.toggleReaction.mutate({
@@ -40,6 +42,8 @@ export function useToggleReaction(channelId: string) {
       } catch (error) {
         console.error("Error toggling reaction:", error);
         toast.error("Failed to update reaction.");
+      } finally {
+        setIsLoading(false);
       }
     },
     [channelId, currentUserId, currentUserName],
@@ -47,6 +51,6 @@ export function useToggleReaction(channelId: string) {
 
   return {
     toggleReaction,
-    isLoading: false,
+    isLoading,
   };
 }
