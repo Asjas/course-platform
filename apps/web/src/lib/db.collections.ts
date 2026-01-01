@@ -1,3 +1,4 @@
+import type { AllGdprAuditLogs } from "@apps/server/src/db/queries/gdprAudit";
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
 import type {
   ChannelMessages,
@@ -689,4 +690,13 @@ export function aggregateReactions(
     emoji,
     users,
   }));
+}
+
+// ========== GDPR Audit Logs ==========
+
+export type GdprAuditLog = AllGdprAuditLogs[number];
+
+// Use regular useQuery for audit logs since they're read-only and don't need mutations
+export function useGdprAuditLogs(limit = 100, offset = 0) {
+  return useQuery(trpc.audit.getGdprAuditLogs.queryOptions({ limit, offset }));
 }

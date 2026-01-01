@@ -10,3 +10,4 @@ export * from "~/db/schema/progress.js";
 export * from "~/db/schema/platformAnnouncements.js";
 export * from "~/db/schema/userNotifications.js";
 export * from "~/db/schema/chatMessageReports.js";
+export * from "~/db/schema/gdprAudit.js";
