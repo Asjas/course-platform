@@ -1,6 +1,4 @@
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
-// ========== Chat Messages ==========
-
 import type {
   ChannelMessages,
   DMMessages,
