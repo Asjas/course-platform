@@ -43,18 +43,55 @@ function AuthenticatedChatChannelPage() {
         enabled: true,
         onData: (msg) => {
           const newMessage = msg.data;
-          // Use getChannelCacheKey directly to avoid stale closure
-          const currentCacheKey = getChannelCacheKey(channelId);
 
-          queryClient.setQueryData<ChatMessage[]>(
-            currentCacheKey,
-            (prev = []) => {
-              const map = new Map(prev.map((message) => [message.id, message]));
-              map.set(newMessage.id, newMessage);
+          // Update collection - this will automatically update the cache via collection's queryKey
+          try {
+            channelCollection.insert({
+              ...newMessage,
+              channelId,
+              reactions: newMessage.reactions || [],
+            });
+          } catch (error) {
+            if (
+              error instanceof Error &&
+              /already exists|duplicate/i.test(error.message)
+            ) {
+              console.debug(
+                "Message already in collection (expected):",
+                newMessage.id,
+              );
+            } else {
+              console.error(
+                "Unexpected error inserting message into collection:",
+                {
+                  messageId: newMessage.id,
+                  channelId,
+                  error,
+                },
+              );
+            }
+          }
 
-              return Array.from(map.values());
-            },
-          );
+          // Update reactions collection if message has reactions
+          if (newMessage.reactions && newMessage.reactions.length > 0) {
+            for (const reactionGroup of newMessage.reactions) {
+              for (const user of reactionGroup.users) {
+                const reactionId = `${newMessage.id}:${reactionGroup.emoji}:${user.userId}`;
+                try {
+                  MessageReactionsCollection.insert({
+                    id: reactionId,
+                    messageId: newMessage.id,
+                    emoji: reactionGroup.emoji,
+                    userId: user.userId,
+                    userName: user.userName,
+                  });
+                } catch {
+                  // Already exists, that's okay
+                  console.debug("Reaction already exists");
+                }
+              }
+            }
+          }
         },
         onError: (err) => console.error("Subscription error:", err),
       },
