@@ -10,39 +10,7 @@ import { SupportTicketsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
 
-/**
- * Props for the {@link NewSupportTicketForm} component.
- *
- * @property navigateTo Optional TanStack Router route path to navigate to
- *   after a support ticket is successfully created. This value is passed
- *   directly to `navigate({ to: navigateTo })`, so it should be a valid
- *   static route string understood by the router (for example,
- *   `"/support"` or `"/dashboard/support"`). Routes that require params
- *   should generally not be used here unless those params are fully
- *   encoded in the path.
- *
- *   - When provided, the form will navigate to this route instead of the
- *     newly created ticket's detail page.
- *   - When omitted, the form navigates to `"/support/$supportTicket"`
- *     with the new ticket's `id` passed as the `supportTicket` route
- *     param, showing the ticket details.
- *
- * Example:
- * ```tsx
- * // Navigate back to the support overview after creating a ticket
- * <NewSupportTicketForm navigateTo="/support" />
- *
- * // Navigate to a custom dashboard route
- * <NewSupportTicketForm navigateTo="/dashboard/support" />
- * ```
- */
-interface NewSupportTicketFormProps {
-  navigateTo?: "/support/$supportTicket" | "/chat/support/$courseSlug";
-}
-
-export default function NewSupportTicketForm({
-  navigateTo,
-}: NewSupportTicketFormProps) {
+export default function NewSupportTicketForm() {
   const navigate = useNavigate();
 
   const form = useForm({
@@ -72,14 +40,10 @@ export default function NewSupportTicketForm({
         toast.success("Support ticket created successfully!");
         await new Promise((resolve) => setTimeout(resolve, 300));
 
-        if (navigateTo) {
-          navigate({ to: navigateTo });
-        } else {
-          navigate({
-            to: "/support/$supportTicket",
-            params: { supportTicket: id },
-          });
-        }
+        navigate({
+          to: "/support/$supportTicket",
+          params: { supportTicket: id },
+        });
       } catch (error) {
         console.error("Error creating support ticket: ", error);
         toast.error(
