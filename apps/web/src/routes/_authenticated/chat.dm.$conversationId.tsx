@@ -1,93 +1,51 @@
-import type { ChatMessage } from "@apps/server/src/routers/chat";
+import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
 import {
-  ChatMessagesCollection,
   MessageReactionsCollection,
-  useDMMessages,
+  createDMMessagesCollection,
 } from "~/lib/db.collections";
-import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
   {
-    loader: async ({ context, params }) => {
-      const { queryClient } = context;
-      const { conversationId } = params;
-
-      // Fetch conversation details
-      const conversation =
-        await trpcClient.directMessages.getConversation.query({
-          conversationId,
-        });
-
-      // Fetch DM history and populate both cache and collection
-      const messages = await trpcClient.chat.getDMHistory.query({
-        conversationId,
+    loader: async ({ params }) => {
+      // Pre-load messages into tRPC cache via queryOptions
+      // The collection will automatically hydrate from this cache
+      await trpcClient.chat.getDMHistory.query({
+        conversationId: params.conversationId,
         limit: 50,
       });
 
-      // Populate TanStack Query cache
-      await queryClient.setQueryData(
-        trpc.chat.getDMHistory.queryKey({ conversationId, limit: 50 }),
-        messages,
-      );
-
-      // Populate collection
-      for (const message of messages) {
-        try {
-          ChatMessagesCollection.insert(message);
-
-          // Also populate reactions from the message
-          if (message.reactions && message.reactions.length > 0) {
-            for (const reactionGroup of message.reactions) {
-              for (const user of reactionGroup.users) {
-                const reactionId = `${message.id}:${reactionGroup.emoji}:${user.userId}`;
-                try {
-                  MessageReactionsCollection.insert({
-                    id: reactionId,
-                    messageId: message.id,
-                    emoji: reactionGroup.emoji,
-                    userId: user.userId,
-                    userName: user.userName,
-                  });
-                } catch (error) {
-                  console.error("Failed to insert reaction into collection", {
-                    reactionId,
-                    messageId: message.id,
-                    error,
-                  });
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error("Failed to insert message into collection", {
-            messageId: message.id,
-            error,
-          });
-        }
-      }
-
-      return { conversation };
+      // Also fetch conversation details
+      await trpcClient.directMessages.getConversation.query({
+        conversationId: params.conversationId,
+      });
     },
-    component: DMChatPage,
+    component: AuthenticatedChatDMPage,
   },
 );
 
-function DMChatPage() {
+function AuthenticatedChatDMPage() {
   const auth = useAuth();
   const { conversationId } = useParams({
     from: "/_authenticated/chat/dm/$conversationId",
   });
-  const cacheKey = ["dm", conversationId] as const;
+
+  // Create DM-specific collection
+  const [dmCollection] = useState(() =>
+    createDMMessagesCollection(conversationId),
+  );
+
+  // Get messages from collection using useLiveQuery
+  const { data: messages } = useLiveQuery(dmCollection);
 
   // Fetch conversation details
   const { data: conversation } = useQuery({
@@ -103,16 +61,9 @@ function DMChatPage() {
         onData: (msg) => {
           const newMessage = msg.data;
 
-          // Update TanStack Query cache
-          queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-            const map = new Map(prev.map((message) => [message.id, message]));
-            map.set(newMessage.id, newMessage);
-            return Array.from(map.values());
-          });
-
-          // Update collection
+          // Update collection - this will automatically update the cache via collection's queryKey
           try {
-            ChatMessagesCollection.insert({
+            dmCollection.insert({
               ...newMessage,
               conversationId,
               reactions: newMessage.reactions || [],
@@ -163,22 +114,6 @@ function DMChatPage() {
       },
     ),
   );
-
-  // Use collection data instead of direct cache query
-  const { data: collectionMessages } = useDMMessages({ conversationId });
-
-  // Fallback to cache if collection is empty
-  const { data: cachedMessages } = useQuery<ChatMessage[]>({
-    queryKey: cacheKey,
-    queryFn: () =>
-      trpcClient.chat.getDMHistory.query({ conversationId, limit: 50 }),
-  });
-
-  // Use collection data if available, otherwise fallback to cache
-  const messages =
-    collectionMessages && collectionMessages.length > 0
-      ? collectionMessages
-      : cachedMessages;
 
   const scrollRef = useRef<HTMLDivElement>(null);
 

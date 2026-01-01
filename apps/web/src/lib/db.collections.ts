@@ -498,137 +498,137 @@ export type DMMessage = DMMessages[number];
 // Union type for all chat messages
 export type ChatMessage = ChannelMessage | DMMessage;
 
-// Helper to determine if message is a channel message
-function isChannelMessage(msg: unknown): msg is ChannelMessage {
-  return (
-    typeof msg === "object" &&
-    msg !== null &&
-    "channelId" in msg &&
-    msg.channelId !== undefined
-  );
-}
+// Channel Messages Collection - stores messages for a specific channel
+// Uses tRPC queryKey for proper cache integration
+export function createChannelMessagesCollection(channelId: string) {
+  return createCollection(
+    queryCollectionOptions<ChannelMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getChannelHistory.queryKey({ channelId, limit: 50 }),
+      queryFn: async () => {
+        // Fetch from server using tRPC
+        return trpcClient.chat.getChannelHistory.query({ channelId });
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
 
-// Helper to determine if message is a DM message
-function isDMMessage(msg: unknown): msg is DMMessage {
-  return (
-    typeof msg === "object" &&
-    msg !== null &&
-    "conversationId" in msg &&
-    msg.conversationId !== undefined
-  );
-}
+          if (!modified.channelId) {
+            throw new Error("Channel ID is required for channel messages");
+          }
 
-// Single unified Messages Collection for all chat messages
-export const ChatMessagesCollection = createCollection(
-  queryCollectionOptions<ChatMessage>({
-    queryClient,
-    getKey: (item) => item.id,
-    // Note: no queryFn here; this collection is populated via
-    // subscriptions and manual insertions, so refetches will not
-    // reset existing messages.
-    queryKey: ["chat", "all", "messages"],
-    onInsert: async ({ transaction }) => {
-      try {
-        const { modified } = transaction.mutations[0];
-
-        if (isChannelMessage(modified) && modified.channelId) {
           await trpcClient.chat.postMessage.mutate({
             channelId: modified.channelId,
             message: modified.message,
           });
-        } else if (isDMMessage(modified) && modified.conversationId) {
+        } catch (error) {
+          console.error("Error posting channel message: ", error);
+          toast.error(
+            "An error occurred while posting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
+
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting message: ", error);
+          toast.error(
+            "An error occurred while deleting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing message: ", error);
+          toast.error(
+            "An error occurred while editing the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+    }),
+  );
+}
+
+// DM Messages Collection - stores messages for a specific conversation
+// Uses tRPC queryKey for proper cache integration
+export function createDMMessagesCollection(conversationId: string) {
+  return createCollection(
+    queryCollectionOptions<DMMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getDMHistory.queryKey({ conversationId, limit: 50 }),
+      queryFn: async () => {
+        // Fetch from server using tRPC
+        return trpcClient.chat.getDMHistory.query({ conversationId });
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          if (!modified.conversationId) {
+            throw new Error("Conversation ID is required for DM messages");
+          }
+
           await trpcClient.chat.postDMMessage.mutate({
             conversationId: modified.conversationId,
             message: modified.message,
           });
-        } else {
-          const error = new Error(
-            "Cannot determine message type: missing channelId or conversationId",
-          );
-          console.error("Invalid message type:", modified);
+        } catch (error) {
+          console.error("Error posting DM message: ", error);
           toast.error(
-            "Failed to send message: invalid message type. Please try again.",
+            "An error occurred while posting the message. Please try again.",
           );
           throw error;
         }
-      } catch (error) {
-        console.error("Error posting message: ", error);
-        toast.error(
-          "An error occurred while posting the message. Please try again.",
-        );
-        throw error;
-      }
-    },
-    onDelete: async ({ transaction }) => {
-      try {
-        const { original } = transaction.mutations[0];
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
 
-        await trpcClient.chat.deleteMessage.mutate({
-          id: original.id,
-        });
-      } catch (error) {
-        console.error("Error deleting message: ", error);
-        toast.error(
-          "An error occurred while deleting the message. Please try again.",
-        );
-        throw error;
-      }
-    },
-    onUpdate: async ({ transaction }) => {
-      try {
-        const { modified } = transaction.mutations[0];
-
-        await trpcClient.chat.editMessage.mutate({
-          id: modified.id,
-          message: modified.message,
-        });
-      } catch (error) {
-        console.error("Error editing message: ", error);
-        toast.error(
-          "An error occurred while editing the message. Please try again.",
-        );
-        throw error;
-      }
-    },
-  }),
-);
-
-// Helper functions for channel-specific queries
-export function useChannelMessages({ channelId }: { channelId: string }) {
-  return useLiveQuery(
-    (query) => {
-      return query
-        .from({ message: ChatMessagesCollection })
-        .where(({ message }) => {
-          // Use type guard and verify all required properties
-          return (
-            isChannelMessage(message) &&
-            message.channelId !== undefined &&
-            eq(message.channelId, channelId)
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting message: ", error);
+          toast.error(
+            "An error occurred while deleting the message. Please try again.",
           );
-        })
-        .select(({ message }) => message);
-    },
-    [channelId],
-  );
-}
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
 
-export function useDMMessages({ conversationId }: { conversationId: string }) {
-  return useLiveQuery(
-    (query) => {
-      return query
-        .from({ message: ChatMessagesCollection })
-        .where(({ message }) => {
-          // Use type guard and verify all required properties
-          return (
-            isDMMessage(message) &&
-            message.conversationId !== undefined &&
-            eq(message.conversationId, conversationId)
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing message: ", error);
+          toast.error(
+            "An error occurred while editing the message. Please try again.",
           );
-        })
-        .select(({ message }) => message);
-    },
-    [conversationId],
+          throw error;
+        }
+      },
+    }),
   );
 }
 
