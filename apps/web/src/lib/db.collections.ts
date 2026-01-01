@@ -654,10 +654,36 @@ export const MessageReactionsCollection = createCollection(
       // This will be empty initially and populated as needed
       return [];
     },
-    // Intentionally no onInsert/onDelete handlers here.
-    // Server mutations for toggling reactions should be invoked explicitly
-    // from user interaction handlers to avoid double-toggling when
-    // subscription updates also write into this collection.
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        // Toggle reaction on server - this will add if not present, remove if present
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: modified.messageId,
+          emoji: modified.emoji,
+        });
+      } catch (error) {
+        console.error("Error toggling reaction: ", error);
+        toast.error("Failed to update reaction.");
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        // Toggle reaction on server to remove it
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: original.messageId,
+          emoji: original.emoji,
+        });
+      } catch (error) {
+        console.error("Error removing reaction: ", error);
+        toast.error("Failed to remove reaction.");
+        throw error;
+      }
+    },
   }),
 );
 
@@ -690,6 +716,35 @@ export function aggregateReactions(
     emoji,
     users,
   }));
+}
+
+// Helper to toggle a reaction using the collection
+export function toggleReactionViaCollection({
+  messageId,
+  emoji,
+  userId,
+  userName,
+}: {
+  messageId: string;
+  emoji: string;
+  userId: string;
+  userName: string;
+}) {
+  const reactionId = `${messageId}:${emoji}:${userId}`;
+
+  // Try to remove first (if exists, this will work)
+  try {
+    MessageReactionsCollection.delete(reactionId);
+  } catch {
+    // Doesn't exist, so insert it
+    MessageReactionsCollection.insert({
+      id: reactionId,
+      messageId,
+      emoji,
+      userId,
+      userName,
+    });
+  }
 }
 
 // ========== GDPR Audit Logs ==========

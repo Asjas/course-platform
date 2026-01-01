@@ -20,9 +20,9 @@ import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
 import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
-import { useToggleReaction } from "~/hooks/use-toggle-reaction";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
+import { toggleReactionViaCollection } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
@@ -56,11 +56,21 @@ export default function ChatMessage({
     trpc.chat.editMessage.mutationOptions({ keyPrefix: undefined }),
   );
 
-  // Use the shared hook for toggling reactions
-  const { toggleReaction } = useToggleReaction(channelId);
+  async function handleToggleReaction(emoji: string) {
+    const currentUserId = auth.session?.user.id;
+    const currentUserName = auth.session?.user.name;
 
-  function handleToggleReaction(emoji: string) {
-    toggleReaction(msg.id, emoji);
+    if (!currentUserId || !currentUserName) {
+      toast.error("You must be logged in to react.");
+      return;
+    }
+
+    toggleReactionViaCollection({
+      messageId: msg.id,
+      emoji,
+      userId: currentUserId,
+      userName: currentUserName,
+    });
   }
 
   useEffect(() => {
@@ -297,7 +307,6 @@ export default function ChatMessage({
           {/* Reactions */}
           <MessageReactions
             messageId={msg.id}
-            channelId={channelId}
             reactions={msg.reactions}
             messageAuthor={msg.name}
           />
