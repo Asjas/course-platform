@@ -523,11 +523,10 @@ export const ChatMessagesCollection = createCollection(
   queryCollectionOptions<ChatMessage>({
     queryClient,
     getKey: (item) => item.id,
+    // Note: no queryFn here; this collection is populated via
+    // subscriptions and manual insertions, so refetches will not
+    // reset existing messages.
     queryKey: ["chat", "all", "messages"],
-    queryFn: async () => {
-      // This will be empty initially and populated by subscriptions
-      return [];
-    },
     onInsert: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
