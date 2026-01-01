@@ -1,5 +1,9 @@
 import type { AllGdprAuditLogs } from "@apps/server/src/db/queries/gdprAudit";
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements";
+import type {
+  ChannelMessages,
+  DMMessages,
+} from "@apps/server/src/routers/chat/queries.js";
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
@@ -486,6 +490,261 @@ export const SearchableUsersCollection = createCollection(
 
 export function useSearchableUsers() {
   return useLiveQuery(SearchableUsersCollection);
+}
+
+// Derive single message types from array types
+export type ChannelMessage = ChannelMessages[number];
+export type DMMessage = DMMessages[number];
+
+// Union type for all chat messages
+export type ChatMessage = ChannelMessage | DMMessage;
+
+// Channel Messages Collection - stores messages for a specific channel
+// Uses tRPC queryKey for proper cache integration
+export function createChannelMessagesCollection(channelId: string) {
+  return createCollection(
+    queryCollectionOptions<ChannelMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getChannelHistory.queryKey({ channelId, limit: 50 }),
+      queryFn: async () => {
+        // Fetch from server using tRPC
+        return trpcClient.chat.getChannelHistory.query({ channelId });
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          if (!modified.channelId) {
+            throw new Error("Channel ID is required for channel messages");
+          }
+
+          await trpcClient.chat.postMessage.mutate({
+            channelId: modified.channelId,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error posting channel message: ", error);
+          toast.error(
+            "An error occurred while posting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
+
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting message: ", error);
+          toast.error(
+            "An error occurred while deleting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing message: ", error);
+          toast.error(
+            "An error occurred while editing the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+    }),
+  );
+}
+
+// DM Messages Collection - stores messages for a specific conversation
+// Uses tRPC queryKey for proper cache integration
+export function createDMMessagesCollection(conversationId: string) {
+  return createCollection(
+    queryCollectionOptions<DMMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getDMHistory.queryKey({ conversationId, limit: 50 }),
+      queryFn: async () => {
+        // Fetch from server using tRPC
+        return trpcClient.chat.getDMHistory.query({ conversationId });
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          if (!modified.conversationId) {
+            throw new Error("Conversation ID is required for DM messages");
+          }
+
+          await trpcClient.chat.postDMMessage.mutate({
+            conversationId: modified.conversationId,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error posting DM message: ", error);
+          toast.error(
+            "An error occurred while posting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
+
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting message: ", error);
+          toast.error(
+            "An error occurred while deleting the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing message: ", error);
+          toast.error(
+            "An error occurred while editing the message. Please try again.",
+          );
+          throw error;
+        }
+      },
+    }),
+  );
+}
+
+// ========== Message Reactions ==========
+
+// Individual reaction - flattened structure for collection
+export interface MessageReaction {
+  id: string; // Unique ID: messageId:emoji:userId
+  messageId: string;
+  emoji: string;
+  userId: string;
+  userName: string;
+}
+
+// Message Reactions Collection
+export const MessageReactionsCollection = createCollection(
+  queryCollectionOptions<MessageReaction>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: ["chat", "reactions"],
+    queryFn: async () => {
+      // This will be empty initially and populated as needed
+      return [];
+    },
+    onInsert: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        // Toggle reaction on server - this will add if not present, remove if present
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: modified.messageId,
+          emoji: modified.emoji,
+        });
+      } catch (error) {
+        console.error("Error toggling reaction: ", error);
+        toast.error("Failed to update reaction.");
+        throw error;
+      }
+    },
+    onDelete: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+
+        // Toggle reaction on server to remove it
+        await trpcClient.chat.toggleReaction.mutate({
+          messageId: original.messageId,
+          emoji: original.emoji,
+        });
+      } catch (error) {
+        console.error("Error removing reaction: ", error);
+        toast.error("Failed to remove reaction.");
+        throw error;
+      }
+    },
+  }),
+);
+
+// Helper to get reactions for a specific message
+export function useMessageReactions({ messageId }: { messageId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ reaction: MessageReactionsCollection })
+        .where(({ reaction }) => eq(reaction.messageId, messageId))
+        .select(({ reaction }) => reaction);
+    },
+    [messageId],
+  );
+}
+
+// Helper to aggregate reactions by emoji (for display)
+export function aggregateReactions(
+  reactions: MessageReaction[],
+): { emoji: string; users: { userId: string; userName: string }[] }[] {
+  const grouped = new Map<string, { userId: string; userName: string }[]>();
+
+  for (const reaction of reactions) {
+    const users = grouped.get(reaction.emoji) || [];
+    users.push({ userId: reaction.userId, userName: reaction.userName });
+    grouped.set(reaction.emoji, users);
+  }
+
+  return Array.from(grouped.entries()).map(([emoji, users]) => ({
+    emoji,
+    users,
+  }));
+}
+
+// Helper to toggle a reaction using the collection
+export function toggleReactionViaCollection({
+  messageId,
+  emoji,
+  userId,
+  userName,
+}: {
+  messageId: string;
+  emoji: string;
+  userId: string;
+  userName: string;
+}) {
+  const reactionId = `${messageId}:${emoji}:${userId}`;
+
+  // Try to remove first (if exists, this will work)
+  try {
+    MessageReactionsCollection.delete(reactionId);
+  } catch {
+    // Doesn't exist, so insert it
+    MessageReactionsCollection.insert({
+      id: reactionId,
+      messageId,
+      emoji,
+      userId,
+      userName,
+    });
+  }
 }
 
 // ========== GDPR Audit Logs ==========

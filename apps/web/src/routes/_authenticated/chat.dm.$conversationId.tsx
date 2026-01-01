@@ -1,45 +1,51 @@
-import type { ChatMessage } from "@apps/server/src/routers/chat";
+import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
-import { queryClient } from "~/lib/query.client";
+import {
+  MessageReactionsCollection,
+  createDMMessagesCollection,
+} from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
   {
-    loader: async ({ context, params }) => {
-      const { queryClient } = context;
-      const { conversationId } = params;
+    loader: async ({ params }) => {
+      // Pre-load messages into tRPC cache via queryOptions
+      // The collection will automatically hydrate from this cache
+      await trpcClient.chat.getDMHistory.query({
+        conversationId: params.conversationId,
+        limit: 50,
+      });
 
-      // Fetch conversation details
-      const conversation =
-        await trpcClient.directMessages.getConversation.query({
-          conversationId,
-        });
-
-      // Fetch DM history using tRPC query options pattern
-      await queryClient.fetchQuery(
-        trpc.chat.getDMHistory.queryOptions({ conversationId, limit: 50 }),
-      );
-
-      return { conversation };
+      // Also fetch conversation details
+      await trpcClient.directMessages.getConversation.query({
+        conversationId: params.conversationId,
+      });
     },
-    component: DMChatPage,
+    component: AuthenticatedChatDMPage,
   },
 );
 
-function DMChatPage() {
+function AuthenticatedChatDMPage() {
   const auth = useAuth();
   const { conversationId } = useParams({
     from: "/_authenticated/chat/dm/$conversationId",
   });
-  const cacheKey = ["dm", conversationId] as const;
+
+  // Create DM-specific collection
+  const [dmCollection] = useState(() =>
+    createDMMessagesCollection(conversationId),
+  );
+
+  // Get messages from collection using useLiveQuery
+  const { data: messages } = useLiveQuery(dmCollection);
 
   // Fetch conversation details
   const { data: conversation } = useQuery({
@@ -55,23 +61,59 @@ function DMChatPage() {
         onData: (msg) => {
           const newMessage = msg.data;
 
-          queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-            const map = new Map(prev.map((message) => [message.id, message]));
-            map.set(newMessage.id, newMessage);
+          // Update collection - this will automatically update the cache via collection's queryKey
+          try {
+            dmCollection.insert({
+              ...newMessage,
+              conversationId,
+              reactions: newMessage.reactions || [],
+            });
+          } catch (error) {
+            if (
+              error instanceof Error &&
+              /already exists|duplicate/i.test(error.message)
+            ) {
+              console.debug(
+                "Message already in collection (expected):",
+                newMessage.id,
+              );
+            } else {
+              console.error(
+                "Unexpected error inserting message into collection:",
+                {
+                  messageId: newMessage.id,
+                  conversationId,
+                  error,
+                },
+              );
+            }
+          }
 
-            return Array.from(map.values());
-          });
+          // Update reactions collection if message has reactions
+          if (newMessage.reactions && newMessage.reactions.length > 0) {
+            for (const reactionGroup of newMessage.reactions) {
+              for (const user of reactionGroup.users) {
+                const reactionId = `${newMessage.id}:${reactionGroup.emoji}:${user.userId}`;
+                try {
+                  MessageReactionsCollection.insert({
+                    id: reactionId,
+                    messageId: newMessage.id,
+                    emoji: reactionGroup.emoji,
+                    userId: user.userId,
+                    userName: user.userName,
+                  });
+                } catch {
+                  // Already exists, that's okay
+                  console.debug("Reaction already exists");
+                }
+              }
+            }
+          }
         },
         onError: (err) => console.error("DM subscription error:", err),
       },
     ),
   );
-
-  const { data: cachedMessages } = useQuery<ChatMessage[]>({
-    queryKey: cacheKey,
-    queryFn: () =>
-      trpcClient.chat.getDMHistory.query({ conversationId, limit: 50 }),
-  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -97,22 +139,22 @@ function DMChatPage() {
   }, []);
 
   useEffect(() => {
-    if (cachedMessages && cachedMessages.length > 0 && isNearBottom()) {
+    if (messages && messages.length > 0 && isNearBottom()) {
       requestAnimationFrame(() => {
         scrollToBottom();
       });
     }
-  }, [cachedMessages]);
+  }, [messages]);
 
   const messagesWithDividers = useMemo(() => {
-    if (!cachedMessages || cachedMessages.length === 0) {
+    if (!messages || messages.length === 0) {
       return null;
     }
 
     const elements: React.ReactNode[] = [];
     let lastDate: Date | null = null;
 
-    for (const msg of cachedMessages) {
+    for (const msg of messages) {
       const msgDate = new Date(msg.timestamp);
 
       if (!lastDate || !isSameDay(lastDate, msgDate)) {
@@ -135,7 +177,7 @@ function DMChatPage() {
     }
 
     return elements;
-  }, [cachedMessages, conversationId]);
+  }, [messages, conversationId]);
 
   // Determine the other user's name for the header
   const otherUserName = useMemo(() => {
