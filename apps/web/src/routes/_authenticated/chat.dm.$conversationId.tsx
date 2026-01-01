@@ -8,6 +8,11 @@ import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
+import {
+  ChatMessagesCollection,
+  MessageReactionsCollection,
+  useDMMessages,
+} from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -23,10 +28,46 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
           conversationId,
         });
 
-      // Fetch DM history using tRPC query options pattern
-      await queryClient.fetchQuery(
-        trpc.chat.getDMHistory.queryOptions({ conversationId, limit: 50 }),
+      // Fetch DM history and populate both cache and collection
+      const messages = await trpcClient.chat.getDMHistory.query({
+        conversationId,
+        limit: 50,
+      });
+
+      // Populate TanStack Query cache
+      await queryClient.setQueryData(
+        trpc.chat.getDMHistory.queryKey({ conversationId, limit: 50 }),
+        messages,
       );
+
+      // Populate collection
+      for (const message of messages) {
+        try {
+          ChatMessagesCollection.insert(message);
+
+          // Also populate reactions from the message
+          if (message.reactions && message.reactions.length > 0) {
+            for (const reactionGroup of message.reactions) {
+              for (const user of reactionGroup.users) {
+                const reactionId = `${message.id}:${reactionGroup.emoji}:${user.userId}`;
+                try {
+                  MessageReactionsCollection.insert({
+                    id: reactionId,
+                    messageId: message.id,
+                    emoji: reactionGroup.emoji,
+                    userId: user.userId,
+                    userName: user.userName,
+                  });
+                } catch {
+                  console.debug("Reaction already in collection:", reactionId);
+                }
+              }
+            }
+          }
+        } catch {
+          console.debug("Message already in collection:", message.id);
+        }
+      }
 
       return { conversation };
     },
@@ -55,23 +96,66 @@ function DMChatPage() {
         onData: (msg) => {
           const newMessage = msg.data;
 
+          // Update TanStack Query cache
           queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
             const map = new Map(prev.map((message) => [message.id, message]));
             map.set(newMessage.id, newMessage);
-
             return Array.from(map.values());
           });
+
+          // Update collection
+          try {
+            ChatMessagesCollection.insert({
+              ...newMessage,
+              conversationId,
+              reactions: newMessage.reactions || [],
+            });
+          } catch {
+            // If already exists, skip - the subscription already has the latest
+            console.debug("Could not insert message into collection");
+          }
+
+          // Update reactions collection if message has reactions
+          if (newMessage.reactions && newMessage.reactions.length > 0) {
+            for (const reactionGroup of newMessage.reactions) {
+              for (const user of reactionGroup.users) {
+                const reactionId = `${newMessage.id}:${reactionGroup.emoji}:${user.userId}`;
+                try {
+                  MessageReactionsCollection.insert({
+                    id: reactionId,
+                    messageId: newMessage.id,
+                    emoji: reactionGroup.emoji,
+                    userId: user.userId,
+                    userName: user.userName,
+                  });
+                } catch {
+                  // Already exists, that's okay
+                  console.debug("Reaction already exists");
+                }
+              }
+            }
+          }
         },
         onError: (err) => console.error("DM subscription error:", err),
       },
     ),
   );
 
+  // Use collection data instead of direct cache query
+  const { data: collectionMessages } = useDMMessages({ conversationId });
+
+  // Fallback to cache if collection is empty
   const { data: cachedMessages } = useQuery<ChatMessage[]>({
     queryKey: cacheKey,
     queryFn: () =>
       trpcClient.chat.getDMHistory.query({ conversationId, limit: 50 }),
   });
+
+  // Use collection data if available, otherwise fallback to cache
+  const messages =
+    collectionMessages && collectionMessages.length > 0
+      ? collectionMessages
+      : cachedMessages;
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -97,22 +181,22 @@ function DMChatPage() {
   }, []);
 
   useEffect(() => {
-    if (cachedMessages && cachedMessages.length > 0 && isNearBottom()) {
+    if (messages && messages.length > 0 && isNearBottom()) {
       requestAnimationFrame(() => {
         scrollToBottom();
       });
     }
-  }, [cachedMessages]);
+  }, [messages]);
 
   const messagesWithDividers = useMemo(() => {
-    if (!cachedMessages || cachedMessages.length === 0) {
+    if (!messages || messages.length === 0) {
       return null;
     }
 
     const elements: React.ReactNode[] = [];
     let lastDate: Date | null = null;
 
-    for (const msg of cachedMessages) {
+    for (const msg of messages) {
       const msgDate = new Date(msg.timestamp);
 
       if (!lastDate || !isSameDay(lastDate, msgDate)) {
@@ -135,7 +219,7 @@ function DMChatPage() {
     }
 
     return elements;
-  }, [cachedMessages, conversationId]);
+  }, [messages, conversationId]);
 
   // Determine the other user's name for the header
   const otherUserName = useMemo(() => {

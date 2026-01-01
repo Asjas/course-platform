@@ -7,6 +7,11 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
+import {
+  ChatMessagesCollection,
+  MessageReactionsCollection,
+  useChannelMessages,
+} from "~/lib/db.collections";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -16,10 +21,44 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
     const { channelId } = params;
     const cacheKey = getChannelCacheKey(channelId);
 
-    await queryClient.fetchQuery({
-      queryKey: cacheKey,
-      queryFn: () => trpcClient.chat.getChannelHistory.query({ channelId }),
+    // Fetch messages and populate both cache and collection
+    const messages = await trpcClient.chat.getChannelHistory.query({
+      channelId,
     });
+
+    // Populate TanStack Query cache
+    queryClient.setQueryData(cacheKey, messages);
+
+    // Insert messages and their reactions into collections
+    for (const message of messages) {
+      try {
+        // Use a transaction-like approach to avoid triggering mutations
+        ChatMessagesCollection.insert(message);
+
+        // Also populate reactions from the message
+        if (message.reactions && message.reactions.length > 0) {
+          for (const reactionGroup of message.reactions) {
+            for (const user of reactionGroup.users) {
+              const reactionId = `${message.id}:${reactionGroup.emoji}:${user.userId}`;
+              try {
+                MessageReactionsCollection.insert({
+                  id: reactionId,
+                  messageId: message.id,
+                  emoji: reactionGroup.emoji,
+                  userId: user.userId,
+                  userName: user.userName,
+                });
+              } catch {
+                console.debug("Reaction already in collection:", reactionId);
+              }
+            }
+          }
+        }
+      } catch {
+        // Message might already exist, that's okay
+        console.debug("Message already in collection:", message.id);
+      }
+    }
   },
   component: AuthenticatedChatChannelPage,
 });
@@ -28,6 +67,7 @@ function AuthenticatedChatChannelPage() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
   const cacheKey = getChannelCacheKey(channelId);
 
+  // Subscribe to new messages
   useSubscription(
     trpc.chat.getChannelMessages.subscriptionOptions(
       { channelId },
@@ -36,22 +76,65 @@ function AuthenticatedChatChannelPage() {
         onData: (msg) => {
           const newMessage = msg.data;
 
+          // Update TanStack Query cache
           queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
             const map = new Map(prev.map((message) => [message.id, message]));
             map.set(newMessage.id, newMessage);
-
             return Array.from(map.values());
           });
+
+          // Update collection
+          try {
+            ChatMessagesCollection.insert({
+              ...newMessage,
+              channelId,
+              reactions: newMessage.reactions || [],
+            });
+          } catch {
+            // If already exists, skip - the subscription already has the latest
+            console.debug("Could not insert message into collection");
+          }
+
+          // Update reactions collection if message has reactions
+          if (newMessage.reactions && newMessage.reactions.length > 0) {
+            for (const reactionGroup of newMessage.reactions) {
+              for (const user of reactionGroup.users) {
+                const reactionId = `${newMessage.id}:${reactionGroup.emoji}:${user.userId}`;
+                try {
+                  MessageReactionsCollection.insert({
+                    id: reactionId,
+                    messageId: newMessage.id,
+                    emoji: reactionGroup.emoji,
+                    userId: user.userId,
+                    userName: user.userName,
+                  });
+                } catch {
+                  // Already exists, that's okay
+                  console.debug("Reaction already exists");
+                }
+              }
+            }
+          }
         },
         onError: (err) => console.error("Subscription error:", err),
       },
     ),
   );
 
+  // Use collection data instead of direct cache query
+  const { data: collectionMessages } = useChannelMessages({ channelId });
+
+  // Fallback to cache if collection is empty
   const { data: cachedMessages } = useQuery<ChatMessage[]>({
     queryKey: cacheKey,
     queryFn: () => trpcClient.chat.getChannelHistory.query({ channelId }),
   });
+
+  // Use collection data if available, otherwise fallback to cache
+  const messages =
+    collectionMessages && collectionMessages.length > 0
+      ? collectionMessages
+      : cachedMessages;
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -79,23 +162,23 @@ function AuthenticatedChatChannelPage() {
 
   // Scroll when new messages arrive (only if already near bottom)
   useEffect(() => {
-    if (cachedMessages && cachedMessages.length > 0 && isNearBottom()) {
+    if (messages && messages.length > 0 && isNearBottom()) {
       requestAnimationFrame(() => {
         scrollToBottom();
       });
     }
-  }, [cachedMessages]);
+  }, [messages]);
 
   // Memoize messages with date dividers to avoid recreation on every render
   const messagesWithDividers = useMemo(() => {
-    if (!cachedMessages || cachedMessages.length === 0) {
+    if (!messages || messages.length === 0) {
       return null;
     }
 
     const elements: React.ReactNode[] = [];
     let lastDate: Date | null = null;
 
-    for (const msg of cachedMessages) {
+    for (const msg of messages) {
       const msgDate = new Date(msg.timestamp);
 
       // Check if we need a date divider
@@ -119,7 +202,7 @@ function AuthenticatedChatChannelPage() {
     }
 
     return elements;
-  }, [cachedMessages, channelId]);
+  }, [messages, channelId]);
 
   return (
     <div className="grid-container">
@@ -133,7 +216,7 @@ function AuthenticatedChatChannelPage() {
         role="log"
         aria-label={`${channelId} channel messages`}
       >
-        {!cachedMessages || cachedMessages.length === 0 ? (
+        {!messages || messages.length === 0 ? (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm text-gray-500">
               No messages yet. Start the conversation!
