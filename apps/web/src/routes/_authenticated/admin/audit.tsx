@@ -34,7 +34,7 @@ function AdminAuditPage() {
   const [selectedLog, setSelectedLog] = useState<GdprAuditLog | null>(null);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
 
-  const { data: gdprLogs, isLoading } = useGdprAuditLogs(100, 0);
+  const { data: gdprLogs, isLoading } = useGdprAuditLogs();
 
   function handleViewLog(log: GdprAuditLog) {
     setSelectedLog(log);
