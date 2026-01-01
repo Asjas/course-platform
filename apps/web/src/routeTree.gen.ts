@@ -23,6 +23,7 @@ import { Route as SupportCreateTicketRouteImport } from "./routes/support/create
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
+import { Route as AuthenticatedDataExportRouteImport } from "./routes/_authenticated/data-export"
 import { Route as AuthenticatedDashboardRouteImport } from "./routes/_authenticated/dashboard"
 import { Route as AuthenticatedChatRouteImport } from "./routes/_authenticated/chat"
 import { Route as AuthenticatedAccountRouteImport } from "./routes/_authenticated/account"
@@ -123,6 +124,11 @@ const AuthenticatedPurchasesRoute = AuthenticatedPurchasesRouteImport.update({
 const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   id: "/profile",
   path: "/profile",
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDataExportRoute = AuthenticatedDataExportRouteImport.update({
+  id: "/data-export",
+  path: "/data-export",
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -327,6 +333,7 @@ export interface FileRoutesByFullPath {
   "/account": typeof AuthenticatedAccountRoute
   "/chat": typeof AuthenticatedChatRouteWithChildren
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/data-export": typeof AuthenticatedDataExportRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   "/account": typeof AuthenticatedAccountRoute
   "/chat": typeof AuthenticatedChatRouteWithChildren
   "/dashboard": typeof AuthenticatedDashboardRoute
+  "/data-export": typeof AuthenticatedDataExportRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -420,6 +428,7 @@ export interface FileRoutesById {
   "/_authenticated/account": typeof AuthenticatedAccountRoute
   "/_authenticated/chat": typeof AuthenticatedChatRouteWithChildren
   "/_authenticated/dashboard": typeof AuthenticatedDashboardRoute
+  "/_authenticated/data-export": typeof AuthenticatedDataExportRoute
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
   "/blog/$slug": typeof BlogSlugRoute
@@ -469,6 +478,7 @@ export interface FileRouteTypes {
     | "/account"
     | "/chat"
     | "/dashboard"
+    | "/data-export"
     | "/profile"
     | "/purchases"
     | "/blog/$slug"
@@ -514,6 +524,7 @@ export interface FileRouteTypes {
     | "/account"
     | "/chat"
     | "/dashboard"
+    | "/data-export"
     | "/profile"
     | "/purchases"
     | "/blog/$slug"
@@ -561,6 +572,7 @@ export interface FileRouteTypes {
     | "/_authenticated/account"
     | "/_authenticated/chat"
     | "/_authenticated/dashboard"
+    | "/_authenticated/data-export"
     | "/_authenticated/profile"
     | "/_authenticated/purchases"
     | "/blog/$slug"
@@ -706,6 +718,13 @@ declare module "@tanstack/react-router" {
       path: "/profile"
       fullPath: "/profile"
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    "/_authenticated/data-export": {
+      id: "/_authenticated/data-export"
+      path: "/data-export"
+      fullPath: "/data-export"
+      preLoaderRoute: typeof AuthenticatedDataExportRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     "/_authenticated/dashboard": {
@@ -1050,6 +1069,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedChatRoute: typeof AuthenticatedChatRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedDataExportRoute: typeof AuthenticatedDataExportRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
   AuthenticatedCoursesCourseIdRoute: typeof AuthenticatedCoursesCourseIdRouteWithChildren
@@ -1060,6 +1080,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedChatRoute: AuthenticatedChatRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedDataExportRoute: AuthenticatedDataExportRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,
   AuthenticatedCoursesCourseIdRoute:

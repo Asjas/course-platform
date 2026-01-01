@@ -5,6 +5,7 @@ import { chatRouter } from "~/routers/chat/index.js";
 import { chatReportsRouter } from "~/routers/chatReports/index.js";
 import { couponsRouter } from "~/routers/coupons/index.js";
 import { coursesRouter } from "~/routers/courses/index.js";
+import { dataExportRouter } from "~/routers/dataExport/index.js";
 import { directMessagesRouter } from "~/routers/directMessages/index.js";
 import { notificationsRouter } from "~/routers/notifications/index.js";
 import { reviewsRouter } from "~/routers/reviews/index.js";
@@ -17,6 +18,7 @@ export const appRouter = router({
   announcements: announcementsRouter,
   coupons: couponsRouter,
   courses: coursesRouter,
+  dataExport: dataExportRouter,
   images: imagesRouter,
   notifications: notificationsRouter,
   reviews: reviewsRouter,
