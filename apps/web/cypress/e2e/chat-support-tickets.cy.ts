@@ -22,8 +22,8 @@ describe("Chat Support Ticket Management", () => {
     // Should be on a course-specific support page
     cy.url().should("include", "/chat/support/");
 
-    // Click the "Create new ticket" button
-    cy.contains("button", "Create new ticket").click();
+    // Click the "Create new ticket" control
+    cy.contains("Create new ticket").click();
 
     // Should navigate to the embedded create route
     cy.url().should("include", "/chat/support/new");
