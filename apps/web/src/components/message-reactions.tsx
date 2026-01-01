@@ -1,12 +1,12 @@
 import type { Reaction } from "@apps/server/src/routers/chat";
 import { Tooltip, TooltipTrigger } from "react-aria-components";
+import { toast } from "sonner";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
-import { useToggleReaction } from "~/hooks/use-toggle-reaction";
 import { useAuth } from "~/lib/auth.context";
+import { toggleReactionViaCollection } from "~/lib/db.collections";
 
 interface MessageReactionsProps {
   messageId: string;
-  channelId: string;
   reactions?: Reaction[];
   /**
    * Name of the message author for accessible aria-label.
@@ -16,18 +16,25 @@ interface MessageReactionsProps {
 
 export function MessageReactions({
   messageId,
-  channelId,
   reactions = [],
   messageAuthor,
 }: MessageReactionsProps) {
   const auth = useAuth();
   const currentUserId = auth.session?.user.id;
+  const currentUserName = auth.session?.user.name;
 
-  // Use the shared hook for toggling reactions
-  const { toggleReaction } = useToggleReaction(channelId);
+  async function handleToggleReaction(emoji: string) {
+    if (!currentUserId || !currentUserName) {
+      toast.error("You must be logged in to react.");
+      return;
+    }
 
-  function handleToggleReaction(emoji: string) {
-    toggleReaction(messageId, emoji);
+    toggleReactionViaCollection({
+      messageId,
+      emoji,
+      userId: currentUserId,
+      userName: currentUserName,
+    });
   }
 
   // Check if the current user has reacted with a specific emoji

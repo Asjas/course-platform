@@ -1,28 +1,36 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
-import { useMutation } from "@tanstack/react-query";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "~/lib/auth.context";
 import { getChannelCacheKey, queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
+import { trpcClient } from "~/lib/trpc.client";
 
 /**
  * Custom hook for toggling emoji reactions on chat messages.
- * Centralizes the mutation and cache update logic to avoid duplication.
+ * Reactions are managed through the collection mutation handlers.
  */
 export function useToggleReaction(channelId: string) {
-  const toggleReactionMutation = useMutation(
-    trpc.chat.toggleReaction.mutationOptions({ keyPrefix: undefined }),
-  );
+  const auth = useAuth();
+  const currentUserId = auth.session?.user.id;
+  const currentUserName = auth.session?.user.name;
+  const [isLoading, setIsLoading] = useState(false);
 
   const toggleReaction = useCallback(
     async (messageId: string, emoji: string) => {
+      if (!currentUserId || !currentUserName) {
+        toast.error("You must be logged in to react.");
+        return;
+      }
+
+      setIsLoading(true);
       try {
-        const result = await toggleReactionMutation.mutateAsync({
+        // Call the mutation which handles the toggle logic
+        const result = await trpcClient.chat.toggleReaction.mutate({
           messageId,
           emoji,
         });
 
-        // Update the message in the cache with the new reactions
+        // Update the message cache with the new reactions
         const cacheKey = getChannelCacheKey(channelId);
         queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
           return prev.map((message) =>
@@ -34,13 +42,15 @@ export function useToggleReaction(channelId: string) {
       } catch (error) {
         console.error("Error toggling reaction:", error);
         toast.error("Failed to update reaction.");
+      } finally {
+        setIsLoading(false);
       }
     },
-    [channelId, toggleReactionMutation],
+    [channelId, currentUserId, currentUserName],
   );
 
   return {
     toggleReaction,
-    isLoading: toggleReactionMutation.isPending,
+    isLoading,
   };
 }
