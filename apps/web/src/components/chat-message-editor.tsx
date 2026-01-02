@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@packages/shared-ui/components/tooltip";
 import { useMutation } from "@tanstack/react-query";
 import {
   AtSignIcon,
@@ -28,6 +33,7 @@ import {
 import {
   generateAttachmentMarkdown,
   getAcceptString,
+  getSupportedFileTypesDescription,
   validateFile,
 } from "~/lib/attachments";
 import { trpc } from "~/lib/trpc.client";
@@ -400,18 +406,31 @@ export default function ChatMessageEditor({
           aria-label="Formatting tools"
         >
           {/* Action Bar */}
-          <button
-            className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
-            type="button"
-            aria-label="Upload attachment"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingCount > 0}
-          >
-            <PlusCircleIcon
-              size={16}
-              aria-hidden="true"
-            />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+                type="button"
+                aria-label="Upload attachment"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploadingCount > 0}
+              >
+                <PlusCircleIcon
+                  size={16}
+                  aria-hidden="true"
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              className="max-w-xs text-left whitespace-pre-line"
+              side="top"
+            >
+              <p className="font-semibold">Supported file types:</p>
+              <p className="mt-1 text-xs opacity-90">
+                {getSupportedFileTypesDescription()}
+              </p>
+            </TooltipContent>
+          </Tooltip>
           <button
             className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
             type="button"

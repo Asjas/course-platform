@@ -1,9 +1,15 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@packages/shared-ui/components/tooltip";
 import { useMutation } from "@tanstack/react-query";
 import {
   AtSignIcon,
   BoldIcon,
   CodeIcon,
   HeadingIcon,
+  InfoIcon,
   ItalicIcon,
   LinkIcon,
   ListIcon,
@@ -19,6 +25,7 @@ import {
 import {
   generateAttachmentMarkdown,
   getAcceptString,
+  getSupportedFileTypesDescription,
   validateFile,
 } from "~/lib/attachments";
 import { renderMarkdown } from "~/lib/markdown";
@@ -1068,7 +1075,7 @@ export default function GitHubMessageEditor({
       )}
 
       {/* Markdown Help (GitHub-style) */}
-      <div className="col-span-full flex justify-between gap-4 border-t border-gray-300 bg-gray-200 px-3 py-2 text-xs text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+      <div className="col-span-full flex items-center justify-between gap-4 border-t border-gray-300 bg-gray-200 px-3 py-2 text-xs text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
         <label className="relative inline-block w-full cursor-pointer hover:underline">
           {/* Hidden native file input */}
           <input
@@ -1087,7 +1094,31 @@ export default function GitHubMessageEditor({
               : "Paste, drop, or click to add files."}
           </span>
         </label>
-        <span>
+        <div className="flex items-center gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                className="flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                type="button"
+                aria-label="View supported file types"
+              >
+                <InfoIcon
+                  size={14}
+                  aria-hidden="true"
+                />
+                <span className="hidden sm:inline">Supported types</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent
+              className="max-w-xs text-left whitespace-pre-line"
+              side="top"
+            >
+              <p className="font-semibold">Supported file types:</p>
+              <p className="mt-1 text-xs opacity-90">
+                {getSupportedFileTypesDescription()}
+              </p>
+            </TooltipContent>
+          </Tooltip>
           <a
             className="text-gray-900 hover:text-green-600 dark:text-white"
             target="_blank"
@@ -1105,7 +1136,7 @@ export default function GitHubMessageEditor({
               <path d="M14.85 3c.63 0 1.15.52 1.14 1.15v7.7c0 .63-.51 1.15-1.15 1.15H1.15C.52 13 0 12.48 0 11.84V4.15C0 3.52.52 3 1.15 3ZM9 11V5H7L5.5 7 4 5H2v6h2V8l1.5 1.92L7 8v3Zm2.99.5L14.5 8H13V5h-2v3H9.5Z"></path>
             </svg>
           </a>
-        </span>
+        </div>
       </div>
 
       {mentionContext && (

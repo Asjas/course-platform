@@ -387,7 +387,8 @@ export function validateFile(file: File): string | null {
 
   // Check if file type is supported
   if (!config) {
-    return `File type ".${ext}" is not supported. Supported types: ${getAllowedExtensions().join(", ")}`;
+    const supported = getSupportedExtensionsList();
+    return `File type ".${ext}" is not supported.\n\nSupported types: ${supported}`;
   }
 
   // Check file size
@@ -406,6 +407,54 @@ export function validateFile(file: File): string | null {
  */
 export function getAllowedExtensions(): string[] {
   return [...new Set(SUPPORTED_FILE_TYPES.map((ft) => `.${ft.extension}`))];
+}
+
+/**
+ * Get a human-readable list of supported file extensions grouped by category
+ */
+export function getSupportedFileTypesDescription(): string {
+  const categories = {
+    image: [] as string[],
+    video: [] as string[],
+    document: [] as string[],
+    archive: [] as string[],
+    text: [] as string[],
+  };
+
+  for (const ft of SUPPORTED_FILE_TYPES) {
+    if (ft.category !== "unknown") {
+      categories[ft.category].push(`.${ft.extension}`);
+    }
+  }
+
+  const parts: string[] = [];
+  if (categories.image.length > 0) {
+    parts.push(`Images: ${[...new Set(categories.image)].join(", ")}`);
+  }
+  if (categories.video.length > 0) {
+    parts.push(`Videos: ${[...new Set(categories.video)].join(", ")}`);
+  }
+  if (categories.document.length > 0) {
+    parts.push(`Documents: ${[...new Set(categories.document)].join(", ")}`);
+  }
+  if (categories.archive.length > 0) {
+    parts.push(`Archives: ${[...new Set(categories.archive)].join(", ")}`);
+  }
+  if (categories.text.length > 0) {
+    parts.push(`Text: ${[...new Set(categories.text)].join(", ")}`);
+  }
+
+  return parts.join("\n");
+}
+
+/**
+ * Get a short comma-separated list of all supported extensions
+ */
+export function getSupportedExtensionsList(): string {
+  const extensions = [
+    ...new Set(SUPPORTED_FILE_TYPES.map((ft) => ft.extension)),
+  ];
+  return extensions.join(", ");
 }
 
 /**
