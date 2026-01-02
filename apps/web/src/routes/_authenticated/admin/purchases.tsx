@@ -88,7 +88,7 @@ function AdminPurchasesPage() {
   const totalRefunded = purchases.reduce((sum, p) => sum + p.refundedAmount, 0);
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="mb-15 flex h-full flex-col">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-lg font-semibold text-gray-900 md:text-3xl dark:text-white">

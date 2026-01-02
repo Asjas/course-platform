@@ -39,6 +39,11 @@ export async function refundOrder({
   reason?: RefundReason;
   comment?: string;
 }): Promise<RefundResult> {
+  // Check if access token is configured
+  if (!config.POLAR_ACCESS_TOKEN) {
+    throw new Error("POLAR_ACCESS_TOKEN not configured");
+  }
+
   try {
     // First get the order to know the amount
     const order = await getPurchaseById(orderId);
@@ -71,6 +76,17 @@ export async function refundOrder({
       currency: refund.currency,
     };
   } catch (err) {
+    // Provide clearer error message for connection issues
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    if (
+      errorMessage.includes("ENOTFOUND") ||
+      errorMessage.includes("fetch failed")
+    ) {
+      log.error("Polar API unreachable, cannot process refund");
+      throw new Error(
+        "Polar API is currently unreachable. Please try again later.",
+      );
+    }
     log.error(err, `Failed to refund order ${orderId}`);
     throw err;
   }

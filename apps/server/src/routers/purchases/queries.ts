@@ -134,7 +134,9 @@ function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
 export async function getAllPurchases(): Promise<AllPurchases> {
   // Skip API call if no access token is configured
   if (!config.POLAR_ACCESS_TOKEN) {
-    log.warn("POLAR_ACCESS_TOKEN not configured, returning empty purchases list");
+    log.warn(
+      "POLAR_ACCESS_TOKEN not configured, returning empty purchases list",
+    );
     return [];
   }
 
@@ -166,7 +168,10 @@ export async function getAllPurchases(): Promise<AllPurchases> {
   } catch (err) {
     // Return empty array on connection errors (e.g., sandbox API unreachable)
     const errorMessage = err instanceof Error ? err.message : String(err);
-    if (errorMessage.includes("ENOTFOUND") || errorMessage.includes("fetch failed")) {
+    if (
+      errorMessage.includes("ENOTFOUND") ||
+      errorMessage.includes("fetch failed")
+    ) {
       log.warn("Polar API unreachable, returning empty purchases list");
       return [];
     }
@@ -178,10 +183,25 @@ export async function getAllPurchases(): Promise<AllPurchases> {
 export async function getPurchaseById(
   orderId: string,
 ): Promise<PolarOrderResponse | null> {
+  // Skip API call if no access token is configured
+  if (!config.POLAR_ACCESS_TOKEN) {
+    log.warn("POLAR_ACCESS_TOKEN not configured");
+    return null;
+  }
+
   try {
     const order = await polarClient.orders.get({ id: orderId });
     return mapOrderToResponse(order);
   } catch (err) {
+    // Return null on connection errors (e.g., sandbox API unreachable)
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    if (
+      errorMessage.includes("ENOTFOUND") ||
+      errorMessage.includes("fetch failed")
+    ) {
+      log.warn(`Polar API unreachable, cannot fetch order ${orderId}`);
+      return null;
+    }
     log.error(err, `Failed to fetch order ${orderId} from Polar`);
     return null;
   }
