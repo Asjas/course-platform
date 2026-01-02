@@ -548,7 +548,13 @@ export function createChannelMessagesCollection(channelId: string) {
       },
       onUpdate: async ({ transaction }) => {
         try {
-          const { modified } = transaction.mutations[0];
+          const { original, modified } = transaction.mutations[0];
+
+          // Skip editMessage call if only reactions changed (not the message text)
+          // Reactions are synced separately via toggleReaction endpoint
+          if (original.message === modified.message) {
+            return;
+          }
 
           await trpcClient.chat.editMessage.mutate({
             id: modified.id,
@@ -615,7 +621,13 @@ export function createDMMessagesCollection(conversationId: string) {
       },
       onUpdate: async ({ transaction }) => {
         try {
-          const { modified } = transaction.mutations[0];
+          const { original, modified } = transaction.mutations[0];
+
+          // Skip editMessage call if only reactions changed (not the message text)
+          // Reactions are synced separately via toggleReaction endpoint
+          if (original.message === modified.message) {
+            return;
+          }
 
           await trpcClient.chat.editMessage.mutate({
             id: modified.id,
