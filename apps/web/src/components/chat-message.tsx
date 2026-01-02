@@ -358,7 +358,7 @@ export default function ChatMessage({
             </MenuButton>
 
             <Popover className="z-50">
-              <Menu className="min-w-[140px] rounded-md border border-gray-200 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
+              <Menu className="min-w-35 rounded-md border border-gray-200 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
                 {auth.session?.user.name === msg.name ||
                 auth.hasRole("admin") ? (
                   <MenuItem

@@ -207,7 +207,7 @@ function AdminAuditPage() {
                   <h3 className="text-sm font-medium text-red-900 dark:text-red-400">
                     Error Message
                   </h3>
-                  <p className="mt-1 text-sm break-words text-red-600 dark:text-red-400">
+                  <p className="mt-1 text-sm wrap-break-word text-red-600 dark:text-red-400">
                     {selectedLog.errorMessage}
                   </p>
                 </div>

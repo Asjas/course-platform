@@ -1013,7 +1013,7 @@ export default function GitHubMessageEditor({
           <div className="bg-gray-100 p-2 dark:bg-gray-900">
             <textarea
               className={cn(
-                "size-to-fit block min-h-[180px] w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
+                "size-to-fit block min-h-45 w-full resize-y rounded-sm bg-white p-4 text-sm text-gray-900",
                 "focus:ring-1 focus:ring-green-500 focus:outline-none",
                 "dark:bg-gray-900 dark:text-white",
                 "placeholder-gray-500 dark:placeholder-gray-400",
@@ -1061,7 +1061,7 @@ export default function GitHubMessageEditor({
           <div className="absolute top-2 right-2"></div>
         </div>
       ) : (
-        <div className="custom-scrollbar min-h-[180px] overflow-auto bg-white dark:bg-gray-900">
+        <div className="custom-scrollbar min-h-45 overflow-auto bg-white dark:bg-gray-900">
           <div
             className={cn(
               "min-w-fit text-base",

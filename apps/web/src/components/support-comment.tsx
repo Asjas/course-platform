@@ -104,7 +104,7 @@ export default function SupportComment({
               </MenuButton>
 
               <Popover className="z-50">
-                <Menu className="min-w-[120px] rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
+                <Menu className="min-w-30 rounded-md border border-gray-300 bg-white p-1 text-sm shadow-lg dark:border-gray-700 dark:bg-gray-800">
                   <MenuItem
                     className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
                     onAction={handleEdit}
