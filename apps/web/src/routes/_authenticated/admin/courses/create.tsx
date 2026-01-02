@@ -382,7 +382,7 @@ function CreateCoursePage() {
 
         {/* Right Column - Preview */}
         <aside
-          className="custom-scrollbar w-96 flex-shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900"
+          className="custom-scrollbar w-96 shrink-0 overflow-y-auto border-l border-gray-200 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-900"
           aria-label="Course structure preview"
         >
           <h2 className="mb-4 text-sm font-semibold tracking-wide text-gray-700 uppercase dark:text-gray-300">

@@ -149,7 +149,7 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
                 >
                   <div className="flex items-start gap-3">
                     <Icon
-                      className={`mt-0.5 h-5 w-5 flex-shrink-0 ${
+                      className={`mt-0.5 h-5 w-5 shrink-0 ${
                         announcementIconColors[announcement.type]
                       }`}
                     />
@@ -169,7 +169,7 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
                       )}
                     </div>
                     <button
-                      className="flex-shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
+                      className="shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                       onClick={() => handleDismiss(announcement.id)}
                       disabled={markAsReadMutation.isPending}
                       aria-label="Dismiss announcement"
@@ -194,7 +194,7 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
                 key={announcement.id}
               >
                 <div className="flex items-start gap-3">
-                  <Icon className="mt-0.5 h-5 w-5 flex-shrink-0 text-gray-400" />
+                  <Icon className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {announcement.title}

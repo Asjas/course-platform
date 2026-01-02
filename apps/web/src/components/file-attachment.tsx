@@ -133,7 +133,7 @@ export function FileAttachment({
       )}
     >
       {/* File icon */}
-      <div className="flex-shrink-0">
+      <div className="shrink-0">
         <FileTypeIcon
           className="size-8 text-gray-500 dark:text-gray-400"
           iconName={info.icon}
@@ -158,7 +158,7 @@ export function FileAttachment({
 
       {/* Download button */}
       <button
-        className="flex-shrink-0 rounded-md p-2 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+        className="shrink-0 rounded-md p-2 text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
         type="button"
         onClick={handleDownload}
         aria-label={`Download ${filename}`}
