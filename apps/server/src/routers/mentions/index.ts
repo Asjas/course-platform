@@ -33,7 +33,7 @@ export const mentionsRouter = router({
   getChannelMentions: publicProcedure
     .input(z.object({ channelId: z.string() }))
     .use(isAuthenticated)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<MentionableUser[]> => {
       const currentUserId = ctx.user.id;
 
       // Try to get members from Redis first
@@ -45,7 +45,7 @@ export const mentionsRouter = router({
         const memberIds = cachedMemberIds.filter((id) => id !== currentUserId);
 
         if (memberIds.length === 0) {
-          return [] as MentionableUser[];
+          return [];
         }
 
         // Fetch user details from DB
@@ -61,7 +61,7 @@ export const mentionsRouter = router({
           orderBy: [asc(user.name)],
         });
 
-        return users as MentionableUser[];
+        return users;
       }
 
       // Fallback: If no cached members, return all users except ghost and current user
@@ -78,7 +78,7 @@ export const mentionsRouter = router({
         orderBy: [asc(user.name)],
       });
 
-      return users as MentionableUser[];
+      return users;
     }),
 
   /**
@@ -88,7 +88,7 @@ export const mentionsRouter = router({
   getDMMentions: publicProcedure
     .input(z.object({ conversationId: z.string() }))
     .use(isAuthenticated)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<MentionableUser[]> => {
       const currentUserId = ctx.user.id;
 
       // Get the conversation to find the other user
@@ -117,7 +117,7 @@ export const mentionsRouter = router({
       });
 
       if (!conversation) {
-        return [] as MentionableUser[];
+        return [];
       }
 
       // Return the other user (not the current user)
@@ -126,7 +126,7 @@ export const mentionsRouter = router({
           ? conversation.user2
           : conversation.user1;
 
-      return [otherUser] as MentionableUser[];
+      return [otherUser];
     }),
 
   /**
@@ -137,7 +137,7 @@ export const mentionsRouter = router({
   getSupportTicketMentions: publicProcedure
     .input(z.object({ ticketId: z.string() }))
     .use(isAuthenticated)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx, input }): Promise<MentionableUser[]> => {
       const currentUserId = ctx.user.id;
       const isUserAdmin = ctx.user.role === "admin";
 
@@ -163,7 +163,7 @@ export const mentionsRouter = router({
       });
 
       if (!ticket) {
-        return [] as MentionableUser[];
+        return [];
       }
 
       // Collect unique user IDs from ticket creator and commenters
@@ -191,7 +191,7 @@ export const mentionsRouter = router({
       }
 
       if (userIds.size === 0) {
-        return [] as MentionableUser[];
+        return [];
       }
 
       // Fetch user details
@@ -207,7 +207,7 @@ export const mentionsRouter = router({
         orderBy: [asc(user.name)],
       });
 
-      return users as MentionableUser[];
+      return users;
     }),
 
   /**
@@ -217,7 +217,7 @@ export const mentionsRouter = router({
   joinChannel: publicProcedure
     .input(z.object({ channelId: z.string() }))
     .use(isAuthenticated)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }): Promise<{ success: boolean }> => {
       const userId = ctx.user.id;
       const membersKey = getChannelMembersKey(input.channelId);
 
@@ -236,7 +236,7 @@ export const mentionsRouter = router({
   leaveChannel: publicProcedure
     .input(z.object({ channelId: z.string() }))
     .use(isAuthenticated)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }): Promise<{ success: boolean }> => {
       const userId = ctx.user.id;
       const membersKey = getChannelMembersKey(input.channelId);
 
