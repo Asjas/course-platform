@@ -70,7 +70,7 @@ function DataExportPage() {
   }
 
   return (
-    <div className="mx-auto mt-20 w-full max-w-7xl px-4 md:px-6 lg:px-8">
+    <div className="mx-auto mt-20 mb-20 w-full max-w-7xl px-4 md:px-6 lg:px-8">
       <h1 className="text-2xl/9 font-semibold text-gray-900 dark:text-white">
         Download My Data
       </h1>
@@ -101,7 +101,7 @@ function DataExportPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           <button
-            className="flex items-center justify-center gap-2 rounded-lg border-2 border-green-600 bg-green-50 px-6 py-4 text-green-700 transition-colors hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-green-600 bg-green-50 px-6 py-4 text-green-700 transition-colors hover:bg-green-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/30"
             disabled={isExporting}
             onClick={() => handleExport("json")}
             aria-busy={isExporting}
@@ -127,7 +127,7 @@ function DataExportPage() {
           </button>
 
           <button
-            className="flex items-center justify-center gap-2 rounded-lg border-2 border-blue-600 bg-blue-50 px-6 py-4 text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-blue-600 bg-blue-50 px-6 py-4 text-blue-700 transition-colors hover:bg-blue-100 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/30"
             disabled={isExporting}
             onClick={() => handleExport("csv")}
             aria-busy={isExporting}
