@@ -668,3 +668,53 @@ export const GdprAuditLogsCollection = createCollection(
 export function useGdprAuditLogs() {
   return useLiveQuery(GdprAuditLogsCollection);
 }
+
+// ========== Message Reactions ==========
+
+// Type for reactions from the server
+export type MessageReaction = Awaited<
+  ReturnType<typeof trpcClient.chat.getMessageReactions.query>
+>[number];
+
+/**
+ * Hook to fetch and manage reactions for a specific message.
+ * Reactions are stored separately from messages to avoid the "edited" indicator
+ * appearing when reactions are added/removed.
+ */
+export function useMessageReactions({ messageId }: { messageId: string }) {
+  return useQuery({
+    ...trpc.chat.getMessageReactions.queryOptions({ messageId }),
+    staleTime: 30_000, // 30 seconds - reactions don't change that frequently
+  });
+}
+
+/**
+ * Toggle a reaction on a message and invalidate the reactions cache.
+ * This function handles both the server call and cache invalidation.
+ */
+export async function toggleMessageReaction({
+  messageId,
+  emoji,
+}: {
+  messageId: string;
+  emoji: string;
+}) {
+  try {
+    // Call the server to toggle the reaction
+    const updatedReactions = await trpcClient.chat.toggleReaction.mutate({
+      messageId,
+      emoji,
+    });
+
+    // Invalidate the reactions query to refetch fresh data
+    await queryClient.invalidateQueries({
+      queryKey: trpc.chat.getMessageReactions.queryKey({ messageId }),
+    });
+
+    return updatedReactions;
+  } catch (error) {
+    console.error("Error toggling reaction:", error);
+    toast.error("Failed to update reaction. Please try again.");
+    throw error;
+  }
+}
