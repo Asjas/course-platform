@@ -1,7 +1,15 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { CircleIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import {
+  CircleIcon,
+  CloudIcon,
+  CloudOffIcon,
+  MenuIcon,
+  RefreshCwIcon,
+  UserIcon,
+  XIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { Button as MenuButton, MenuTrigger } from "react-aria-components";
 import { toast } from "sonner";
@@ -26,6 +34,24 @@ export default function Header({ auth }: { auth: AuthState }) {
     ...trpc.supportStatus.getMyStatus.queryOptions(),
     enabled: isAdmin,
   });
+
+  // Fetch sync statuses for authenticated users
+  const { data: syncStatuses } = useQuery({
+    ...trpc.syncStatus.getAll.queryOptions(),
+    enabled: auth.isAuthenticated,
+  });
+
+  // Compute overall sync status
+  const hasSyncIssues =
+    syncStatuses?.some(
+      (s) =>
+        s.syncState === "error" ||
+        s.syncState === "offline" ||
+        !s.isOnline ||
+        s.pendingUpdates > 0,
+    ) ?? false;
+  const isSyncing =
+    syncStatuses?.some((s) => s.syncState === "syncing") ?? false;
 
   // Mutation for setting status
   const setStatusMutation = useMutation({
@@ -166,6 +192,38 @@ export default function Header({ auth }: { auth: AuthState }) {
         </div>
 
         <div className="flex flex-1 items-center justify-end gap-2">
+          {/* Sync Status Icon - leftmost, only shown when there are issues */}
+          {auth.isAuthenticated && (hasSyncIssues || isSyncing) && (
+            <Link
+              className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-gray-800 dark:hover:text-gray-300"
+              to="/sync-status"
+              aria-label={
+                isSyncing
+                  ? "Syncing data..."
+                  : hasSyncIssues
+                    ? "Sync issues detected"
+                    : "Sync status"
+              }
+            >
+              {isSyncing ? (
+                <RefreshCwIcon
+                  className="h-5 w-5 animate-spin text-blue-500"
+                  aria-hidden="true"
+                />
+              ) : hasSyncIssues ? (
+                <CloudOffIcon
+                  className="h-5 w-5 text-yellow-500"
+                  aria-hidden="true"
+                />
+              ) : (
+                <CloudIcon
+                  className="h-5 w-5 text-green-500"
+                  aria-hidden="true"
+                />
+              )}
+            </Link>
+          )}
+
           <ThemeToggle />
 
           {auth.isAuthenticated && user ? (
@@ -202,6 +260,10 @@ export default function Header({ auth }: { auth: AuthState }) {
 
                     <MenuItem onAction={() => navigate({ to: "/purchases" })}>
                       Purchases
+                    </MenuItem>
+
+                    <MenuItem onAction={() => navigate({ to: "/sync-status" })}>
+                      Sync Status
                     </MenuItem>
 
                     <MenuItem onAction={() => navigate({ to: "/data-export" })}>
@@ -385,6 +447,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                             onAction={() => navigate({ to: "/purchases" })}
                           >
                             Purchases
+                          </MenuItem>
+
+                          <MenuItem
+                            onAction={() => navigate({ to: "/sync-status" })}
+                          >
+                            Sync Status
                           </MenuItem>
 
                           <MenuItem

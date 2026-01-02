@@ -316,3 +316,8 @@ export const chatReportsSyncConfig: EntitySyncConfig = {
   streamKeyPrefix: "sync:chat-reports",
   maxStreamLength: 5000,
 };
+
+export const searchableUsersSyncConfig: EntitySyncConfig = {
+  streamKeyPrefix: "sync:searchable-users",
+  maxStreamLength: 10000,
+};

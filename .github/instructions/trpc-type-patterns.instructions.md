@@ -45,7 +45,87 @@ export type ItemById = Awaited<ReturnType<typeof getItemById>>;
 
 ---
 
-## 2. tRPC Router Explicit Return Types
+## 2. tRPC Endpoint Naming Conventions
+
+Endpoints should have concise, predictable names that follow consistent patterns. The router context already provides the entity name, so avoid redundancy.
+
+### ✅ Correct Naming
+
+```typescript
+// The router name (e.g., couponsRouter) provides context
+export const couponsRouter = router({
+  getAll: publicProcedure...        // Not "getAllCoupons"
+  getById: publicProcedure...       // Not "getCouponById"
+  create: publicProcedure...        // Not "createCoupon"
+  update: publicProcedure...        // Not "updateCoupon"
+  delete: publicProcedure...        // Not "deleteCoupon"
+});
+
+// Filtered queries use descriptive suffixes
+export const coursesRouter = router({
+  getAll: publicProcedure...          // All courses (general list)
+  getAllAsAdmin: publicProcedure...   // Admin-specific view with extra data
+  getPublished: publicProcedure...    // Published courses only
+  getById: publicProcedure...         // Single course by ID
+});
+
+// User-scoped queries describe the scope, not the entity
+export const notificationsRouter = router({
+  getUnreadForUser: publicProcedure...    // User's unread notifications
+  getAllForUser: publicProcedure...       // User's all notifications
+  markAsRead: publicProcedure...          // Mark notification as read
+});
+
+// Searchable/filterable endpoints
+export const directMessagesRouter = router({
+  getSearchable: publicProcedure...       // Searchable users list
+  getConversation: publicProcedure...     // Messages between users
+});
+```
+
+### ❌ Incorrect Naming
+
+```typescript
+// DON'T repeat the entity name in the endpoint
+export const couponsRouter = router({
+  getAllCoupons: ...      // ❌ Redundant - router is already "coupons"
+  getCouponById: ...      // ❌ Redundant
+  createCoupon: ...       // ❌ Redundant
+});
+
+// DON'T use inconsistent patterns
+export const reviewsRouter = router({
+  getAllReviews: ...      // ❌ Should be "getAll"
+  fetchAll: ...           // ❌ Use "get" prefix, not "fetch"
+  list: ...               // ❌ Use "getAll" for lists
+});
+
+// DON'T be vague for filtered endpoints
+export const coursesRouter = router({
+  getCourses: ...         // ❌ Unclear - all courses? published? admin?
+  adminCourses: ...       // ❌ Use "getAllAsAdmin" pattern
+});
+```
+
+### Naming Pattern Reference
+
+| Pattern | Example | Use Case |
+|---------|---------|----------|
+| `getAll` | `coupons.getAll` | All items in a collection |
+| `getAllAsAdmin` | `courses.getAllAsAdmin` | Admin view with extra data |
+| `getById` | `reviews.getById` | Single item by ID |
+| `getBySlug` | `courses.getBySlug` | Single item by slug |
+| `getPublished` | `courses.getPublished` | Filtered by status |
+| `getUnreadForUser` | `notifications.getUnreadForUser` | User-scoped query |
+| `getSearchable` | `directMessages.getSearchable` | Searchable/filterable list |
+| `create` | `coupons.create` | Create new item |
+| `update` | `reviews.update` | Update existing item |
+| `delete` | `supportTickets.delete` | Delete item |
+| `markAsRead` | `notifications.markAsRead` | State change action |
+
+---
+
+## 3. tRPC Router Explicit Return Types
 
 All tRPC query endpoints must specify explicit return types using the imported types from queries.
 
@@ -85,7 +165,7 @@ export const itemsRouter = router({
 
 ---
 
-## 3. Frontend db.collections.ts Integration
+## 4. Frontend db.collections.ts Integration
 
 The frontend uses TanStack Query with SignalDB for reactive local collections.
 
@@ -113,7 +193,7 @@ export const AnnouncementsCollection = reactiveCollection<Announcement>("id");
 
 ---
 
-## 4. Component Usage
+## 5. Component Usage
 
 Components should use collections without manual type casting.
 
@@ -161,7 +241,7 @@ getAll: publicProcedure.query(async ({ ctx }): Promise<AllItems> => {
 
 ---
 
-## 5. Complete Flow Example
+## 6. Complete Flow Example
 
 ### Step 1: Database Query (Server)
 ```typescript
@@ -211,7 +291,7 @@ function AdminReviews() {
 
 ---
 
-## 6. Checklist for New Endpoints
+## 7. Checklist for New Endpoints
 
 When creating a new tRPC endpoint:
 
@@ -228,7 +308,7 @@ When creating a new tRPC endpoint:
 
 ---
 
-## 7. Collection Preloading in Route Loaders
+## 8. Collection Preloading in Route Loaders
 
 **CRITICAL**: All routes that use collections MUST preload the collection in their route loader. This ensures data is fetched during navigation, eliminating loading spinners.
 
@@ -343,7 +423,7 @@ export const Route = createFileRoute("/_authenticated/admin/reviews")({
 
 ---
 
-## 8. SSE Sync Infrastructure
+## 9. SSE Sync Infrastructure
 
 The platform uses Server-Sent Events (SSE) via Redis Streams for real-time synchronization between backend and frontend. This enables:
 - Real-time updates when entities are created/updated/deleted

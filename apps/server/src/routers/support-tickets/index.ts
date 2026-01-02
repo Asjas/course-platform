@@ -34,30 +34,28 @@ import {
 export type SupportTicketSyncUpdate = EntitySyncUpdate<SupportTicket>;
 
 export const supportTicketsRouter = router({
-  getAllSupportTickets: publicProcedure.query(
-    async ({ ctx }): Promise<AllSupportTickets> => {
-      const fastify = ctx.reply.server;
+  getAll: publicProcedure.query(async ({ ctx }): Promise<AllSupportTickets> => {
+    const fastify = ctx.reply.server;
 
-      const [err, tickets] = await fastify.to(
-        fastify.cache.getAllSupportTickets(),
-      );
+    const [err, tickets] = await fastify.to(
+      fastify.cache.getAllSupportTickets(),
+    );
 
-      if (err) {
-        ctx.request.log.error(err, "Failed to get support tickets");
+    if (err) {
+      ctx.request.log.error(err, "Failed to get support tickets");
 
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Internal server error",
-        });
-      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+      });
+    }
 
-      ctx.request.log.debug(
-        `Retrieved ${tickets.length} support tickets from cache/db`,
-      );
+    ctx.request.log.debug(
+      `Retrieved ${tickets.length} support tickets from cache/db`,
+    );
 
-      return tickets;
-    },
-  ),
+    return tickets;
+  }),
   getSupportTicketCountsByCourse: publicProcedure.query(async ({ ctx }) => {
     const fastify = ctx.reply.server;
 

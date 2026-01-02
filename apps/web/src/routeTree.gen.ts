@@ -21,6 +21,7 @@ import { Route as SupportIndexRouteImport } from "./routes/support/index"
 import { Route as BlogIndexRouteImport } from "./routes/blog/index"
 import { Route as SupportCreateTicketRouteImport } from "./routes/support/create-ticket"
 import { Route as BlogSlugRouteImport } from "./routes/blog/$slug"
+import { Route as AuthenticatedSyncStatusRouteImport } from "./routes/_authenticated/sync-status"
 import { Route as AuthenticatedPurchasesRouteImport } from "./routes/_authenticated/purchases"
 import { Route as AuthenticatedProfileRouteImport } from "./routes/_authenticated/profile"
 import { Route as AuthenticatedDataExportRouteImport } from "./routes/_authenticated/data-export"
@@ -117,6 +118,11 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   id: "/blog/$slug",
   path: "/blog/$slug",
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedSyncStatusRoute = AuthenticatedSyncStatusRouteImport.update({
+  id: "/sync-status",
+  path: "/sync-status",
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPurchasesRoute = AuthenticatedPurchasesRouteImport.update({
   id: "/purchases",
@@ -349,6 +355,7 @@ export interface FileRoutesByFullPath {
   "/data-export": typeof AuthenticatedDataExportRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
+  "/sync-status": typeof AuthenticatedSyncStatusRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
   "/blog": typeof BlogIndexRoute
@@ -397,6 +404,7 @@ export interface FileRoutesByTo {
   "/data-export": typeof AuthenticatedDataExportRoute
   "/profile": typeof AuthenticatedProfileRoute
   "/purchases": typeof AuthenticatedPurchasesRoute
+  "/sync-status": typeof AuthenticatedSyncStatusRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
   "/blog": typeof BlogIndexRoute
@@ -448,6 +456,7 @@ export interface FileRoutesById {
   "/_authenticated/data-export": typeof AuthenticatedDataExportRoute
   "/_authenticated/profile": typeof AuthenticatedProfileRoute
   "/_authenticated/purchases": typeof AuthenticatedPurchasesRoute
+  "/_authenticated/sync-status": typeof AuthenticatedSyncStatusRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
   "/blog/": typeof BlogIndexRoute
@@ -500,6 +509,7 @@ export interface FileRouteTypes {
     | "/data-export"
     | "/profile"
     | "/purchases"
+    | "/sync-status"
     | "/blog/$slug"
     | "/support/create-ticket"
     | "/blog"
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
     | "/data-export"
     | "/profile"
     | "/purchases"
+    | "/sync-status"
     | "/blog/$slug"
     | "/support/create-ticket"
     | "/blog"
@@ -598,6 +609,7 @@ export interface FileRouteTypes {
     | "/_authenticated/data-export"
     | "/_authenticated/profile"
     | "/_authenticated/purchases"
+    | "/_authenticated/sync-status"
     | "/blog/$slug"
     | "/support/create-ticket"
     | "/blog/"
@@ -730,6 +742,13 @@ declare module "@tanstack/react-router" {
       fullPath: "/blog/$slug"
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    "/_authenticated/sync-status": {
+      id: "/_authenticated/sync-status"
+      path: "/sync-status"
+      fullPath: "/sync-status"
+      preLoaderRoute: typeof AuthenticatedSyncStatusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     "/_authenticated/purchases": {
       id: "/_authenticated/purchases"
@@ -1115,6 +1134,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDataExportRoute: typeof AuthenticatedDataExportRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedPurchasesRoute: typeof AuthenticatedPurchasesRoute
+  AuthenticatedSyncStatusRoute: typeof AuthenticatedSyncStatusRoute
   AuthenticatedCoursesCourseIdRoute: typeof AuthenticatedCoursesCourseIdRouteWithChildren
 }
 
@@ -1126,6 +1146,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDataExportRoute: AuthenticatedDataExportRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedPurchasesRoute: AuthenticatedPurchasesRoute,
+  AuthenticatedSyncStatusRoute: AuthenticatedSyncStatusRoute,
   AuthenticatedCoursesCourseIdRoute:
     AuthenticatedCoursesCourseIdRouteWithChildren,
 }

@@ -14,6 +14,7 @@ import { reviewsRouter } from "~/routers/reviews/index.js";
 import { statsRouter } from "~/routers/stats/index.js";
 import { supportTicketsRouter } from "~/routers/support-tickets/index.js";
 import { supportStatusRouter } from "~/routers/supportStatus/index.js";
+import { syncStatusRouter } from "~/routers/syncStatus/index.js";
 import { usersRouter } from "~/routers/users/index.js";
 
 export const appRouter = router({
@@ -29,6 +30,7 @@ export const appRouter = router({
   stats: statsRouter,
   supportStatus: supportStatusRouter,
   supportTickets: supportTicketsRouter,
+  syncStatus: syncStatusRouter,
   chat: chatRouter,
   chatReports: chatReportsRouter,
   directMessages: directMessagesRouter,

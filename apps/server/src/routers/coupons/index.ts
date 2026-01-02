@@ -26,7 +26,7 @@ import {
 export type CouponSyncUpdate = EntitySyncUpdate<Coupon>;
 
 export const couponsRouter = router({
-  getAllCoupons: publicProcedure
+  getAll: publicProcedure
     .use(isAdmin)
     .query(async ({ ctx }): Promise<CouponsReturnType> => {
       const fastify = ctx.reply.server;

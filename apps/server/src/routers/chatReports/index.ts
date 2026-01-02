@@ -87,7 +87,7 @@ export const chatReportsRouter = router({
       }
     }),
 
-  getAllReports: publicProcedure
+  getAll: publicProcedure
     .use(isAuthenticated)
     .use(isAdmin)
     .query(async (): Promise<AllChatReports> => {

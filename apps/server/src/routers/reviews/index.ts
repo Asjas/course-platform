@@ -109,7 +109,7 @@ export const reviewsRouter = router({
     }),
 
   // Get all reviews (admin only)
-  getAllReviews: publicProcedure
+  getAll: publicProcedure
     .use(isAdmin)
     .query(async ({ ctx }): Promise<AllReviews> => {
       const fastify = ctx.reply.server;

@@ -13,6 +13,7 @@ import {
   type ConversationById,
   type DMRequestById,
   type PendingDMRequests,
+  type SearchableUser,
   type SearchableUsers,
   findConversationBetweenUsers,
   findDMRequestBetweenUsers,
@@ -28,15 +29,23 @@ import * as z from "zod";
 import { db } from "~/db/index.js";
 import { user } from "~/db/schema/user.js";
 import { pinoLogger } from "~/lib/logging.js";
+import {
+  type EntitySyncUpdate,
+  getEntityUpdatesSince,
+  searchableUsersSyncConfig,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
 const log = pinoLogger.child({ module: "routers:directMessages" });
+
+export type SearchableUserSyncUpdate = EntitySyncUpdate<SearchableUser>;
 
 export const directMessagesRouter = router({
   /**
    * Get all searchable users for client-side filtering
    */
-  getAllSearchableUsers: publicProcedure
+  getSearchable: publicProcedure
     .use(isAuthenticated)
     .query(async (): Promise<SearchableUsers> => {
       try {
@@ -370,6 +379,50 @@ export const directMessagesRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to reopen conversation",
+        });
+      }
+    }),
+
+  /**
+   * Subscribe to real-time searchable users updates via SSE.
+   * Clients receive updates when users are created, updated, or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<SearchableUser>(
+        searchableUsersSyncConfig,
+        input.lastEventId,
+      );
+    }),
+
+  /**
+   * Get searchable users updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<SearchableUser>(
+          searchableUsersSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch searchable users updates",
         });
       }
     }),

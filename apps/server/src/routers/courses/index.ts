@@ -55,7 +55,7 @@ export type LessonSyncUpdate = EntitySyncUpdate<Lesson>;
 
 export const coursesRouter = router({
   // Admin query to get all courses with full details
-  getAllCoursesAsAdmin: publicProcedure
+  getAllAsAdmin: publicProcedure
     .use(isAdmin)
     .query(async ({ ctx }): Promise<AllCoursesAsAdmin> => {
       const fastify = ctx.reply.server;

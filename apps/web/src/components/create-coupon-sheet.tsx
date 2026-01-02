@@ -52,7 +52,7 @@ export default function CreateCouponSheet({
         const newCoupon = await createCouponMutation.mutateAsync(value);
 
         queryClient.invalidateQueries({
-          queryKey: trpc.coupons.getAllCoupons.queryKey(),
+          queryKey: trpc.coupons.getAll.queryKey(),
         });
 
         toast.success(`Coupon ${newCoupon.code} created successfully!`, {

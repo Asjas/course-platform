@@ -14,6 +14,7 @@ import type {
 import type { SearchableUsers } from "@apps/server/src/routers/directMessages/queries";
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
+import type { AllSyncStatuses } from "@apps/server/src/routers/syncStatus/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
@@ -48,8 +49,8 @@ export const SupportTicketsCollection = createCollection(
   queryCollectionOptions<SupportTicket>({
     queryClient,
     getKey: (item) => item.id,
-    queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
-    queryFn: () => trpcClient.supportTickets.getAllSupportTickets.query(),
+    queryKey: trpc.supportTickets.getAll.queryKey(),
+    queryFn: () => trpcClient.supportTickets.getAll.query(),
     onInsert: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
@@ -86,8 +87,8 @@ export const CouponsCollection = createCollection(
   queryCollectionOptions<Coupon>({
     queryClient,
     getKey: (item) => item.id,
-    queryKey: trpc.coupons.getAllCoupons.queryKey(),
-    queryFn: () => trpcClient.coupons.getAllCoupons.query(),
+    queryKey: trpc.coupons.getAll.queryKey(),
+    queryFn: () => trpcClient.coupons.getAll.query(),
     onInsert: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
@@ -316,7 +317,7 @@ export const CoursesAdminCollection = createCollection(
     queryClient,
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
-    queryFn: () => trpcClient.courses.getAllCoursesAsAdmin.query(),
+    queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
   }),
 );
 
@@ -369,8 +370,8 @@ export const ReviewsCollection = createCollection(
   queryCollectionOptions<Review>({
     queryClient,
     getKey: (item) => item.id,
-    queryKey: trpc.reviews.getAllReviews.queryKey(),
-    queryFn: () => trpcClient.reviews.getAllReviews.query(),
+    queryKey: trpc.reviews.getAll.queryKey(),
+    queryFn: () => trpcClient.reviews.getAll.query(),
     onInsert: async ({ transaction }) => {
       try {
         const { modified } = transaction.mutations[0];
@@ -454,8 +455,8 @@ export const ChatReportsCollection = createCollection(
   queryCollectionOptions<ChatReport>({
     queryClient,
     getKey: (item) => item.id,
-    queryKey: trpc.chatReports.getAllReports.queryKey(),
-    queryFn: () => trpcClient.chatReports.getAllReports.query(),
+    queryKey: trpc.chatReports.getAll.queryKey(),
+    queryFn: () => trpcClient.chatReports.getAll.query(),
   }),
 );
 
@@ -483,13 +484,68 @@ export const SearchableUsersCollection = createCollection(
   queryCollectionOptions<SearchableUser>({
     queryClient,
     getKey: (item) => item.id,
-    queryKey: trpc.directMessages.getAllSearchableUsers.queryKey(),
-    queryFn: () => trpcClient.directMessages.getAllSearchableUsers.query(),
+    queryKey: trpc.directMessages.getSearchable.queryKey(),
+    queryFn: () => trpcClient.directMessages.getSearchable.query(),
   }),
 );
 
 export function useSearchableUsers() {
   return useLiveQuery(SearchableUsersCollection);
+}
+
+// ========== Sync Status ==========
+
+export type SyncStatusItem = AllSyncStatuses[number];
+
+export const SyncStatusCollection = createCollection(
+  queryCollectionOptions<SyncStatusItem>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.syncStatus.getAll.queryKey(),
+    queryFn: () => trpcClient.syncStatus.getAll.query(),
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { modified } = transaction.mutations[0];
+
+        await trpcClient.syncStatus.update.mutate({
+          collectionName: modified.collectionName,
+          lastSyncedAt: modified.lastSyncedAt
+            ? new Date(modified.lastSyncedAt)
+            : null,
+          lastEventId: modified.lastEventId,
+          syncState: modified.syncState,
+          pendingUpdates: modified.pendingUpdates,
+          errorMessage: modified.errorMessage,
+          isOnline: modified.isOnline,
+        });
+      } catch (error) {
+        console.error("Error updating sync status: ", error);
+        throw error;
+      }
+    },
+  }),
+);
+
+export function useSyncStatuses() {
+  return useLiveQuery(SyncStatusCollection);
+}
+
+export function useSyncStatusByCollection({
+  collectionName,
+}: {
+  collectionName: string;
+}) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ syncStatus: SyncStatusCollection })
+        .where(({ syncStatus }) =>
+          eq(syncStatus.collectionName, collectionName),
+        )
+        .findOne();
+    },
+    [collectionName],
+  );
 }
 
 // Derive single message types from array types

@@ -39,7 +39,7 @@ export default function CreateReviewSheet({
   });
 
   const { data: courses } = useSuspenseQuery(
-    trpc.courses.getAllCoursesAsAdmin.queryOptions(),
+    trpc.courses.getAllAsAdmin.queryOptions(),
   );
 
   const createReviewMutation = useMutation({

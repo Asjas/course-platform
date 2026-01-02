@@ -244,3 +244,4 @@ export async function getAllSearchableUsers() {
 }
 
 export type SearchableUsers = Awaited<ReturnType<typeof getAllSearchableUsers>>;
+export type SearchableUser = SearchableUsers[number];

@@ -44,7 +44,7 @@ export default function SupportCommentForm({ ticketId }: { ticketId: string }) {
         });
 
         queryClient.invalidateQueries({
-          queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+          queryKey: trpc.supportTickets.getAll.queryKey(),
         });
 
         form.reset();

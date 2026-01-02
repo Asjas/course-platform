@@ -74,7 +74,7 @@ export function useSupportTicketsSync(): SyncStatus {
           );
           if (updates.length > 0) {
             await queryClient.invalidateQueries({
-              queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+              queryKey: trpc.supportTickets.getAll.queryKey(),
             });
             toast.info(`Synced ${updates.length} support ticket updates`);
           }
@@ -97,7 +97,7 @@ export function useSupportTicketsSync(): SyncStatus {
 
               // Invalidate queries to refetch
               void queryClient.invalidateQueries({
-                queryKey: trpc.supportTickets.getAllSupportTickets.queryKey(),
+                queryKey: trpc.supportTickets.getAll.queryKey(),
               });
 
               syncUtils.setLastSyncTimestamp(collectionName, data.timestamp);
@@ -200,7 +200,7 @@ export function useCouponsSync(): SyncStatus {
           });
           if (updates.length > 0) {
             await queryClient.invalidateQueries({
-              queryKey: trpc.coupons.getAllCoupons.queryKey(),
+              queryKey: trpc.coupons.getAll.queryKey(),
             });
             toast.info(`Synced ${updates.length} coupon updates`);
           }
@@ -220,7 +220,7 @@ export function useCouponsSync(): SyncStatus {
             const data = event.data as EntitySyncUpdate<unknown>;
 
             void queryClient.invalidateQueries({
-              queryKey: trpc.coupons.getAllCoupons.queryKey(),
+              queryKey: trpc.coupons.getAll.queryKey(),
             });
 
             syncUtils.setLastSyncTimestamp(collectionName, data.timestamp);
@@ -321,7 +321,7 @@ export function useReviewsSync(): SyncStatus {
           });
           if (updates.length > 0) {
             await queryClient.invalidateQueries({
-              queryKey: trpc.reviews.getAllReviews.queryKey(),
+              queryKey: trpc.reviews.getAll.queryKey(),
             });
             toast.info(`Synced ${updates.length} review updates`);
           }
@@ -341,7 +341,7 @@ export function useReviewsSync(): SyncStatus {
             const data = event.data as EntitySyncUpdate<unknown>;
 
             void queryClient.invalidateQueries({
-              queryKey: trpc.reviews.getAllReviews.queryKey(),
+              queryKey: trpc.reviews.getAll.queryKey(),
             });
 
             syncUtils.setLastSyncTimestamp(collectionName, data.timestamp);
@@ -685,7 +685,7 @@ export function useChatReportsSync(): SyncStatus {
           });
           if (updates.length > 0) {
             await queryClient.invalidateQueries({
-              queryKey: trpc.chatReports.getAllReports.queryKey(),
+              queryKey: trpc.chatReports.getAll.queryKey(),
             });
             toast.info(`Synced ${updates.length} chat report updates`);
           }
@@ -706,7 +706,7 @@ export function useChatReportsSync(): SyncStatus {
               const data = event.data as EntitySyncUpdate<unknown>;
 
               void queryClient.invalidateQueries({
-                queryKey: trpc.chatReports.getAllReports.queryKey(),
+                queryKey: trpc.chatReports.getAll.queryKey(),
               });
 
               syncUtils.setLastSyncTimestamp(collectionName, data.timestamp);
