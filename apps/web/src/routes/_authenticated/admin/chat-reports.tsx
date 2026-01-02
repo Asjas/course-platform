@@ -47,25 +47,25 @@ function AdminChatReportsPage() {
   async function handleConfirmAction() {
     if (!reportToAction || !actionType) return;
 
-    const toastId = toast.loading(
-      actionType === "dismiss" ? "Dismissing report..." : "Deleting message...",
-    );
-
     try {
       if (actionType === "dismiss") {
-        await trpcClient.chatReports.updateReportStatus.mutate({
-          reportId: reportToAction.id,
-          status: "dismissed",
+        // Optimistic update - UI updates immediately
+        ChatReportsCollection.update(reportToAction.id, (draft) => {
+          draft.status = "dismissed";
         });
-        await ChatReportsCollection.utils.refetch();
-        toast.success("Report dismissed successfully.", { id: toastId });
+        toast.success("Report dismissed successfully.");
       } else if (actionType === "delete") {
+        // Delete action requires server call first (deletes message from Redis)
+        const toastId = toast.loading("Deleting message...");
         await trpcClient.chatReports.deleteReportedMessage.mutate({
           reportId: reportToAction.id,
           messageId: reportToAction.messageId,
           channelId: reportToAction.channelId,
         });
-        await ChatReportsCollection.utils.refetch();
+        // Optimistic update after successful delete
+        ChatReportsCollection.update(reportToAction.id, (draft) => {
+          draft.status = "actioned";
+        });
         toast.success("Message deleted and report marked as actioned.", {
           id: toastId,
         });
@@ -74,9 +74,7 @@ function AdminChatReportsPage() {
       console.error(`Error ${actionType}ing report:`, error);
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      toast.error(`Failed to ${actionType} report: ${errorMessage}`, {
-        id: toastId,
-      });
+      toast.error(`Failed to ${actionType} report: ${errorMessage}`);
     } finally {
       setReportToAction(null);
       setActionType(null);
