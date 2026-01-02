@@ -24,7 +24,6 @@ import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
 import { toggleReactionViaCollection } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
-import { getChannelCacheKey, queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 
 // Default color for users without a precomputed color
@@ -33,9 +32,13 @@ const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
 export default function ChatMessage({
   msg,
   channelId,
+  onDeleteMessage,
+  onEditMessage,
 }: {
   msg: ChatMessage;
   channelId: string;
+  onDeleteMessage?: (messageId: string) => void;
+  onEditMessage?: (messageId: string, newMessage: string) => void;
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -162,48 +165,46 @@ export default function ChatMessage({
     const newText = prompt("Edit message:", msg.message);
 
     if (newText !== null && newText !== msg.message) {
-      editMessageMutation.mutate(
-        { id: msg.id, message: newText },
-        {
-          onSuccess(updatedMessage) {
-            const cacheKey = getChannelCacheKey(channelId);
-
-            queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-              return prev.map((message) =>
-                message.id === msg.id ? updatedMessage : message,
-              );
-            });
-
-            toast.info("Message edited successfully.");
+      if (onEditMessage) {
+        // Use collection-based edit
+        onEditMessage(msg.id, newText);
+      } else {
+        // Fallback to direct mutation
+        editMessageMutation.mutate(
+          { id: msg.id, message: newText },
+          {
+            onSuccess() {
+              toast.info("Message edited successfully.");
+            },
+            onError(error) {
+              console.error("Error editing message:", error);
+              toast.error("Failed to edit message.");
+            },
           },
-          onError(error) {
-            console.error("Error editing message:", error);
-            toast.error("Failed to edit message.");
-          },
-        },
-      );
+        );
+      }
     }
   }
 
   function handleDelete() {
-    deleteMessageMutation.mutate(
-      { id: msg.id },
-      {
-        onSuccess() {
-          const cacheKey = getChannelCacheKey(channelId);
-
-          queryClient.setQueryData<ChatMessage[]>(cacheKey, (prev = []) => {
-            return prev.filter((message) => message.id !== msg.id);
-          });
-
-          toast.success("Message deleted successfully.");
+    if (onDeleteMessage) {
+      // Use collection-based delete
+      onDeleteMessage(msg.id);
+    } else {
+      // Fallback to direct mutation
+      deleteMessageMutation.mutate(
+        { id: msg.id },
+        {
+          onSuccess() {
+            toast.success("Message deleted successfully.");
+          },
+          onError(error) {
+            console.error("Error deleting message:", error);
+            toast.error("Failed to delete message.");
+          },
         },
-        onError(error) {
-          console.error("Error deleting message:", error);
-          toast.error("Failed to delete message.");
-        },
-      },
-    );
+      );
+    }
   }
 
   return (
