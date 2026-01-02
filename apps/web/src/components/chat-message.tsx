@@ -5,6 +5,7 @@ import {
   ChevronRightIcon,
   EllipsisIcon,
   FlagIcon,
+  MessageSquareIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -40,11 +41,14 @@ export default function ChatMessageComponent({
   channelId,
   collection,
   reactions,
+  onOpenThread,
 }: {
   msg: ChatMessage;
   channelId: string;
   collection: MessageCollection;
   reactions: Reaction[];
+  /** Callback to open the thread panel for this message */
+  onOpenThread?: (parentMessage: ChatMessage) => void;
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -286,6 +290,29 @@ export default function ChatMessageComponent({
             currentUserId={auth.session?.user.id}
             messageAuthor={msg.name}
           />
+
+          {/* Thread reply info - only show if message has replies */}
+          {msg.replyCount && msg.replyCount > 0 ? (
+            <button
+              className="mt-1 flex cursor-pointer items-center gap-2 rounded px-2 py-1 text-xs text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+              type="button"
+              onClick={() => onOpenThread?.(msg)}
+              aria-label={`View ${msg.replyCount} ${msg.replyCount === 1 ? "reply" : "replies"} in thread`}
+            >
+              <MessageSquareIcon
+                size={14}
+                aria-hidden="true"
+              />
+              <span className="font-medium">
+                {msg.replyCount} {msg.replyCount === 1 ? "reply" : "replies"}
+              </span>
+              {msg.latestReplyAt ? (
+                <span className="text-gray-500 dark:text-gray-400">
+                  Last reply {format(msg.latestReplyAt, "MMM d 'at' HH:mm")}
+                </span>
+              ) : null}
+            </button>
+          ) : null}
         </div>
 
         {/* Action menu - appears on hover or focus, positioned at right edge */}
@@ -295,6 +322,22 @@ export default function ChatMessageComponent({
             onEmojiSelect={handleToggleReaction}
             messageAuthor={msg.name}
           />
+
+          {/* Reply in thread button */}
+          {onOpenThread ? (
+            <button
+              className="cursor-pointer rounded border border-gray-200 bg-white p-1 shadow-sm hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:bg-gray-600"
+              type="button"
+              onClick={() => onOpenThread(msg)}
+              aria-label="Reply in thread"
+              title="Reply in thread"
+            >
+              <MessageSquareIcon
+                className="text-gray-600 dark:text-gray-300"
+                size={16}
+              />
+            </button>
+          ) : null}
 
           <MenuTrigger>
             <MenuButton

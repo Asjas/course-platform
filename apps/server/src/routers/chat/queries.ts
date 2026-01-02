@@ -16,6 +16,11 @@ export interface ChatMessage {
   reactions?: Reaction[];
   channelId?: string; // For channel messages
   conversationId?: string; // For DM messages
+  // Threading fields
+  parentMessageId?: string; // If this is a reply, the ID of the parent message
+  replyCount?: number; // Number of replies to this message
+  latestReplyAt?: number; // Timestamp of the most recent reply
+  latestReplyUserIds?: string[]; // User IDs who replied (for avatars)
 }
 
 /**
@@ -65,37 +70,81 @@ export async function getReactionsForMessage(
 }
 
 /**
+ * Get the Redis key for storing thread metadata for a parent message.
+ */
+export function getThreadMetaKey(parentMessageId: string): string {
+  return `chat:thread:${parentMessageId}:meta`;
+}
+
+/**
+ * Get thread metadata for a parent message.
+ */
+export async function getThreadMeta(parentMessageId: string): Promise<{
+  replyCount: number;
+  latestReplyAt: number | null;
+  latestReplyUserIds: string[];
+}> {
+  const metaKey = getThreadMetaKey(parentMessageId);
+  const meta = await redis.hgetall(metaKey);
+
+  return {
+    replyCount: meta.replyCount ? parseInt(meta.replyCount, 10) : 0,
+    latestReplyAt: meta.latestReplyAt ? parseInt(meta.latestReplyAt, 10) : null,
+    latestReplyUserIds: meta.latestReplyUserIds
+      ? (safeJsonParse<string[]>(meta.latestReplyUserIds) ?? [])
+      : [],
+  };
+}
+
+/**
  * Get channel message history with reactions.
+ * Only returns top-level messages (not thread replies).
+ * Includes thread metadata (reply count, latest reply) for each message.
  */
 export async function getChannelHistory(channelId: string, limit = 50) {
   const streamKey = `chat:channel:${channelId}:messages`;
-  const entries = await redis.xrevrange(streamKey, "+", "-", "COUNT", limit);
+  // Fetch more messages to account for filtering out thread replies
+  const entries = await redis.xrevrange(
+    streamKey,
+    "+",
+    "-",
+    "COUNT",
+    limit * 2,
+  );
 
-  const messages = entries
+  const allMessages = entries
     .map(([, fields]) =>
       safeJsonParse<ChatMessage>(fields[1], "getChannelHistory"),
     )
     .filter((msg): msg is ChatMessage => msg !== null);
 
-  // Fetch reactions for all messages using Redis pipeline for efficiency
-  const pipeline = redis.pipeline();
-  for (const msg of messages) {
-    pipeline.hgetall(getReactionKey(msg.id));
-  }
-  const reactionResults = await pipeline.exec();
+  // Filter out thread replies (messages with parentMessageId) for main view
+  const topLevelMessages = allMessages
+    .filter((msg) => !msg.parentMessageId)
+    .slice(0, limit);
 
-  // Combine messages with their reactions and add channelId
-  const messagesWithReactions = messages.map((msg, index) => {
-    const pipelineResult = reactionResults?.[index];
+  // Fetch reactions and thread metadata for all top-level messages using Redis pipeline
+  const pipeline = redis.pipeline();
+  for (const msg of topLevelMessages) {
+    pipeline.hgetall(getReactionKey(msg.id));
+    pipeline.hgetall(getThreadMetaKey(msg.id));
+  }
+  const pipelineResults = await pipeline.exec();
+
+  // Combine messages with their reactions, thread metadata, and channelId
+  const messagesWithReactions = topLevelMessages.map((msg, index) => {
+    // Each message has 2 pipeline results: reactions and thread meta
+    const reactionResult = pipelineResults?.[index * 2];
+    const threadMetaResult = pipelineResults?.[index * 2 + 1];
+
     const reactions: Reaction[] = [];
 
-    // Check for pipeline errors before processing
-    if (pipelineResult && !pipelineResult[0]) {
-      const reactionData = pipelineResult[1] as Record<string, string> | null;
+    // Process reactions
+    if (reactionResult && !reactionResult[0]) {
+      const reactionData = reactionResult[1] as Record<string, string> | null;
       if (reactionData) {
         for (const [emoji, usersJson] of Object.entries(reactionData)) {
           const users = safeJsonParse<ReactionUser[]>(usersJson);
-          // Skip corrupted data instead of crashing
           if (users && Array.isArray(users)) {
             reactions.push({ emoji, users });
           }
@@ -103,7 +152,35 @@ export async function getChannelHistory(channelId: string, limit = 50) {
       }
     }
 
-    return { ...msg, reactions, channelId };
+    // Process thread metadata
+    let replyCount = 0;
+    let latestReplyAt: number | undefined;
+    let latestReplyUserIds: string[] | undefined;
+
+    if (threadMetaResult && !threadMetaResult[0]) {
+      const threadMeta = threadMetaResult[1] as Record<string, string> | null;
+      if (threadMeta) {
+        replyCount = threadMeta.replyCount
+          ? parseInt(threadMeta.replyCount, 10)
+          : 0;
+        latestReplyAt = threadMeta.latestReplyAt
+          ? parseInt(threadMeta.latestReplyAt, 10)
+          : undefined;
+        latestReplyUserIds = threadMeta.latestReplyUserIds
+          ? (safeJsonParse<string[]>(threadMeta.latestReplyUserIds) ??
+            undefined)
+          : undefined;
+      }
+    }
+
+    return {
+      ...msg,
+      reactions,
+      channelId,
+      replyCount: replyCount > 0 ? replyCount : undefined,
+      latestReplyAt,
+      latestReplyUserIds,
+    };
   });
 
   // Sort by creation time (ULID or createdAt field)
@@ -167,3 +244,65 @@ export async function getDMHistory(conversationId: string, limit = 50) {
 // Type exports for frontend collections
 export type ChannelMessages = Awaited<ReturnType<typeof getChannelHistory>>;
 export type DMMessages = Awaited<ReturnType<typeof getDMHistory>>;
+
+/**
+ * Get thread replies for a parent message.
+ * Returns all messages that have the given parentMessageId.
+ */
+export async function getThreadReplies(
+  channelId: string,
+  parentMessageId: string,
+  limit = 100,
+) {
+  const streamKey = `chat:channel:${channelId}:messages`;
+  // Fetch more messages to find thread replies
+  const entries = await redis.xrange(streamKey, "-", "+");
+
+  const allMessages = entries
+    .map(([, fields]) =>
+      safeJsonParse<ChatMessage>(fields[1], "getThreadReplies"),
+    )
+    .filter((msg): msg is ChatMessage => msg !== null);
+
+  // Filter to only thread replies for this parent
+  const threadReplies = allMessages
+    .filter((msg) => msg.parentMessageId === parentMessageId)
+    .slice(0, limit);
+
+  // Fetch reactions for all thread replies using Redis pipeline
+  const pipeline = redis.pipeline();
+  for (const msg of threadReplies) {
+    pipeline.hgetall(getReactionKey(msg.id));
+  }
+  const reactionResults = await pipeline.exec();
+
+  // Combine messages with their reactions and channelId
+  const repliesWithReactions = threadReplies.map((msg, index) => {
+    const pipelineResult = reactionResults?.[index];
+    const reactions: Reaction[] = [];
+
+    if (pipelineResult && !pipelineResult[0]) {
+      const reactionData = pipelineResult[1] as Record<string, string> | null;
+      if (reactionData) {
+        for (const [emoji, usersJson] of Object.entries(reactionData)) {
+          const users = safeJsonParse<ReactionUser[]>(usersJson);
+          if (users && Array.isArray(users)) {
+            reactions.push({ emoji, users });
+          }
+        }
+      }
+    }
+
+    return { ...msg, reactions, channelId };
+  });
+
+  // Sort by creation time (oldest first for thread view)
+  return repliesWithReactions.sort((a, b) => {
+    if ("createdAt" in a && "createdAt" in b) {
+      return (a.createdAt ?? 0) - (b.createdAt ?? 0);
+    }
+    return a.id.localeCompare(b.id);
+  });
+}
+
+export type ThreadReplies = Awaited<ReturnType<typeof getThreadReplies>>;

@@ -1,4 +1,7 @@
-import type { ReactionUpdate } from "@apps/server/src/routers/chat";
+import type {
+  ChatMessage,
+  ReactionUpdate,
+} from "@apps/server/src/routers/chat";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
@@ -7,6 +10,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
+import { ThreadPanel } from "~/components/thread-panel";
 import { createChannelMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -25,7 +29,18 @@ export const Route = createFileRoute("/_authenticated/chat/$channelId")({
 function AuthenticatedChatChannelPage() {
   const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
 
-  // Create channel-specific collection - recreate when channelId changes
+  // Use key prop pattern to reset all component state when channelId changes
+  // This avoids the need for useEffect to reset state
+  return (
+    <ChatChannelContent
+      key={channelId}
+      channelId={channelId}
+    />
+  );
+}
+
+function ChatChannelContent({ channelId }: { channelId: string }) {
+  // Create channel-specific collection
   const channelCollection = useMemo(
     () => createChannelMessagesCollection(channelId),
     [channelId],
@@ -40,6 +55,22 @@ function AuthenticatedChatChannelPage() {
   const [reactionOverrides, setReactionOverrides] = useState<
     Map<string, ReactionUpdate["reactions"]>
   >(new Map());
+
+  // Thread panel state - stores the parent message when a thread is open
+  // State automatically resets when channelId changes due to key prop pattern on parent
+  const [selectedThread, setSelectedThread] = useState<ChatMessage | null>(
+    null,
+  );
+
+  // Handler to open thread panel
+  const handleOpenThread = (parentMessage: ChatMessage) => {
+    setSelectedThread(parentMessage);
+  };
+
+  // Handler to close thread panel
+  const handleCloseThread = () => {
+    setSelectedThread(null);
+  };
 
   // Subscribe to new messages
   useSubscription(
@@ -56,6 +87,10 @@ function AuthenticatedChatChannelPage() {
               ...newMessage,
               channelId,
               reactions: newMessage.reactions || [],
+              // Thread metadata - new messages from subscription don't have replies yet
+              replyCount: undefined,
+              latestReplyAt: undefined,
+              latestReplyUserIds: undefined,
             });
           } catch (error) {
             if (
@@ -169,6 +204,7 @@ function AuthenticatedChatChannelPage() {
           msg={msg}
           collection={channelCollection}
           reactions={reactions}
+          onOpenThread={handleOpenThread}
         />,
       );
     }
@@ -177,31 +213,43 @@ function AuthenticatedChatChannelPage() {
   }, [messages, channelId, channelCollection, reactionOverrides]);
 
   return (
-    <div className="grid-container">
-      <div className="border-b border-gray-300 bg-gray-800 px-4 py-3 dark:border-gray-700">
-        <h1 className="text-lg font-bold text-white">{`# ${channelId}`}</h1>
+    <div className="flex h-full">
+      {/* Main chat area */}
+      <div className="grid-container flex-1">
+        <div className="border-b border-gray-300 bg-gray-800 px-4 py-3 dark:border-gray-700">
+          <h1 className="text-lg font-bold text-white">{`# ${channelId}`}</h1>
+        </div>
+
+        <section
+          className="scrollable-section custom-scrollbar bg-gray-800"
+          ref={scrollRef}
+          role="log"
+          aria-label={`${channelId} channel messages`}
+        >
+          {!messages || messages.length === 0 ? (
+            <div className="flex h-full items-center justify-center">
+              <p className="text-sm text-gray-500">
+                No messages yet. Start the conversation!
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col">{messagesWithDividers}</div>
+          )}
+        </section>
+
+        <section className="bg-gray-800">
+          <ChatMessageForm mentionContext={{ type: "channel", channelId }} />
+        </section>
       </div>
 
-      <section
-        className="scrollable-section custom-scrollbar bg-gray-800"
-        ref={scrollRef}
-        role="log"
-        aria-label={`${channelId} channel messages`}
-      >
-        {!messages || messages.length === 0 ? (
-          <div className="flex h-full items-center justify-center">
-            <p className="text-sm text-gray-500">
-              No messages yet. Start the conversation!
-            </p>
-          </div>
-        ) : (
-          <div className="flex flex-col">{messagesWithDividers}</div>
-        )}
-      </section>
-
-      <section className="bg-gray-800">
-        <ChatMessageForm mentionContext={{ type: "channel", channelId }} />
-      </section>
+      {/* Thread panel - slides in from right when a thread is selected */}
+      {selectedThread ? (
+        <ThreadPanel
+          parentMessage={selectedThread}
+          channelId={channelId}
+          onClose={handleCloseThread}
+        />
+      ) : null}
     </div>
   );
 }

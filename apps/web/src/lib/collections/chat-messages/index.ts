@@ -7,9 +7,11 @@
 export {
   createChannelMessagesCollection,
   createDMMessagesCollection,
+  createThreadMessagesCollection,
   toggleMessageReaction,
   type ChannelMessage,
   type DMMessage,
+  type ThreadMessage,
   type ChatMessage,
   type Reaction,
   type ReactionUpdate,

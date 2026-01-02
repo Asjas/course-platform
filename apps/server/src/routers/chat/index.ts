@@ -2,10 +2,13 @@ import { validateDMConversationAccess } from "./dmValidation.js";
 import {
   type ChannelMessages,
   type DMMessages,
+  type ThreadReplies,
   getChannelHistory,
   getDMHistory,
   getReactionKey,
   getReactionsForMessage,
+  getThreadMetaKey,
+  getThreadReplies,
 } from "./queries.js";
 import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
@@ -45,6 +48,11 @@ export interface ChatMessage {
   reactions?: Reaction[];
   channelId?: string; // For channel messages
   conversationId?: string; // For DM messages
+  // Threading fields
+  parentMessageId?: string; // If this is a reply, the ID of the parent message
+  replyCount?: number; // Number of replies to this message
+  latestReplyAt?: number; // Timestamp of the most recent reply
+  latestReplyUserIds?: string[]; // User IDs who replied (for avatars)
 }
 
 /**
@@ -156,10 +164,17 @@ export const chatRouter = router({
       return getChannelHistory(input.channelId, input.limit);
     }),
   postMessage: publicProcedure
-    .input(z.object({ channelId: z.string(), message: z.string() }))
+    .input(
+      z.object({
+        channelId: z.string(),
+        message: z.string(),
+        parentMessageId: z.string().optional(), // For thread replies
+      }),
+    )
     .use(isAuthenticated)
     .mutation(async ({ ctx, input }) => {
       const id = `msg:${ulid()}`;
+      const now = Date.now();
 
       const payload: ChatMessage = {
         id,
@@ -167,8 +182,9 @@ export const chatRouter = router({
         username: ctx.user.username,
         color: ctx.user.color,
         message: input.message,
-        timestamp: Date.now(),
-        createdAt: Date.now(),
+        timestamp: now,
+        createdAt: now,
+        parentMessageId: input.parentMessageId,
       };
 
       const streamId = await redis.xadd(
@@ -177,6 +193,40 @@ export const chatRouter = router({
         "message",
         JSON.stringify(payload),
       );
+
+      // If this is a thread reply, update the parent message's thread metadata
+      if (input.parentMessageId) {
+        const threadMetaKey = getThreadMetaKey(input.parentMessageId);
+
+        // Increment reply count
+        await redis.hincrby(threadMetaKey, "replyCount", 1);
+        // Update latest reply timestamp
+        await redis.hset(threadMetaKey, "latestReplyAt", now.toString());
+
+        // Update latest reply user IDs (keep last 3 unique users for avatar display)
+        const currentUserIds = await redis.hget(
+          threadMetaKey,
+          "latestReplyUserIds",
+        );
+        const userIds: string[] = currentUserIds
+          ? (safeJsonParse<string[]>(currentUserIds) ?? [])
+          : [];
+
+        // Add current user if not already in the list
+        if (!userIds.includes(ctx.user.id)) {
+          userIds.push(ctx.user.id);
+        }
+
+        // Keep only the last 3 users
+        const latestUserIds = userIds.slice(-3);
+        await redis.hset(
+          threadMetaKey,
+          "latestReplyUserIds",
+          JSON.stringify(latestUserIds),
+        );
+
+        redisStreamOperations.inc({ operation: "hset", status: "success" });
+      }
 
       chatMessageCount.inc({ channel: input.channelId, action: "post" });
       redisStreamOperations.inc({ operation: "xadd", status: "success" });
@@ -477,6 +527,88 @@ export const chatRouter = router({
       );
 
       return getDMHistory(input.conversationId, input.limit);
+    }),
+  /**
+   * Get thread replies for a parent message
+   */
+  getThreadReplies: publicProcedure
+    .input(
+      z.object({
+        channelId: z.string(),
+        parentMessageId: z.string(),
+        limit: z.number().default(50),
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input }): Promise<ThreadReplies> => {
+      return getThreadReplies(
+        input.channelId,
+        input.parentMessageId,
+        input.limit,
+      );
+    }),
+  /**
+   * Subscribe to thread replies for a parent message
+   */
+  subscribeToThread: publicProcedure
+    .input(
+      z.object({
+        channelId: z.string(),
+        parentMessageId: z.string(),
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      const streamKey = `chat:channel:${input.channelId}:messages`;
+
+      let lastId =
+        input.lastEventId ?? (input.lastEventId === undefined ? "$" : "$");
+
+      while (true) {
+        try {
+          const result = await subscriptionRedis.xread(
+            "COUNT",
+            100,
+            "BLOCK",
+            5000,
+            "STREAMS",
+            streamKey,
+            lastId,
+          );
+
+          if (!result?.length) continue;
+
+          const [[, entries]] = result;
+
+          for (const [streamId, fields] of entries) {
+            const payload = safeJsonParse<ChatMessage>(
+              fields[1],
+              "subscribeToThread",
+            );
+            if (!payload) continue; // Skip corrupted messages
+
+            // Only yield messages that belong to this thread
+            if (payload.parentMessageId !== input.parentMessageId) continue;
+
+            const messageId = payload.id; // ULID
+
+            // Update lastId to Redis stream ID
+            lastId = streamId;
+
+            yield tracked(messageId, payload); // tRPC tracks by ULID
+          }
+        } catch (err) {
+          if (
+            err instanceof Error &&
+            err.message.includes("Invalid stream ID")
+          ) {
+            lastId = "$"; // fallback
+            continue;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
     }),
   /**
    * Post a DM message

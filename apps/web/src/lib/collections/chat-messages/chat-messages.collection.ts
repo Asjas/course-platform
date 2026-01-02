@@ -9,6 +9,7 @@ import type { Reaction } from "@apps/server/src/routers/chat";
 import type {
   ChannelMessages,
   DMMessages,
+  ThreadReplies,
 } from "@apps/server/src/routers/chat/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection } from "@tanstack/react-db";
@@ -19,6 +20,7 @@ import { trpc, trpcClient } from "~/lib/trpc.client";
 // Derive single message types from array types
 export type ChannelMessage = ChannelMessages[number];
 export type DMMessage = DMMessages[number];
+export type ThreadMessage = ThreadReplies[number];
 
 // Union type for all chat messages
 export type ChatMessage = ChannelMessage | DMMessage;
@@ -244,4 +246,91 @@ export async function toggleMessageReaction({
     toast.error("Failed to update reaction. Please try again.");
     throw error;
   }
+}
+
+/**
+ * Create a thread messages collection for a specific thread.
+ * Uses tRPC queryKey for proper cache integration.
+ */
+export function createThreadMessagesCollection(
+  channelId: string,
+  parentMessageId: string,
+) {
+  return createCollection(
+    queryCollectionOptions<ThreadMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getThreadReplies.queryKey({
+        channelId,
+        parentMessageId,
+        limit: 50,
+      }),
+      queryFn: async () => {
+        const messages = await trpcClient.chat.getThreadReplies.query({
+          channelId,
+          parentMessageId,
+        });
+        // Deduplicate messages to prevent duplicates from loader + collection fetch
+        return deduplicateMessages(messages);
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          if (!modified.channelId) {
+            throw new Error("Channel ID is required for thread messages");
+          }
+
+          await trpcClient.chat.postMessage.mutate({
+            channelId: modified.channelId,
+            message: modified.message,
+            parentMessageId: modified.parentMessageId,
+          });
+        } catch (error) {
+          console.error("Error posting thread message: ", error);
+          toast.error(
+            "An error occurred while posting the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
+
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting thread message: ", error);
+          toast.error(
+            "An error occurred while deleting the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { original, modified } = transaction.mutations[0];
+
+          // Skip editMessage call if only reactions changed (not the message text)
+          // Reactions are synced separately via toggleReaction endpoint
+          if (original.message === modified.message) {
+            return;
+          }
+
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing thread message: ", error);
+          toast.error(
+            "An error occurred while editing the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+    }),
+  );
 }
