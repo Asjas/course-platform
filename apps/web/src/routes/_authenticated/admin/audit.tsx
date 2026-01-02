@@ -19,19 +19,17 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { type GdprAuditLog, useGdprAuditLogs } from "~/lib/db.collections";
-import { trpcClient } from "~/lib/trpc.client";
+import {
+  type GdprAuditLog,
+  GdprAuditLogsCollection,
+  useGdprAuditLogs,
+} from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
-  // Prefetch audit logs data before rendering
   loader: async () => {
-    // Prefetch the data - it will be cached and available immediately
-    await trpcClient.audit.getGdprAuditLogs.query({ limit: 100, offset: 0 });
-    return null;
+    await GdprAuditLogsCollection.preload();
   },
-  // Keep data fresh for 1 minute to avoid refetching on every navigation
-  staleTime: 1000 * 60,
   component: AdminAuditPage,
 });
 
