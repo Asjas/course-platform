@@ -183,6 +183,15 @@ export function ThreadPanel({
     ),
   );
 
+  // Handle immediate reaction updates from user interactions
+  const handleReactionUpdate = useCallback((update: ReactionUpdate) => {
+    setReactionOverrides((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(update.messageId, update.reactions);
+      return newMap;
+    });
+  }, []);
+
   // Mutation for posting thread replies
   const postReplyMutation = useMutation(
     trpc.chat.postMessage.mutationOptions({ keyPrefix: undefined }),
@@ -298,12 +307,19 @@ export function ThreadPanel({
           msg={msg as ChatMessageType}
           collection={threadCollection}
           reactions={reactions}
+          onReactionUpdate={handleReactionUpdate}
         />,
       );
     }
 
     return elements;
-  }, [threadMessages, channelId, threadCollection, reactionOverrides]);
+  }, [
+    threadMessages,
+    channelId,
+    threadCollection,
+    reactionOverrides,
+    handleReactionUpdate,
+  ]);
 
   const usernameColor = parentMessage.color || DEFAULT_USERNAME_COLOR;
   const replyCount = threadMessages?.length ?? 0;

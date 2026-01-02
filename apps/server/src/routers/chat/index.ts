@@ -302,6 +302,37 @@ export const chatRouter = router({
           if (message.id === input.id) {
             await redis.xdel(key, streamId);
 
+            // If this was a thread reply, decrement the parent's reply count
+            if (message.parentMessageId) {
+              const threadMetaKey = getThreadMetaKey(message.parentMessageId);
+
+              // Decrement reply count (min 0)
+              const currentCount = await redis.hget(
+                threadMetaKey,
+                "replyCount",
+              );
+              const newCount = Math.max(
+                0,
+                (currentCount ? parseInt(currentCount, 10) : 0) - 1,
+              );
+
+              if (newCount === 0) {
+                // No more replies, clean up thread metadata
+                await redis.del(threadMetaKey);
+              } else {
+                await redis.hset(
+                  threadMetaKey,
+                  "replyCount",
+                  newCount.toString(),
+                );
+              }
+
+              redisStreamOperations.inc({
+                operation: "hset",
+                status: "success",
+              });
+            }
+
             chatMessageCount.inc({ channel: key, action: "delete" });
             redisStreamOperations.inc({ operation: "xdel", status: "success" });
 

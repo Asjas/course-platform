@@ -1,4 +1,8 @@
-import type { ChatMessage, Reaction } from "@apps/server/src/routers/chat";
+import type {
+  ChatMessage,
+  Reaction,
+  ReactionUpdate,
+} from "@apps/server/src/routers/chat";
 import { format } from "date-fns";
 import {
   ChevronDownIcon,
@@ -42,6 +46,7 @@ export default function ChatMessageComponent({
   collection,
   reactions,
   onOpenThread,
+  onReactionUpdate,
 }: {
   msg: ChatMessage;
   channelId: string;
@@ -49,6 +54,8 @@ export default function ChatMessageComponent({
   reactions: Reaction[];
   /** Callback to open the thread panel for this message */
   onOpenThread?: (parentMessage: ChatMessage) => void;
+  /** Callback when reactions are updated (for immediate UI feedback) */
+  onReactionUpdate?: (update: ReactionUpdate) => void;
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -76,11 +83,21 @@ export default function ChatMessageComponent({
       // Call the server to toggle the reaction
       // The toggleMessageReaction function handles error toasts
       // Server publishes update via SSE for all subscribers
-      await toggleMessageReaction({
+      const updatedReactions = await toggleMessageReaction({
         messageId: msg.id,
         emoji,
         channelId,
       });
+
+      // Immediately update the UI with the server response
+      // This provides instant feedback while SSE propagates to other clients
+      if (onReactionUpdate && updatedReactions) {
+        onReactionUpdate({
+          messageId: msg.id,
+          reactions: updatedReactions,
+          timestamp: Date.now(),
+        });
+      }
     } catch {
       // Error already handled by toggleMessageReaction
     }

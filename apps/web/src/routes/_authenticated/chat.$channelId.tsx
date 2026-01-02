@@ -6,7 +6,14 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
@@ -151,6 +158,15 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
     }
   }, [messages]);
 
+  // Handler for immediate reaction updates from the current user
+  const handleReactionUpdate = useCallback((update: ReactionUpdate) => {
+    setReactionOverrides((prev) => {
+      const newMap = new Map(prev);
+      newMap.set(update.messageId, update.reactions);
+      return newMap;
+    });
+  }, []);
+
   // Memoize messages with date dividers to avoid recreation on every render
   const messagesWithDividers = useMemo(() => {
     if (!messages || messages.length === 0) {
@@ -185,12 +201,19 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
           collection={channelCollection}
           reactions={reactions}
           onOpenThread={handleOpenThread}
+          onReactionUpdate={handleReactionUpdate}
         />,
       );
     }
 
     return elements;
-  }, [messages, channelId, channelCollection, reactionOverrides]);
+  }, [
+    messages,
+    channelId,
+    channelCollection,
+    reactionOverrides,
+    handleReactionUpdate,
+  ]);
 
   return (
     <div className="flex h-full">
