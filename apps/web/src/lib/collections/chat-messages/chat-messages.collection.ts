@@ -4,6 +4,8 @@
  * Offline-first collections for chat messages.
  * Supports both channel messages and DM messages with full CRUD.
  */
+// Import the Reaction type for internal use
+import type { Reaction } from "@apps/server/src/routers/chat";
 import type {
   ChannelMessages,
   DMMessages,
@@ -25,13 +27,37 @@ export type ChatMessage = ChannelMessage | DMMessage;
 export type { Reaction, ReactionUpdate } from "@apps/server/src/routers/chat";
 
 /**
+ * Deduplicate users within each reaction by their userId.
+ * Keeps the last occurrence of each user (most recent version).
+ */
+function deduplicateReactionUsers(reactions: Reaction[]): Reaction[] {
+  return reactions.map((reaction) => {
+    const userMap = new Map<string, (typeof reaction.users)[number]>();
+    for (const user of reaction.users) {
+      userMap.set(user.userId, user);
+    }
+    return {
+      ...reaction,
+      users: Array.from(userMap.values()),
+    };
+  });
+}
+
+/**
  * Deduplicate an array of messages by their ID.
+ * Also deduplicates reaction users within each message.
  * Keeps the last occurrence of each message (most recent version).
  */
-function deduplicateMessages<T extends { id: string }>(messages: T[]): T[] {
+function deduplicateMessages<T extends { id: string; reactions?: Reaction[] }>(
+  messages: T[],
+): T[] {
   const messageMap = new Map<string, T>();
   for (const msg of messages) {
-    messageMap.set(msg.id, msg);
+    // Deduplicate reaction users if reactions exist
+    const deduplicatedMsg = msg.reactions
+      ? { ...msg, reactions: deduplicateReactionUsers(msg.reactions) }
+      : msg;
+    messageMap.set(msg.id, deduplicatedMsg as T);
   }
   return Array.from(messageMap.values());
 }
