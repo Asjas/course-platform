@@ -16,6 +16,7 @@ import {
 } from "react-aria-components";
 import { toast } from "sonner";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
+import { MarkdownContent } from "~/components/markdown-content";
 import { MessageReactions } from "~/components/message-reactions";
 import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
@@ -313,11 +314,11 @@ export default function ChatMessage({
                 <span>{mediaLabel}</span>
               </button>
 
-              {/* Collapsible media content */}
+              {/* Collapsible media content - uses VideoPlayer for consistent styling */}
               {isMediaVisible ? (
-                <div
-                  className="chat-message-media [&_iframe]:max-w-md [&_iframe]:rounded [&_img]:max-w-md [&_img]:rounded [&_video]:max-w-md [&_video]:rounded"
-                  dangerouslySetInnerHTML={{ __html: mediaHtml }}
+                <MarkdownContent
+                  className="chat-message-media [&_iframe]:max-w-md [&_iframe]:rounded [&_img]:max-w-md [&_img]:rounded"
+                  html={mediaHtml}
                 />
               ) : null}
             </div>

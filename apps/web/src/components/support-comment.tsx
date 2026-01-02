@@ -9,6 +9,7 @@ import {
   MenuTrigger,
   Popover,
 } from "react-aria-components";
+import { MarkdownContent } from "~/components/markdown-content";
 import { useAuth } from "~/lib/auth.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { cn } from "~/lib/utils";
@@ -124,18 +125,16 @@ export default function SupportComment({
         </div>
       </div>
       <div className="custom-scrollbar min-h-0 max-w-screen overflow-auto rounded-b-md bg-white dark:bg-gray-900">
-        <div
+        <MarkdownContent
           className={cn(
             "min-w-fit text-base",
             "prose prose-sm dark:prose-invert p-6",
             "text-gray-900 dark:text-white",
             "[&_code]:overflow-visible! [&_pre]:overflow-visible!",
           )}
+          html={ticketContent}
           key={ticket.id}
-          dangerouslySetInnerHTML={{
-            __html: ticketContent,
-          }}
-        ></div>
+        />
       </div>
     </div>
   );
