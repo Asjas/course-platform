@@ -1098,7 +1098,7 @@ export default function GitHubMessageEditor({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="flex items-center gap-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                className="flex items-center gap-1 whitespace-nowrap text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                 type="button"
                 aria-label="View supported file types"
               >
@@ -1106,7 +1106,7 @@ export default function GitHubMessageEditor({
                   size={14}
                   aria-hidden="true"
                 />
-                <span className="hidden sm:inline">Supported types</span>
+                <span className="hidden sm:inline">Supported file types</span>
               </button>
             </TooltipTrigger>
             <TooltipContent
