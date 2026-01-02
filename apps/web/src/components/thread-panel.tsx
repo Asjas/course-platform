@@ -12,8 +12,15 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { format, isSameDay } from "date-fns";
-import { CircleArrowRightIcon, XIcon } from "lucide-react";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { CircleArrowRightIcon, GripVerticalIcon, XIcon } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
@@ -30,6 +37,12 @@ import { cn } from "~/lib/utils";
 
 // Default color for users without a precomputed color
 const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
+
+// Thread panel resize constraints
+const MIN_WIDTH = 320;
+const MAX_WIDTH = 800;
+const DEFAULT_WIDTH = 384;
+const STORAGE_KEY = "thread-panel-width";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message cannot be empty"),
@@ -50,8 +63,60 @@ export function ThreadPanel({
   onClose,
 }: ThreadPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const resizeRef = useRef<HTMLButtonElement>(null);
   const [parentHtml, setParentHtml] = useState("");
   const [submitAttempted, setSubmitAttempted] = useState(false);
+
+  // Width state with localStorage persistence
+  const [width, setWidth] = useState(() => {
+    if (typeof window === "undefined") return DEFAULT_WIDTH;
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed >= MIN_WIDTH && parsed <= MAX_WIDTH) {
+        return parsed;
+      }
+    }
+    return DEFAULT_WIDTH;
+  });
+  const [isResizing, setIsResizing] = useState(false);
+
+  // Handle resize drag
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      // Calculate width from right edge of viewport
+      const newWidth = window.innerWidth - e.clientX;
+      const clampedWidth = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, newWidth));
+      setWidth(clampedWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+      // Persist to localStorage
+      localStorage.setItem(STORAGE_KEY, width.toString());
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    // Add cursor style to body during resize
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    };
+  }, [isResizing, width]);
 
   // Render parent message markdown
   useEffect(() => {
@@ -259,7 +324,26 @@ export function ThreadPanel({
   const replyCount = threadMessages?.length ?? 0;
 
   return (
-    <div className="flex h-full w-96 flex-col border-l border-gray-700 bg-gray-800">
+    <div
+      className="relative flex h-full flex-col border-l border-gray-700 bg-gray-800"
+      style={{ width: `${width}px` }}
+    >
+      {/* Resize handle - uses button for proper a11y with mouse events */}
+      <button
+        className="absolute top-0 left-0 z-10 flex h-full w-2 cursor-col-resize items-center justify-center border-none bg-transparent p-0 opacity-0 transition-opacity hover:opacity-100 focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        ref={resizeRef}
+        type="button"
+        onMouseDown={handleMouseDown}
+        aria-label={`Resize thread panel, current width ${width} pixels`}
+      >
+        <span className="flex h-16 w-4 items-center justify-center rounded bg-gray-600">
+          <GripVerticalIcon
+            className="text-gray-400"
+            size={12}
+          />
+        </span>
+      </button>
+
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-700 px-4 py-3">
         <div>

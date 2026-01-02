@@ -138,6 +138,12 @@ export const chatRouter = router({
             );
             if (!payload) continue; // Skip corrupted messages
 
+            // Skip thread replies - they should only appear in the thread panel
+            if (payload.parentMessageId) {
+              lastId = streamId;
+              continue;
+            }
+
             const messageId = payload.id; // ULID
 
             // Update lastId to Redis stream ID
