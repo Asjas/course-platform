@@ -223,4 +223,120 @@ When creating a new tRPC endpoint:
 - [ ] Derive singular type from array type using `[number]`
 - [ ] Create reactive collection with primary key
 - [ ] Use collection in components without type casting
+- [ ] **Preload collection in route loader** (see Section 7)
 - [ ] Run `pnpm typecheck` to verify type flow
+
+---
+
+## 7. Collection Preloading in Route Loaders
+
+**CRITICAL**: All routes that use collections MUST preload the collection in their route loader. This ensures data is fetched during navigation, eliminating loading spinners.
+
+### Pattern for Static Collections
+
+For collections that don't require route parameters:
+
+```typescript
+// apps/web/src/routes/_authenticated/admin/reviews.tsx
+import { ReviewsCollection, useReviews } from "~/lib/db.collections";
+
+export const Route = createFileRoute("/_authenticated/admin/reviews")({
+  loader: async () => {
+    await ReviewsCollection.preload();
+  },
+  component: AdminReviewsPage,
+});
+
+function AdminReviewsPage() {
+  // Data is prefetched - no loading spinner needed
+  const { data: reviews, isLoading } = useReviews();
+  // ...
+}
+```
+
+### Pattern for Multiple Collections
+
+When a route uses multiple collections, preload them in parallel:
+
+```typescript
+export const Route = createFileRoute("/_authenticated/courses/$courseId/lessons/$lessonId")({
+  loader: async ({ params }) => {
+    await Promise.all([
+      CoursesCollection.preload(),
+      SupportTicketsCollection.preload(),
+    ]);
+    // Additional loading logic...
+  },
+  component: LessonPage,
+});
+```
+
+### Pattern for Dynamic/Parameterized Collections
+
+For collections created dynamically (e.g., per channel/conversation), use trpcClient directly in the loader since the collection is created per-render:
+
+```typescript
+// apps/web/src/routes/_authenticated/chat.$channelId.tsx
+import { createChannelMessagesCollection } from "~/lib/db.collections";
+import { trpcClient } from "~/lib/trpc.client";
+
+export const Route = createFileRoute("/_authenticated/chat/$channelId")({
+  loader: async ({ params }) => {
+    // Pre-load messages into tRPC cache
+    // The dynamically-created collection will hydrate from this cache
+    await trpcClient.chat.getChannelHistory.query({
+      channelId: params.channelId,
+    });
+  },
+  component: ChatChannelPage,
+});
+
+function ChatChannelPage() {
+  const { channelId } = useParams({ from: "/_authenticated/chat/$channelId" });
+
+  // Create channel-specific collection - recreates when channelId changes
+  const channelCollection = useMemo(
+    () => createChannelMessagesCollection(channelId),
+    [channelId],
+  );
+
+  const { data: messages } = useLiveQuery(channelCollection);
+  // ...
+}
+```
+
+### Anti-patterns to Avoid
+
+```typescript
+// ❌ BAD: No preloading - causes loading spinner on every navigation
+export const Route = createFileRoute("/_authenticated/admin/audit")({
+  component: AdminAuditPage,
+});
+
+function AdminAuditPage() {
+  const { data, isLoading } = useGdprAuditLogs();
+  if (isLoading) return <Loading />; // User sees spinner every time
+}
+
+// ❌ BAD: Using trpcClient directly instead of Collection.preload()
+export const Route = createFileRoute("/_authenticated/admin/reviews")({
+  loader: async () => {
+    await trpcClient.reviews.getAllReviews.query();
+  },
+});
+
+// ✅ GOOD: Use Collection.preload() for static collections
+export const Route = createFileRoute("/_authenticated/admin/reviews")({
+  loader: async () => {
+    await ReviewsCollection.preload();
+  },
+});
+```
+
+### Checklist for Routes Using Collections
+
+- [ ] Route has a `loader` function
+- [ ] All static collections used in component are preloaded via `Collection.preload()`
+- [ ] Multiple collections are preloaded in parallel with `Promise.all()`
+- [ ] Dynamic collections use `trpcClient` directly in loader
+- [ ] Component handles `isLoading` gracefully (but it should rarely be true due to preloading)

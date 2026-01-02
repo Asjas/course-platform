@@ -115,20 +115,35 @@ await trpcClient.reviews.updateUserReview.mutate({
 
 ### Collections with TanStack Query DB
 
-Use collections from `~/lib/db.collections` for reactive data:
+Use collections from `~/lib/db.collections` for reactive data. **CRITICAL**: Always preload collections in the route loader to eliminate loading spinners.
 
 ```tsx
 import { CoursesCollection, useCourseById } from "~/lib/db.collections";
 
-// Preload in route loader
+// ALWAYS preload in route loader
 export const Route = createFileRoute("/_authenticated/courses/$courseId")({
   loader: async ({ params }) => {
     await CoursesCollection.preload();
   },
+  component: CoursePage,
 });
 
-// Use reactive query in component
+// Use reactive query in component - data is already available
 const { data: course, isLoading } = useCourseById({ courseId });
+```
+
+For multiple collections, preload in parallel:
+
+```tsx
+export const Route = createFileRoute("/_authenticated/admin/dashboard")({
+  loader: async () => {
+    await Promise.all([
+      CoursesCollection.preload(),
+      ReviewsCollection.preload(),
+    ]);
+  },
+  component: DashboardPage,
+});
 ```
 
 Insert with optimistic updates:
