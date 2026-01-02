@@ -16,6 +16,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { DMRequestModal } from "~/components/dm-request-modal";
 import { UserSearchModal } from "~/components/user-search-modal";
+import { UsernameRequirementModal } from "~/components/username-requirement-modal";
+import { useAuth } from "~/lib/auth.context";
 import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
 
@@ -38,10 +40,14 @@ const channels = ["general", "random"];
 
 function AuthenticatedChatPage() {
   const navigate = useNavigate();
+  const auth = useAuth();
   const [isUserSearchOpen, setIsUserSearchOpen] = useState(false);
   const [isDMRequestModalOpen, setIsDMRequestModalOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedUserName, setSelectedUserName] = useState<string>("");
+  const [showUsernameModal, setShowUsernameModal] = useState(
+    !auth.session?.user?.username,
+  );
 
   // Fetch active DM conversations
   const { data: dmConversations, refetch: refetchDmConversations } = useQuery(
@@ -281,6 +287,16 @@ function AuthenticatedChatPage() {
         onClose={handleDMRequestClose}
         recipientId={selectedUserId}
         recipientName={selectedUserName}
+      />
+
+      <UsernameRequirementModal
+        isOpen={showUsernameModal}
+        onClose={() => setShowUsernameModal(false)}
+        onSuccess={() => {
+          setShowUsernameModal(false);
+          // Reload the page to get updated session with new username
+          window.location.reload();
+        }}
       />
     </div>
   );

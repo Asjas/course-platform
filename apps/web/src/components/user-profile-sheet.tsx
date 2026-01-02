@@ -75,7 +75,11 @@ export default function UserProfileSheet({
       try {
         await authClient.updateUser({
           name: value.name,
-          username: value.username || undefined,
+          // Only send username if it's not empty - empty string means no username
+          username:
+            value.username && value.username.trim()
+              ? value.username.trim()
+              : undefined,
         });
 
         toast.success("Profile updated successfully!", { id: toastId });
