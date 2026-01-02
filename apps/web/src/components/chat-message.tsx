@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@apps/server/src/routers/chat";
+import type { ChatMessage, Reaction } from "@apps/server/src/routers/chat";
 import { format } from "date-fns";
 import {
   ChevronDownIcon,
@@ -21,8 +21,8 @@ import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
-import { toggleReactionViaCollection } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
+import { trpcClient } from "~/lib/trpc.client";
 
 // Default color for users without a precomputed color
 const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
@@ -30,7 +30,10 @@ const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
 // Minimal interface for collection operations used by ChatMessage
 interface MessageCollection {
   delete(id: string): void;
-  update(id: string, callback: (draft: { message: string }) => void): void;
+  update(
+    id: string,
+    callback: (draft: { message: string; reactions?: Reaction[] }) => void,
+  ): void;
 }
 
 export default function ChatMessage({
@@ -63,12 +66,52 @@ export default function ChatMessage({
       return;
     }
 
-    toggleReactionViaCollection({
-      messageId: msg.id,
-      emoji,
-      userId: currentUserId,
-      userName: currentUserName,
+    // Optimistically update the reactions in the collection
+    collection.update(msg.id, (draft) => {
+      const reactions = draft.reactions ?? [];
+      const existingReaction = reactions.find((r) => r.emoji === emoji);
+
+      if (existingReaction) {
+        const userIndex = existingReaction.users.findIndex(
+          (u) => u.userId === currentUserId,
+        );
+
+        if (userIndex !== -1) {
+          // User already reacted, remove their reaction
+          existingReaction.users.splice(userIndex, 1);
+          // If no users left for this emoji, remove the reaction entirely
+          if (existingReaction.users.length === 0) {
+            const reactionIndex = reactions.findIndex((r) => r.emoji === emoji);
+            reactions.splice(reactionIndex, 1);
+          }
+        } else {
+          // User hasn't reacted with this emoji yet, add them
+          existingReaction.users.push({
+            userId: currentUserId,
+            userName: currentUserName,
+          });
+        }
+      } else {
+        // No reaction with this emoji exists, create it
+        reactions.push({
+          emoji,
+          users: [{ userId: currentUserId, userName: currentUserName }],
+        });
+      }
+
+      draft.reactions = reactions;
     });
+
+    // Sync to server
+    try {
+      await trpcClient.chat.toggleReaction.mutate({
+        messageId: msg.id,
+        emoji,
+      });
+    } catch (error) {
+      console.error("Error toggling reaction:", error);
+      toast.error("Failed to update reaction.");
+    }
   }
 
   useEffect(() => {
@@ -282,8 +325,9 @@ export default function ChatMessage({
 
           {/* Reactions */}
           <MessageReactions
-            messageId={msg.id}
             reactions={msg.reactions}
+            onToggleReaction={handleToggleReaction}
+            currentUserId={auth.session?.user.id}
             messageAuthor={msg.name}
           />
         </div>

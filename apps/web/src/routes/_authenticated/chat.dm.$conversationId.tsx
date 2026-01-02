@@ -8,10 +8,7 @@ import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
-import {
-  MessageReactionsCollection,
-  createDMMessagesCollection,
-} from "~/lib/db.collections";
+import { createDMMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
@@ -87,27 +84,6 @@ function AuthenticatedChatDMPage() {
                   error,
                 },
               );
-            }
-          }
-
-          // Update reactions collection if message has reactions
-          if (newMessage.reactions && newMessage.reactions.length > 0) {
-            for (const reactionGroup of newMessage.reactions) {
-              for (const user of reactionGroup.users) {
-                const reactionId = `${newMessage.id}:${reactionGroup.emoji}:${user.userId}`;
-                try {
-                  MessageReactionsCollection.insert({
-                    id: reactionId,
-                    messageId: newMessage.id,
-                    emoji: reactionGroup.emoji,
-                    userId: user.userId,
-                    userName: user.userName,
-                  });
-                } catch {
-                  // Already exists, that's okay
-                  console.debug("Reaction already exists");
-                }
-              }
             }
           }
         },

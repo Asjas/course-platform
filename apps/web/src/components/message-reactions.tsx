@@ -1,13 +1,17 @@
 import type { Reaction } from "@apps/server/src/routers/chat";
 import { Tooltip, TooltipTrigger } from "react-aria-components";
-import { toast } from "sonner";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
-import { useAuth } from "~/lib/auth.context";
-import { toggleReactionViaCollection } from "~/lib/db.collections";
 
 interface MessageReactionsProps {
-  messageId: string;
   reactions?: Reaction[];
+  /**
+   * Callback to toggle a reaction on the message.
+   */
+  onToggleReaction: (emoji: string) => void;
+  /**
+   * Current user ID to determine if user has reacted.
+   */
+  currentUserId?: string;
   /**
    * Name of the message author for accessible aria-label.
    */
@@ -15,28 +19,11 @@ interface MessageReactionsProps {
 }
 
 export function MessageReactions({
-  messageId,
   reactions = [],
+  onToggleReaction,
+  currentUserId,
   messageAuthor,
 }: MessageReactionsProps) {
-  const auth = useAuth();
-  const currentUserId = auth.session?.user.id;
-  const currentUserName = auth.session?.user.name;
-
-  async function handleToggleReaction(emoji: string) {
-    if (!currentUserId || !currentUserName) {
-      toast.error("You must be logged in to react.");
-      return;
-    }
-
-    toggleReactionViaCollection({
-      messageId,
-      emoji,
-      userId: currentUserId,
-      userName: currentUserName,
-    });
-  }
-
   // Check if the current user has reacted with a specific emoji
   function hasUserReacted(reaction: Reaction): boolean {
     return reaction.users.some((user) => user.userId === currentUserId);
@@ -72,7 +59,7 @@ export function MessageReactions({
                 : "bg-gray-600/60 text-gray-200 hover:bg-gray-600/80"
             }`}
             type="button"
-            onClick={() => handleToggleReaction(reaction.emoji)}
+            onClick={() => onToggleReaction(reaction.emoji)}
             aria-label={`${reaction.emoji} reaction from ${getReactionTooltip(reaction)}. Click to ${hasUserReacted(reaction) ? "remove" : "add"} your reaction.`}
           >
             <span aria-hidden="true">{reaction.emoji}</span>
@@ -84,7 +71,7 @@ export function MessageReactions({
         </TooltipTrigger>
       ))}
       <EmojiReactionPicker
-        onEmojiSelect={handleToggleReaction}
+        onEmojiSelect={onToggleReaction}
         variant="inline"
         messageAuthor={messageAuthor}
       />
