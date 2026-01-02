@@ -125,3 +125,13 @@ export {
   markUserNotificationAsRead,
   type UserNotification,
 } from "./notifications";
+
+// ========== Purchases ==========
+export {
+  PurchasesCollection,
+  usePurchases,
+  usePurchaseById,
+  useRefundedPurchases,
+  useActivePurchases,
+  type Purchase,
+} from "./purchases";

@@ -1,0 +1,176 @@
+import { Polar } from "@polar-sh/sdk";
+import config from "~/config.js";
+import { pinoLogger } from "~/lib/logging.js";
+
+const log = pinoLogger.child({ module: "routers:purchases:queries" });
+
+const polarClient = new Polar({
+  accessToken: config.POLAR_ACCESS_TOKEN,
+  server: config.NODE_ENV === "production" ? "production" : "sandbox",
+});
+
+// Define types locally to avoid ESLint import resolution issues with SDK sub-paths
+export type OrderStatus =
+  | "paid"
+  | "refunded"
+  | "partially_refunded"
+  | "pending";
+export type OrderBillingReason =
+  | "purchase"
+  | "subscription_create"
+  | "subscription_cycle"
+  | "subscription_update";
+
+// Simplified order type for API response (serializable)
+export interface PolarOrderResponse {
+  id: string;
+  createdAt: string;
+  modifiedAt: string | null;
+  status: OrderStatus;
+  paid: boolean;
+  totalAmount: number;
+  refundedAmount: number;
+  taxAmount: number;
+  currency: string;
+  billingReason: OrderBillingReason;
+  customerId: string;
+  productId: string | null;
+  checkoutId: string | null;
+  userId: string;
+  invoiceNumber: string;
+  description: string;
+  customer: {
+    id: string;
+    email: string;
+    emailVerified: boolean;
+    name: string | null;
+    avatarUrl: string;
+    organizationId: string;
+  };
+  product: {
+    id: string;
+    name: string;
+    description: string | null;
+    isRecurring: boolean;
+    isArchived: boolean;
+  } | null;
+}
+
+export type AllPurchases = PolarOrderResponse[];
+
+// Use interface to type the order from SDK response
+interface PolarOrder {
+  id: string;
+  createdAt: Date;
+  modifiedAt: Date | null;
+  status: OrderStatus;
+  paid: boolean;
+  totalAmount: number;
+  refundedAmount: number;
+  taxAmount: number;
+  currency: string;
+  billingReason: OrderBillingReason;
+  customerId: string;
+  productId: string | null;
+  checkoutId: string | null;
+  userId: string;
+  invoiceNumber: string;
+  description: string;
+  customer: {
+    id: string;
+    email: string;
+    emailVerified: boolean;
+    name: string | null;
+    avatarUrl: string;
+    organizationId: string;
+  };
+  product: {
+    id: string;
+    name: string;
+    description: string | null;
+    isRecurring: boolean;
+    isArchived: boolean;
+  } | null;
+}
+
+function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
+  return {
+    id: order.id,
+    createdAt: order.createdAt.toISOString(),
+    modifiedAt: order.modifiedAt?.toISOString() ?? null,
+    status: order.status,
+    paid: order.paid,
+    totalAmount: order.totalAmount,
+    refundedAmount: order.refundedAmount,
+    taxAmount: order.taxAmount,
+    currency: order.currency,
+    billingReason: order.billingReason,
+    customerId: order.customerId,
+    productId: order.productId,
+    checkoutId: order.checkoutId,
+    userId: order.userId,
+    invoiceNumber: order.invoiceNumber,
+    description: order.description,
+    customer: {
+      id: order.customer.id,
+      email: order.customer.email,
+      emailVerified: order.customer.emailVerified,
+      name: order.customer.name,
+      avatarUrl: order.customer.avatarUrl,
+      organizationId: order.customer.organizationId,
+    },
+    product: order.product
+      ? {
+          id: order.product.id,
+          name: order.product.name,
+          description: order.product.description,
+          isRecurring: order.product.isRecurring,
+          isArchived: order.product.isArchived,
+        }
+      : null,
+  };
+}
+
+export async function getAllPurchases(): Promise<AllPurchases> {
+  try {
+    const orders: PolarOrderResponse[] = [];
+
+    // Fetch all orders using pagination
+    let page = 1;
+    const limit = 100;
+    let hasMore = true;
+
+    while (hasMore) {
+      const response = await polarClient.orders.list({
+        page,
+        limit,
+      });
+
+      if (response.result.items.length > 0) {
+        orders.push(...response.result.items.map(mapOrderToResponse));
+        page++;
+        hasMore = response.result.items.length === limit;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    log.info(`Fetched ${orders.length} orders from Polar`);
+    return orders;
+  } catch (err) {
+    log.error(err, "Failed to fetch orders from Polar");
+    throw err;
+  }
+}
+
+export async function getPurchaseById(
+  orderId: string,
+): Promise<PolarOrderResponse | null> {
+  try {
+    const order = await polarClient.orders.get({ id: orderId });
+    return mapOrderToResponse(order);
+  } catch (err) {
+    log.error(err, `Failed to fetch order ${orderId} from Polar`);
+    return null;
+  }
+}

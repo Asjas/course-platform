@@ -10,6 +10,7 @@ import { coursesRouter } from "~/routers/courses/index.js";
 import { dataExportRouter } from "~/routers/dataExport/index.js";
 import { directMessagesRouter } from "~/routers/directMessages/index.js";
 import { notificationsRouter } from "~/routers/notifications/index.js";
+import { purchasesRouter } from "~/routers/purchases/index.js";
 import { reviewsRouter } from "~/routers/reviews/index.js";
 import { statsRouter } from "~/routers/stats/index.js";
 import { supportTicketsRouter } from "~/routers/support-tickets/index.js";
@@ -26,6 +27,7 @@ export const appRouter = router({
   images: imagesRouter,
   mentions: mentionsRouter,
   notifications: notificationsRouter,
+  purchases: purchasesRouter,
   reviews: reviewsRouter,
   stats: statsRouter,
   supportStatus: supportStatusRouter,
