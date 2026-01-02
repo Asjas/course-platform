@@ -47,10 +47,24 @@ export const auth = betterAuth({
   },
   emailVerification: {
     autoSignInAfterVerification: true,
-    sendOnSignUp: true,
-    sendOnSignIn: true,
+    // Disable email verification in development to avoid SMTP hanging
+    sendOnSignUp: config.NODE_ENV === "production",
+    sendOnSignIn: config.NODE_ENV === "production",
     expiresIn: ONE_HOUR,
     async sendVerificationEmail(data) {
+      // Skip email in development
+      if (config.NODE_ENV !== "production") {
+        console.log(
+          "[AUTH DEBUG] Skipping email in development. Verification token:",
+          data.token,
+        );
+        console.log(
+          "[AUTH DEBUG] Verify URL:",
+          `${config.ORIGIN}/verify-email/${data.token}`,
+        );
+        return;
+      }
+
       console.log(
         "[AUTH DEBUG] sendVerificationEmail called for:",
         data.user.email,
