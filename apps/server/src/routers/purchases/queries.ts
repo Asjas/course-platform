@@ -132,6 +132,12 @@ function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
 }
 
 export async function getAllPurchases(): Promise<AllPurchases> {
+  // Skip API call if no access token is configured
+  if (!config.POLAR_ACCESS_TOKEN) {
+    log.warn("POLAR_ACCESS_TOKEN not configured, returning empty purchases list");
+    return [];
+  }
+
   try {
     const orders: PolarOrderResponse[] = [];
 
@@ -158,6 +164,12 @@ export async function getAllPurchases(): Promise<AllPurchases> {
     log.info(`Fetched ${orders.length} orders from Polar`);
     return orders;
   } catch (err) {
+    // Return empty array on connection errors (e.g., sandbox API unreachable)
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    if (errorMessage.includes("ENOTFOUND") || errorMessage.includes("fetch failed")) {
+      log.warn("Polar API unreachable, returning empty purchases list");
+      return [];
+    }
     log.error(err, "Failed to fetch orders from Polar");
     throw err;
   }
