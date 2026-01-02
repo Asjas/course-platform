@@ -131,8 +131,23 @@ apps/server/src/
 ### React Components
 - Functional components with ES5 function declarations
 - Use `function MyComponent()` not arrow functions
-- Use TanStack Query for server state
+- **NEVER use tRPC or React Query directly in components** - use collection hooks instead
 - Use Zod 4 for validation
+
+### Offline-First Data Fetching (CRITICAL)
+
+This application supports offline mode for web and Tauri native apps. **ALL data operations MUST go through TanStack React-DB collections.**
+
+```typescript
+// ❌ NEVER: Direct tRPC/React Query in components
+const { data } = trpc.courses.getAll.useQuery(); // BREAKS OFFLINE!
+
+// ✅ ALWAYS: Use collection hooks
+import { useCourses } from "~/lib/collections";
+const { data } = useCourses(); // Works offline!
+```
+
+Collections are in `apps/web/src/lib/collections/`. See `trpc-type-patterns.instructions.md` for full details.
 
 ### Fastify Routes
 ```typescript

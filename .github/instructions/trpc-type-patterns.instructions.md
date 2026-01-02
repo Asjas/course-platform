@@ -1,11 +1,85 @@
 ---
-applyTo: "apps/server/src/routers/**/*.ts, apps/server/src/db/queries/**/*.ts, apps/web/src/lib/db.collections.ts"
+applyTo: "apps/server/src/routers/**/*.ts, apps/server/src/db/queries/**/*.ts, apps/web/src/lib/collections/**/*.ts"
 description: "tRPC endpoint patterns, type exports, and frontend collection integration"
 ---
 
 # tRPC Type Patterns and Frontend Integration
 
 This guide establishes consistent patterns for tRPC endpoints, type exports, and frontend TanStack Query collections.
+
+## ⚠️ CRITICAL: Offline-First Data Fetching
+
+**ALL data fetching, viewing, editing, and deletion MUST go through TanStack React-DB collections.**
+
+Direct usage of React Query or tRPC in components is **STRICTLY PROHIBITED** as it breaks offline functionality for the web and Tauri native applications.
+
+### ❌ NEVER DO THIS
+
+```typescript
+// ❌ BAD: Direct tRPC in components - BREAKS OFFLINE
+function MyComponent() {
+  const { data } = trpc.courses.getAll.useQuery();
+  return <CourseList courses={data} />;
+}
+
+// ❌ BAD: Direct React Query - BREAKS OFFLINE
+function MyComponent() {
+  const { data } = useQuery({
+    queryKey: ['courses'],
+    queryFn: () => trpcClient.courses.getAll.query()
+  });
+  return <CourseList courses={data} />;
+}
+
+// ❌ BAD: Direct tRPC mutation - BREAKS OFFLINE
+function MyComponent() {
+  const mutation = trpc.reviews.create.useMutation();
+  const handleSubmit = () => mutation.mutate(data);
+}
+```
+
+### ✅ ALWAYS DO THIS
+
+```typescript
+// ✅ GOOD: Use collection hooks - WORKS OFFLINE
+import { useCourses, CoursesCollection } from "~/lib/collections";
+
+function MyComponent() {
+  const { data: courses } = useCourses();
+  return <CourseList courses={courses} />;
+}
+
+// ✅ GOOD: Use collection mutations - WORKS OFFLINE with optimistic updates
+import { ReviewsCollection } from "~/lib/collections";
+
+function MyComponent() {
+  const handleSubmit = () => {
+    ReviewsCollection.insert({
+      id: ulid(),
+      ...reviewData,
+    });
+    // Collection's onInsert handler syncs to server
+  };
+}
+```
+
+### Collection Location
+
+All collections are located in `apps/web/src/lib/collections/`:
+- Each entity has its own subdirectory (e.g., `collections/courses/`)
+- Collection definition in `*.collection.ts`
+- Hooks in `hooks.ts`
+- Re-export everything from `collections/index.ts`
+
+### When tRPC is Acceptable
+
+tRPC can ONLY be used in these specific contexts:
+1. **Inside collection definitions** - for `queryFn`, `onInsert`, `onUpdate`, `onDelete`
+2. **Inside route loaders** - for preloading collections via `Collection.preload()`
+3. **Inside SSE sync hooks** - for `getUpdatesSince` queries
+4. **Server-side only code** - not in React components
+
+---
 
 ## 1. Database Query Type Exports
 
