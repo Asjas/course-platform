@@ -424,7 +424,8 @@ export function ThreadPanel({
                 onSubmit={handleSubmit}
                 hasError={submitAttempted && field.state.value.trim() === ""}
                 mentionContext={{ type: "channel", channelId }}
-                iconSize={12}
+                iconSize={14}
+                buttonPadding="p-1"
               >
                 <form.Subscribe
                   selector={(state) => [state.isDirty, state.isSubmitting]}

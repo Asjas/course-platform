@@ -55,6 +55,10 @@ interface GitHubMessageEditorProps {
    * Size of toolbar icons in pixels (default: 16)
    */
   iconSize?: number;
+  /**
+   * Padding class for toolbar buttons (default: "p-2")
+   */
+  buttonPadding?: string;
 }
 
 export default function ChatMessageEditor({
@@ -67,6 +71,7 @@ export default function ChatMessageEditor({
   hasError = false,
   mentionContext,
   iconSize = 16,
+  buttonPadding = "p-2",
 }: GitHubMessageEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -414,7 +419,10 @@ export default function ChatMessageEditor({
           <Tooltip>
             <TooltipTrigger asChild>
               <button
-                className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+                className={cn(
+                  "cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+                  buttonPadding,
+                )}
                 type="button"
                 aria-label="Upload attachment"
                 onClick={() => fileInputRef.current?.click()}
@@ -437,7 +445,10 @@ export default function ChatMessageEditor({
             </TooltipContent>
           </Tooltip>
           <button
-            className="cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add header text"
             onClick={() => {
@@ -468,7 +479,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add bold text"
             onClick={() => {
@@ -558,7 +572,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add italic text"
             onClick={() => {
@@ -654,7 +671,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Insert a quote"
             onClick={() => {
@@ -733,7 +753,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add inline code"
             onClick={() => {
@@ -825,7 +848,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add a link"
             onClick={() => {
@@ -902,7 +928,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add a bulleted list"
             onClick={() => {
@@ -981,7 +1010,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add a numbered list"
             onClick={() => {
@@ -1074,7 +1106,10 @@ export default function ChatMessageEditor({
             />
           </button>
           <button
-            className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+            className={cn(
+              "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+              buttonPadding,
+            )}
             type="button"
             aria-label="Add a GIF"
             onClick={() => setIsGiphyPickerOpen(true)}
@@ -1086,7 +1121,10 @@ export default function ChatMessageEditor({
           </button>
           {mentionContext && (
             <button
-              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+              className={cn(
+                "ml-1 cursor-pointer rounded-md hover:bg-gray-200 dark:hover:bg-gray-600",
+                buttonPadding,
+              )}
               type="button"
               aria-label="Mention someone"
               onClick={insertAtSymbol}
