@@ -55,12 +55,15 @@ interface ThreadPanelProps {
   channelId: string;
   /** Callback when the panel should be closed */
   onClose: () => void;
+  /** Callback when a thread reply is deleted (for optimistic update of parent's replyCount) */
+  onThreadReplyDeleted?: (parentMessageId: string) => void;
 }
 
 export function ThreadPanel({
   parentMessage,
   channelId,
   onClose,
+  onThreadReplyDeleted,
 }: ThreadPanelProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const resizeRef = useRef<HTMLButtonElement>(null);
@@ -308,6 +311,7 @@ export function ThreadPanel({
           collection={threadCollection}
           reactions={reactions}
           onReactionUpdate={handleReactionUpdate}
+          onThreadReplyDeleted={onThreadReplyDeleted}
         />,
       );
     }
@@ -319,6 +323,7 @@ export function ThreadPanel({
     threadCollection,
     reactionOverrides,
     handleReactionUpdate,
+    onThreadReplyDeleted,
   ]);
 
   const usernameColor = parentMessage.color || DEFAULT_USERNAME_COLOR;

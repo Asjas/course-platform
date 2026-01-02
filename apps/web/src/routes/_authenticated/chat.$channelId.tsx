@@ -167,6 +167,26 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
     });
   }, []);
 
+  // Handler for optimistic update when a thread reply is deleted
+  // Updates the parent message's replyCount immediately in the UI
+  const handleThreadReplyDeleted = useCallback(
+    (parentMessageId: string) => {
+      channelCollection.update(parentMessageId, (draft) => {
+        if (draft.replyCount && draft.replyCount > 0) {
+          draft.replyCount -= 1;
+        }
+      });
+      // Also update selectedThread if it's the parent being updated
+      setSelectedThread((prev) => {
+        if (prev && prev.id === parentMessageId && prev.replyCount) {
+          return { ...prev, replyCount: Math.max(0, prev.replyCount - 1) };
+        }
+        return prev;
+      });
+    },
+    [channelCollection],
+  );
+
   // Memoize messages with date dividers to avoid recreation on every render
   const messagesWithDividers = useMemo(() => {
     if (!messages || messages.length === 0) {
@@ -251,6 +271,7 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
           parentMessage={selectedThread}
           channelId={channelId}
           onClose={handleCloseThread}
+          onThreadReplyDeleted={handleThreadReplyDeleted}
         />
       ) : null}
     </div>

@@ -47,6 +47,7 @@ export default function ChatMessageComponent({
   reactions,
   onOpenThread,
   onReactionUpdate,
+  onThreadReplyDeleted,
 }: {
   msg: ChatMessage;
   channelId: string;
@@ -56,6 +57,8 @@ export default function ChatMessageComponent({
   onOpenThread?: (parentMessage: ChatMessage) => void;
   /** Callback when reactions are updated (for immediate UI feedback) */
   onReactionUpdate?: (update: ReactionUpdate) => void;
+  /** Callback when a thread reply is deleted (for optimistic update of parent's replyCount) */
+  onThreadReplyDeleted?: (parentMessageId: string) => void;
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -195,6 +198,10 @@ export default function ChatMessageComponent({
   function handleDelete() {
     try {
       collection.delete(msg.id);
+      // If this is a thread reply, notify parent to update replyCount
+      if (msg.parentMessageId && onThreadReplyDeleted) {
+        onThreadReplyDeleted(msg.parentMessageId);
+      }
       toast.success("Message deleted successfully.");
     } catch (error) {
       console.error("Error deleting message:", error);
