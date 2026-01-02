@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import ChatMessageEditor from "~/components/chat-message-editor";
+import type { MentionContext } from "~/components/mention-picker";
 import { useAppForm } from "~/lib/form.context";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
@@ -20,6 +21,7 @@ interface ChatMessageFormProps {
   channelId?: string;
   conversationId?: string;
   isDM?: boolean;
+  mentionContext?: MentionContext;
 }
 
 export default function ChatMessageForm({
@@ -27,6 +29,7 @@ export default function ChatMessageForm({
   channelId: propChannelId,
   conversationId: propConversationId,
   isDM = false,
+  mentionContext,
 }: ChatMessageFormProps = {}) {
   const params = useParams({ strict: false });
   const channelId = propChannelId || params.channelId;
@@ -138,6 +141,7 @@ export default function ChatMessageForm({
               value={field.state.value}
               onSubmit={handleSubmit}
               hasError={submitAttempted && field.state.value.trim() === ""}
+              mentionContext={mentionContext}
             >
               <form.Subscribe
                 selector={(state) => [state.isDirty, state.isSubmitting]}

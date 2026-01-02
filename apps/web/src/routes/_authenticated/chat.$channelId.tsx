@@ -167,7 +167,7 @@ function AuthenticatedChatChannelPage() {
       </section>
 
       <section className="bg-gray-800">
-        <ChatMessageForm />
+        <ChatMessageForm mentionContext={{ type: "channel", channelId }} />
       </section>
     </div>
   );
