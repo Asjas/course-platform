@@ -180,7 +180,8 @@ export const auth = betterAuth({
     }),
     polar({
       client: polarClient,
-      createCustomerOnSignUp: true,
+      // Disable customer creation in development to allow local signup without Polar API
+      createCustomerOnSignUp: config.NODE_ENV === "production",
       use: [
         portal(),
         checkout({
