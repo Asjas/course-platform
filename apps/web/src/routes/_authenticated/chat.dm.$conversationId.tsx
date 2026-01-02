@@ -232,6 +232,7 @@ function AuthenticatedChatDMPage() {
           channelId={`dm:${conversationId}`}
           isDM={true}
           mentionContext={{ type: "dm", conversationId }}
+          collection={dmCollection}
         />
       </div>
     </div>

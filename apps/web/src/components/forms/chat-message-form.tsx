@@ -1,20 +1,22 @@
-import { useMutation } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { CircleArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import ChatMessageEditor from "~/components/chat-message-editor";
 import type { MentionContext } from "~/components/mention-picker";
+import { useAuth } from "~/lib/auth.context";
 import { useAppForm } from "~/lib/form.context";
-import { queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 const formSchema = z.object({
   message: z.string().min(1, "Message cannot be empty"),
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-definitions
+type AnyCollection = { insert: (data: any) => void };
 
 interface ChatMessageFormProps {
   onMessageSent?: () => void;
@@ -22,6 +24,8 @@ interface ChatMessageFormProps {
   conversationId?: string;
   isDM?: boolean;
   mentionContext?: MentionContext;
+  /** The collection to insert messages into */
+  collection?: AnyCollection;
 }
 
 export default function ChatMessageForm({
@@ -30,6 +34,7 @@ export default function ChatMessageForm({
   conversationId: propConversationId,
   isDM = false,
   mentionContext,
+  collection,
 }: ChatMessageFormProps = {}) {
   const params = useParams({ strict: false });
   const channelId = propChannelId || params.channelId;
@@ -42,18 +47,7 @@ export default function ChatMessageForm({
     : undefined;
 
   const [submitAttempted, setSubmitAttempted] = useState(false);
-
-  const createChannelMessageMutation = useMutation(
-    trpc.chat.postMessage.mutationOptions({
-      keyPrefix: undefined,
-    }),
-  );
-
-  const createDMMessageMutation = useMutation(
-    trpc.chat.postDMMessage.mutationOptions({
-      keyPrefix: undefined,
-    }),
-  );
+  const auth = useAuth();
 
   const form = useAppForm({
     defaultValues: {
@@ -64,33 +58,36 @@ export default function ChatMessageForm({
     },
     onSubmit: async ({ value: { message } }) => {
       try {
-        if (isDM && conversationId) {
-          await createDMMessageMutation.mutateAsync({
-            conversationId,
-            message,
-          });
-
-          // Invalidate using tRPC's queryKey for consistency with collections
-          queryClient.invalidateQueries({
-            queryKey: trpc.chat.getDMHistory.queryKey({
-              conversationId,
-              limit: 50,
-            }),
-          });
-        } else if (channelId) {
-          await createChannelMessageMutation.mutateAsync({
-            channelId,
-            message,
-          });
-
-          // Invalidate using tRPC's queryKey for consistency with collections
-          queryClient.invalidateQueries({
-            queryKey: trpc.chat.getChannelHistory.queryKey({
-              channelId,
-              limit: 50,
-            }),
-          });
+        const user = auth.session?.user;
+        if (!user) {
+          toast.error("You must be logged in to send a message.");
+          return;
         }
+
+        if (!collection) {
+          toast.error("Unable to send message. Please refresh the page.");
+          return;
+        }
+
+        // Capture timestamp before insert
+        // eslint-disable-next-line react-hooks/purity -- Date.now() is safe in async event handler
+        const now = Date.now();
+
+        // Insert via collection - triggers onInsert which calls the server
+        // SSE subscription will handle updates for all clients
+        // Note: Only include fields that match the server's ChatMessage type
+        collection.insert({
+          id: ulid(),
+          channelId: isDM ? undefined : channelId,
+          conversationId: isDM ? conversationId : undefined,
+          message,
+          name: user.name || "Unknown",
+          username: user.username || null,
+          color: null,
+          timestamp: now,
+          createdAt: now,
+          reactions: [],
+        });
 
         form.reset();
         setSubmitAttempted(false);

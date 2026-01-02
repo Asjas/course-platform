@@ -261,7 +261,10 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
         </section>
 
         <section className="bg-gray-800">
-          <ChatMessageForm mentionContext={{ type: "channel", channelId }} />
+          <ChatMessageForm
+            mentionContext={{ type: "channel", channelId }}
+            collection={channelCollection}
+          />
         </section>
       </div>
 

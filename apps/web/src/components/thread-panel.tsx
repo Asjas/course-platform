@@ -9,7 +9,6 @@ import type {
   ReactionUpdate,
 } from "@apps/server/src/routers/chat";
 import { useLiveQuery } from "@tanstack/react-db";
-import { useMutation } from "@tanstack/react-query";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { format, isSameDay } from "date-fns";
 import { CircleArrowRightIcon, GripVerticalIcon, XIcon } from "lucide-react";
@@ -22,16 +21,17 @@ import {
   useState,
 } from "react";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageEditor from "~/components/chat-message-editor";
 import { MarkdownContent } from "~/components/markdown-content";
+import { useAuth } from "~/lib/auth.context";
 import { createThreadMessagesCollection } from "~/lib/collections/chat-messages";
 import { useAppForm } from "~/lib/form.context";
 import { renderMarkdown } from "~/lib/markdown";
-import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -195,10 +195,8 @@ export function ThreadPanel({
     });
   }, []);
 
-  // Mutation for posting thread replies
-  const postReplyMutation = useMutation(
-    trpc.chat.postMessage.mutationOptions({ keyPrefix: undefined }),
-  );
+  // Get current user info for optimistic message display
+  const auth = useAuth();
 
   const form = useAppForm({
     defaultValues: {
@@ -209,27 +207,30 @@ export function ThreadPanel({
     },
     onSubmit: async ({ value: { message } }) => {
       try {
-        await postReplyMutation.mutateAsync({
+        const user = auth.session?.user;
+        if (!user) {
+          toast.error("You must be logged in to reply.");
+          return;
+        }
+
+        // Capture timestamp before insert
+        // eslint-disable-next-line react-hooks/purity -- Date.now() is safe in async event handler
+        const now = Date.now();
+
+        // Insert via collection - triggers onInsert which calls the server
+        // SSE subscription will handle updates for all clients
+        // Note: Only include fields that match the server's ChatMessage type
+        threadCollection.insert({
+          id: ulid(),
           channelId,
           message,
           parentMessageId: parentMessage.id,
-        });
-
-        // Invalidate thread replies cache
-        queryClient.invalidateQueries({
-          queryKey: trpc.chat.getThreadReplies.queryKey({
-            channelId,
-            parentMessageId: parentMessage.id,
-            limit: 50,
-          }),
-        });
-
-        // Also invalidate channel history to update the reply count
-        queryClient.invalidateQueries({
-          queryKey: trpc.chat.getChannelHistory.queryKey({
-            channelId,
-            limit: 50,
-          }),
+          name: user.name || "Unknown",
+          username: user.username || null,
+          color: null,
+          timestamp: now,
+          createdAt: now,
+          reactions: [],
         });
 
         form.reset();
