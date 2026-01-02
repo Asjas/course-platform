@@ -69,7 +69,11 @@ export default function ChatMessage({
 
     // Optimistically update the reactions in the collection
     collection.update(msg.id, (draft) => {
-      const reactions = draft.reactions ?? [];
+      // Ensure reactions is initialized as an array
+      if (!draft.reactions) {
+        draft.reactions = [];
+      }
+      const reactions = draft.reactions;
       const existingReaction = reactions.find((r) => r.emoji === emoji);
 
       if (existingReaction) {
