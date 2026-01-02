@@ -124,15 +124,15 @@ export default function EditMessageSheet({
             value={activeTab}
             onValueChange={setActiveTab}
           >
-            <TabsList className="mb-4 grid w-full grid-cols-2 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
+            <TabsList className="mb-4 flex w-full rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
               <TabsTrigger
-                className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:text-gray-400 dark:hover:text-white dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+                className="flex-1 cursor-pointer rounded-md py-2 text-center text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:text-gray-400 dark:hover:text-white dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
                 value="edit"
               >
                 Edit
               </TabsTrigger>
               <TabsTrigger
-                className="cursor-pointer rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:text-gray-400 dark:hover:text-white dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
+                className="flex-1 cursor-pointer rounded-md py-2 text-center text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm dark:text-gray-400 dark:hover:text-white dark:data-[state=active]:bg-gray-700 dark:data-[state=active]:text-white"
                 value="preview"
               >
                 Preview
