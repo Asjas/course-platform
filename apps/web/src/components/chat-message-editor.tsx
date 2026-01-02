@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import {
+  AtSignIcon,
   BoldIcon,
   CodeIcon,
   HeadingIcon,
@@ -20,6 +21,10 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { GiphyPicker } from "~/components/giphy-picker";
+import {
+  type MentionContext,
+  MentionPicker,
+} from "~/components/mention-picker";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -31,6 +36,10 @@ interface GitHubMessageEditorProps {
   children: ReactNode;
   onSubmit?: () => void;
   hasError?: boolean;
+  /**
+   * Context for the mention picker (determines which users can be mentioned)
+   */
+  mentionContext?: MentionContext;
 }
 
 export default function ChatMessageEditor({
@@ -41,11 +50,16 @@ export default function ChatMessageEditor({
   children,
   onSubmit,
   hasError = false,
+  mentionContext,
 }: GitHubMessageEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [isGiphyPickerOpen, setIsGiphyPickerOpen] = useState(false);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [isMentionPickerOpen, setIsMentionPickerOpen] = useState(false);
+  const [mentionSearchQuery, setMentionSearchQuery] = useState("");
+  const [mentionStartIndex, setMentionStartIndex] = useState(-1);
 
   const signedUrlMutation = useMutation(
     trpc.images.getPresignedUrl.mutationOptions({ keyPrefix: undefined }),
@@ -84,6 +98,99 @@ export default function ChatMessageEditor({
     window.addEventListener("resize", adjustTextareaHeight);
     return () => window.removeEventListener("resize", adjustTextareaHeight);
   }, [adjustTextareaHeight]);
+
+  // Detect @ mention trigger
+  useEffect(() => {
+    if (!mentionContext) return;
+
+    // Find the @ symbol before the cursor
+    const textBeforeCursor = value.slice(0, cursorPosition);
+    const lastAtIndex = textBeforeCursor.lastIndexOf("@");
+
+    if (lastAtIndex === -1) {
+      setIsMentionPickerOpen(false);
+      setMentionSearchQuery("");
+      setMentionStartIndex(-1);
+      return;
+    }
+
+    // Check if there's a space between @ and cursor (which means mention is complete)
+    const textAfterAt = textBeforeCursor.slice(lastAtIndex + 1);
+    const hasSpace = textAfterAt.includes(" ");
+
+    if (hasSpace) {
+      setIsMentionPickerOpen(false);
+      setMentionSearchQuery("");
+      setMentionStartIndex(-1);
+      return;
+    }
+
+    // Check if @ is at start of text or preceded by whitespace
+    const charBeforeAt = value[lastAtIndex - 1];
+    const isValidStart =
+      lastAtIndex === 0 ||
+      charBeforeAt === " " ||
+      charBeforeAt === "\n" ||
+      charBeforeAt === undefined;
+
+    if (!isValidStart) {
+      setIsMentionPickerOpen(false);
+      setMentionSearchQuery("");
+      setMentionStartIndex(-1);
+      return;
+    }
+
+    // Valid mention trigger
+    setIsMentionPickerOpen(true);
+    setMentionSearchQuery(textAfterAt);
+    setMentionStartIndex(lastAtIndex);
+  }, [value, cursorPosition, mentionContext]);
+
+  function handleMentionSelect(user: {
+    name: string;
+    username: string | null;
+    displayUsername: string | null;
+  }) {
+    if (mentionStartIndex === -1) return;
+
+    // Replace @query with @username
+    const beforeMention = value.slice(0, mentionStartIndex);
+    const afterCursor = value.slice(cursorPosition);
+    const username = user.displayUsername || user.username || user.name;
+    const newValue = `${beforeMention}@${username} ${afterCursor}`;
+
+    onChange(newValue);
+    setIsMentionPickerOpen(false);
+    setMentionSearchQuery("");
+    setMentionStartIndex(-1);
+
+    // Focus and set cursor after the mention
+    requestAnimationFrame(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+      textarea.focus();
+      const newCursorPos = mentionStartIndex + username.length + 2; // +2 for @ and space
+      textarea.setSelectionRange(newCursorPos, newCursorPos);
+      setCursorPosition(newCursorPos);
+    });
+  }
+
+  function insertAtSymbol() {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    const cursorPos = textarea.selectionStart;
+    const newValue = value.slice(0, cursorPos) + "@" + value.slice(cursorPos);
+
+    onChange(newValue);
+
+    requestAnimationFrame(() => {
+      textarea.focus();
+      const newPos = cursorPos + 1;
+      textarea.setSelectionRange(newPos, newPos);
+      setCursorPosition(newPos);
+    });
+  }
 
   function handleGifSelect(gifUrl: string) {
     const textarea = textareaRef.current;
@@ -244,8 +351,30 @@ export default function ChatMessageEditor({
             ref={textareaRef}
             placeholder={placeholder}
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              onChange(e.target.value);
+              setCursorPosition(e.target.selectionStart);
+            }}
+            onSelect={(e) => setCursorPosition(e.currentTarget.selectionStart)}
             onKeyDown={(e) => {
+              // Handle mention picker keyboard navigation
+              if (isMentionPickerOpen) {
+                if (
+                  e.key === "ArrowDown" ||
+                  e.key === "ArrowUp" ||
+                  e.key === "Enter" ||
+                  e.key === "Tab"
+                ) {
+                  // Let the MentionPicker handle these keys
+                  return;
+                }
+                if (e.key === "Escape") {
+                  e.preventDefault();
+                  setIsMentionPickerOpen(false);
+                  return;
+                }
+              }
+
               if (e.key === "Enter" && e.shiftKey && onSubmit) {
                 e.preventDefault();
                 onSubmit();
@@ -924,6 +1053,19 @@ export default function ChatMessageEditor({
               aria-hidden="true"
             />
           </button>
+          {mentionContext && (
+            <button
+              className="ml-1 cursor-pointer rounded-md p-2 hover:bg-gray-200 dark:hover:bg-gray-600"
+              type="button"
+              aria-label="Mention someone"
+              onClick={insertAtSymbol}
+            >
+              <AtSignIcon
+                size={16}
+                aria-hidden="true"
+              />
+            </button>
+          )}
         </div>
         {children}
       </div>
@@ -933,6 +1075,16 @@ export default function ChatMessageEditor({
         onClose={() => setIsGiphyPickerOpen(false)}
         onSelectGif={handleGifSelect}
       />
+
+      {mentionContext && (
+        <MentionPicker
+          isOpen={isMentionPickerOpen}
+          onClose={() => setIsMentionPickerOpen(false)}
+          onSelectUser={handleMentionSelect}
+          context={mentionContext}
+          searchQuery={mentionSearchQuery}
+        />
+      )}
     </div>
   );
 }

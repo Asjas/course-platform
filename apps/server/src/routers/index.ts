@@ -1,4 +1,5 @@
 import { imagesRouter } from "./images/index.js";
+import { mentionsRouter } from "./mentions/index.js";
 import { router } from "~/router.js";
 import { announcementsRouter } from "~/routers/announcements/index.js";
 import { auditRouter } from "~/routers/audit/index.js";
@@ -22,6 +23,7 @@ export const appRouter = router({
   courses: coursesRouter,
   dataExport: dataExportRouter,
   images: imagesRouter,
+  mentions: mentionsRouter,
   notifications: notificationsRouter,
   reviews: reviewsRouter,
   stats: statsRouter,
