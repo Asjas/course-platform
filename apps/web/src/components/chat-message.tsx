@@ -15,6 +15,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import EditMessageSheet from "~/components/edit-message-sheet";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
 import { MarkdownContent } from "~/components/markdown-content";
 import { MessageReactions } from "~/components/message-reactions";
@@ -48,6 +49,7 @@ export default function ChatMessageComponent({
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [isProfileSheetOpen, setIsProfileSheetOpen] = useState(false);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   // Initialize media visibility from persisted state (collapsed = not visible)
   const [isMediaVisible, setIsMediaVisible] = useState(
     () => !isMediaCollapsed(msg.id),
@@ -166,19 +168,7 @@ export default function ChatMessageComponent({
     }, [html]);
 
   function handleEdit() {
-    const newText = prompt("Edit message:", msg.message);
-
-    if (newText !== null && newText !== msg.message) {
-      try {
-        collection.update(msg.id, (draft) => {
-          draft.message = newText;
-        });
-        toast.info("Message edited successfully.");
-      } catch (error) {
-        console.error("Error editing message:", error);
-        toast.error("Failed to edit message.");
-      }
-    }
+    setIsEditSheetOpen(true);
   }
 
   function handleDelete() {
@@ -366,6 +356,13 @@ export default function ChatMessageComponent({
         userName={msg.name}
         open={isProfileSheetOpen}
         onOpenChange={setIsProfileSheetOpen}
+      />
+
+      <EditMessageSheet
+        message={msg}
+        open={isEditSheetOpen}
+        onOpenChange={setIsEditSheetOpen}
+        collection={collection}
       />
     </>
   );
