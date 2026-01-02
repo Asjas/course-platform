@@ -9,6 +9,14 @@ import type {
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
 import { notifyAdminNewSupportTicket } from "~/lib/notifications.js";
+import {
+  type EntitySyncUpdate,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+  supportTicketsSyncConfig,
+} from "~/lib/sse-sync.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
@@ -22,6 +30,8 @@ import {
   getSupportTicketById,
   getSupportTicketCountsByCourse,
 } from "~/routers/support-tickets/queries.js";
+
+export type SupportTicketSyncUpdate = EntitySyncUpdate<SupportTicket>;
 
 export const supportTicketsRouter = router({
   getAllSupportTickets: publicProcedure.query(
@@ -142,6 +152,19 @@ export const supportTicketsRouter = router({
       ctx.request.log.debug(
         `Created new support ticket with ID ${newTicket.id}`,
       );
+
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          supportTicketsSyncConfig,
+          createSyncUpdate("created", newTicket.id, newTicket, ctx.user.id),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(
+          sseErr,
+          "Failed to publish support ticket to SSE",
+        );
+      }
 
       // Send notification to admins after ticket is created
       try {
@@ -265,6 +288,63 @@ export const supportTicketsRouter = router({
 
       ctx.request.log.debug(`Deleted support ticket with ID ${input.ticketId}`);
 
+      // Publish deletion to SSE stream
+      try {
+        await publishEntityChange(
+          supportTicketsSyncConfig,
+          createSyncUpdate("deleted", input.ticketId, null, ctx.user.id),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(
+          sseErr,
+          "Failed to publish support ticket deletion to SSE",
+        );
+      }
+
       return deletedTicket;
+    }),
+
+  /**
+   * Subscribe to real-time support ticket updates via SSE.
+   * Clients receive updates when tickets are created or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<SupportTicket>(
+        supportTicketsSyncConfig,
+        input.lastEventId,
+      );
+    }),
+
+  /**
+   * Get support ticket updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<SupportTicket>(
+          supportTicketsSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch support ticket updates",
+        });
+      }
     }),
 });

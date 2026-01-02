@@ -340,3 +340,277 @@ export const Route = createFileRoute("/_authenticated/admin/reviews")({
 - [ ] Multiple collections are preloaded in parallel with `Promise.all()`
 - [ ] Dynamic collections use `trpcClient` directly in loader
 - [ ] Component handles `isLoading` gracefully (but it should rarely be true due to preloading)
+
+---
+
+## 8. SSE Sync Infrastructure
+
+The platform uses Server-Sent Events (SSE) via Redis Streams for real-time synchronization between backend and frontend. This enables:
+- Real-time updates when entities are created/updated/deleted
+- Offline sync for devices that have been disconnected for days/weeks
+- Automatic reconnection with proper event ordering
+
+### Server-Side SSE Infrastructure
+
+Location: `apps/server/src/lib/sse-sync.ts`
+
+#### Entity Sync Update Type
+
+```typescript
+// Standardized payload for all entity updates
+interface EntitySyncUpdate<T> {
+  id: string;                    // Unique ID for deduplication
+  type: "created" | "updated" | "deleted";
+  data: T | null;               // Entity data (null for deletions)
+  entityId: string;             // Entity ID for deletions
+  timestamp: number;            // When the change occurred
+  actorId?: string;             // User who made the change
+}
+```
+
+#### Pre-configured Sync Configs
+
+Each entity type has a sync config in `sse-sync.ts`:
+
+```typescript
+export const announcementsSyncConfig: EntitySyncConfig = {
+  streamKeyPrefix: "sync:announcements",
+  maxStreamLength: 10000,
+};
+
+export const notificationsSyncConfig: EntitySyncConfig = {
+  streamKeyPrefix: "sync:notifications",
+  maxStreamLength: 50000, // Higher for per-user streams
+};
+
+// ... supportTicketsSyncConfig, couponsSyncConfig, reviewsSyncConfig,
+//     coursesSyncConfig, chatReportsSyncConfig
+```
+
+### Adding SSE to a New Entity Type
+
+#### Step 1: Add Sync Config
+
+```typescript
+// In apps/server/src/lib/sse-sync.ts
+export const widgetsSyncConfig: EntitySyncConfig = {
+  streamKeyPrefix: "sync:widgets",
+  maxStreamLength: 10000,
+};
+```
+
+#### Step 2: Import Utilities in Router
+
+```typescript
+// In apps/server/src/routers/widgets/index.ts
+import {
+  type EntitySyncUpdate,
+  widgetsSyncConfig,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
+import type { Widget } from "~/db/schema/widgets.js";
+
+export type WidgetSyncUpdate = EntitySyncUpdate<Widget>;
+```
+
+#### Step 3: Publish Changes in Mutations
+
+```typescript
+// In createWidget mutation, after the insert:
+await publishEntityChange(
+  widgetsSyncConfig,
+  createSyncUpdate("created", widget.id, widget, ctx.user.id),
+);
+
+// In updateWidget mutation:
+await publishEntityChange(
+  widgetsSyncConfig,
+  createSyncUpdate("updated", widget.id, widget, ctx.user.id),
+);
+
+// In deleteWidget mutation:
+await publishEntityChange(
+  widgetsSyncConfig,
+  createSyncUpdate("deleted", widget.id, null, ctx.user.id),
+);
+```
+
+#### Step 4: Add Subscription Endpoint
+
+```typescript
+// In the router:
+subscribeToUpdates: publicProcedure
+  .input(
+    z.object({
+      lastEventId: z.string().nullish(),
+    }),
+  )
+  .use(isAuthenticated)
+  .subscription(async function* ({ input }) {
+    yield* streamEntityUpdates<Widget>(
+      widgetsSyncConfig,
+      input.lastEventId,
+    );
+  }),
+```
+
+#### Step 5: Add Offline Sync Query
+
+```typescript
+getUpdatesSince: publicProcedure
+  .input(
+    z.object({
+      since: z.number(), // Timestamp in ms
+    }),
+  )
+  .use(isAuthenticated)
+  .query(async ({ input }) => {
+    try {
+      const updates = await getEntityUpdatesSince<Widget>(
+        widgetsSyncConfig,
+        input.since,
+      );
+      return updates;
+    } catch {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to fetch widget updates",
+      });
+    }
+  }),
+```
+
+### User-Scoped SSE Streams
+
+For entities that are user-specific (like notifications), use a scoped stream:
+
+```typescript
+// In subscription endpoint:
+subscribeToUpdates: publicProcedure
+  .input(
+    z.object({
+      userId: z.string(),
+      lastEventId: z.string().nullish(),
+    }),
+  )
+  .use(isAuthenticated)
+  .subscription(async function* ({ input, ctx }) {
+    // Security check
+    if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Cannot subscribe to other users' data",
+      });
+    }
+
+    yield* streamEntityUpdates<Notification>(
+      notificationsSyncConfig,
+      input.lastEventId,
+      input.userId, // User-scoped stream
+    );
+  }),
+```
+
+### Frontend SSE Sync Hooks
+
+Location: `apps/web/src/hooks/useSseSync.ts`
+
+#### Using Pre-built Sync Hooks
+
+```typescript
+import { useSupportTicketsSync, useCoursesSync } from "~/hooks/useSseSync";
+
+function SupportDashboard() {
+  // Subscribes to real-time updates and syncs offline changes
+  const syncStatus = useSupportTicketsSync();
+
+  return (
+    <div>
+      {syncStatus.isConnected ? "Connected" : "Offline"}
+      {syncStatus.isSyncing && "Syncing..."}
+    </div>
+  );
+}
+```
+
+#### Available Sync Hooks
+
+```typescript
+// Generic collections
+useSupportTicketsSync()   // Support ticket updates
+useCouponsSync()          // Coupon updates (admin)
+useReviewsSync()          // Review updates
+useAnnouncementsSync()    // Announcement updates
+useCoursesSync()          // Course updates
+useChatReportsSync()      // Chat report updates (admin)
+
+// User-scoped
+useNotificationsSync(userId)  // User's notifications
+```
+
+### Sync Status UI Component
+
+Location: `apps/web/src/components/SyncStatusIndicator.tsx`
+
+```tsx
+import { SyncStatusIndicator } from "~/components/SyncStatusIndicator";
+import { useSupportTicketsSync, useCoursesSync } from "~/hooks/useSseSync";
+
+function Header() {
+  const ticketsSync = useSupportTicketsSync();
+  const coursesSync = useCoursesSync();
+
+  return (
+    <header>
+      <SyncStatusIndicator
+        collections={[
+          { ...ticketsSync, name: "support-tickets", displayName: "Support Tickets" },
+          { ...coursesSync, name: "courses", displayName: "Courses" },
+        ]}
+      />
+    </header>
+  );
+}
+```
+
+### Offline Sync Pattern
+
+The sync system handles offline reconnection automatically:
+
+1. **On connect**: Fetches updates since last sync timestamp via `getUpdatesSince`
+2. **Real-time**: Receives updates via SSE subscription
+3. **On disconnect**: Stores last event ID for reconnection
+4. **On reconnect**: Continues from last event ID, syncs any missed updates
+
+```typescript
+// Timestamps stored in localStorage
+const SYNC_STORAGE_KEY_PREFIX = "sync:lastTimestamp:";
+
+// syncUtils available from db.collections.ts
+import { syncUtils } from "~/lib/db.collections";
+
+// Get last sync time
+const lastSync = syncUtils.getLastSyncTimestamp("support-tickets");
+
+// Sync offline updates
+const count = await syncUtils.syncOfflineUpdates(
+  "support-tickets",
+  SupportTicketsCollection,
+  (since) => trpcClient.supportTickets.getUpdatesSince.query({ since }),
+);
+```
+
+### SSE Checklist for New Entities
+
+- [ ] Add sync config to `sse-sync.ts`
+- [ ] Export `EntitySyncUpdate<T>` type alias in router
+- [ ] Import sync utilities in router file
+- [ ] Add `publishEntityChange` calls to all mutations
+- [ ] Add `subscribeToUpdates` subscription endpoint
+- [ ] Add `getUpdatesSince` query for offline sync
+- [ ] Create frontend sync hook in `useSseSync.ts`
+- [ ] Test real-time updates with multiple browser tabs
+- [ ] Test offline sync by disconnecting and reconnecting

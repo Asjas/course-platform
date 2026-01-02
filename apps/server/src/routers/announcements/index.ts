@@ -18,7 +18,20 @@ import {
   getReadAnnouncementsForUser,
   getUnreadAnnouncementsForUser,
 } from "~/db/queries/platformAnnouncements.js";
-import { isAdmin, publicProcedure, router } from "~/router.js";
+import {
+  type EntitySyncUpdate,
+  announcementsSyncConfig,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
+import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
+
+// Export type for frontend use
+export type AnnouncementSyncUpdate = EntitySyncUpdate<
+  PublishedAnnouncements[number]
+>;
 
 const announcementTypeEnum = z.enum([
   "platform_update",
@@ -133,7 +146,24 @@ export const announcementsRouter = router({
             publishedAt: input.publishedAt ? new Date(input.publishedAt) : null,
           },
         });
-        return result[0];
+
+        const announcement = result[0];
+
+        // Publish to SSE stream for real-time sync
+        // Only published announcements are broadcast
+        if (announcement.publishedAt) {
+          await publishEntityChange(
+            announcementsSyncConfig,
+            createSyncUpdate(
+              "created",
+              announcement.id,
+              announcement,
+              ctx.user.id,
+            ),
+          );
+        }
+
+        return announcement;
       } catch {
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -150,7 +180,7 @@ export const announcementsRouter = router({
       }),
     )
     .use(isAdmin)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         const updates: Record<string, unknown> = { ...input.updates };
         if (input.updates.publishedAt !== undefined) {
@@ -170,7 +200,21 @@ export const announcementsRouter = router({
             message: "Announcement not found",
           });
         }
-        return result[0];
+
+        const announcement = result[0];
+
+        // Publish to SSE stream for real-time sync
+        await publishEntityChange(
+          announcementsSyncConfig,
+          createSyncUpdate(
+            "updated",
+            announcement.id,
+            announcement,
+            ctx.user.id,
+          ),
+        );
+
+        return announcement;
       } catch (error) {
         if (error instanceof TRPCError) throw error;
         throw new TRPCError({
@@ -183,9 +227,16 @@ export const announcementsRouter = router({
   delete: publicProcedure
     .input(z.string())
     .use(isAdmin)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         await deletePlatformAnnouncementById(input);
+
+        // Publish deletion to SSE stream for real-time sync
+        await publishEntityChange(
+          announcementsSyncConfig,
+          createSyncUpdate("deleted", input, null, ctx.user.id),
+        );
+
         return { success: true };
       } catch {
         throw new TRPCError({
@@ -214,6 +265,52 @@ export const announcementsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to mark announcement as read",
+        });
+      }
+    }),
+
+  /**
+   * Subscribe to real-time announcement updates via SSE.
+   * Clients receive updates when announcements are created, updated, or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<PublishedAnnouncements[number]>(
+        announcementsSyncConfig,
+        input.lastEventId,
+      );
+    }),
+
+  /**
+   * Get announcement updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   *
+   * @param since - Timestamp in milliseconds to fetch updates from
+   * @returns Array of updates since the given timestamp
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<
+          PublishedAnnouncements[number]
+        >(announcementsSyncConfig, input.since);
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch announcement updates",
         });
       }
     }),

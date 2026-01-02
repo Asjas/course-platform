@@ -14,9 +14,20 @@ import {
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import { pinoLogger } from "~/lib/logging.js";
+import {
+  type EntitySyncUpdate,
+  getEntityUpdatesSince,
+  notificationsSyncConfig,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
 
 const log = pinoLogger.child({ module: "routers:notifications" });
+
+// Export type for frontend use
+export type NotificationSyncUpdate = EntitySyncUpdate<
+  UnreadNotifications[number]
+>;
 
 export const notificationsRouter = router({
   getUnreadForUser: publicProcedure
@@ -141,6 +152,73 @@ export const notificationsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to delete notification",
+        });
+      }
+    }),
+
+  /**
+   * Subscribe to real-time notification updates via SSE.
+   * Clients receive updates when notifications are created for the user.
+   * Uses user-scoped stream to only receive relevant notifications.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input, ctx }) {
+      // Ensure user can only subscribe to their own notifications
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot subscribe to other users' notifications",
+        });
+      }
+
+      yield* streamEntityUpdates<UnreadNotifications[number]>(
+        notificationsSyncConfig,
+        input.lastEventId,
+        input.userId, // User-scoped stream
+      );
+    }),
+
+  /**
+   * Get notification updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        userId: z.string(),
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input, ctx }) => {
+      // Ensure user can only fetch their own notifications
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot fetch other users' notifications",
+        });
+      }
+
+      try {
+        const updates = await getEntityUpdatesSince<
+          UnreadNotifications[number]
+        >(
+          notificationsSyncConfig,
+          input.since,
+          input.userId, // User-scoped stream
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch notification updates",
         });
       }
     }),

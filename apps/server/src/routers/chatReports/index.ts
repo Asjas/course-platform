@@ -12,10 +12,21 @@ import {
 import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import type { ChatMessageReport } from "~/db/schema/chatMessageReports.js";
 import { reportReason } from "~/db/schema/chatMessageReports.js";
 import { pinoLogger } from "~/lib/logging.js";
 import { notifyAdminChatMessageReported } from "~/lib/notifications.js";
+import {
+  type EntitySyncUpdate,
+  chatReportsSyncConfig,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
 import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
+
+export type ChatReportSyncUpdate = EntitySyncUpdate<ChatMessageReport>;
 
 const log = pinoLogger.child({ module: "routers:chatReports" });
 
@@ -55,6 +66,16 @@ export const chatReportsRouter = router({
           reporterName: ctx.user.name,
           reason: input.reason,
         });
+
+        // Publish to SSE stream for real-time updates
+        try {
+          await publishEntityChange(
+            chatReportsSyncConfig,
+            createSyncUpdate("created", report.id, report, ctx.user.id),
+          );
+        } catch (sseErr) {
+          log.error(sseErr, "Failed to publish chat report to SSE");
+        }
 
         return report;
       } catch (error) {
@@ -118,11 +139,23 @@ export const chatReportsRouter = router({
     )
     .mutation(async ({ ctx, input }) => {
       try {
-        return await updateReportStatus({
+        const report = await updateReportStatus({
           reportId: input.reportId,
           status: input.status,
           reviewedBy: ctx.user.id,
         });
+
+        // Publish to SSE stream for real-time updates
+        try {
+          await publishEntityChange(
+            chatReportsSyncConfig,
+            createSyncUpdate("updated", report.id, report, ctx.user.id),
+          );
+        } catch (sseErr) {
+          log.error(sseErr, "Failed to publish chat report update to SSE");
+        }
+
+        return report;
       } catch (error) {
         log.error(error, "Failed to update report status");
         throw new TRPCError({
@@ -171,6 +204,52 @@ export const chatReportsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to delete message",
+        });
+      }
+    }),
+
+  /**
+   * Subscribe to real-time chat report updates via SSE.
+   * Admin-only: Clients receive updates when reports are created or updated.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .use(isAdmin)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<ChatMessageReport>(
+        chatReportsSyncConfig,
+        input.lastEventId,
+      );
+    }),
+
+  /**
+   * Get chat report updates since a specific timestamp.
+   * Admin-only: Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .use(isAdmin)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<ChatMessageReport>(
+          chatReportsSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch chat report updates",
         });
       }
     }),

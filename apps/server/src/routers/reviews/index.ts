@@ -1,7 +1,16 @@
 import { TRPCError } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import { courseReview } from "~/db/schema/index.js";
 import { notifyAdminNewReview } from "~/lib/notifications.js";
+import {
+  type EntitySyncUpdate,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  reviewsSyncConfig,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
 import { isAdmin, isAuthenticated, publicProcedure, router } from "~/router.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
@@ -21,6 +30,10 @@ import {
   getReviewById,
   getUserReviewForCourse,
 } from "~/routers/reviews/queries.js";
+
+type Review = typeof courseReview.$inferSelect;
+
+export type ReviewSyncUpdate = EntitySyncUpdate<Review>;
 
 export const reviewsRouter = router({
   // Create a new review (authenticated users only)
@@ -59,6 +72,16 @@ export const reviewsRouter = router({
           code: "INTERNAL_SERVER_ERROR",
           message: "Failed to create review",
         });
+      }
+
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("created", review.id, review, userId),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish review to SSE");
       }
 
       // Send notification to admins after review is created
@@ -161,6 +184,16 @@ export const reviewsRouter = router({
         });
       }
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("created", review.id, review, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish admin review to SSE");
+      }
+
       return review;
     }),
 
@@ -228,6 +261,16 @@ export const reviewsRouter = router({
         });
       }
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("updated", reviewId, review, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish review update to SSE");
+      }
+
       return review;
     }),
 
@@ -289,6 +332,16 @@ export const reviewsRouter = router({
         );
       }
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("updated", reviewId, review, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish review approval to SSE");
+      }
+
       return review;
     }),
 
@@ -313,6 +366,16 @@ export const reviewsRouter = router({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
         });
+      }
+
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("deleted", reviewId, null, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish review deletion to SSE");
       }
 
       return review;
@@ -445,6 +508,19 @@ export const reviewsRouter = router({
         }
       }
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("updated", reviewId, review, userId),
+        );
+      } catch (sseErr) {
+        fastify.log.error(
+          sseErr,
+          "Failed to publish user review update to SSE",
+        );
+      }
+
       return review;
     }),
 
@@ -493,6 +569,60 @@ export const reviewsRouter = router({
         });
       }
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          reviewsSyncConfig,
+          createSyncUpdate("deleted", reviewId, null, userId),
+        );
+      } catch (sseErr) {
+        fastify.log.error(
+          sseErr,
+          "Failed to publish user review deletion to SSE",
+        );
+      }
+
       return review;
+    }),
+
+  /**
+   * Subscribe to real-time review updates via SSE.
+   * Clients receive updates when reviews are created, updated, or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<Review>(reviewsSyncConfig, input.lastEventId);
+    }),
+
+  /**
+   * Get review updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAuthenticated)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<Review>(
+          reviewsSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch review updates",
+        });
+      }
     }),
 });

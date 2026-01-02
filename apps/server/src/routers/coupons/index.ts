@@ -1,7 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import type { NewCoupon } from "~/db/schema/coupon.js";
+import type { Coupon, NewCoupon } from "~/db/schema/coupon.js";
 import { notifyAdminCouponUsageThreshold } from "~/lib/notifications.js";
+import {
+  type EntitySyncUpdate,
+  couponsSyncConfig,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
 import { isAdmin, publicProcedure, router } from "~/router.js";
 import {
   deleteCouponById,
@@ -14,6 +22,8 @@ import {
   type CouponByIdReturnType,
   type CouponsReturnType,
 } from "~/routers/coupons/queries.js";
+
+export type CouponSyncUpdate = EntitySyncUpdate<Coupon>;
 
 export const couponsRouter = router({
   getAllCoupons: publicProcedure
@@ -156,6 +166,21 @@ export const couponsRouter = router({
         `Inserted coupon with id ${newCoupon.id} successfully`,
       );
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          couponsSyncConfig,
+          createSyncUpdate(
+            "created",
+            newCoupon.id,
+            newCoupon as Coupon,
+            ctx.user.id,
+          ),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(sseErr, "Failed to publish coupon to SSE");
+      }
+
       return newCoupon;
     }),
   updateCouponById: publicProcedure
@@ -205,6 +230,16 @@ export const couponsRouter = router({
 
       ctx.request.log.debug(`Updated coupon with id ${coupon.id} successfully`);
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          couponsSyncConfig,
+          createSyncUpdate("updated", coupon.id, coupon, ctx.user.id),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(sseErr, "Failed to publish coupon update to SSE");
+      }
+
       return coupon;
     }),
   deleteCouponById: publicProcedure
@@ -236,6 +271,19 @@ export const couponsRouter = router({
       ]);
 
       ctx.request.log.debug(`Deleted coupon with id ${coupon.id} successfully`);
+
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          couponsSyncConfig,
+          createSyncUpdate("deleted", coupon.id, null, ctx.user.id),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(
+          sseErr,
+          "Failed to publish coupon deletion to SSE",
+        );
+      }
 
       return coupon;
     }),
@@ -322,5 +370,46 @@ export const couponsRouter = router({
       }
 
       return redemption;
+    }),
+
+  /**
+   * Subscribe to real-time coupon updates via SSE.
+   * Admin-only: Clients receive updates when coupons are created, updated, or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAdmin)
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<Coupon>(couponsSyncConfig, input.lastEventId);
+    }),
+
+  /**
+   * Get coupon updates since a specific timestamp.
+   * Admin-only: Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .use(isAdmin)
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<Coupon>(
+          couponsSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch coupon updates",
+        });
+      }
     }),
 });

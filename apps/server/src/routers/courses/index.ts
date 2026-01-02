@@ -1,11 +1,24 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
 import {
+  type EntitySyncUpdate,
+  coursesSyncConfig,
+  createSyncUpdate,
+  getEntityUpdatesSince,
+  publishEntityChange,
+  streamEntityUpdates,
+} from "~/lib/sse-sync.js";
+import {
   isAdmin,
   protectedProcedure,
   publicProcedure,
   router,
 } from "~/router.js";
+import type {
+  Course,
+  CourseLesson as Lesson,
+  CourseModule as Module,
+} from "~/routers/courses/mutations.js";
 import {
   deleteCourse,
   deleteLesson,
@@ -35,6 +48,10 @@ import type {
   LessonProgress,
   ModulesAndLessonsByCourseId,
 } from "~/routers/courses/queries.js";
+
+export type CourseSyncUpdate = EntitySyncUpdate<Course>;
+export type ModuleSyncUpdate = EntitySyncUpdate<Module>;
+export type LessonSyncUpdate = EntitySyncUpdate<Lesson>;
 
 export const coursesRouter = router({
   // Admin query to get all courses with full details
@@ -294,6 +311,16 @@ export const coursesRouter = router({
 
       await fastify.cache.invalidateAll(["course~all"]);
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          coursesSyncConfig,
+          createSyncUpdate("created", course.id, course, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish course to SSE");
+      }
+
       return course;
     }),
 
@@ -339,6 +366,16 @@ export const coursesRouter = router({
 
       await fastify.cache.invalidateAll(["course~all", `course~id~${id}`]);
 
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          coursesSyncConfig,
+          createSyncUpdate("updated", course.id, course, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish course update to SSE");
+      }
+
       return course;
     }),
 
@@ -363,6 +400,16 @@ export const coursesRouter = router({
         "course~all",
         `course~id~${input.courseId}`,
       ]);
+
+      // Publish to SSE stream for real-time updates
+      try {
+        await publishEntityChange(
+          coursesSyncConfig,
+          createSyncUpdate("deleted", input.courseId, null, ctx.user.id),
+        );
+      } catch (sseErr) {
+        fastify.log.error(sseErr, "Failed to publish course deletion to SSE");
+      }
 
       return course;
     }),
@@ -669,5 +716,44 @@ export const coursesRouter = router({
       ]);
 
       return lesson;
+    }),
+
+  /**
+   * Subscribe to real-time course updates via SSE.
+   * Clients receive updates when courses are created, updated, or deleted.
+   */
+  subscribeToUpdates: publicProcedure
+    .input(
+      z.object({
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .subscription(async function* ({ input }) {
+      yield* streamEntityUpdates<Course>(coursesSyncConfig, input.lastEventId);
+    }),
+
+  /**
+   * Get course updates since a specific timestamp.
+   * Useful for syncing offline clients that have been disconnected.
+   */
+  getUpdatesSince: publicProcedure
+    .input(
+      z.object({
+        since: z.number(), // Timestamp in ms
+      }),
+    )
+    .query(async ({ input }) => {
+      try {
+        const updates = await getEntityUpdatesSince<Course>(
+          coursesSyncConfig,
+          input.since,
+        );
+        return updates;
+      } catch {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to fetch course updates",
+        });
+      }
     }),
 });
