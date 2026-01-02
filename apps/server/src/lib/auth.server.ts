@@ -51,6 +51,11 @@ export const auth = betterAuth({
     sendOnSignIn: true,
     expiresIn: ONE_HOUR,
     async sendVerificationEmail(data) {
+      console.log(
+        "[AUTH DEBUG] sendVerificationEmail called for:",
+        data.user.email,
+      );
+
       let text = "";
 
       text += `Please verify your email address by clicking the link below:\n\n${config.ORIGIN}/verify-email/${data.token}`;
@@ -58,13 +63,22 @@ export const auth = betterAuth({
       text += `\n\nThis link will expire in 1 hour.`;
       text += `\n\n--\n© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`;
 
-      await mailer.sendMail({
-        sender: "Codewizard Training <support@codewizard.training>",
-        replyTo: "support@codewizard.training",
-        to: data.user.email,
-        subject: "Verify your email address",
-        text,
-      });
+      try {
+        await mailer.sendMail({
+          sender: "Codewizard Training <support@codewizard.training>",
+          replyTo: "support@codewizard.training",
+          to: data.user.email,
+          subject: "Verify your email address",
+          text,
+        });
+        console.log(
+          "[AUTH DEBUG] Verification email sent successfully to:",
+          data.user.email,
+        );
+      } catch (error) {
+        console.error("[AUTH DEBUG] Failed to send verification email:", error);
+        throw error;
+      }
     },
   },
   emailAndPassword: {
@@ -155,14 +169,30 @@ export const auth = betterAuth({
   },
   secondaryStorage: {
     get: async (key) => {
-      return await redis.get(key);
+      try {
+        const result = await redis.get(key);
+        return result;
+      } catch (error) {
+        console.error("[AUTH DEBUG] Redis GET failed for key:", key, error);
+        throw error;
+      }
     },
     set: async (key, value, ttl) => {
-      await redis.set(key, value);
-      if (ttl) await redis.expire(key, ttl);
+      try {
+        await redis.set(key, value);
+        if (ttl) await redis.expire(key, ttl);
+      } catch (error) {
+        console.error("[AUTH DEBUG] Redis SET failed for key:", key, error);
+        throw error;
+      }
     },
     delete: async (key) => {
-      await redis.del(key);
+      try {
+        await redis.del(key);
+      } catch (error) {
+        console.error("[AUTH DEBUG] Redis DELETE failed for key:", key, error);
+        throw error;
+      }
     },
   },
   database: drizzleAdapter(db, {
