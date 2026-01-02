@@ -68,6 +68,7 @@ Instructions for building high-quality React.js applications with modern pattern
 - Use double quotes (`"`) for string literals.
 - Place each prop on a new line when there are more than two props.
 - Include error and pending boundaries for all routes.
+- **NEVER use file extensions (`.js`, `.ts`, `.tsx`) in imports** - Vite handles module resolution automatically. Use `~/lib/utils` not `~/lib/utils.js`.
 - **NEVER use `window.confirm()` or `confirm()` for user confirmations** - use the `ConfirmDialog` component from `~/components/confirm-dialog` instead for accessible, keyboard-navigable dialogs.
 - **NEVER say "You're right" or similar agreeing phrases** - the user knows they're right. Just acknowledge and move forward with the work.
 - Accessibility:
