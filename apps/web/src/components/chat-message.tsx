@@ -67,55 +67,57 @@ export default function ChatMessage({
       return;
     }
 
-    // Optimistically update the reactions in the collection
-    collection.update(msg.id, (draft) => {
-      // Ensure reactions is initialized as an array
-      if (!draft.reactions) {
-        draft.reactions = [];
-      }
-      const reactions = draft.reactions;
-      const existingReaction = reactions.find((r) => r.emoji === emoji);
+    try {
+      // Optimistically update the reactions in the collection
+      collection.update(msg.id, (draft) => {
+        // Ensure reactions is initialized as an array
+        if (!draft.reactions) {
+          draft.reactions = [];
+        }
+        const reactions = draft.reactions;
+        const existingReaction = reactions.find((r) => r.emoji === emoji);
 
-      if (existingReaction) {
-        const userIndex = existingReaction.users.findIndex(
-          (u) => u.userId === currentUserId,
-        );
+        if (existingReaction) {
+          const userIndex = existingReaction.users.findIndex(
+            (u) => u.userId === currentUserId,
+          );
 
-        if (userIndex !== -1) {
-          // User already reacted, remove their reaction
-          existingReaction.users.splice(userIndex, 1);
-          // If no users left for this emoji, remove the reaction entirely
-          if (existingReaction.users.length === 0) {
-            const reactionIndex = reactions.findIndex((r) => r.emoji === emoji);
-            reactions.splice(reactionIndex, 1);
+          if (userIndex !== -1) {
+            // User already reacted, remove their reaction
+            existingReaction.users.splice(userIndex, 1);
+            // If no users left for this emoji, remove the reaction entirely
+            if (existingReaction.users.length === 0) {
+              const reactionIndex = reactions.findIndex(
+                (r) => r.emoji === emoji,
+              );
+              reactions.splice(reactionIndex, 1);
+            }
+          } else {
+            // User hasn't reacted with this emoji yet, add them
+            existingReaction.users.push({
+              userId: currentUserId,
+              userName: currentUserName,
+            });
           }
         } else {
-          // User hasn't reacted with this emoji yet, add them
-          existingReaction.users.push({
-            userId: currentUserId,
-            userName: currentUserName,
+          // No reaction with this emoji exists, create it
+          reactions.push({
+            emoji,
+            users: [{ userId: currentUserId, userName: currentUserName }],
           });
         }
-      } else {
-        // No reaction with this emoji exists, create it
-        reactions.push({
-          emoji,
-          users: [{ userId: currentUserId, userName: currentUserName }],
-        });
-      }
 
-      draft.reactions = reactions;
-    });
+        draft.reactions = reactions;
+      });
 
-    // Sync to server
-    try {
+      // Sync to server
       await trpcClient.chat.toggleReaction.mutate({
         messageId: msg.id,
         emoji,
       });
     } catch (error) {
       console.error("Error toggling reaction:", error);
-      toast.error("Failed to update reaction.");
+      toast.error("Failed to update reaction. Please try again.");
     }
   }
 
