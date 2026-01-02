@@ -46,7 +46,8 @@ export default function ProfileForm() {
       // See: https://github.com/better-auth/better-auth/issues/XXXX
       const updatePromise = authClient.updateUser({
         name,
-        username,
+        // Only send username if it's not empty - empty string means no username
+        username: username && username.trim() ? username.trim() : undefined,
         color: color ? color.replace("#", "") : undefined,
         image,
       } as Parameters<typeof authClient.updateUser>[0]);
