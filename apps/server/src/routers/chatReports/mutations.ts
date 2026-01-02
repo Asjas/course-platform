@@ -4,7 +4,26 @@ import {
   type NewChatMessageReport,
   chatMessageReport,
 } from "~/db/schema/chatMessageReports.js";
+import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
+
+const log = pinoLogger.child({ module: "routers:chatReports:mutations" });
+
+/**
+ * Safely parse JSON with error handling.
+ * Returns null if parsing fails instead of throwing.
+ */
+function safeJsonParse<T>(json: string, context?: string): T | null {
+  try {
+    return JSON.parse(json) as T;
+  } catch (error) {
+    log.error(
+      { error, json: json.slice(0, 100), context },
+      "Failed to parse JSON",
+    );
+    return null;
+  }
+}
 
 export async function insertChatReport(report: NewChatMessageReport) {
   const [inserted] = await db
@@ -52,7 +71,12 @@ export async function deleteReportedMessageFromRedis({
   const entries = await redis.xrange(streamKey, "-", "+");
 
   for (const [streamId, fields] of entries) {
-    const messageData = JSON.parse(fields[1]) as { id: string };
+    const messageData = safeJsonParse<{ id: string }>(
+      fields[1],
+      "deleteReportedMessageFromRedis",
+    );
+    if (!messageData) continue; // Skip corrupted messages
+
     if (messageData.id === messageId) {
       await redis.xdel(streamKey, streamId);
       return true;

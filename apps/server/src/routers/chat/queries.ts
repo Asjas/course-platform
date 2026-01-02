@@ -1,5 +1,8 @@
 import type { Reaction, ReactionUser } from "./index.js";
+import { pinoLogger } from "~/lib/logging.js";
 import { redis } from "~/lib/redis.js";
+
+const log = pinoLogger.child({ module: "routers:chat:queries" });
 
 export interface ChatMessage {
   id: string;
@@ -26,10 +29,14 @@ function getReactionKey(messageId: string): string {
  * Safely parse JSON with error handling.
  * Returns null if parsing fails instead of throwing.
  */
-function safeJsonParse<T>(json: string): T | null {
+function safeJsonParse<T>(json: string, context?: string): T | null {
   try {
     return JSON.parse(json) as T;
-  } catch {
+  } catch (error) {
+    log.error(
+      { error, json: json.slice(0, 100), context },
+      "Failed to parse JSON",
+    );
     return null;
   }
 }
@@ -62,9 +69,11 @@ export async function getChannelHistory(channelId: string, limit = 50) {
   const streamKey = `chat:channel:${channelId}:messages`;
   const entries = await redis.xrevrange(streamKey, "+", "-", "COUNT", limit);
 
-  const messages = entries.map(
-    ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
-  );
+  const messages = entries
+    .map(([, fields]) =>
+      safeJsonParse<ChatMessage>(fields[1], "getChannelHistory"),
+    )
+    .filter((msg): msg is ChatMessage => msg !== null);
 
   // Fetch reactions for all messages using Redis pipeline for efficiency
   const pipeline = redis.pipeline();
@@ -111,9 +120,9 @@ export async function getDMHistory(conversationId: string, limit = 50) {
   const streamKey = `chat:dm:${conversationId}:messages`;
   const entries = await redis.xrevrange(streamKey, "+", "-", "COUNT", limit);
 
-  const messages = entries.map(
-    ([, fields]) => JSON.parse(fields[1]) as ChatMessage,
-  );
+  const messages = entries
+    .map(([, fields]) => safeJsonParse<ChatMessage>(fields[1], "getDMHistory"))
+    .filter((msg): msg is ChatMessage => msg !== null);
 
   // Fetch reactions for all messages using Redis pipeline for efficiency
   const pipeline = redis.pipeline();

@@ -11,8 +11,11 @@ import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
 import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
+import { pinoLogger } from "~/lib/logging.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+
+const log = pinoLogger.child({ module: "routers:chat" });
 
 /**
  * A single user's reaction to a message.
@@ -55,10 +58,14 @@ function getReactionKey(messageId: string): string {
  * Safely parse JSON with error handling.
  * Returns null if parsing fails instead of throwing.
  */
-function safeJsonParse<T>(json: string): T | null {
+function safeJsonParse<T>(json: string, context?: string): T | null {
   try {
     return JSON.parse(json) as T;
-  } catch {
+  } catch (error) {
+    log.error(
+      { error, json: json.slice(0, 100), context },
+      "Failed to parse JSON",
+    );
     return null;
   }
 }
@@ -108,7 +115,12 @@ export const chatRouter = router({
             // Skip if not newer
             if (lastId !== "$" && !isIdAfter(streamId, lastId)) continue;
 
-            const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
+            const payload = safeJsonParse<ChatMessage>(
+              fields[1],
+              "getChannelMessages",
+            );
+            if (!payload) continue; // Skip corrupted messages
+
             const messageId = payload.id; // ULID
 
             // Update lastId to Redis stream ID
@@ -173,7 +185,8 @@ export const chatRouter = router({
         const entries = await redis.xrange(streamKey, "-", "+");
 
         for (const [streamId, fields] of entries) {
-          const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
+          const payload = safeJsonParse<ChatMessage>(fields[1], "editMessage");
+          if (!payload) continue; // Skip corrupted messages
 
           if (payload.id === input.id) {
             await redis.xdel(streamKey, streamId);
@@ -215,7 +228,11 @@ export const chatRouter = router({
 
         for (const [streamId, fields] of entries) {
           const messageJson = fields[1];
-          const message: ChatMessage = JSON.parse(messageJson) as ChatMessage;
+          const message = safeJsonParse<ChatMessage>(
+            messageJson,
+            "deleteMessage",
+          );
+          if (!message) continue; // Skip corrupted messages
 
           if (message.id === input.id) {
             await redis.xdel(key, streamId);
@@ -337,7 +354,12 @@ export const chatRouter = router({
             // Skip if not newer
             if (lastId !== "$" && !isIdAfter(streamId, lastId)) continue;
 
-            const payload: ChatMessage = JSON.parse(fields[1]) as ChatMessage;
+            const payload = safeJsonParse<ChatMessage>(
+              fields[1],
+              "getDMMessages",
+            );
+            if (!payload) continue; // Skip corrupted messages
+
             const messageId = payload.id; // ULID
 
             // Update lastId to Redis stream ID
