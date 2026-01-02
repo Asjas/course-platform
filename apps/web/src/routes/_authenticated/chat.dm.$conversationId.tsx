@@ -3,14 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
-import { toast } from "sonner";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
@@ -154,35 +147,6 @@ function AuthenticatedChatDMPage() {
     }
   }, [messages]);
 
-  // Handlers for delete and edit using the collection
-  const handleDeleteMessage = useCallback(
-    (messageId: string) => {
-      try {
-        dmCollection.delete(messageId);
-        toast.success("Message deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting message:", error);
-        toast.error("Failed to delete message.");
-      }
-    },
-    [dmCollection],
-  );
-
-  const handleEditMessage = useCallback(
-    (messageId: string, newMessage: string) => {
-      try {
-        dmCollection.update(messageId, (draft) => {
-          draft.message = newMessage;
-        });
-        toast.info("Message edited successfully.");
-      } catch (error) {
-        console.error("Error editing message:", error);
-        toast.error("Failed to edit message.");
-      }
-    },
-    [dmCollection],
-  );
-
   const messagesWithDividers = useMemo(() => {
     if (!messages || messages.length === 0) {
       return null;
@@ -209,14 +173,13 @@ function AuthenticatedChatDMPage() {
           key={msg.id}
           msg={msg}
           channelId={`dm:${conversationId}`}
-          onDeleteMessage={handleDeleteMessage}
-          onEditMessage={handleEditMessage}
+          collection={dmCollection}
         />,
       );
     }
 
     return elements;
-  }, [messages, conversationId, handleDeleteMessage, handleEditMessage]);
+  }, [messages, conversationId, dmCollection]);
 
   // Determine the other user's name for the header
   const otherUserName = useMemo(() => {

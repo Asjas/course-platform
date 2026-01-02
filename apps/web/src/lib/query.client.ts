@@ -8,6 +8,3 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
-export const getChannelCacheKey = (channelId: string) =>
-  ["chat", "messages", channelId] as const;

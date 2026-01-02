@@ -2,14 +2,7 @@ import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-} from "react";
-import { toast } from "sonner";
+import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
@@ -138,35 +131,6 @@ function AuthenticatedChatChannelPage() {
     }
   }, [messages]);
 
-  // Handlers for delete and edit using the collection
-  const handleDeleteMessage = useCallback(
-    (messageId: string) => {
-      try {
-        channelCollection.delete(messageId);
-        toast.success("Message deleted successfully.");
-      } catch (error) {
-        console.error("Error deleting message:", error);
-        toast.error("Failed to delete message.");
-      }
-    },
-    [channelCollection],
-  );
-
-  const handleEditMessage = useCallback(
-    (messageId: string, newMessage: string) => {
-      try {
-        channelCollection.update(messageId, (draft) => {
-          draft.message = newMessage;
-        });
-        toast.info("Message edited successfully.");
-      } catch (error) {
-        console.error("Error editing message:", error);
-        toast.error("Failed to edit message.");
-      }
-    },
-    [channelCollection],
-  );
-
   // Memoize messages with date dividers to avoid recreation on every render
   const messagesWithDividers = useMemo(() => {
     if (!messages || messages.length === 0) {
@@ -195,14 +159,13 @@ function AuthenticatedChatChannelPage() {
           key={msg.id}
           channelId={channelId}
           msg={msg}
-          onDeleteMessage={handleDeleteMessage}
-          onEditMessage={handleEditMessage}
+          collection={channelCollection}
         />,
       );
     }
 
     return elements;
-  }, [messages, channelId, handleDeleteMessage, handleEditMessage]);
+  }, [messages, channelId, channelCollection]);
 
   return (
     <div className="grid-container">

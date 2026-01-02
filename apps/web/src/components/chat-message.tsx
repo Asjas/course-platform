@@ -1,5 +1,4 @@
 import type { ChatMessage } from "@apps/server/src/routers/chat";
-import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
   ChevronDownIcon,
@@ -24,21 +23,24 @@ import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
 import { toggleReactionViaCollection } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
-import { trpc } from "~/lib/trpc.client";
 
 // Default color for users without a precomputed color
 const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
 
+// Minimal interface for collection operations used by ChatMessage
+interface MessageCollection {
+  delete(id: string): void;
+  update(id: string, callback: (draft: { message: string }) => void): void;
+}
+
 export default function ChatMessage({
   msg,
   channelId,
-  onDeleteMessage,
-  onEditMessage,
+  collection,
 }: {
   msg: ChatMessage;
   channelId: string;
-  onDeleteMessage?: (messageId: string) => void;
-  onEditMessage?: (messageId: string, newMessage: string) => void;
+  collection: MessageCollection;
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -51,13 +53,6 @@ export default function ChatMessage({
 
   // Use the precomputed color from the user's database record, with a fallback
   const usernameColor = msg.color || DEFAULT_USERNAME_COLOR;
-
-  const deleteMessageMutation = useMutation(
-    trpc.chat.deleteMessage.mutationOptions({ keyPrefix: undefined }),
-  );
-  const editMessageMutation = useMutation(
-    trpc.chat.editMessage.mutationOptions({ keyPrefix: undefined }),
-  );
 
   async function handleToggleReaction(emoji: string) {
     const currentUserId = auth.session?.user.id;
@@ -165,45 +160,25 @@ export default function ChatMessage({
     const newText = prompt("Edit message:", msg.message);
 
     if (newText !== null && newText !== msg.message) {
-      if (onEditMessage) {
-        // Use collection-based edit
-        onEditMessage(msg.id, newText);
-      } else {
-        // Fallback to direct mutation
-        editMessageMutation.mutate(
-          { id: msg.id, message: newText },
-          {
-            onSuccess() {
-              toast.info("Message edited successfully.");
-            },
-            onError(error) {
-              console.error("Error editing message:", error);
-              toast.error("Failed to edit message.");
-            },
-          },
-        );
+      try {
+        collection.update(msg.id, (draft) => {
+          draft.message = newText;
+        });
+        toast.info("Message edited successfully.");
+      } catch (error) {
+        console.error("Error editing message:", error);
+        toast.error("Failed to edit message.");
       }
     }
   }
 
   function handleDelete() {
-    if (onDeleteMessage) {
-      // Use collection-based delete
-      onDeleteMessage(msg.id);
-    } else {
-      // Fallback to direct mutation
-      deleteMessageMutation.mutate(
-        { id: msg.id },
-        {
-          onSuccess() {
-            toast.success("Message deleted successfully.");
-          },
-          onError(error) {
-            console.error("Error deleting message:", error);
-            toast.error("Failed to delete message.");
-          },
-        },
-      );
+    try {
+      collection.delete(msg.id);
+      toast.success("Message deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast.error("Failed to delete message.");
     }
   }
 

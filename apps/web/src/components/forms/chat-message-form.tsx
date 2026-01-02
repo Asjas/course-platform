@@ -7,7 +7,7 @@ import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import ChatMessageEditor from "~/components/chat-message-editor";
 import { useAppForm } from "~/lib/form.context";
-import { getChannelCacheKey, queryClient } from "~/lib/query.client";
+import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
@@ -67,8 +67,12 @@ export default function ChatMessageForm({
             message,
           });
 
+          // Invalidate using tRPC's queryKey for consistency with collections
           queryClient.invalidateQueries({
-            queryKey: ["dm", conversationId],
+            queryKey: trpc.chat.getDMHistory.queryKey({
+              conversationId,
+              limit: 50,
+            }),
           });
         } else if (channelId) {
           await createChannelMessageMutation.mutateAsync({
@@ -76,8 +80,12 @@ export default function ChatMessageForm({
             message,
           });
 
+          // Invalidate using tRPC's queryKey for consistency with collections
           queryClient.invalidateQueries({
-            queryKey: getChannelCacheKey(channelId),
+            queryKey: trpc.chat.getChannelHistory.queryKey({
+              channelId,
+              limit: 50,
+            }),
           });
         }
 
