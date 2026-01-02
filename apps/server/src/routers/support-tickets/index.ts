@@ -34,55 +34,75 @@ import {
 export type SupportTicketSyncUpdate = EntitySyncUpdate<SupportTicket>;
 
 export const supportTicketsRouter = router({
-  getAll: publicProcedure.query(async ({ ctx }): Promise<AllSupportTickets> => {
-    const fastify = ctx.reply.server;
+  getAll: publicProcedure
+    .use(isAuthenticated)
+    .query(async ({ ctx }): Promise<AllSupportTickets> => {
+      const fastify = ctx.reply.server;
+      const isAdmin = ctx.user.role === "admin";
 
-    const [err, tickets] = await fastify.to(
-      fastify.cache.getAllSupportTickets(),
-    );
+      const [err, allTickets] = await fastify.to(
+        fastify.cache.getAllSupportTickets(),
+      );
 
-    if (err) {
-      ctx.request.log.error(err, "Failed to get support tickets");
+      if (err) {
+        ctx.request.log.error(err, "Failed to get support tickets");
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-      });
-    }
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
 
-    ctx.request.log.debug(
-      `Retrieved ${tickets.length} support tickets from cache/db`,
-    );
+      // Admins see all tickets, users only see their own
+      const tickets = isAdmin
+        ? allTickets
+        : allTickets.filter((ticket) => ticket.userId === ctx.user.id);
 
-    return tickets;
-  }),
-  getSupportTicketCountsByCourse: publicProcedure.query(async ({ ctx }) => {
-    const fastify = ctx.reply.server;
+      ctx.request.log.debug(
+        `Retrieved ${tickets.length} support tickets from cache/db`,
+      );
 
-    const [err, counts] = await fastify.to(getSupportTicketCountsByCourse());
+      return tickets;
+    }),
+  getSupportTicketCountsByCourse: publicProcedure
+    .use(isAuthenticated)
+    .query(async ({ ctx }) => {
+      const fastify = ctx.reply.server;
 
-    if (err) {
-      ctx.request.log.error(err, "Failed to get support ticket counts");
+      // Only admins can see counts across all courses
+      if (ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Only admins can view ticket counts",
+        });
+      }
 
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
-      });
-    }
+      const [err, counts] = await fastify.to(getSupportTicketCountsByCourse());
 
-    ctx.request.log.debug(`Retrieved support ticket counts for courses`);
+      if (err) {
+        ctx.request.log.error(err, "Failed to get support ticket counts");
 
-    // Convert Map to plain object for JSON serialization
-    return Object.fromEntries(counts);
-  }),
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      ctx.request.log.debug(`Retrieved support ticket counts for courses`);
+
+      // Convert Map to plain object for JSON serialization
+      return Object.fromEntries(counts);
+    }),
   getSupportTicketById: publicProcedure
     .input(z.object({ ticketId: z.string() }))
+    .use(isAuthenticated)
     .query(
       async ({
         ctx,
         input: { ticketId },
       }): Promise<SupportTicketById | null> => {
         const fastify = ctx.reply.server;
+        const isAdmin = ctx.user.role === "admin";
 
         const [err, ticket] = await fastify.to(
           fastify.cache.getSupportTicketById({ ticketId }),
@@ -97,6 +117,14 @@ export const supportTicketsRouter = router({
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
             message: "Internal server error",
+          });
+        }
+
+        // Check authorization: only ticket owner or admin can view
+        if (ticket && ticket.userId !== ctx.user.id && !isAdmin) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You are not authorized to view this ticket",
           });
         }
 
@@ -265,6 +293,26 @@ export const supportTicketsRouter = router({
     .use(isAuthenticated)
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
       const fastify = ctx.reply.server;
+      const isAdmin = ctx.user.role === "admin";
+
+      // Check if user owns the ticket or is admin before deleting
+      const existingTicket = await getSupportTicketById({
+        ticketId: input.ticketId,
+      });
+
+      if (!existingTicket) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Support ticket not found",
+        });
+      }
+
+      if (existingTicket.userId !== ctx.user.id && !isAdmin) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not authorized to delete this ticket",
+        });
+      }
 
       const [err, deletedTicket] = await fastify.to(
         deleteSupportTicketById({ ticketId: input.ticketId }),

@@ -82,7 +82,7 @@ export const directMessagesRouter = router({
   getDMRequest: publicProcedure
     .input(z.object({ requestId: z.string() }))
     .use(isAuthenticated)
-    .query(async ({ input }): Promise<NonNullable<DMRequestById>> => {
+    .query(async ({ input, ctx }): Promise<NonNullable<DMRequestById>> => {
       try {
         const request = await getDMRequestById(input.requestId);
 
@@ -90,6 +90,19 @@ export const directMessagesRouter = router({
           throw new TRPCError({
             code: "NOT_FOUND",
             message: "DM request not found",
+          });
+        }
+
+        // Check authorization: only requester, recipient, or admin can view
+        const isParticipant =
+          request.requesterId === ctx.user.id ||
+          request.recipientId === ctx.user.id;
+        const isAdmin = ctx.user.role === "admin";
+
+        if (!isParticipant && !isAdmin) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "You are not authorized to view this DM request",
           });
         }
 

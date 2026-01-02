@@ -33,7 +33,15 @@ export const notificationsRouter = router({
   getUnreadForUser: publicProcedure
     .input(z.string())
     .use(isAuthenticated)
-    .query(async ({ input: userId }): Promise<UnreadNotifications> => {
+    .query(async ({ input: userId, ctx }): Promise<UnreadNotifications> => {
+      // Verify user can only fetch their own notifications
+      if (ctx.user.id !== userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot fetch other users' notifications",
+        });
+      }
+
       try {
         const notifications = await getUnreadNotificationsForUser(userId);
 
@@ -50,7 +58,15 @@ export const notificationsRouter = router({
   getReadForUser: publicProcedure
     .input(z.string())
     .use(isAuthenticated)
-    .query(async ({ input: userId }): Promise<ReadNotifications> => {
+    .query(async ({ input: userId, ctx }): Promise<ReadNotifications> => {
+      // Verify user can only fetch their own notifications
+      if (ctx.user.id !== userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot fetch other users' notifications",
+        });
+      }
+
       try {
         const notifications = await getReadNotificationsForUser(userId);
 
@@ -100,7 +116,15 @@ export const notificationsRouter = router({
       }),
     )
     .use(isAuthenticated)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // Verify user can only mark their own notifications
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot mark other users' notifications as read",
+        });
+      }
+
       try {
         const result = await markNotificationAsRead({
           notificationId: input.notificationId,
@@ -118,7 +142,15 @@ export const notificationsRouter = router({
   markAllAsRead: publicProcedure
     .input(z.object({ userId: z.string() }))
     .use(isAuthenticated)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // Verify user can only mark their own notifications
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot mark other users' notifications as read",
+        });
+      }
+
       try {
         const result = await markAllNotificationsAsRead({
           userId: input.userId,
@@ -140,7 +172,15 @@ export const notificationsRouter = router({
       }),
     )
     .use(isAuthenticated)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // Verify user can only delete their own notifications
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot delete other users' notifications",
+        });
+      }
+
       try {
         const result = await deleteNotification({
           notificationId: input.notificationId,

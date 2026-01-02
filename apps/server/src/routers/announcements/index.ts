@@ -87,7 +87,16 @@ export const announcementsRouter = router({
 
   getUnreadForUser: publicProcedure
     .input(z.string())
-    .query(async ({ input }): Promise<UnreadAnnouncementsForUser> => {
+    .use(isAuthenticated)
+    .query(async ({ input, ctx }): Promise<UnreadAnnouncementsForUser> => {
+      // Verify user can only fetch their own unread announcements
+      if (ctx.user.id !== input && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot fetch other users' announcements",
+        });
+      }
+
       try {
         const announcements = await getUnreadAnnouncementsForUser(input);
         return announcements;
@@ -101,7 +110,16 @@ export const announcementsRouter = router({
 
   getReadForUser: publicProcedure
     .input(z.string())
-    .query(async ({ input }): Promise<ReadAnnouncementsForUser> => {
+    .use(isAuthenticated)
+    .query(async ({ input, ctx }): Promise<ReadAnnouncementsForUser> => {
+      // Verify user can only fetch their own read announcements
+      if (ctx.user.id !== input && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot fetch other users' announcements",
+        });
+      }
+
       try {
         const announcements = await getReadAnnouncementsForUser(input);
         return announcements;
@@ -254,7 +272,16 @@ export const announcementsRouter = router({
         userId: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .use(isAuthenticated)
+    .mutation(async ({ input, ctx }) => {
+      // Verify user can only mark their own announcements as read
+      if (ctx.user.id !== input.userId && ctx.user.role !== "admin") {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Cannot mark other users' announcements as read",
+        });
+      }
+
       try {
         const result = await insertPlatformAnnouncementRead(input.id, {
           announcementId: input.announcementId,
