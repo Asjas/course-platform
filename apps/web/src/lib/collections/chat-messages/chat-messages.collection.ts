@@ -25,6 +25,18 @@ export type ChatMessage = ChannelMessage | DMMessage;
 export type { Reaction, ReactionUpdate } from "@apps/server/src/routers/chat";
 
 /**
+ * Deduplicate an array of messages by their ID.
+ * Keeps the last occurrence of each message (most recent version).
+ */
+function deduplicateMessages<T extends { id: string }>(messages: T[]): T[] {
+  const messageMap = new Map<string, T>();
+  for (const msg of messages) {
+    messageMap.set(msg.id, msg);
+  }
+  return Array.from(messageMap.values());
+}
+
+/**
  * Create a channel messages collection for a specific channel.
  * Uses tRPC queryKey for proper cache integration.
  */
@@ -35,7 +47,11 @@ export function createChannelMessagesCollection(channelId: string) {
       getKey: (item) => item.id,
       queryKey: trpc.chat.getChannelHistory.queryKey({ channelId, limit: 50 }),
       queryFn: async () => {
-        return trpcClient.chat.getChannelHistory.query({ channelId });
+        const messages = await trpcClient.chat.getChannelHistory.query({
+          channelId,
+        });
+        // Deduplicate messages to prevent duplicates from loader + collection fetch
+        return deduplicateMessages(messages);
       },
       onInsert: async ({ transaction }) => {
         try {
@@ -109,7 +125,11 @@ export function createDMMessagesCollection(conversationId: string) {
       getKey: (item) => item.id,
       queryKey: trpc.chat.getDMHistory.queryKey({ conversationId, limit: 50 }),
       queryFn: async () => {
-        return trpcClient.chat.getDMHistory.query({ conversationId });
+        const messages = await trpcClient.chat.getDMHistory.query({
+          conversationId,
+        });
+        // Deduplicate messages to prevent duplicates from loader + collection fetch
+        return deduplicateMessages(messages);
       },
       onInsert: async ({ transaction }) => {
         try {
