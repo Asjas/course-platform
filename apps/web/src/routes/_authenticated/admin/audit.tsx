@@ -3,7 +3,6 @@ import { intlFormat } from "date-fns";
 import { EyeIcon } from "lucide-react";
 import { useState } from "react";
 import { EmptyState } from "~/components/empty-state";
-import Loading from "~/components/loading";
 import {
   Sheet,
   SheetContent,
@@ -21,9 +20,18 @@ import {
   TableHeaderRow,
 } from "~/components/ui/table";
 import { type GdprAuditLog, useGdprAuditLogs } from "~/lib/db.collections";
+import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({
+  // Prefetch audit logs data before rendering
+  loader: async () => {
+    // Prefetch the data - it will be cached and available immediately
+    await trpcClient.audit.getGdprAuditLogs.query({ limit: 100, offset: 0 });
+    return null;
+  },
+  // Keep data fresh for 1 minute to avoid refetching on every navigation
+  staleTime: 1000 * 60,
   component: AdminAuditPage,
 });
 
@@ -34,7 +42,8 @@ function AdminAuditPage() {
   const [selectedLog, setSelectedLog] = useState<GdprAuditLog | null>(null);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = useState(false);
 
-  const { data: gdprLogs, isLoading } = useGdprAuditLogs();
+  // Data is prefetched in the loader, so it should be available immediately
+  const { data: gdprLogs } = useGdprAuditLogs();
 
   function handleViewLog(log: GdprAuditLog) {
     setSelectedLog(log);
@@ -46,10 +55,6 @@ function AdminAuditPage() {
     if (!open) {
       setSelectedLog(null);
     }
-  }
-
-  if (isLoading) {
-    return <Loading />;
   }
 
   return (
