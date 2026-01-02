@@ -3,7 +3,7 @@ import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platfor
 import type {
   ChannelMessages,
   DMMessages,
-} from "@apps/server/src/routers/chat/queries.js";
+} from "@apps/server/src/routers/chat/queries";
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
