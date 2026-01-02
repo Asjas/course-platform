@@ -81,37 +81,17 @@ function ChatChannelContent({ channelId }: { channelId: string }) {
         onData: (msg) => {
           const newMessage = msg.data;
 
-          // Update collection - this will automatically update the cache via collection's queryKey
-          try {
-            channelCollection.insert({
-              ...newMessage,
-              channelId,
-              reactions: newMessage.reactions || [],
-              // Thread metadata - new messages from subscription don't have replies yet
-              replyCount: undefined,
-              latestReplyAt: undefined,
-              latestReplyUserIds: undefined,
-            });
-          } catch (error) {
-            if (
-              error instanceof Error &&
-              /already exists|duplicate/i.test(error.message)
-            ) {
-              console.debug(
-                "Message already in collection (expected):",
-                newMessage.id,
-              );
-            } else {
-              console.error(
-                "Unexpected error inserting message into collection:",
-                {
-                  messageId: newMessage.id,
-                  channelId,
-                  error,
-                },
-              );
-            }
-          }
+          // Use utils.writeUpsert to insert SSE-received messages directly into the synced data store
+          // This bypasses onInsert (which would try to POST to server again)
+          channelCollection.utils.writeUpsert({
+            ...newMessage,
+            channelId,
+            reactions: newMessage.reactions || [],
+            // Thread metadata - new messages from subscription don't have replies yet
+            replyCount: undefined,
+            latestReplyAt: undefined,
+            latestReplyUserIds: undefined,
+          });
         },
         onError: (err) => console.error("Subscription error:", err),
       },

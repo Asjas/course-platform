@@ -71,33 +71,13 @@ function AuthenticatedChatDMPage() {
         onData: (msg) => {
           const newMessage = msg.data;
 
-          // Update collection - this will automatically update the cache via collection's queryKey
-          try {
-            dmCollection.insert({
-              ...newMessage,
-              conversationId,
-              reactions: newMessage.reactions || [],
-            });
-          } catch (error) {
-            if (
-              error instanceof Error &&
-              /already exists|duplicate/i.test(error.message)
-            ) {
-              console.debug(
-                "Message already in collection (expected):",
-                newMessage.id,
-              );
-            } else {
-              console.error(
-                "Unexpected error inserting message into collection:",
-                {
-                  messageId: newMessage.id,
-                  conversationId,
-                  error,
-                },
-              );
-            }
-          }
+          // Use utils.writeUpsert to insert SSE-received messages directly into the synced data store
+          // This bypasses onInsert (which would try to POST to server again)
+          dmCollection.utils.writeUpsert({
+            ...newMessage,
+            conversationId,
+            reactions: newMessage.reactions || [],
+          });
         },
         onError: (err) => console.error("DM subscription error:", err),
       },

@@ -151,28 +151,13 @@ export function ThreadPanel({
         onData: (msg) => {
           const newMessage = msg.data;
 
-          try {
-            threadCollection.insert({
-              ...newMessage,
-              channelId,
-              reactions: newMessage.reactions || [],
-            });
-          } catch (error) {
-            if (
-              error instanceof Error &&
-              /already exists|duplicate/i.test(error.message)
-            ) {
-              console.debug(
-                "Thread message already in collection (expected):",
-                newMessage.id,
-              );
-            } else {
-              console.error(
-                "Unexpected error inserting thread message into collection:",
-                { messageId: newMessage.id, channelId, error },
-              );
-            }
-          }
+          // Use utils.writeUpsert to insert SSE-received messages directly into the synced data store
+          // This bypasses onInsert (which would try to POST to server again)
+          threadCollection.utils.writeUpsert({
+            ...newMessage,
+            channelId,
+            reactions: newMessage.reactions || [],
+          });
         },
         onError: (err) => console.error("Thread subscription error:", err),
       },
