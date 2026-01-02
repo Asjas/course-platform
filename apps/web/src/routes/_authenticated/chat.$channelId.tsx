@@ -1,30 +1,23 @@
+import type { ReactionUpdate } from "@apps/server/src/routers/chat";
 import { useLiveQuery } from "@tanstack/react-db";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
-import {
-  createChannelMessagesCollection,
-  prefetchMessageReactions,
-} from "~/lib/db.collections";
+import { createChannelMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/$channelId")({
   loader: async ({ params }) => {
     // Pre-load messages into tRPC cache via queryOptions
     // The collection will automatically hydrate from this cache
-    const messages = await trpcClient.chat.getChannelHistory.query({
+    // Messages include reactions from getChannelHistory
+    await trpcClient.chat.getChannelHistory.query({
       channelId: params.channelId,
     });
-
-    // Prefetch reactions for all messages to hydrate the React Query cache
-    // This prevents N+1 queries when each ChatMessage component mounts
-    if (messages.length > 0) {
-      await prefetchMessageReactions(messages.map((m) => m.id));
-    }
   },
   component: AuthenticatedChatChannelPage,
 });
@@ -40,6 +33,13 @@ function AuthenticatedChatChannelPage() {
 
   // Get messages from collection using useLiveQuery
   const { data: messages } = useLiveQuery(channelCollection);
+
+  // Store SSE reaction updates separately to avoid "edited" indicator when reactions change
+  // Key: messageId, Value: reactions array
+  // Initial reactions come from message.reactions, SSE updates override in this map
+  const [reactionOverrides, setReactionOverrides] = useState<
+    Map<string, ReactionUpdate["reactions"]>
+  >(new Map());
 
   // Subscribe to new messages
   useSubscription(
@@ -79,6 +79,26 @@ function AuthenticatedChatChannelPage() {
           }
         },
         onError: (err) => console.error("Subscription error:", err),
+      },
+    ),
+  );
+
+  // Subscribe to reaction updates via SSE
+  useSubscription(
+    trpc.chat.subscribeToReactions.subscriptionOptions(
+      { channelId },
+      {
+        enabled: true,
+        onData: (update) => {
+          const reactionUpdate = update.data;
+          // Update the reactions override map with the new reactions
+          setReactionOverrides((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(reactionUpdate.messageId, reactionUpdate.reactions);
+            return newMap;
+          });
+        },
+        onError: (err) => console.error("Reaction subscription error:", err),
       },
     ),
   );
@@ -139,18 +159,22 @@ function AuthenticatedChatChannelPage() {
         lastDate = msgDate;
       }
 
+      // Get reactions from SSE overrides, falling back to message reactions
+      const reactions = reactionOverrides.get(msg.id) ?? msg.reactions ?? [];
+
       elements.push(
         <ChatMessageComponent
           key={msg.id}
           channelId={channelId}
           msg={msg}
           collection={channelCollection}
+          reactions={reactions}
         />,
       );
     }
 
     return elements;
-  }, [messages, channelId, channelCollection]);
+  }, [messages, channelId, channelCollection, reactionOverrides]);
 
   return (
     <div className="grid-container">

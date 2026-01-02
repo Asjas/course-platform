@@ -1,4 +1,4 @@
-import type { ChatMessage } from "@apps/server/src/routers/chat";
+import type { ChatMessage, Reaction } from "@apps/server/src/routers/chat";
 import { format } from "date-fns";
 import {
   ChevronDownIcon,
@@ -22,17 +22,13 @@ import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
-import {
-  toggleMessageReaction,
-  useMessageReactions,
-} from "~/lib/db.collections";
+import { toggleMessageReaction } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
 
 // Default color for users without a precomputed color
 const DEFAULT_USERNAME_COLOR = "rgb(41, 128, 185)"; // Blue
 
 // Minimal interface for collection operations used by ChatMessage
-// Note: Reactions are now managed separately via useMessageReactions hook
 interface MessageCollection {
   delete(id: string): void;
   update(id: string, callback: (draft: { message: string }) => void): void;
@@ -42,10 +38,12 @@ export default function ChatMessageComponent({
   msg,
   channelId,
   collection,
+  reactions,
 }: {
   msg: ChatMessage;
   channelId: string;
   collection: MessageCollection;
+  reactions: Reaction[];
 }) {
   const [html, setHtml] = useState("");
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
@@ -55,10 +53,6 @@ export default function ChatMessageComponent({
     () => !isMediaCollapsed(msg.id),
   );
   const auth = useAuth();
-
-  // Fetch reactions separately from the message
-  // This prevents the "edited" indicator from appearing when reactions change
-  const { data: reactions } = useMessageReactions({ messageId: msg.id });
 
   // Use the precomputed color from the user's database record, with a fallback
   const usernameColor = msg.color || DEFAULT_USERNAME_COLOR;
@@ -75,9 +69,11 @@ export default function ChatMessageComponent({
     try {
       // Call the server to toggle the reaction
       // The toggleMessageReaction function handles error toasts
+      // Server publishes update via SSE for all subscribers
       await toggleMessageReaction({
         messageId: msg.id,
         emoji,
+        channelId,
       });
     } catch {
       // Error already handled by toggleMessageReaction
@@ -293,9 +289,9 @@ export default function ChatMessageComponent({
             </div>
           ) : null}
 
-          {/* Reactions - fetched separately to avoid "edited" indicator when reactions change */}
+          {/* Reactions - passed as prop, updated via SSE subscription in parent */}
           <MessageReactions
-            reactions={reactions ?? []}
+            reactions={reactions}
             onToggleReaction={handleToggleReaction}
             currentUserId={auth.session?.user.id}
             messageAuthor={msg.name}

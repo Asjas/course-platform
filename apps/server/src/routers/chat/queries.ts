@@ -21,7 +21,7 @@ export interface ChatMessage {
 /**
  * Get the Redis key for storing reactions for a message.
  */
-function getReactionKey(messageId: string): string {
+export function getReactionKey(messageId: string): string {
   return `chat:reactions:${messageId}`;
 }
 
@@ -46,7 +46,9 @@ function safeJsonParse<T>(json: string, context?: string): T | null {
  * Reactions are stored separately from messages to avoid race conditions
  * and the need to republish messages when reactions change.
  */
-async function getReactionsForMessage(messageId: string): Promise<Reaction[]> {
+export async function getReactionsForMessage(
+  messageId: string,
+): Promise<Reaction[]> {
   const reactionKey = getReactionKey(messageId);
   const allReactions = await redis.hgetall(reactionKey);
 
@@ -162,14 +164,6 @@ export async function getDMHistory(conversationId: string, limit = 50) {
   });
 }
 
-/**
- * Get reactions for a specific message.
- */
-export async function getMessageReactions(messageId: string) {
-  return getReactionsForMessage(messageId);
-}
-
 // Type exports for frontend collections
 export type ChannelMessages = Awaited<ReturnType<typeof getChannelHistory>>;
 export type DMMessages = Awaited<ReturnType<typeof getDMHistory>>;
-export type MessageReactions = Awaited<ReturnType<typeof getMessageReactions>>;

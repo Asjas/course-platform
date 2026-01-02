@@ -1,17 +1,15 @@
+import type { ReactionUpdate } from "@apps/server/src/routers/chat";
 import { useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useSubscription } from "@trpc/tanstack-react-query";
 import { isSameDay } from "date-fns";
-import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
-import {
-  createDMMessagesCollection,
-  prefetchMessageReactions,
-} from "~/lib/db.collections";
+import { createDMMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
@@ -19,16 +17,11 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
     loader: async ({ params }) => {
       // Pre-load messages into tRPC cache via queryOptions
       // The collection will automatically hydrate from this cache
-      const messages = await trpcClient.chat.getDMHistory.query({
+      // Messages include reactions from getDMHistory
+      await trpcClient.chat.getDMHistory.query({
         conversationId: params.conversationId,
         limit: 50,
       });
-
-      // Prefetch reactions for all messages to hydrate the React Query cache
-      // This prevents N+1 queries when each ChatMessage component mounts
-      if (messages.length > 0) {
-        await prefetchMessageReactions(messages.map((m) => m.id));
-      }
 
       // Also fetch conversation details
       await trpcClient.directMessages.getConversation.query({
@@ -45,6 +38,9 @@ function AuthenticatedChatDMPage() {
     from: "/_authenticated/chat/dm/$conversationId",
   });
 
+  // DM channel ID for reactions subscription
+  const dmChannelId = `dm:${conversationId}`;
+
   // Create DM-specific collection - recreate when conversationId changes
   const dmCollection = useMemo(
     () => createDMMessagesCollection(conversationId),
@@ -53,6 +49,13 @@ function AuthenticatedChatDMPage() {
 
   // Get messages from collection using useLiveQuery
   const { data: messages } = useLiveQuery(dmCollection);
+
+  // Store SSE reaction updates separately to avoid "edited" indicator when reactions change
+  // Key: messageId, Value: reactions array
+  // Initial reactions come from message.reactions, SSE updates override in this map
+  const [reactionOverrides, setReactionOverrides] = useState<
+    Map<string, ReactionUpdate["reactions"]>
+  >(new Map());
 
   // Fetch conversation details
   const { data: conversation } = useQuery({
@@ -97,6 +100,26 @@ function AuthenticatedChatDMPage() {
           }
         },
         onError: (err) => console.error("DM subscription error:", err),
+      },
+    ),
+  );
+
+  // Subscribe to reaction updates via SSE
+  useSubscription(
+    trpc.chat.subscribeToReactions.subscriptionOptions(
+      { channelId: dmChannelId },
+      {
+        enabled: true,
+        onData: (update) => {
+          const reactionUpdate = update.data;
+          // Update the reactions override map with the new reactions
+          setReactionOverrides((prev) => {
+            const newMap = new Map(prev);
+            newMap.set(reactionUpdate.messageId, reactionUpdate.reactions);
+            return newMap;
+          });
+        },
+        onError: (err) => console.error("Reaction subscription error:", err),
       },
     ),
   );
@@ -153,18 +176,22 @@ function AuthenticatedChatDMPage() {
         lastDate = msgDate;
       }
 
+      // Get reactions from SSE overrides, falling back to message reactions
+      const reactions = reactionOverrides.get(msg.id) ?? msg.reactions ?? [];
+
       elements.push(
         <ChatMessageComponent
           key={msg.id}
           msg={msg}
-          channelId={`dm:${conversationId}`}
+          channelId={dmChannelId}
           collection={dmCollection}
+          reactions={reactions}
         />,
       );
     }
 
     return elements;
-  }, [messages, conversationId, dmCollection]);
+  }, [messages, dmChannelId, dmCollection, reactionOverrides]);
 
   // Determine the other user's name for the header
   const otherUserName = useMemo(() => {

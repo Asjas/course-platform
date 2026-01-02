@@ -2,10 +2,10 @@ import { validateDMConversationAccess } from "./dmValidation.js";
 import {
   type ChannelMessages,
   type DMMessages,
-  type MessageReactions,
   getChannelHistory,
   getDMHistory,
-  getMessageReactions,
+  getReactionKey,
+  getReactionsForMessage,
 } from "./queries.js";
 import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
@@ -48,10 +48,19 @@ export interface ChatMessage {
 }
 
 /**
- * Get the Redis key for storing reactions for a message.
+ * Reaction update payload for SSE subscription.
  */
-function getReactionKey(messageId: string): string {
-  return `chat:reactions:${messageId}`;
+export interface ReactionUpdate {
+  messageId: string;
+  reactions: Reaction[];
+  timestamp: number;
+}
+
+/**
+ * Get the Redis stream key for reaction updates.
+ */
+function getReactionStreamKey(channelId: string): string {
+  return `chat:reactions:stream:${channelId}`;
 }
 
 /**
@@ -254,27 +263,19 @@ export const chatRouter = router({
       });
     }),
   /**
-   * Get reactions for a specific message.
-   */
-  getMessageReactions: publicProcedure
-    .input(z.object({ messageId: z.string() }))
-    .use(isAuthenticated)
-    .query(async ({ input }): Promise<MessageReactions> => {
-      return getMessageReactions(input.messageId);
-    }),
-  /**
    * Toggle a reaction on a message. If the user already has this reaction, it's removed.
    * Otherwise, it's added.
    *
    * Note: Reactions are stored separately from messages in Redis hashes.
    * This avoids race conditions and the need to republish messages when reactions change.
-   * The frontend updates its local cache with the returned reactions.
+   * After updating, publishes to a reaction stream for SSE subscribers.
    */
   toggleReaction: publicProcedure
     .input(
       z.object({
         messageId: z.string(),
         emoji: z.string().min(1).max(10),
+        channelId: z.string(), // Required to publish to the correct reaction stream
       }),
     )
     .use(isAuthenticated)
@@ -308,7 +309,87 @@ export const chatRouter = router({
 
       redisStreamOperations.inc({ operation: "hset", status: "success" });
 
-      return getMessageReactions(input.messageId);
+      // Fetch updated reactions and publish to stream for SSE subscribers
+      const updatedReactions = await getReactionsForMessage(input.messageId);
+      const reactionUpdate: ReactionUpdate = {
+        messageId: input.messageId,
+        reactions: updatedReactions,
+        timestamp: Date.now(),
+      };
+
+      // Publish to the reaction stream for this channel
+      await redis.xadd(
+        getReactionStreamKey(input.channelId),
+        "MAXLEN",
+        "~",
+        "1000", // Keep last ~1000 reaction updates per channel
+        "*",
+        "data",
+        JSON.stringify(reactionUpdate),
+      );
+
+      redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
+      return updatedReactions;
+    }),
+  /**
+   * Subscribe to reaction updates for a channel via SSE.
+   * Clients receive real-time updates when any message in the channel has reactions changed.
+   */
+  subscribeToReactions: publicProcedure
+    .input(
+      z.object({
+        channelId: z.string(),
+        lastEventId: z.string().nullish(),
+      }),
+    )
+    .use(isAuthenticated)
+    .subscription(async function* ({ input }) {
+      const streamKey = getReactionStreamKey(input.channelId);
+
+      let lastId =
+        input.lastEventId ?? (input.lastEventId === undefined ? "$" : "$");
+
+      while (true) {
+        try {
+          const result = await subscriptionRedis.xread(
+            "COUNT",
+            100,
+            "BLOCK",
+            5000,
+            "STREAMS",
+            streamKey,
+            lastId,
+          );
+
+          if (!result?.length) continue;
+
+          const [[, entries]] = result;
+
+          for (const [streamId, fields] of entries) {
+            const payload = safeJsonParse<ReactionUpdate>(
+              fields[1],
+              "subscribeToReactions",
+            );
+            if (!payload) continue; // Skip corrupted data
+
+            // Update lastId to Redis stream ID
+            lastId = streamId;
+
+            // Use messageId as the tracking ID for deduplication
+            yield tracked(payload.messageId, payload);
+          }
+        } catch (err) {
+          if (
+            err instanceof Error &&
+            err.message.includes("Invalid stream ID")
+          ) {
+            lastId = "$"; // fallback
+            continue;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
     }),
   /**
    * Get DM messages (subscription)

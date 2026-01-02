@@ -671,61 +671,29 @@ export function useGdprAuditLogs() {
 
 // ========== Message Reactions ==========
 
-// Type for reactions from the server
-export type MessageReaction = Awaited<
-  ReturnType<typeof trpcClient.chat.getMessageReactions.query>
->[number];
+// Re-export Reaction type from server for frontend use
+export type { Reaction, ReactionUpdate } from "@apps/server/src/routers/chat";
 
 /**
- * Prefetch reactions for multiple messages in parallel.
- * Call this in route loaders after fetching messages to hydrate the React Query cache.
- * This improves performance by fetching all reactions upfront rather than one-by-one.
- */
-export async function prefetchMessageReactions(messageIds: string[]) {
-  // Use Promise.all to fetch all reactions in parallel
-  await Promise.all(
-    messageIds.map((messageId) =>
-      queryClient.prefetchQuery({
-        ...trpc.chat.getMessageReactions.queryOptions({ messageId }),
-        staleTime: 30_000,
-      }),
-    ),
-  );
-}
-
-/**
- * Hook to fetch and manage reactions for a specific message.
- * Reactions are stored separately from messages to avoid the "edited" indicator
- * appearing when reactions are added/removed.
- */
-export function useMessageReactions({ messageId }: { messageId: string }) {
-  return useQuery({
-    ...trpc.chat.getMessageReactions.queryOptions({ messageId }),
-    staleTime: 30_000, // 30 seconds - reactions don't change that frequently
-  });
-}
-
-/**
- * Toggle a reaction on a message and invalidate the reactions cache.
- * This function handles both the server call and cache invalidation.
+ * Toggle a reaction on a message.
+ * The reaction update is published via SSE to all subscribers.
  */
 export async function toggleMessageReaction({
   messageId,
   emoji,
+  channelId,
 }: {
   messageId: string;
   emoji: string;
+  channelId: string;
 }) {
   try {
     // Call the server to toggle the reaction
+    // Server will publish update to SSE stream for all subscribers
     const updatedReactions = await trpcClient.chat.toggleReaction.mutate({
       messageId,
       emoji,
-    });
-
-    // Invalidate the reactions query to refetch fresh data
-    await queryClient.invalidateQueries({
-      queryKey: trpc.chat.getMessageReactions.queryKey({ messageId }),
+      channelId,
     });
 
     return updatedReactions;
