@@ -424,6 +424,7 @@ export function ThreadPanel({
                 onSubmit={handleSubmit}
                 hasError={submitAttempted && field.state.value.trim() === ""}
                 mentionContext={{ type: "channel", channelId }}
+                iconSize={12}
               >
                 <form.Subscribe
                   selector={(state) => [state.isDirty, state.isSubmitting]}
@@ -441,7 +442,7 @@ export function ThreadPanel({
                       disabled={isSubmitting || !isDirty}
                     >
                       <CircleArrowRightIcon
-                        size={24}
+                        size={18}
                         color="currentColor"
                       />
                     </button>

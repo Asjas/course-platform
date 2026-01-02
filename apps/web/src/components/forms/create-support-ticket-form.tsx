@@ -5,7 +5,7 @@ import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import FieldInfo from "~/components/field-info";
-import GitHubMessageEditor from "~/components/github-message-editor";
+import { GitHubMessageEditor } from "~/components/markdown-editor";
 import { SupportTicketsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";

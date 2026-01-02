@@ -51,6 +51,10 @@ interface GitHubMessageEditorProps {
    * Context for the mention picker (determines which users can be mentioned)
    */
   mentionContext?: MentionContext;
+  /**
+   * Size of toolbar icons in pixels (default: 16)
+   */
+  iconSize?: number;
 }
 
 export default function ChatMessageEditor({
@@ -62,6 +66,7 @@ export default function ChatMessageEditor({
   onSubmit,
   hasError = false,
   mentionContext,
+  iconSize = 16,
 }: GitHubMessageEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -416,7 +421,7 @@ export default function ChatMessageEditor({
                 disabled={uploadingCount > 0}
               >
                 <PlusCircleIcon
-                  size={16}
+                  size={iconSize}
                   aria-hidden="true"
                 />
               </button>
@@ -458,7 +463,7 @@ export default function ChatMessageEditor({
             }}
           >
             <HeadingIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -548,7 +553,7 @@ export default function ChatMessageEditor({
             }}
           >
             <BoldIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -644,7 +649,7 @@ export default function ChatMessageEditor({
             }}
           >
             <ItalicIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -723,7 +728,7 @@ export default function ChatMessageEditor({
             }}
           >
             <TextQuoteIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -815,7 +820,7 @@ export default function ChatMessageEditor({
             }}
           >
             <CodeIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -892,7 +897,7 @@ export default function ChatMessageEditor({
             }}
           >
             <LinkIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -971,7 +976,7 @@ export default function ChatMessageEditor({
             }}
           >
             <ListIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -1064,7 +1069,7 @@ export default function ChatMessageEditor({
             }}
           >
             <ListOrderedIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -1075,7 +1080,7 @@ export default function ChatMessageEditor({
             onClick={() => setIsGiphyPickerOpen(true)}
           >
             <SmileIcon
-              size={16}
+              size={iconSize}
               aria-hidden="true"
             />
           </button>
@@ -1087,7 +1092,7 @@ export default function ChatMessageEditor({
               onClick={insertAtSymbol}
             >
               <AtSignIcon
-                size={16}
+                size={iconSize}
                 aria-hidden="true"
               />
             </button>

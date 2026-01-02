@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { ulid } from "ulid";
 import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
-import GitHubMessageEditor from "~/components/github-message-editor";
+import { GitHubMessageEditor } from "~/components/markdown-editor";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";

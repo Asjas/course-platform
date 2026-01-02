@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import GitHubMessageEditor from "~/components/github-message-editor";
+import { GitHubMessageEditor } from "~/components/markdown-editor";
 import { trpcClient } from "~/lib/trpc.client";
 
 interface DMRequestModalProps {
