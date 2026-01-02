@@ -16,6 +16,11 @@ import {
   type MentionContext,
   MentionPicker,
 } from "~/components/mention-picker";
+import {
+  generateAttachmentMarkdown,
+  getAcceptString,
+  validateFile,
+} from "~/lib/attachments";
 import { renderMarkdown } from "~/lib/markdown";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
@@ -168,13 +173,16 @@ export default function GitHubMessageEditor({
     });
   }
 
-  const handleImageUpload = async (
-    file: File,
-    index: number,
-    total: number,
-  ) => {
+  const handleFileUpload = async (file: File, index: number, total: number) => {
+    // Validate file type and size
+    const validationError = validateFile(file);
+    if (validationError) {
+      toast.error(validationError);
+      return;
+    }
+
     try {
-      const extension = file.name.split(".").pop() || "jpg";
+      const extension = file.name.split(".").pop() || "bin";
       const filename = `${crypto.randomUUID()}.${extension}`;
       const key = `support_ticket_attachments/${filename}`;
 
@@ -197,34 +205,33 @@ export default function GitHubMessageEditor({
         throw new Error(`Upload failed: ${uploadResponse.statusText}`);
       }
 
-      // Step 3: Insert Markdown
+      // Step 3: Insert Markdown based on file type
       const textarea = textareaRef.current;
       const cursorPos = textarea?.selectionStart ?? value.length;
-      const alt = file.name.split(".").slice(0, -1).join(".") || "image";
-      const imageMarkdown = `\n![${alt}](${publicUrl})\n`;
+      const attachmentMarkdown = generateAttachmentMarkdown(
+        file.name,
+        publicUrl,
+      );
+      const markdown = `\n${attachmentMarkdown}\n`;
 
       onChange(
-        (prev) =>
-          prev.slice(0, cursorPos) + imageMarkdown + prev.slice(cursorPos),
+        (prev) => prev.slice(0, cursorPos) + markdown + prev.slice(cursorPos),
       );
 
       // Restore cursor
       requestAnimationFrame(() => {
         if (!textarea) return;
         textarea.focus();
-        const newPos = cursorPos + imageMarkdown.length;
+        const newPos = cursorPos + markdown.length;
         textarea.setSelectionRange(newPos, newPos);
       });
 
-      toast.success(`Image ${index + 1}/${total} uploaded!`);
+      toast.success(`File ${index + 1}/${total} uploaded!`);
     } catch (error) {
       if (error instanceof Error) {
         console.error("Upload error:", error);
         toast.error(`Failed to upload ${file.name}`);
       }
-
-      // Only turn off uploading when ALL are done
-      // We'll handle this in the loop
     }
   };
 
@@ -238,39 +245,37 @@ export default function GitHubMessageEditor({
     e.stopPropagation();
 
     const files = Array.from(e.dataTransfer.files);
-    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
-    if (imageFiles.length === 0) return;
+    if (files.length === 0) return;
 
-    setUploadingCount(imageFiles.length);
-    const toastId = toast.loading(`Uploading 0/${imageFiles.length}...`);
+    setUploadingCount(files.length);
+    const toastId = toast.loading(`Uploading 0/${files.length}...`);
 
-    for (let i = 0; i < imageFiles.length; i++) {
-      toast.loading(`Uploading ${i + 1}/${imageFiles.length}...`, {
+    for (let i = 0; i < files.length; i++) {
+      toast.loading(`Uploading ${i + 1}/${files.length}...`, {
         id: toastId,
       });
-      await handleImageUpload(imageFiles[i], i, imageFiles.length);
+      await handleFileUpload(files[i], i, files.length);
     }
 
-    toast.success("All images uploaded!", { id: toastId });
+    toast.success("All files uploaded!", { id: toastId });
     setUploadingCount(0);
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    const imageFiles = files.filter((f) => f.type.startsWith("image/"));
-    if (imageFiles.length === 0) return;
+    if (files.length === 0) return;
 
-    setUploadingCount(imageFiles.length);
-    const toastId = toast.loading(`Uploading 0/${imageFiles.length}...`);
+    setUploadingCount(files.length);
+    const toastId = toast.loading(`Uploading 0/${files.length}...`);
 
-    for (let i = 0; i < imageFiles.length; i++) {
-      toast.loading(`Uploading ${i + 1}/${imageFiles.length}...`, {
+    for (let i = 0; i < files.length; i++) {
+      toast.loading(`Uploading ${i + 1}/${files.length}...`, {
         id: toastId,
       });
-      await handleImageUpload(imageFiles[i], i, imageFiles.length);
+      await handleFileUpload(files[i], i, files.length);
     }
 
-    toast.success("All images uploaded!", { id: toastId });
+    toast.success("All files uploaded!", { id: toastId });
     setUploadingCount(0);
     e.target.value = "";
   };
@@ -1069,7 +1074,7 @@ export default function GitHubMessageEditor({
           <input
             className="absolute inset-0 z-10 cursor-pointer opacity-0"
             type="file"
-            accept=".gif,.jpeg,.jpg,.mov,.mp4,.png,.gz,.log,.md,.txt,.yaml,.yml,.zip"
+            accept={getAcceptString()}
             multiple
             disabled={uploadingCount > 0}
             onChange={handleFileSelect}
