@@ -6,16 +6,25 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
-import { createChannelMessagesCollection } from "~/lib/db.collections";
+import {
+  createChannelMessagesCollection,
+  prefetchMessageReactions,
+} from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/$channelId")({
   loader: async ({ params }) => {
     // Pre-load messages into tRPC cache via queryOptions
     // The collection will automatically hydrate from this cache
-    await trpcClient.chat.getChannelHistory.query({
+    const messages = await trpcClient.chat.getChannelHistory.query({
       channelId: params.channelId,
     });
+
+    // Prefetch reactions for all messages to hydrate the React Query cache
+    // This prevents N+1 queries when each ChatMessage component mounts
+    if (messages.length > 0) {
+      await prefetchMessageReactions(messages.map((m) => m.id));
+    }
   },
   component: AuthenticatedChatChannelPage,
 });

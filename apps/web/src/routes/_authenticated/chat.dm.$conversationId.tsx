@@ -8,7 +8,10 @@ import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
-import { createDMMessagesCollection } from "~/lib/db.collections";
+import {
+  createDMMessagesCollection,
+  prefetchMessageReactions,
+} from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
@@ -16,10 +19,16 @@ export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(
     loader: async ({ params }) => {
       // Pre-load messages into tRPC cache via queryOptions
       // The collection will automatically hydrate from this cache
-      await trpcClient.chat.getDMHistory.query({
+      const messages = await trpcClient.chat.getDMHistory.query({
         conversationId: params.conversationId,
         limit: 50,
       });
+
+      // Prefetch reactions for all messages to hydrate the React Query cache
+      // This prevents N+1 queries when each ChatMessage component mounts
+      if (messages.length > 0) {
+        await prefetchMessageReactions(messages.map((m) => m.id));
+      }
 
       // Also fetch conversation details
       await trpcClient.directMessages.getConversation.query({

@@ -677,6 +677,23 @@ export type MessageReaction = Awaited<
 >[number];
 
 /**
+ * Prefetch reactions for multiple messages in parallel.
+ * Call this in route loaders after fetching messages to hydrate the React Query cache.
+ * This improves performance by fetching all reactions upfront rather than one-by-one.
+ */
+export async function prefetchMessageReactions(messageIds: string[]) {
+  // Use Promise.all to fetch all reactions in parallel
+  await Promise.all(
+    messageIds.map((messageId) =>
+      queryClient.prefetchQuery({
+        ...trpc.chat.getMessageReactions.queryOptions({ messageId }),
+        staleTime: 30_000,
+      }),
+    ),
+  );
+}
+
+/**
  * Hook to fetch and manage reactions for a specific message.
  * Reactions are stored separately from messages to avoid the "edited" indicator
  * appearing when reactions are added/removed.
