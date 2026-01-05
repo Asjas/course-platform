@@ -83,7 +83,7 @@
     "@tanstack/react-form-devtools": "0.2.10",
     "@tanstack/react-query-devtools": "5.91.2",
     "@tanstack/react-router-devtools": "1.144.0",
-    "@tanstack/router-plugin": "1.145.2",
+    "@tanstack/router-plugin": "1.145.4",
     "@tauri-apps/cli": "2.9.6",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
