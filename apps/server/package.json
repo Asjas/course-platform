@@ -51,7 +51,7 @@
     "resolve-tspaths": "0.8.23",
     "superjson": "2.2.6",
     "ulid": "3.0.2",
-    "undici": "7.18.0",
+    "undici": "7.18.2",
     "zod": "4.3.5"
   },
   "devDependencies": {

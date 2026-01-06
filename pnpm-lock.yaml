@@ -238,8 +238,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2
       undici:
-        specifier: 7.18.0
-        version: 7.18.0
+        specifier: 7.18.2
+        version: 7.18.2
       zod:
         specifier: 4.3.5
         version: 4.3.5
@@ -9338,8 +9338,8 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
-  undici@7.18.0:
-    resolution: {integrity: sha512-CfPufgPFHCYu0W4h1NiKW9+tNJ39o3kWm7Cm29ET1enSJx+AERfz7A2wAr26aY0SZbYzZlTBQtcHy15o60VZfQ==}
+  undici@7.18.2:
+    resolution: {integrity: sha512-y+8YjDFzWdQlSE9N5nzKMT3g4a5UBX1HKowfdXh0uvAnTaqqwqB92Jt4UXBAeKekDs5IaDKyJFR4X1gYVCgXcw==}
     engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -11788,7 +11788,7 @@ snapshots:
       fast-querystring: 1.1.2
       fastify-plugin: 5.1.0
       toad-cache: 3.7.0
-      undici: 7.18.0
+      undici: 7.18.2
 
   '@fastify/sensible@6.0.4':
     dependencies:
@@ -20618,7 +20618,7 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  undici@7.18.0: {}
+  undici@7.18.2: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
