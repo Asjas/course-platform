@@ -520,8 +520,8 @@ importers:
         specifier: 19.1.0-rc.3
         version: 19.1.0-rc.3
       cypress:
-        specifier: 15.8.1
-        version: 15.8.1
+        specifier: 15.8.2
+        version: 15.8.2
       jsdom:
         specifier: 27.4.0
         version: 27.4.0
@@ -1536,8 +1536,8 @@ packages:
     resolution: {integrity: sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==}
     engines: {node: '>=18'}
 
-  '@cypress/request@3.0.9':
-    resolution: {integrity: sha512-I3l7FdGRXluAS44/0NguwWlO83J18p0vlr2FYHrJkWdNYhgVoiYo61IXPqaOsL+vNxU1ZqMACzItGK3/KKDsdw==}
+  '@cypress/request@3.0.10':
+    resolution: {integrity: sha512-hauBrOdvu08vOsagkZ/Aju5XuiZx6ldsLfByg1htFeldhex+PeMrYauANzFsMJeAA0+dyPLbDoX2OYuvVoLDkQ==}
     engines: {node: '>= 6'}
 
   '@cypress/xvfb@1.2.4':
@@ -5764,8 +5764,8 @@ packages:
   custom-media-element@1.4.5:
     resolution: {integrity: sha512-cjrsQufETwxjvwZbYbKBCJNvmQ2++G9AvT45zDi7NXL9k2PdVcs2h0jQz96J6G4TMKRCcEsoJ+QTgQD00Igtjw==}
 
-  cypress@15.8.1:
-    resolution: {integrity: sha512-ogc62stTQGh1395ipKxfCE5hQuSApTzeH5e0d9U6m7wYO9HQeCpgnkYtBtd0MbkN2Fnch5Od2mX9u4hoTlrH4Q==}
+  cypress@15.8.2:
+    resolution: {integrity: sha512-KGpuiE8o9l9eyVLPkig574t8zOXkEDKzI0a+RQwy4cfXzpaLipvTOv0t+QEEkLiw/8HbgMNZ0fbPKakJAB3USA==}
     engines: {node: ^20.1.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
 
@@ -8329,8 +8329,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qs@6.14.0:
-    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
+  qs@6.14.1:
+    resolution: {integrity: sha512-4EK3+xJl8Ts67nLYNwqw/dsFVnCf+qR7RgXSK9jEEm9unao3njwMDdmsdvoKBKHzxd7tCYz5e5M+SnMjdtXGQQ==}
     engines: {node: '>=0.6'}
 
   queue-microtask@1.2.3:
@@ -11650,7 +11650,7 @@ snapshots:
 
   '@csstools/css-tokenizer@3.0.4': {}
 
-  '@cypress/request@3.0.9':
+  '@cypress/request@3.0.10':
     dependencies:
       aws-sign2: 0.7.0
       aws4: 1.13.2
@@ -11665,7 +11665,7 @@ snapshots:
       json-stringify-safe: 5.0.1
       mime-types: 2.1.35
       performance-now: 2.1.0
-      qs: 6.14.0
+      qs: 6.14.1
       safe-buffer: 5.2.1
       tough-cookie: 5.1.2
       tunnel-agent: 0.6.0
@@ -16513,9 +16513,9 @@ snapshots:
 
   custom-media-element@1.4.5: {}
 
-  cypress@15.8.1:
+  cypress@15.8.2:
     dependencies:
-      '@cypress/request': 3.0.9
+      '@cypress/request': 3.0.10
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
       '@types/sinonjs__fake-timers': 8.1.1
       '@types/sizzle': 2.3.10
@@ -19596,7 +19596,7 @@ snapshots:
 
   punycode@2.3.1: {}
 
-  qs@6.14.0:
+  qs@6.14.1:
     dependencies:
       side-channel: 1.1.0
 
