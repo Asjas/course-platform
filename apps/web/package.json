@@ -78,7 +78,7 @@
     "@polar-sh/better-auth": "1.6.3",
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "4.1.18",
-    "@tanstack/devtools-vite": "0.4.0",
+    "@tanstack/devtools-vite": "0.4.1",
     "@tanstack/react-devtools": "0.9.0",
     "@tanstack/react-form-devtools": "0.2.11",
     "@tanstack/react-query-devtools": "5.91.2",
