@@ -29,7 +29,7 @@
     "@radix-ui/react-dropdown-menu": "2.1.16",
     "@radix-ui/react-label": "2.1.8",
     "@radix-ui/react-slot": "1.2.4",
-    "@shikijs/rehype": "3.20.0",
+    "@shikijs/rehype": "3.21.0",
     "@tanstack/offline-transactions": "1.0.6",
     "@tanstack/query-async-storage-persister": "5.90.18",
     "@tanstack/query-core": "5.90.16",
