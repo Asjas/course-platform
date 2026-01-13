@@ -60,12 +60,12 @@
     "@types/node": "25.0.6",
     "@types/nodemailer": "7.0.5",
     "@types/pg": "8.16.0",
-    "@vitest/coverage-v8": "4.0.16",
+    "@vitest/coverage-v8": "4.0.17",
     "drizzle-kit": "0.31.8",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
     "vite-tsconfig-paths": "6.0.4",
-    "vitest": "4.0.16"
+    "vitest": "4.0.17"
   },
   "optionalDependencies": {
     "pg-native": "3.5.2"
