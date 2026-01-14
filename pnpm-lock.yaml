@@ -342,8 +342,8 @@ importers:
         specifier: 1.0.14
         version: 1.0.14(@tanstack/query-core@5.90.16)(typescript@5.9.3)
       '@tanstack/react-db':
-        specifier: 0.1.62
-        version: 0.1.62(react@19.2.3)(typescript@5.9.3)
+        specifier: 0.1.64
+        version: 0.1.64(react@19.2.3)(typescript@5.9.3)
       '@tanstack/react-form':
         specifier: 1.27.7
         version: 1.27.7(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4584,8 +4584,8 @@ packages:
   '@tanstack/query-persist-client-core@5.91.15':
     resolution: {integrity: sha512-vnPSfQVo41EKJN8v20nkhWNZPyB1dMJIy5icOvCGzcCJzsmRefYY1owtr63ICOcjOiPPTuNEfPsdjdBhkzYnmA==}
 
-  '@tanstack/react-db@0.1.62':
-    resolution: {integrity: sha512-9fCEIIum3glKoRRdClMXsLoc5JDzMQaRL9HwHod1k9dWD6NbhSjshNX0oT1cQ9hsJtDtbDPmWSF+/pteyNMLyA==}
+  '@tanstack/react-db@0.1.64':
+    resolution: {integrity: sha512-XT5Z0pimU4KfRgsVb0OIX83hgEU8NE0XZRwRRYtWDzZCvlZJjMwegWMKDOS1lzRtYvj7PDoZa7zyTyGXEgi2Wg==}
     peerDependencies:
       react: '>=16.8.0'
 
@@ -15482,9 +15482,9 @@ snapshots:
     dependencies:
       '@tanstack/query-core': 5.90.16
 
-  '@tanstack/react-db@0.1.62(react@19.2.3)(typescript@5.9.3)':
+  '@tanstack/react-db@0.1.64(react@19.2.3)(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.5.18(typescript@5.9.3)
+      '@tanstack/db': 0.5.20(typescript@5.9.3)
       react: 19.2.3
       use-sync-external-store: 1.6.0(react@19.2.3)
     transitivePeerDependencies:
