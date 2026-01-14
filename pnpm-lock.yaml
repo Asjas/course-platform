@@ -330,8 +330,8 @@ importers:
         specifier: 3.21.0
         version: 3.21.0
       '@tanstack/offline-transactions':
-        specifier: 1.0.9
-        version: 1.0.9(typescript@5.9.3)
+        specifier: 1.0.10
+        version: 1.0.10(typescript@5.9.3)
       '@tanstack/query-async-storage-persister':
         specifier: 5.90.18
         version: 5.90.18
@@ -4471,8 +4471,8 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
-  '@tanstack/db-ivm@0.1.15':
-    resolution: {integrity: sha512-4z5xpGWd/Gk0QRVfQ9qW8lVlZpqRFQtqvQPb++RUJNkED3n95H1Wwy1S0oW1YkGbrMc11mMcy0PRxQdAjro8vQ==}
+  '@tanstack/db-ivm@0.1.16':
+    resolution: {integrity: sha512-DIMfUoHtAcQ1IYghU+XqprDdzToy2d6qg3R5h0DJH60XPsmRTt0qOnlu/HVZqwCP7XL/b2UhRvyR5utz/N4KGg==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -4481,8 +4481,8 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
-  '@tanstack/db@0.5.19':
-    resolution: {integrity: sha512-46MlvGEZs1mDx4zEM/my0953U0uE9FDWUozEl0Jc2neJX3s7Gi8SxDtoBcc2tNnS5Qettitmt0/py9y0FlY6+Q==}
+  '@tanstack/db@0.5.20':
+    resolution: {integrity: sha512-vpN2JlqxdkvLQq2Uc5H0+JXfVTKaAxArOZATCbiDt+NaTw1kriA20rgJRJTPBA8RxQwNmZEUWKEYfjAn7+YI+g==}
     peerDependencies:
       typescript: '>=4.7'
 
@@ -4555,8 +4555,8 @@ packages:
     resolution: {integrity: sha512-gMo/ReTUp0a3IOcZoI3hH6PLDC2R/5ELQ7P2yu9F6aEkA0wSQh+Q4qzMrtcKvF2ut0oE+16xWCGDo/TdYd6cEQ==}
     engines: {node: '>=12'}
 
-  '@tanstack/offline-transactions@1.0.9':
-    resolution: {integrity: sha512-1PGWeHnWyKceQM82mAb1TvFOLx+mY+M1oGqy+QMWPKmYJp6rCz8Jlu0myvQuVKm7kHHEaqhsMqgjryrujki7GA==}
+  '@tanstack/offline-transactions@1.0.10':
+    resolution: {integrity: sha512-DXTaJX4P9X1xzXwscwgjXbBx9BnQK5ZRsifxE4DusJEJGwd/pNrkU1V6nmG/5+22/uEuT0aItwbSruT5cOY7Bw==}
 
   '@tanstack/pacer-lite@0.1.1':
     resolution: {integrity: sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==}
@@ -15327,7 +15327,7 @@ snapshots:
       sorted-btree: 1.8.1
       typescript: 5.9.3
 
-  '@tanstack/db-ivm@0.1.15(typescript@5.9.3)':
+  '@tanstack/db-ivm@0.1.16(typescript@5.9.3)':
     dependencies:
       fractional-indexing: 3.2.0
       sorted-btree: 1.8.1
@@ -15340,10 +15340,10 @@ snapshots:
       '@tanstack/pacer-lite': 0.2.1
       typescript: 5.9.3
 
-  '@tanstack/db@0.5.19(typescript@5.9.3)':
+  '@tanstack/db@0.5.20(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
-      '@tanstack/db-ivm': 0.1.15(typescript@5.9.3)
+      '@tanstack/db-ivm': 0.1.16(typescript@5.9.3)
       '@tanstack/pacer-lite': 0.2.1
       typescript: 5.9.3
 
@@ -15452,9 +15452,9 @@ snapshots:
 
   '@tanstack/history@1.145.7': {}
 
-  '@tanstack/offline-transactions@1.0.9(typescript@5.9.3)':
+  '@tanstack/offline-transactions@1.0.10(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.5.19(typescript@5.9.3)
+      '@tanstack/db': 0.5.20(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
