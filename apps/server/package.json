@@ -57,7 +57,7 @@
   "devDependencies": {
     "@dotenvx/dotenvx": "1.51.4",
     "@total-typescript/ts-reset": "0.6.1",
-    "@types/node": "25.0.6",
+    "@types/node": "25.0.9",
     "@types/nodemailer": "7.0.5",
     "@types/pg": "8.16.0",
     "@vitest/coverage-v8": "4.0.17",
