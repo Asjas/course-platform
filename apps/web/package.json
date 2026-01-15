@@ -41,7 +41,7 @@
     "@tanstack/react-virtual": "3.13.18",
     "@trpc/client": "11.8.1",
     "@trpc/tanstack-react-query": "11.8.1",
-    "better-auth": "1.4.12",
+    "better-auth": "1.4.13",
     "browserslist": "4.28.1",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
