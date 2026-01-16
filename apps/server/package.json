@@ -35,7 +35,7 @@
     "better-auth": "1.4.13",
     "close-with-grace": "2.4.0",
     "drizzle-orm": "0.45.1",
-    "fastify": "5.7.0",
+    "fastify": "5.7.1",
     "fastify-allow": "2.1.1",
     "fastify-better-auth": "1.2.0",
     "fastify-favicon": "5.0.0",
