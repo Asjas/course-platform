@@ -55,7 +55,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "1.51.4",
+    "@dotenvx/dotenvx": "1.52.0",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/node": "25.0.6",
     "@types/nodemailer": "7.0.5",
