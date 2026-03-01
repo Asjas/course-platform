@@ -1,0 +1,16 @@
+{
+  "name": "Learn Fastify",
+  "short_name": "Learn Fastify",
+  "description": "A comprehensive course to master the Fastify framework",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5a4",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
