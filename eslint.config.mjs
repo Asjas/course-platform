@@ -79,7 +79,7 @@ export default defineConfig(
         reactCompiler.configs.recommended,
         reactRefresh.configs.recommended,
         reactRefresh.configs.vite,
-        tanstackQueryPlugin.configs.recommended,
+        ...tanstackQueryPlugin.configs["flat/recommended"],
         reactHooks.configs.flat["recommended-latest"],
         fixupConfigRules(
           compat.extends(

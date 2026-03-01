@@ -1,16 +1,24 @@
 ---
-import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import WhatYouBuild from "../components/WhatYouBuild.astro";
+import Curriculum from "../components/Curriculum.astro";
+import Instructor from "../components/Instructor.astro";
+import Pricing from "../components/Pricing.astro";
+import FAQ from "../components/FAQ.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Layout>
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
-  <Welcome />
+  <Header />
+  <main>
+    <Hero />
+    <WhatYouBuild />
+    <Curriculum />
+    <Instructor />
+    <Pricing />
+    <FAQ />
+  </main>
+  <Footer />
 </Layout>

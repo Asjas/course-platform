@@ -1,0 +1,52 @@
+---
+import { ThemeToggle } from "./ThemeToggle";
+---
+
+<header
+  class="fixed top-0 z-50 w-full border-b border-gray-200/50 bg-white/80 backdrop-blur-lg dark:border-gray-800/50 dark:bg-gray-900/80"
+>
+  <nav
+    class="container mx-auto flex max-w-6xl items-center justify-between px-4 py-4"
+  >
+    <a
+      href="/"
+      class="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white"
+    >
+      <img
+        src="/fastify-icon.svg"
+        alt=""
+        class="h-8 w-8 dark:invert"
+        aria-hidden="true"
+      />
+      <span>Learn Fastify</span>
+    </a>
+
+    <div class="flex items-center gap-6">
+      <a
+        href="#curriculum"
+        class="hidden text-gray-600 transition-colors hover:text-gray-900 sm:inline-block dark:text-gray-400 dark:hover:text-white"
+      >
+        Curriculum
+      </a>
+      <a
+        href="#pricing"
+        class="hidden text-gray-600 transition-colors hover:text-gray-900 sm:inline-block dark:text-gray-400 dark:hover:text-white"
+      >
+        Pricing
+      </a>
+      <a
+        href="#faq"
+        class="hidden text-gray-600 transition-colors hover:text-gray-900 sm:inline-block dark:text-gray-400 dark:hover:text-white"
+      >
+        FAQ
+      </a>
+      <ThemeToggle client:load />
+      <a
+        href="#signup"
+        class="rounded-lg bg-teal-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-teal-600 dark:bg-teal-400 dark:text-gray-900 dark:hover:bg-teal-500"
+      >
+        Get Early Access
+      </a>
+    </div>
+  </nav>
+</header>

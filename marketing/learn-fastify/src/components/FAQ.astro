@@ -1,0 +1,112 @@
+---
+const faqs = [
+  {
+    question: "What level is this course for?",
+    answer:
+      "This course is designed for developers who have some JavaScript/TypeScript experience and want to learn Fastify from the ground up. Whether you're coming from Express or starting fresh with Node.js frameworks, you'll find value here. We cover fundamentals before diving into advanced patterns.",
+  },
+  {
+    question: "Do I need to know React already?",
+    answer:
+      "No prior React knowledge is required! The course includes a comprehensive module on React fundamentals as we build the frontend for our online store. However, if you already know React, you can use that module as a refresher or skip to the integration parts.",
+  },
+  {
+    question: "How is the content delivered?",
+    answer:
+      "The course consists of video lessons, written summaries, and complete source code. Videos are typically 10-20 minutes each, focused on specific topics. You'll have lifetime access to download everything for offline viewing.",
+  },
+  {
+    question: "What if I get stuck or have questions?",
+    answer:
+      "Pro tier students get access to our Discord community where you can ask questions and get help from both the instructor and fellow students. You can also post questions directly on lessons, and I personally answer all of them within 24 hours.",
+  },
+  {
+    question: "Is the source code included?",
+    answer:
+      "Absolutely! Every lesson includes the complete source code for that point in the project. You can download starter code, follow along, or compare your code with the final version. The entire online store project is included.",
+  },
+  {
+    question: "What about future updates?",
+    answer:
+      "This is a living course. When Fastify releases major updates or best practices evolve, I update the course content. All updates are included free of charge for existing students. Many of my other courses have been updated multiple times over the years.",
+  },
+  {
+    question: "Do you offer team or company licenses?",
+    answer:
+      "Yes! The Team tier is designed for companies who want to train their development teams. For larger teams or custom training needs, reach out directly and we can discuss your requirements.",
+  },
+  {
+    question: "What's your refund policy?",
+    answer:
+      "I want you to be completely satisfied. If the course doesn't meet your expectations within 30 days of purchase, contact me for a full refund. No questions asked, no hoops to jump through.",
+  },
+  {
+    question: "When will the course be available?",
+    answer:
+      "I'm targeting a launch in early 2025. Sign up for early access to get launch updates and lock in the lowest price. Early access members will also get exclusive bonus content not available to later purchasers.",
+  },
+  {
+    question: "Can I expense this at work?",
+    answer:
+      "Absolutely! The Team tier includes invoicing for company purchases. Many companies have L&D budgets specifically for courses like this. I can provide any documentation your employer needs.",
+  },
+];
+---
+
+<section
+  id="faq"
+  class="bg-gray-50 py-20 dark:bg-gray-900/50"
+>
+  <div class="container mx-auto max-w-4xl px-4">
+    <div class="mb-16 text-center">
+      <h2
+        class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white"
+      >
+        Frequently Asked Questions
+      </h2>
+      <p class="text-lg text-gray-600 dark:text-gray-300">
+        Got questions? I've got answers.
+      </p>
+    </div>
+
+    <div class="space-y-4">
+      {
+        faqs.map((faq, index) => (
+          <details class="group rounded-xl border border-gray-200 bg-white transition-all open:shadow-md dark:border-gray-700 dark:bg-gray-800">
+            <summary class="flex cursor-pointer items-center justify-between gap-4 p-6 text-left font-semibold text-gray-900 marker:content-none hover:text-emerald-600 dark:text-white dark:hover:text-emerald-400">
+              <span>{faq.question}</span>
+              <svg
+                class="h-5 w-5 flex-shrink-0 text-gray-400 transition-transform group-open:rotate-180"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </summary>
+            <div class="px-6 pb-6 text-gray-600 dark:text-gray-300">
+              <p>{faq.answer}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-gray-600 dark:text-gray-300">
+        Still have questions?{" "}
+        <a
+          href="mailto:hello@learnfastify.com"
+          class="font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+        >
+          Send me an email
+        </a>
+      </p>
+    </div>
+  </div>
+</section>

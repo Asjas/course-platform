@@ -184,16 +184,27 @@ export const courseWishlist = mySchema.table(
     id: text().primaryKey(),
     userId: text().references(() => user.id, { onDelete: "cascade" }),
     email: text(),
+    name: text(),
     courseId: text()
       .notNull()
       .references(() => course.id, { onDelete: "cascade" }),
+    referrer: text(),
+    utmSource: text("utm_source"),
+    utmMedium: text("utm_medium"),
+    utmCampaign: text("utm_campaign"),
+    confirmedAt: timestamp({ withTimezone: true }),
+    unsubscribedAt: timestamp({ withTimezone: true }),
     ...timestamps,
   },
   (table) => [
-    uniqueIndex("course_wishlist_email_idx").on(table.email),
+    uniqueIndex("course_wishlist_email_course_idx").on(
+      table.email,
+      table.courseId,
+    ),
     uniqueIndex("course_wishlist_unique_idx").on(table.userId, table.courseId),
     index("course_wishlist_user_idx").on(table.userId),
     index("course_wishlist_course_idx").on(table.courseId),
+    index("course_wishlist_created_at_idx").on(table.createdAt),
   ],
 );
 

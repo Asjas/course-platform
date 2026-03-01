@@ -1,0 +1,228 @@
+---
+const modules = [
+  {
+    number: "01",
+    title: "Fastify Fundamentals",
+    lessons: [
+      "Introduction to Fastify architecture",
+      "Setting up your development environment",
+      "Creating your first Fastify server",
+      "Understanding the plugin system",
+      "Request/Response lifecycle",
+      "Logging and error handling",
+    ],
+    color: "teal",
+  },
+  {
+    number: "02",
+    title: "Routing & Validation",
+    lessons: [
+      "Route definition patterns",
+      "Path parameters and query strings",
+      "JSON Schema validation",
+      "Request body parsing",
+      "Custom validators with Zod",
+      "Error responses and status codes",
+    ],
+    color: "cyan",
+  },
+  {
+    number: "03",
+    title: "Database Integration",
+    lessons: [
+      "PostgreSQL setup and configuration",
+      "Drizzle ORM introduction",
+      "Schema design and migrations",
+      "CRUD operations",
+      "Query optimization",
+      "Transactions and relationships",
+    ],
+    color: "blue",
+  },
+  {
+    number: "04",
+    title: "Authentication & Security",
+    lessons: [
+      "Session-based authentication",
+      "Password hashing with Argon2",
+      "OAuth integration (Google, GitHub)",
+      "JWT tokens and refresh flows",
+      "Rate limiting and protection",
+      "CORS and security headers",
+    ],
+    color: "purple",
+  },
+  {
+    number: "05",
+    title: "Building the API",
+    lessons: [
+      "Product catalog endpoints",
+      "Shopping cart implementation",
+      "User profile management",
+      "Order processing",
+      "Real-time updates with SSE",
+      "File uploads to R2/S3",
+    ],
+    color: "pink",
+  },
+  {
+    number: "06",
+    title: "React Frontend",
+    lessons: [
+      "Setting up React with Vite",
+      "TanStack Router for routing",
+      "Data fetching with TanStack Query",
+      "Form handling with TanStack Form",
+      "Tailwind CSS styling",
+      "Component library patterns",
+    ],
+    color: "orange",
+  },
+  {
+    number: "07",
+    title: "Payment Integration",
+    lessons: [
+      "Stripe setup and configuration",
+      "Creating checkout sessions",
+      "Webhook handling",
+      "Order confirmation flow",
+      "Refund processing",
+      "Invoice generation",
+    ],
+    color: "green",
+  },
+  {
+    number: "08",
+    title: "Testing & Deployment",
+    lessons: [
+      "Unit testing with Vitest",
+      "API integration tests",
+      "E2E testing with Cypress",
+      "Docker containerization",
+      "CI/CD with GitHub Actions",
+      "Production deployment",
+    ],
+    color: "red",
+  },
+];
+
+const colorClasses: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  teal: {
+    bg: "bg-teal-100 dark:bg-teal-900/30",
+    text: "text-teal-600 dark:text-teal-400",
+    border: "border-teal-500",
+  },
+  cyan: {
+    bg: "bg-cyan-100 dark:bg-cyan-900/30",
+    text: "text-cyan-600 dark:text-cyan-400",
+    border: "border-cyan-500",
+  },
+  blue: {
+    bg: "bg-blue-100 dark:bg-blue-900/30",
+    text: "text-blue-600 dark:text-blue-400",
+    border: "border-blue-500",
+  },
+  purple: {
+    bg: "bg-purple-100 dark:bg-purple-900/30",
+    text: "text-purple-600 dark:text-purple-400",
+    border: "border-purple-500",
+  },
+  pink: {
+    bg: "bg-pink-100 dark:bg-pink-900/30",
+    text: "text-pink-600 dark:text-pink-400",
+    border: "border-pink-500",
+  },
+  orange: {
+    bg: "bg-orange-100 dark:bg-orange-900/30",
+    text: "text-orange-600 dark:text-orange-400",
+    border: "border-orange-500",
+  },
+  green: {
+    bg: "bg-green-100 dark:bg-green-900/30",
+    text: "text-green-600 dark:text-green-400",
+    border: "border-green-500",
+  },
+  red: {
+    bg: "bg-red-100 dark:bg-red-900/30",
+    text: "text-red-600 dark:text-red-400",
+    border: "border-red-500",
+  },
+};
+---
+
+<section
+  id="curriculum"
+  class="py-20"
+>
+  <div class="container mx-auto max-w-6xl px-4">
+    <div class="mb-16 text-center">
+      <h2
+        class="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white"
+      >
+        Course Curriculum
+      </h2>
+      <p class="mx-auto max-w-2xl text-lg text-gray-600 dark:text-gray-300">
+        8 comprehensive modules with 48+ lessons covering everything from
+        Fastify basics to production deployment.
+      </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2">
+      {
+        modules.map((module) => {
+          const colors = colorClasses[module.color];
+          return (
+            <div class="group overflow-hidden rounded-xl border border-gray-200 bg-white transition-all hover:shadow-lg dark:border-gray-700 dark:bg-gray-800">
+              <div class={`border-b-4 ${colors.border} p-6`}>
+                <div class="flex items-start gap-4">
+                  <span
+                    class={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg font-mono text-sm font-bold ${colors.bg} ${colors.text}`}
+                  >
+                    {module.number}
+                  </span>
+                  <div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                      {module.title}
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      {module.lessons.length} lessons
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <ul class="divide-y divide-gray-100 dark:divide-gray-700">
+                {module.lessons.map((lesson) => (
+                  <li class="flex items-center gap-3 px-6 py-3 text-sm text-gray-600 dark:text-gray-300">
+                    <svg
+                      class={`h-4 w-4 flex-shrink-0 ${colors.text}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    <span>{lesson}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-gray-500 dark:text-gray-400">
+        More modules and lessons will be announced as we get closer to launch.
+      </p>
+    </div>
+  </div>
+</section>

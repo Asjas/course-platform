@@ -6,6 +6,7 @@ import { auditRouter } from "~/routers/audit/index.js";
 import { chatRouter } from "~/routers/chat/index.js";
 import { chatReportsRouter } from "~/routers/chatReports/index.js";
 import { couponsRouter } from "~/routers/coupons/index.js";
+import { courseWishlistRouter } from "~/routers/courseWishlist/index.js";
 import { coursesRouter } from "~/routers/courses/index.js";
 import { dataExportRouter } from "~/routers/dataExport/index.js";
 import { directMessagesRouter } from "~/routers/directMessages/index.js";
@@ -23,6 +24,7 @@ export const appRouter = router({
   audit: auditRouter,
   coupons: couponsRouter,
   courses: coursesRouter,
+  courseWishlist: courseWishlistRouter,
   dataExport: dataExportRouter,
   images: imagesRouter,
   mentions: mentionsRouter,

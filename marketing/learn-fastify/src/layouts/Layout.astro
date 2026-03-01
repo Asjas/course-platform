@@ -92,8 +92,21 @@ import "../styles/global.css";
         "description": "Learn Fastify - A comprehensive course to the Fastify framework."
       }
     </script>
+    <!-- Theme initialization to prevent FOUC -->
+    <script is:inline>
+      (function () {
+        const saved = localStorage.getItem("learnfastify-theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const isDark = saved ? saved === "dark" : prefersDark;
+        document.documentElement.classList.toggle("dark", isDark);
+      })();
+    </script>
   </head>
-  <body>
+  <body
+    class="min-h-screen bg-white text-gray-900 antialiased dark:bg-gray-900 dark:text-gray-100"
+  >
     <slot />
   </body>
 </html>

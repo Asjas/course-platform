@@ -1,0 +1,200 @@
+---
+import SignupForm from "./SignupForm";
+
+interface PricingTier {
+  name: string;
+  originalPrice: number;
+  price: number;
+  description: string;
+  features: string[];
+  highlighted?: boolean;
+  available: boolean;
+  cta: string;
+}
+
+const tiers: PricingTier[] = [
+  {
+    name: "Basic",
+    originalPrice: 149,
+    price: 99,
+    description: "Perfect for getting started with Fastify",
+    features: [
+      "All 8 course modules",
+      "48+ video lessons",
+      "Source code access",
+      "Lifetime updates",
+      "Certificate of completion",
+    ],
+    available: false,
+    cta: "Get Notified",
+  },
+  {
+    name: "Pro",
+    originalPrice: 249,
+    price: 179,
+    description: "Best value for serious developers",
+    features: [
+      "Everything in Basic",
+      "Premium Discord community access",
+      "Q&A sessions with the instructor",
+      "Additional bonus modules",
+      "1-on-1 code review (1 session)",
+      "Priority email support",
+    ],
+    highlighted: true,
+    available: false,
+    cta: "Get Notified",
+  },
+  {
+    name: "Team",
+    originalPrice: 999,
+    price: 699,
+    description: "For teams of up to 5 developers",
+    features: [
+      "Everything in Pro",
+      "5 team member licenses",
+      "Team analytics dashboard",
+      "Private Slack channel",
+      "Quarterly team workshops",
+      "Invoice for company purchase",
+    ],
+    available: false,
+    cta: "Contact Us",
+  },
+];
+---
+
+<section
+  id="pricing"
+  class="py-20"
+>
+  <div class="container mx-auto max-w-6xl px-4">
+    <div class="mb-16 text-center">
+      <span
+        class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+      >
+        <svg
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+          ></path>
+        </svg>
+        Early Access Pricing — Save up to 40%
+      </span>
+      <h2
+        class="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white"
+      >
+        Simple, Transparent Pricing
+      </h2>
+      <p
+        class="mx-auto mt-4 max-w-2xl text-lg text-gray-600 dark:text-gray-300"
+      >
+        Join the waitlist now to lock in early bird pricing. Prices will
+        increase at launch.
+      </p>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-3">
+      {
+        tiers.map((tier) => (
+          <div
+            class:list={[
+              "relative flex flex-col rounded-2xl border p-8 transition-all",
+              tier.highlighted
+                ? "border-emerald-500 bg-white shadow-xl dark:bg-gray-800 scale-105"
+                : "border-gray-200 bg-white hover:shadow-lg dark:border-gray-700 dark:bg-gray-800",
+            ]}
+          >
+            {tier.highlighted && (
+              <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-1 text-sm font-medium text-white">
+                Most Popular
+              </span>
+            )}
+
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                {tier.name}
+              </h3>
+              <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {tier.description}
+              </p>
+            </div>
+
+            <div class="mb-6">
+              <div class="flex items-baseline gap-2">
+                <span class="text-4xl font-bold text-gray-900 dark:text-white">
+                  ${tier.price}
+                </span>
+                <span class="text-lg text-gray-500 line-through dark:text-gray-400">
+                  ${tier.originalPrice}
+                </span>
+              </div>
+              <p class="mt-1 text-sm text-emerald-600 dark:text-emerald-400">
+                Save ${tier.originalPrice - tier.price}
+              </p>
+            </div>
+
+            <ul class="mb-8 flex-1 space-y-3">
+              {tier.features.map((feature) => (
+                <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            {tier.available ? (
+              <a
+                href="#"
+                class:list={[
+                  "inline-flex w-full items-center justify-center rounded-lg px-6 py-3 font-semibold transition-all",
+                  tier.highlighted
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:opacity-90"
+                    : "border border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/20",
+                ]}
+              >
+                {tier.cta}
+              </a>
+            ) : (
+              <div class="text-center">
+                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                  Coming soon!
+                </p>
+                <SignupForm
+                  client:visible
+                  variant="inline"
+                  className="w-full"
+                />
+              </div>
+            )}
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="mt-12 text-center">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        🔒 30-day money-back guarantee · Lifetime access · No subscription
+      </p>
+    </div>
+  </div>
+</section>
