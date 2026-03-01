@@ -1,5 +1,4 @@
-import { type SyntheticEvent, useCallback, useRef } from "react";
-import ReactPlayer from "react-player";
+import YouTube, { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 
 interface VideoPlayerProps {
   url: string;
@@ -18,20 +17,41 @@ interface VideoPlayerProps {
 }
 
 /**
- * Reusable video player component supporting YouTube, Vimeo, and other sources
- * Uses react-player for universal video support
+ * Extract YouTube video ID from URL or return as-is if already an ID
+ */
+function extractYouTubeId(urlOrId: string): string | null {
+  // If it's already just an ID (11 characters, alphanumeric with - and _)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(urlOrId)) {
+    return urlOrId;
+  }
+
+  try {
+    const url = new URL(urlOrId);
+    // youtube.com/watch?v=VIDEO_ID
+    if (url.hostname.includes("youtube.com")) {
+      return url.searchParams.get("v");
+    }
+    // youtu.be/VIDEO_ID
+    if (url.hostname === "youtu.be") {
+      return url.pathname.slice(1);
+    }
+  } catch {
+    // Invalid URL, return null
+  }
+  return null;
+}
+
+/**
+ * Lightweight YouTube video player component
+ * Uses react-youtube for efficient YouTube embeds
  *
  * @example
- * // YouTube video
+ * // YouTube video URL
  * <VideoPlayer url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
  *
  * @example
- * // Vimeo video
- * <VideoPlayer url="https://vimeo.com/123456789" />
- *
- * @example
- * // Direct video file
- * <VideoPlayer url="https://example.com/video.mp4" controls />
+ * // YouTube video ID
+ * <VideoPlayer url="dQw4w9WgXcQ" />
  */
 export function VideoPlayer({
   url,
@@ -40,57 +60,88 @@ export function VideoPlayer({
   playing = false,
   muted = false,
   loop = false,
-  width = "100%",
-  height = "100%",
   onReady,
   onError,
   onEnded,
   onProgress,
 }: VideoPlayerProps) {
-  const lastProgressRef = useRef<number>(0);
+  const videoId = extractYouTubeId(url);
 
-  // Handle timeupdate events and convert to progress format
-  const handleTimeUpdate = useCallback(
-    (event: SyntheticEvent<HTMLVideoElement>) => {
-      if (!onProgress) return;
+  if (!videoId) {
+    console.error("Invalid YouTube URL or ID:", url);
+    return (
+      <div
+        className={`flex aspect-video w-full items-center justify-center bg-gray-900 text-white ${className}`}
+      >
+        <p>Invalid video URL</p>
+      </div>
+    );
+  }
 
-      const video = event.currentTarget;
-      const playedSeconds = video.currentTime;
-      const duration = video.duration;
-
-      if (duration && Number.isFinite(duration)) {
-        const played = playedSeconds / duration;
-
-        // Only call onProgress if there's meaningful change (avoid excessive calls)
-        if (Math.abs(played - lastProgressRef.current) >= 0.01) {
-          lastProgressRef.current = played;
-          onProgress({ played, playedSeconds });
-        }
-      }
+  const opts: YouTubeProps["opts"] = {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      autoplay: playing ? 1 : 0,
+      controls: controls ? 1 : 0,
+      mute: muted ? 1 : 0,
+      loop: loop ? 1 : 0,
+      playlist: loop ? videoId : undefined, // Required for loop to work
+      rel: 0, // Don't show related videos from other channels
+      modestbranding: 1, // Minimal YouTube branding
     },
-    [onProgress],
-  );
+  };
+
+  const handleReady = (event: YouTubeEvent) => {
+    onReady?.();
+
+    // Set up progress tracking if callback provided
+    if (onProgress) {
+      const player = event.target;
+      const interval = setInterval(() => {
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        if (duration > 0) {
+          onProgress({
+            played: currentTime / duration,
+            playedSeconds: currentTime,
+          });
+        }
+      }, 1000);
+
+      // Store interval ID on player to clean up later
+      (
+        player as unknown as { _progressInterval?: NodeJS.Timeout }
+      )._progressInterval = interval;
+    }
+  };
+
+  const handleEnd = (event: YouTubeEvent) => {
+    // Clean up progress interval
+    const player = event.target as unknown as {
+      _progressInterval?: NodeJS.Timeout;
+    };
+    if (player._progressInterval) {
+      clearInterval(player._progressInterval);
+    }
+    onEnded?.();
+  };
+
+  const handleError = (event: YouTubeEvent) => {
+    console.error("YouTube player error:", event.data);
+    onError?.(event.data);
+  };
 
   return (
-    <div
-      className={`aspect-video w-full bg-gray-900 ${className}`}
-      style={{ width, height }}
-    >
-      <ReactPlayer
-        src={url}
-        controls={controls}
-        playing={playing}
-        muted={muted}
-        loop={loop}
-        width="100%"
-        height="100%"
-        onReady={onReady}
-        onError={(error) => {
-          console.error("Video player error:", error);
-          onError?.(error);
-        }}
-        onEnded={onEnded}
-        onTimeUpdate={onProgress ? handleTimeUpdate : undefined}
+    <div className={`aspect-video w-full bg-gray-900 ${className}`}>
+      <YouTube
+        className="h-full w-full"
+        videoId={videoId}
+        opts={opts}
+        onReady={handleReady}
+        onEnd={handleEnd}
+        onError={handleError}
+        iframeClassName="h-full w-full"
       />
     </div>
   );
