@@ -98,7 +98,7 @@ export default function SignupForm({
       >
         <div className="flex flex-col gap-3 sm:flex-row">
           <input
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-500 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-teal-400"
+            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-green-400"
             type="text"
             placeholder="Your name (optional)"
             value={name}
@@ -106,7 +106,7 @@ export default function SignupForm({
             disabled={formState === "loading"}
           />
           <input
-            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-500 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-teal-400"
+            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder:text-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-green-400"
             type="email"
             placeholder="Enter your email"
             value={email}
@@ -117,7 +117,7 @@ export default function SignupForm({
           />
         </div>
         <button
-          className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-teal-600 hover:to-cyan-600 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 dark:from-teal-400 dark:to-cyan-400 dark:text-gray-900 dark:hover:from-teal-500 dark:hover:to-cyan-500"
+          className="group flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:from-green-600 hover:to-green-700 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50 dark:from-green-500 dark:to-green-600 dark:text-white dark:hover:from-green-600 dark:hover:to-green-700"
           type="submit"
           disabled={formState === "loading" || !email}
         >
@@ -158,7 +158,7 @@ export default function SignupForm({
       onSubmit={handleSubmit}
     >
       <input
-        className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder:text-gray-500 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-teal-400"
+        className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 placeholder:text-gray-500 focus:border-green-500 focus:ring-2 focus:ring-green-500/20 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-400 dark:focus:border-green-400"
         type="email"
         placeholder="Enter your email"
         value={email}
@@ -168,7 +168,7 @@ export default function SignupForm({
         disabled={formState === "loading"}
       />
       <button
-        className="cursor-pointer rounded-lg bg-gradient-to-r from-teal-500 to-cyan-500 px-5 py-2.5 font-medium text-white transition-all hover:from-teal-600 hover:to-cyan-600 disabled:cursor-not-allowed disabled:opacity-50 dark:from-teal-400 dark:to-cyan-400 dark:text-gray-900"
+        className="cursor-pointer rounded-lg bg-gradient-to-r from-green-500 to-green-600 px-5 py-2.5 font-medium text-white transition-all hover:from-green-600 hover:to-green-700 disabled:cursor-not-allowed disabled:opacity-50 dark:from-green-500 dark:to-green-600 dark:text-white"
         type="submit"
         disabled={formState === "loading" || !email}
       >

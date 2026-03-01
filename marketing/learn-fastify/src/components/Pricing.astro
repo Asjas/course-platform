@@ -67,9 +67,7 @@ const tiers: PricingTier[] = [
 >
   <div class="container mx-auto max-w-6xl px-4">
     <div class="mb-16 text-center">
-      <h2
-        class="text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white"
-      >
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl dark:text-white">
         Simple, Transparent Pricing
       </h2>
       <p
@@ -86,12 +84,12 @@ const tiers: PricingTier[] = [
             class:list={[
               "relative flex flex-col rounded-2xl border p-8 transition-all",
               tier.highlighted
-                ? "border-emerald-500 bg-white shadow-xl dark:bg-gray-800 md:scale-105"
+                ? "border-green-500 bg-white shadow-xl dark:bg-gray-800 md:scale-105"
                 : "border-gray-200 bg-white hover:shadow-lg dark:border-gray-700 dark:bg-gray-800",
             ]}
           >
             {tier.highlighted && (
-              <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-1 text-sm font-medium text-white">
+              <span class="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-green-500 to-green-600 px-4 py-1 text-sm font-medium text-white">
                 Best Value
               </span>
             )}
@@ -120,7 +118,7 @@ const tiers: PricingTier[] = [
               {tier.features.map((feature) => (
                 <li class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
                   <svg
-                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-emerald-500"
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-500"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -140,7 +138,7 @@ const tiers: PricingTier[] = [
             <div class="mb-6 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
               <div class="flex items-center gap-1">
                 <svg
-                  class="h-4 w-4 text-emerald-500"
+                  class="h-4 w-4 text-green-500"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -154,7 +152,7 @@ const tiers: PricingTier[] = [
               </div>
               <div class="flex items-center gap-1">
                 <svg
-                  class="h-4 w-4 text-emerald-500"
+                  class="h-4 w-4 text-green-500"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -164,7 +162,7 @@ const tiers: PricingTier[] = [
               </div>
               <div class="flex items-center gap-1">
                 <svg
-                  class="h-4 w-4 text-emerald-500"
+                  class="h-4 w-4 text-green-500"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -183,8 +181,8 @@ const tiers: PricingTier[] = [
               class:list={[
                 "inline-flex w-full items-center justify-center rounded-lg px-6 py-3 font-semibold transition-all",
                 tier.highlighted
-                  ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white hover:opacity-90"
-                  : "border border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:text-emerald-400 dark:hover:bg-emerald-900/20",
+                  ? "bg-gradient-to-r from-green-500 to-green-600 text-white hover:opacity-90"
+                  : "border border-green-500 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-900/20",
               ]}
             >
               {tier.cta}
@@ -202,7 +200,7 @@ const tiers: PricingTier[] = [
       <div class="flex flex-wrap items-center justify-center gap-8">
         <div class="flex items-center gap-2">
           <svg
-            class="h-5 w-5 text-emerald-500"
+            class="h-5 w-5 text-green-500"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -216,7 +214,7 @@ const tiers: PricingTier[] = [
         </div>
         <div class="flex items-center gap-2">
           <svg
-            class="h-5 w-5 text-emerald-500"
+            class="h-5 w-5 text-green-500"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -230,7 +228,7 @@ const tiers: PricingTier[] = [
         </div>
         <div class="flex items-center gap-2">
           <svg
-            class="h-5 w-5 text-emerald-500"
+            class="h-5 w-5 text-green-500"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
