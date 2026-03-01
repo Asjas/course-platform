@@ -1,145 +1,76 @@
 ---
 const currentYear = new Date().getFullYear();
-
-const links = {
-  product: [
-    { name: "Curriculum", href: "#curriculum" },
-    { name: "Pricing", href: "#pricing" },
-    { name: "FAQ", href: "#faq" },
-    { name: "What You Build", href: "#what-you-build" },
-  ],
-  company: [
-    { name: "About", href: "#instructor" },
-    { name: "Other Courses", href: "https://codewizard.training" },
-    { name: "Contact", href: "mailto:hello@codewizard.training" },
-  ],
-  legal: [
-    { name: "Privacy Policy", href: "https://codewizard.training/privacy" },
-    {
-      name: "Terms of Service",
-      href: "https://codewizard.training/terms-of-service",
-    },
-  ],
-};
 ---
 
 <footer
-  class="border-t border-gray-200 bg-white py-16 dark:border-gray-800 dark:bg-gray-900"
+  class="mt-auto border-t border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900"
 >
-  <div class="container mx-auto max-w-6xl px-4">
-    <div class="grid gap-12 md:grid-cols-2 lg:grid-cols-5">
-      <div class="lg:col-span-2">
-        <a
-          href="/"
-          class="flex items-center gap-2"
-        >
-          <svg
-            class="h-8 w-8 text-emerald-600 dark:text-emerald-400"
-            viewBox="0 0 32 32"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <circle
-              cx="16"
-              cy="16"
-              r="12"
-            ></circle>
-            <path
-              d="M10 16l4 4 8-8"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-          </svg>
-          <span class="text-xl font-bold text-gray-900 dark:text-white">
-            Learn Fastify
-          </span>
-        </a>
-        <p class="mt-4 max-w-xs text-gray-600 dark:text-gray-400">
-          Master the fastest Node.js web framework. Build production-ready APIs
-          with confidence.
-        </p>
-      </div>
-
-      <div>
-        <h4 class="font-semibold text-gray-900 dark:text-white">Product</h4>
-        <ul class="mt-4 space-y-3">
-          {
-            links.product.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="text-gray-600 transition-colors hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="font-semibold text-gray-900 dark:text-white">Company</h4>
-        <ul class="mt-4 space-y-3">
-          {
-            links.company.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  target={link.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    link.href.startsWith("http")
-                      ? "noopener noreferrer"
-                      : undefined
-                  }
-                  class="text-gray-600 transition-colors hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-
-      <div>
-        <h4 class="font-semibold text-gray-900 dark:text-white">Legal</h4>
-        <ul class="mt-4 space-y-3">
-          {
-            links.legal.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="text-gray-600 transition-colors hover:text-emerald-600 dark:text-gray-400 dark:hover:text-emerald-400"
-                >
-                  {link.name}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </div>
-
-    <div class="mt-12 border-t border-gray-200 pt-8 dark:border-gray-800">
+  <div class="px-4 py-8 md:px-6 md:py-12 lg:px-8">
+    <div class="mx-auto max-w-6xl">
       <div
-        class="flex flex-col items-center justify-between gap-4 text-sm text-gray-500 sm:flex-row dark:text-gray-400"
+        class="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0"
       >
-        <p>
-          © {currentYear} Learn Fastify. All rights reserved.
-        </p>
-        <p>
-          Built with ❤️ using{" "}
+        <div class="flex flex-col space-y-2">
+          <div class="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <a
+              class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+              href="/"
+            >
+              Learn Fastify
+            </a>
+            <span>© {currentYear}</span>
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            <a
+              class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+              href="mailto:contact@codewizard.training"
+            >
+              contact@codewizard.training
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-col text-sm text-gray-600 dark:text-gray-400">
+          <span class="pb-2">Built with ❤️ by Codewizard</span>
+          <span>
+            Powered by{" "}
+            <a
+              class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+              href="https://fastify.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Fastify
+            </a>
+          </span>
+        </div>
+
+        <div class="flex space-x-6 text-sm text-gray-600 dark:text-gray-400">
           <a
-            href="https://fastify.dev"
+            class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+            href="https://codewizard.training/terms"
             target="_blank"
             rel="noopener noreferrer"
-            class="font-medium text-emerald-600 hover:underline dark:text-emerald-400"
           >
-            Fastify
+            Terms of Service
           </a>
-        </p>
+          <a
+            class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+            href="https://codewizard.training/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Privacy Policy
+          </a>
+          <a
+            class="transition-colors hover:text-emerald-600 dark:hover:text-emerald-400"
+            href="https://codewizard.training/cookies"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Cookie Policy
+          </a>
+        </div>
       </div>
     </div>
   </div>
