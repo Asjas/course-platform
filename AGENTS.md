@@ -112,6 +112,37 @@ pnpm --filter @apps/server drizzle:migrate
 pnpm --filter @apps/server drizzle:studio
 ```
 
+### Frequent Validation (During Development)
+
+Run these checks **frequently** while developing — not just before commits.
+Catch issues early:
+
+```bash
+# After modifying any file, format it:
+pnpm format
+
+# After significant code changes, check types:
+pnpm typecheck
+
+# After adding new code, check for lint issues:
+pnpm lint
+
+# Periodically verify the build still works:
+pnpm build
+```
+
+### Route Creation Workflow
+
+When creating new route files in `apps/web/src/routes/`:
+
+1. Create the route file
+2. Run `pnpm --filter @apps/web dev` to start the dev server — TanStack Router
+   will generate the route tree file (`routeTree.gen.ts`)
+3. Stop the dev server (`Ctrl+C`)
+4. Edit the generated route file with your component code
+5. Run `pnpm format` to format the new/modified files
+6. Run `pnpm typecheck` to verify types are correct
+
 ## Coding conventions
 
 ### TypeScript
