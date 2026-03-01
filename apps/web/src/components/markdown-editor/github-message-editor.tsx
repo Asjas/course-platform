@@ -2,13 +2,13 @@ import {
   EditorTabs,
   EditorToolbar,
   FileUploadFooter,
-} from "./components/index.js";
+} from "./components/index";
 import {
   useFileUpload,
   useMarkdownPreview,
   useMentionPicker,
-} from "./hooks/index.js";
-import type { EditorTab, GitHubMessageEditorProps } from "./types.js";
+} from "./hooks/index";
+import type { EditorTab, GitHubMessageEditorProps } from "./types";
 import { useRef, useState } from "react";
 import { MentionPicker } from "~/components/mention-picker";
 import { cn } from "~/lib/utils";

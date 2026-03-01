@@ -1,4 +1,3 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   Bell,
@@ -8,9 +7,11 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
-import { toast } from "sonner";
-import { ulid } from "ulid";
-import { trpc } from "~/lib/trpc.client";
+import {
+  markAnnouncementAsRead,
+  useReadAnnouncements,
+  useUnreadAnnouncements,
+} from "~/lib/collections";
 
 interface Announcement {
   id: string;
@@ -69,31 +70,12 @@ const announcementIconColors: Record<AnnouncementType, string> = {
 export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
   const [activeTab, setActiveTab] = useState<"active" | "dismissed">("active");
 
-  const { data: unreadAnnouncements, refetch: refetchUnread } = useQuery(
-    trpc.announcements.getUnreadForUser.queryOptions(userId),
-  );
+  const { data: unreadAnnouncements } = useUnreadAnnouncements({ userId });
 
-  const { data: readAnnouncements, refetch: refetchRead } = useQuery(
-    trpc.announcements.getReadForUser.queryOptions(userId),
-  );
-
-  const markAsReadMutation = useMutation(
-    trpc.announcements.markAsRead.mutationOptions(),
-  );
+  const { data: readAnnouncements } = useReadAnnouncements({ userId });
 
   async function handleDismiss(announcementId: string) {
-    try {
-      await markAsReadMutation.mutateAsync({
-        id: ulid(),
-        announcementId,
-        userId,
-      });
-      toast.success("Announcement dismissed");
-      refetchUnread();
-      refetchRead();
-    } catch {
-      toast.error("Failed to dismiss announcement");
-    }
+    await markAnnouncementAsRead({ announcementId, userId });
   }
 
   const activeAnnouncements = unreadAnnouncements || [];
@@ -171,7 +153,6 @@ export function AnnouncementsBanner({ userId }: AnnouncementsBannerProps) {
                     <button
                       className="shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-600 dark:hover:bg-gray-700 dark:hover:text-gray-300"
                       onClick={() => handleDismiss(announcement.id)}
-                      disabled={markAsReadMutation.isPending}
                       aria-label="Dismiss announcement"
                     >
                       <X className="h-5 w-5" />

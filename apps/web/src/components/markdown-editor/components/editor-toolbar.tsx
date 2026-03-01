@@ -7,8 +7,8 @@ import {
   toggleBold,
   toggleCode,
   toggleItalic,
-} from "../formatting/index.js";
-import type { FormattingParams } from "../types.js";
+} from "../formatting/index";
+import type { FormattingParams } from "../types";
 import {
   AtSignIcon,
   BoldIcon,

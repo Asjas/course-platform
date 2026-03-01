@@ -1,4 +1,4 @@
-import type { EditorTab } from "../types.js";
+import type { EditorTab } from "../types";
 import { cn } from "~/lib/utils";
 
 interface EditorTabsProps {
