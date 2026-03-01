@@ -197,8 +197,16 @@ Scope: api, ui, auth, db, etc.
 Specialized guidelines exist in `.github/instructions/`:
 - `typescript-react.instructions.md` - React/web patterns
 - `typescript-node.instructions.md` - Server/Fastify patterns
+- `trpc-type-patterns.instructions.md` - tRPC patterns and offline-first
 - `cypress-e2e.instructions.md` - E2E test patterns
 - `a11y.instructions.md` - Accessibility requirements
 - `security-and-owasp.instructions.md` - Security practices
+- `performance-optimization.instructions.md` - Performance best practices
 
 These are automatically applied based on file paths.
+
+Detailed reference documentation lives in `.github/docs/`:
+- `a11y-reference.md` - Full accessibility patterns and code examples
+- `performance-optimization-reference.md` - Comprehensive performance guide
+
+For cross-agent guidance (Claude Code, Cursor, Codex, Gemini CLI), see the `AGENTS.md` file in the repository root.

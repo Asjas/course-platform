@@ -54,10 +54,9 @@ npm install -g pnpm@10.26.2
 **DO NOT SKIP THIS STEP**. If you encounter `pnpm: command not found`, stop and install pnpm first.
 
 ### 2. Install dependencies
-After pnpm is installed:
+After pnpm is installed, navigate to the repository root and install:
 
 ```bash
-cd /home/runner/work/course-platform/course-platform
 pnpm install --frozen-lockfile
 ```
 
@@ -118,7 +117,6 @@ pnpm install --frozen-lockfile
 You can run all validation steps in sequence:
 
 ```bash
-cd /home/runner/work/course-platform/course-platform
 pnpm format && pnpm lint && pnpm typecheck && pnpm build
 ```
 
@@ -165,8 +163,7 @@ Before calling `report_progress`:
 
 ```bash
 # 1. Make code changes
-# 2. Run validation
-cd /home/runner/work/course-platform/course-platform
+# 2. Run validation (from repository root)
 pnpm format && pnpm lint && pnpm typecheck && pnpm build
 
 # 3. If ALL pass, commit
@@ -181,7 +178,7 @@ pnpm format && pnpm lint && pnpm typecheck && pnpm build
 
 Every commit must pass:
 - ✅ Formatting
-- ✅ Linting  
+- ✅ Linting
 - ✅ Type checking
 - ✅ Building
 
