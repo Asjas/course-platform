@@ -39,7 +39,7 @@ const polarClient = new Polar({
 
 export const auth = betterAuth({
   appName: "Codewizard Training",
-  trustedOrigins: [config.ORIGIN],
+  trustedOrigins: config.ORIGIN,
   secret: config.BETTER_AUTH_SECRET,
   session: {
     expiresIn: ONE_YEAR,

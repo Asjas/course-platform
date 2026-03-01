@@ -16,7 +16,10 @@ const schema = z.object({
   LOG_LEVEL: z
     .enum(["fatal", "error", "warn", "info", "debug", "trace"])
     .default("info"),
-  ORIGIN: z.url(),
+  ORIGIN: z
+    .string()
+    .transform((val) => val.split(",").map((s) => s.trim()))
+    .pipe(z.array(z.url())),
   COOKIE_SECRET: z.string().min(32),
   COOKIE_DOMAIN: z.string(),
   SENTRY_AUTH_TOKEN: z.string().optional(),

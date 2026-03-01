@@ -4,8 +4,8 @@ import config from "~/config.js";
 export const autoConfig: FastifyCorsOptions = {
   credentials: true,
   maxAge: 86400,
-  origin: config.ORIGIN,
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: config.ORIGIN, // Supports multiple origins as array
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 };
 
 export default fastifyCors;
