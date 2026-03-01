@@ -25,7 +25,7 @@ prohibited as it breaks offline functionality.
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                         Collection Hooks Layer                           │
-│              (apps/web/src/lib/collections/hooks/*.ts)                  │
+│            (apps/web/src/lib/collections/<entity>/hooks.ts)             │
 │         Provides: useCourses(), useCourseById(), etc.                   │
 └───────────────────────────────────┬─────────────────────────────────────┘
                                     │
@@ -54,20 +54,25 @@ prohibited as it breaks offline functionality.
 
 ### Currently Implemented Collections
 
-| Drizzle Table          | Collection                          | Status  | SSE | CRUD |
-| ---------------------- | ----------------------------------- | ------- | --- | ---- |
-| `supportTicket`        | `SupportTicketsCollection`          | ✅ Done | ✅  | CRD  |
-| `coupon`               | `CouponsCollection`                 | ✅ Done | ✅  | CRUD |
-| `platformAnnouncement` | `AnnouncementsCollection`           | ✅ Done | ✅  | R    |
-| `course`               | `CoursesCollection`                 | ✅ Done | ✅  | R    |
-| `course` (admin)       | `CoursesAdminCollection`            | ✅ Done | ✅  | R    |
-| `courseReview`         | `ReviewsCollection`                 | ✅ Done | ✅  | CRUD |
-| `chatMessageReport`    | `ChatReportsCollection`             | ✅ Done | ✅  | R    |
-| `user` (searchable)    | `SearchableUsersCollection`         | ✅ Done | ✅  | R    |
-| `syncStatus`           | `SyncStatusCollection`              | ✅ Done | -   | RU   |
-| `gdprAuditLog`         | `GdprAuditLogsCollection`           | ✅ Done | -   | R    |
-| Chat Messages          | `createChannelMessagesCollection()` | ✅ Done | ✅  | CRD  |
-| DM Messages            | `createDMMessagesCollection()`      | ✅ Done | ✅  | CRD  |
+| Drizzle Table          | Collection                             | Status  | SSE | CRUD |
+| ---------------------- | -------------------------------------- | ------- | --- | ---- |
+| `supportTicket`        | `SupportTicketsCollection`             | ✅ Done | ✅  | CRD  |
+| `coupon`               | `CouponsCollection`                    | ✅ Done | ✅  | CRUD |
+| `platformAnnouncement` | `AnnouncementsCollection`              | ✅ Done | ✅  | R    |
+| `course`               | `CoursesCollection`                    | ✅ Done | ✅  | R    |
+| `course` (admin)       | `CoursesAdminCollection`               | ✅ Done | ✅  | R    |
+| `courseProgress`       | `CourseProgressCollection`             | ✅ Done | -   | R    |
+| `lessonProgress`       | `LessonProgressCollection`             | ✅ Done | -   | R    |
+| `courseReview`         | `ReviewsCollection`                    | ✅ Done | ✅  | CRUD |
+| `chatMessageReport`    | `ChatReportsCollection`                | ✅ Done | ✅  | RU   |
+| `user` (searchable)    | `SearchableUsersCollection`            | ✅ Done | ✅  | R    |
+| `syncStatus`           | `SyncStatusCollection`                 | ✅ Done | -   | RU   |
+| `gdprAuditLog`         | `GdprAuditLogsCollection`              | ✅ Done | -   | R    |
+| `payment`/`invoice`    | `PurchasesCollection`                  | ✅ Done | -   | R    |
+| `userNotification`     | N/A (React Query hooks, no collection) | ✅ Done | ✅  | RU   |
+| Chat Messages          | `createChannelMessagesCollection()`    | ✅ Done | ✅  | CRUD |
+| DM Messages            | `createDMMessagesCollection()`         | ✅ Done | ✅  | CRUD |
+| Thread Messages        | `createThreadMessagesCollection()`     | ✅ Done | ✅  | CRUD |
 
 ### Collections Needed
 
@@ -75,13 +80,8 @@ prohibited as it breaks offline functionality.
 | ----------------------------- | ------------------------------ | --------- | --- | ---- |
 | `user`                        | `UsersCollection`              | 🔴 High   | ✅  | CRUD |
 | `enrollment`                  | `EnrollmentsCollection`        | 🔴 High   | ✅  | CR   |
-| `courseProgress`              | `CourseProgressCollection`     | 🔴 High   | ✅  | RU   |
-| `lessonProgress`              | `LessonProgressCollection`     | 🔴 High   | ✅  | RU   |
 | `courseModule`                | `ModulesCollection`            | 🟡 Medium | ✅  | CRUD |
 | `courseLesson`                | `LessonsCollection`            | 🟡 Medium | ✅  | CRUD |
-| `payment`                     | `PaymentsCollection`           | 🟡 Medium | ✅  | R    |
-| `invoice`                     | `InvoicesCollection`           | 🟡 Medium | ✅  | R    |
-| `userNotification`            | `NotificationsCollection`      | 🟡 Medium | ✅  | RU   |
 | `directMessageRequest`        | `DMRequestsCollection`         | 🟡 Medium | ✅  | CRU  |
 | `directMessageConversation`   | `DMConversationsCollection`    | 🟡 Medium | ✅  | RU   |
 | `teamLicense`                 | `TeamLicensesCollection`       | 🟢 Low    | ✅  | CRUD |
@@ -94,18 +94,22 @@ prohibited as it breaks offline functionality.
 
 ### Tables That Don't Need Collections
 
-| Table          | Reason               |
-| -------------- | -------------------- |
-| `account`      | Better Auth internal |
-| `session`      | Better Auth internal |
-| `verification` | Better Auth internal |
-| `organization` | Future feature       |
-| `member`       | Future feature       |
-| `invitation`   | Future feature       |
+| Table                  | Reason                                            |
+| ---------------------- | ------------------------------------------------- |
+| `account`              | Better Auth internal                              |
+| `session`              | Better Auth internal                              |
+| `verification`         | Better Auth internal                              |
+| `organization`         | Organization feature (app schema, not yet active) |
+| `member`               | Organization feature (app schema, not yet active) |
+| `invitation`           | Organization feature (app schema, not yet active) |
+| `supportTicketComment` | Managed via parent `supportTicket` relations      |
+| `teamLicenseSeat`      | Managed via parent `teamLicense` relations        |
 
 ---
 
-## Directory Structure (Target)
+## Directory Structure (Current)
+
+Each collection subdirectory contains an `index.ts` re-exporting its contents.
 
 ```
 apps/web/src/lib/collections/
@@ -114,49 +118,71 @@ apps/web/src/lib/collections/
 ├── utils.ts                           # Sync utilities (getLastSyncTimestamp, etc.)
 │
 ├── support-tickets/
-│   ├── support-tickets.collection.ts  # Collection definition with onInsert/onUpdate/onDelete
-│   └── hooks.ts                       # useSupportTickets, useSupportTicketById, etc.
+│   ├── support-tickets.collection.ts  # Collection with onInsert/onDelete
+│   ├── hooks.ts                       # useSupportTickets, useSupportTicketsByCourseId, useSupportTicketById
+│   └── index.ts
 │
 ├── coupons/
-│   ├── coupons.collection.ts
-│   └── hooks.ts
+│   ├── coupons.collection.ts          # Collection with onInsert/onUpdate/onDelete
+│   ├── hooks.ts                       # useCoupons, useCouponById
+│   └── index.ts
 │
 ├── announcements/
 │   ├── announcements.collection.ts
-│   └── hooks.ts
+│   ├── hooks.ts                       # useAnnouncements, useUnreadAnnouncements, useReadAnnouncements
+│   └── index.ts
 │
 ├── courses/
-│   ├── courses.collection.ts          # Both CoursesCollection and CoursesAdminCollection
-│   └── hooks.ts
+│   ├── courses.collection.ts          # CoursesCollection, CoursesAdminCollection,
+│   │                                  # CourseProgressCollection, LessonProgressCollection
+│   ├── hooks.ts                       # useCourses, useCoursesAdmin, useCourseById
+│   └── index.ts
 │
 ├── reviews/
-│   ├── reviews.collection.ts
-│   └── hooks.ts
+│   ├── reviews.collection.ts          # Collection with onInsert/onUpdate/onDelete
+│   ├── hooks.ts                       # useReviews, useReviewById
+│   └── index.ts
 │
 ├── chat-reports/
-│   ├── chat-reports.collection.ts
-│   └── hooks.ts
+│   ├── chat-reports.collection.ts     # Collection with onUpdate (status changes)
+│   ├── hooks.ts                       # useChatReports, useChatReportById
+│   └── index.ts
 │
 ├── searchable-users/
-│   ├── searchable-users.collection.ts
-│   └── hooks.ts
+│   ├── searchable-users.collection.ts # Read-only collection
+│   ├── hooks.ts                       # useSearchableUsers
+│   └── index.ts
 │
 ├── sync-status/
-│   ├── sync-status.collection.ts
-│   └── hooks.ts
+│   ├── sync-status.collection.ts      # Collection with onUpdate
+│   ├── hooks.ts                       # useSyncStatuses, useSyncStatusByCollection
+│   └── index.ts
 │
 ├── gdpr-audit-logs/
-│   ├── gdpr-audit-logs.collection.ts
-│   └── hooks.ts
+│   ├── gdpr-audit-logs.collection.ts  # Read-only collection
+│   ├── hooks.ts                       # useGdprAuditLogs
+│   └── index.ts
 │
 ├── chat-messages/
-│   ├── chat-messages.collection.ts    # Factory functions for channel/DM messages
-│   └── hooks.ts
+│   ├── chat-messages.collection.ts    # Factory functions: createChannelMessagesCollection,
+│   │                                  # createDMMessagesCollection, createThreadMessagesCollection
+│   └── index.ts
+│
+├── purchases/
+│   ├── purchases.collection.ts        # Read-only collection (payment + invoice data)
+│   └── index.ts                       # usePurchases, usePurchaseById, useRefundedPurchases, useActivePurchases
 │
 └── notifications/
-    ├── notifications.collection.ts
-    └── hooks.ts
+    ├── hooks.ts                       # useUnreadUserNotifications, useReadUserNotifications (React Query, no collection)
+    └── index.ts
 ```
+
+**Note:** The `notifications/` directory uses React Query with polling (30s
+interval) rather than a React-DB collection, since notifications are user-scoped
+and do not need full offline-first treatment.
+
+**Legacy file:** `apps/web/src/lib/db.collections.ts` still exists with some
+duplicate definitions being migrated into the modular structure above.
 
 ---
 
@@ -273,6 +299,19 @@ export const exampleSyncConfig: EntitySyncConfig = {
 };
 ```
 
+**Currently configured sync configs (8 total):**
+
+| Config                      | Stream Key Prefix       | Max Length |
+| --------------------------- | ----------------------- | ---------- |
+| `announcementsSyncConfig`   | `sync:announcements`    | 10000      |
+| `notificationsSyncConfig`   | `sync:notifications`    | 50000      |
+| `supportTicketsSyncConfig`  | `sync:support-tickets`  | 10000      |
+| `couponsSyncConfig`         | `sync:coupons`          | 5000       |
+| `reviewsSyncConfig`         | `sync:reviews`          | 10000      |
+| `coursesSyncConfig`         | `sync:courses`          | 5000       |
+| `chatReportsSyncConfig`     | `sync:chat-reports`     | 5000       |
+| `searchableUsersSyncConfig` | `sync:searchable-users` | 10000      |
+
 2. **Subscription endpoint** in router:
 
 ```typescript
@@ -309,19 +348,19 @@ await publishEntityChange(
 
 ### Frontend Side (apps/web)
 
-1. **Sync hook** in `src/hooks/useSseSync.ts`:
+Sync hooks are in `src/hooks/useSseSync.ts`.
 
-```typescript
-export function useExamplesSync() {
-  return useSseCollectionSync<Example>({
-    collectionName: "examples",
-    collection: ExampleCollection,
-    subscriptionEndpoint: "example.subscribeToUpdates",
-    getUpdatesSince: (since) =>
-      trpcClient.example.getUpdatesSince.query({ since }),
-  });
-}
-```
+**Currently implemented sync hooks (7 total):**
+
+| Hook                           | Collection      | Notes               |
+| ------------------------------ | --------------- | ------------------- |
+| `useSupportTicketsSync()`      | Support Tickets |                     |
+| `useCouponsSync()`             | Coupons         |                     |
+| `useReviewsSync()`             | Reviews         |                     |
+| `useAnnouncementsSync()`       | Announcements   | Offline + real-time |
+| `useCoursesSync()`             | Courses         |                     |
+| `useChatReportsSync()`         | Chat Reports    |                     |
+| `useNotificationsSync(userId)` | Notifications   | User-scoped         |
 
 ---
 
@@ -356,36 +395,36 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 
 ### PUBLIC ENDPOINTS (Require Review)
 
-The following endpoints have NO authentication:
+The following endpoints have been audited for authentication:
 
-| Router           | Endpoint               | Status      | Action Needed                                |
-| ---------------- | ---------------------- | ----------- | -------------------------------------------- |
-| `announcements`  | `getPublished`         | ⚠️          | Review if should be public                   |
-| `announcements`  | `getById`              | ✅          | OK for public announcements                  |
-| `announcements`  | `getUnreadForUser`     | 🔴          | ADD AUTH - takes userId without verification |
-| `announcements`  | `getReadForUser`       | 🔴          | ADD AUTH - takes userId without verification |
-| `announcements`  | `markAsRead`           | 🔴          | ADD AUTH - allows marking any user's as read |
-| `courses`        | `getAll`               | ✅          | OK - public course listing                   |
-| `courses`        | `getBySlug`            | ✅          | OK - public course detail                    |
-| `courses`        | `getCourseLessons`     | ⚠️          | Check enrollment for non-preview             |
-| `courses`        | `getLessonById`        | ⚠️          | Check enrollment for non-preview             |
-| `courses`        | `subscribeToUpdates`   | ✅          | OK - public SSE                              |
-| `courses`        | `getUpdatesSince`      | ✅          | OK - public sync                             |
-| `supportTickets` | `getAll`               | 🔴 CRITICAL | ADD AUTH - exposes ALL tickets               |
-| `supportTickets` | `getSupportTicketById` | 🔴 CRITICAL | ADD AUTH + ownership check                   |
-| `stats`          | `getStats`             | ⚠️          | Review if aggregate data is OK public        |
-| `coupons`        | `redeemCoupon`         | ⚠️          | Should require auth                          |
+| Router           | Endpoint               | Status   | Notes                                     |
+| ---------------- | ---------------------- | -------- | ----------------------------------------- |
+| `announcements`  | `getPublished`         | ⚠️       | Review if should be public                |
+| `announcements`  | `getById`              | ✅       | OK for public announcements               |
+| `announcements`  | `getUnreadForUser`     | ✅ FIXED | Auth + userId ownership check added       |
+| `announcements`  | `getReadForUser`       | ✅ FIXED | Auth + userId ownership check added       |
+| `announcements`  | `markAsRead`           | ✅ FIXED | Auth + userId ownership check added       |
+| `courses`        | `getAll`               | ✅       | OK - public course listing                |
+| `courses`        | `getBySlug`            | ✅       | OK - public course detail                 |
+| `courses`        | `getCourseLessons`     | ⚠️       | Check enrollment for non-preview          |
+| `courses`        | `getLessonById`        | ⚠️       | Check enrollment for non-preview          |
+| `courses`        | `subscribeToUpdates`   | ✅       | OK - public SSE                           |
+| `courses`        | `getUpdatesSince`      | ✅       | OK - public sync                          |
+| `supportTickets` | `getAll`               | ✅ FIXED | Auth added; admins see all, users see own |
+| `supportTickets` | `getSupportTicketById` | ✅ FIXED | Auth + ownership check added              |
+| `stats`          | `getStats`             | ⚠️       | Review if aggregate data is OK public     |
+| `coupons`        | `redeemCouponByCode`   | 🔴       | Still public — should require auth        |
 
 ### Authorization Concerns
 
-| Router           | Endpoint           | Issue                                                    |
-| ---------------- | ------------------ | -------------------------------------------------------- |
-| `notifications`  | `getUnreadForUser` | Takes userId input, should verify ctx.user.id === userId |
-| `notifications`  | `getReadForUser`   | Takes userId input, no verification                      |
-| `notifications`  | `markAsRead`       | Any user can mark any notification                       |
-| `notifications`  | `markAllAsRead`    | Any user can mark all for any user                       |
-| `notifications`  | `batchDelete`      | Any user can delete any notifications                    |
-| `directMessages` | `getDMRequest`     | No check user is requester/recipient                     |
+| Router           | Endpoint           | Status   | Notes                                  |
+| ---------------- | ------------------ | -------- | -------------------------------------- |
+| `notifications`  | `getUnreadForUser` | ✅ FIXED | Auth + userId === ctx.user.id verified |
+| `notifications`  | `getReadForUser`   | ✅ FIXED | Auth + userId === ctx.user.id verified |
+| `notifications`  | `markAsRead`       | ✅ FIXED | Auth + userId ownership check added    |
+| `notifications`  | `markAllAsRead`    | ✅ FIXED | Auth + userId ownership check added    |
+| `notifications`  | `delete`           | ✅ FIXED | Auth + userId ownership check added    |
+| `directMessages` | `getDMRequest`     | ✅ FIXED | Auth + participant/admin check added   |
 
 ---
 
@@ -393,33 +432,38 @@ The following endpoints have NO authentication:
 
 ### Phase 1: Security Fixes (Immediate)
 
-- [ ] Fix `supportTickets` - add auth and ownership checks
-- [ ] Fix `announcements` user-scoped endpoints - add auth
-- [ ] Fix `notifications` authorization - verify userId matches ctx.user.id
-- [ ] Fix `directMessages` authorization
+- [x] Fix `supportTickets` - add auth and ownership checks
+- [x] Fix `announcements` user-scoped endpoints - add auth
+- [x] Fix `notifications` authorization - verify userId matches ctx.user.id
+- [x] Fix `directMessages` authorization
+- [ ] Fix `coupons.redeemCouponByCode` - add auth
 
 ### Phase 2: Collection Refactoring
 
-- [ ] Create `collections/` directory structure
-- [ ] Move `SupportTicketsCollection` to `collections/support-tickets/`
-- [ ] Move `CouponsCollection` to `collections/coupons/`
-- [ ] Move all other collections
-- [ ] Update all imports
+- [x] Create `collections/` directory structure
+- [x] Move `SupportTicketsCollection` to `collections/support-tickets/`
+- [x] Move `CouponsCollection` to `collections/coupons/`
+- [x] Move all other collections to modular directories
+- [x] Create `PurchasesCollection` in `collections/purchases/`
+- [x] Create `CourseProgressCollection` / `LessonProgressCollection`
+- [ ] Remove legacy `apps/web/src/lib/db.collections.ts` after full migration
+- [ ] Update remaining imports to use `~/lib/collections`
 
 ### Phase 3: New Collections
 
 - [ ] Create `EnrollmentsCollection`
-- [ ] Create `CourseProgressCollection` / `LessonProgressCollection`
-- [ ] Create `NotificationsCollection`
+- [ ] Migrate `NotificationsCollection` from React Query hooks to React-DB
+      collection
 - [ ] Create `DMRequestsCollection` / `DMConversationsCollection`
 - [ ] Create remaining collections as needed
 
 ### Phase 4: SSE Implementation
 
-- [ ] Add SSE to all new collections
-- [ ] Verify all collections have `subscribeToUpdates` endpoint
-- [ ] Verify all collections have `getUpdatesSince` endpoint
-- [ ] Create sync hooks in `useSseSync.ts`
+- [ ] Add SSE to `CourseProgressCollection` / `LessonProgressCollection`
+- [ ] Add SSE to `PurchasesCollection`
+- [ ] Add SSE to `SearchableUsersCollection` sync hook (config exists, no
+      frontend hook yet)
+- [ ] Create sync hooks for all new collections
 
 ### Phase 5: Component Migration
 
@@ -441,8 +485,8 @@ function MyComponent() {
 // ❌ BAD: Direct React Query
 function MyComponent() {
   const { data } = useQuery({
-    queryKey: ['courses'],
-    queryFn: () => fetch('/api/courses')
+    queryKey: ["courses"],
+    queryFn: () => fetch("/api/courses"),
   });
   // This breaks offline!
 }
@@ -456,6 +500,63 @@ function MyComponent() {
 
 ---
 
+## Key Packages
+
+### Frontend (`apps/web`)
+
+| Package                                   | Version | Purpose                       |
+| ----------------------------------------- | ------- | ----------------------------- |
+| `@tanstack/react-db`                      | 0.1.69  | Live queries, collections     |
+| `@tanstack/query-db-collection`           | 1.0.22  | Bridge React Query ↔ React-DB |
+| `@tanstack/react-query`                   | 5.90.20 | Data fetching, polling        |
+| `@tanstack/react-router`                  | 1.163.3 | File-based routing            |
+| `@tanstack/offline-transactions`          | 1.0.15  | Offline transaction queue     |
+| `@tanstack/query-async-storage-persister` | 5.90.22 | Query persistence             |
+| `@tanstack/react-form`                    | 1.28.3  | Form management               |
+| `@tanstack/react-virtual`                 | 3.13.18 | Virtual scrolling             |
+
+### Backend (`apps/server`)
+
+| Package        | Version | Purpose             |
+| -------------- | ------- | ------------------- |
+| `fastify`      | 5.7.4   | HTTP server         |
+| `@trpc/server` | 11.8.1  | Type-safe API layer |
+| `drizzle-orm`  | 0.45.1  | Database ORM        |
+| `better-auth`  | 1.4.18  | Authentication      |
+| `ioredis`      | 5.9.2   | Redis client (SSE)  |
+| `zod`          | 4.3.6   | Schema validation   |
+| `pino`         | 10.3.1  | Structured logging  |
+
+---
+
+## tRPC Routers
+
+All 18 routers registered in `apps/server/src/routers/index.ts`:
+
+| Router           | SSE | Auth Level                             |
+| ---------------- | --- | -------------------------------------- |
+| `announcements`  | ✅  | Mixed (public reads, admin mutations)  |
+| `audit`          | -   | Admin only                             |
+| `chat`           | ✅  | Protected                              |
+| `chatReports`    | ✅  | Protected / Admin                      |
+| `coupons`        | ✅  | Admin only (except redeemCouponByCode) |
+| `courseWishlist` | -   | Public                                 |
+| `courses`        | ✅  | Mixed (public reads, admin mutations)  |
+| `dataExport`     | -   | Protected (GDPR)                       |
+| `directMessages` | ✅  | Protected (fine-grained auth)          |
+| `images`         | -   | Protected                              |
+| `mentions`       | -   | Protected                              |
+| `notifications`  | ✅  | Protected                              |
+| `purchases`      | -   | Admin only                             |
+| `reviews`        | ✅  | Mixed (public reads, protected writes) |
+| `stats`          | -   | Admin only                             |
+| `supportStatus`  | -   | Auth required / Admin mutations        |
+| `supportTickets` | ✅  | Protected (users see own, admins all)  |
+| `syncStatus`     | -   | Protected                              |
+| `users`          | -   | Protected                              |
+
+---
+
 ## Last Updated
 
-2026-01-02
+2026-03-01
