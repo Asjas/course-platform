@@ -358,7 +358,7 @@ export interface FileRoutesByFullPath {
   "/sync-status": typeof AuthenticatedSyncStatusRoute
   "/blog/$slug": typeof BlogSlugRoute
   "/support/create-ticket": typeof SupportCreateTicketRoute
-  "/blog": typeof BlogIndexRoute
+  "/blog/": typeof BlogIndexRoute
   "/support/": typeof SupportIndexRoute
   "/education/courses/$course": typeof EducationCoursesCourseRouteRouteWithChildren
   "/support/$supportTicket/edit": typeof SupportSupportTicketEditRouteRouteWithChildren
@@ -373,7 +373,7 @@ export interface FileRoutesByFullPath {
   "/chat/$channelId": typeof AuthenticatedChatChannelIdRoute
   "/courses/$courseId": typeof AuthenticatedCoursesCourseIdRouteWithChildren
   "/education/courses/": typeof EducationCoursesIndexRoute
-  "/support/$supportTicket": typeof SupportSupportTicketIndexRoute
+  "/support/$supportTicket/": typeof SupportSupportTicketIndexRoute
   "/admin/courses/create": typeof AuthenticatedAdminCoursesCreateRoute
   "/admin/courses/faq": typeof AuthenticatedAdminCoursesFaqRoute
   "/admin/courses/instructor-notes": typeof AuthenticatedAdminCoursesInstructorNotesRoute
@@ -381,8 +381,8 @@ export interface FileRoutesByFullPath {
   "/chat/support/$courseSlug": typeof AuthenticatedChatSupportCourseSlugRoute
   "/chat/support/new": typeof AuthenticatedChatSupportNewRoute
   "/courses/$courseId/lessons": typeof AuthenticatedCoursesCourseIdLessonsRouteWithChildren
-  "/admin/coupons": typeof AuthenticatedAdminCouponsIndexRoute
-  "/admin/courses": typeof AuthenticatedAdminCoursesIndexRoute
+  "/admin/coupons/": typeof AuthenticatedAdminCouponsIndexRoute
+  "/admin/courses/": typeof AuthenticatedAdminCoursesIndexRoute
   "/education/courses/$course/": typeof EducationCoursesCourseIndexRoute
   "/support/$supportTicket/edit/": typeof SupportSupportTicketEditIndexRoute
   "/admin/courses/$courseId/edit": typeof AuthenticatedAdminCoursesCourseIdEditRoute
@@ -512,7 +512,7 @@ export interface FileRouteTypes {
     | "/sync-status"
     | "/blog/$slug"
     | "/support/create-ticket"
-    | "/blog"
+    | "/blog/"
     | "/support/"
     | "/education/courses/$course"
     | "/support/$supportTicket/edit"
@@ -527,7 +527,7 @@ export interface FileRouteTypes {
     | "/chat/$channelId"
     | "/courses/$courseId"
     | "/education/courses/"
-    | "/support/$supportTicket"
+    | "/support/$supportTicket/"
     | "/admin/courses/create"
     | "/admin/courses/faq"
     | "/admin/courses/instructor-notes"
@@ -535,8 +535,8 @@ export interface FileRouteTypes {
     | "/chat/support/$courseSlug"
     | "/chat/support/new"
     | "/courses/$courseId/lessons"
-    | "/admin/coupons"
-    | "/admin/courses"
+    | "/admin/coupons/"
+    | "/admin/courses/"
     | "/education/courses/$course/"
     | "/support/$supportTicket/edit/"
     | "/admin/courses/$courseId/edit"
@@ -697,7 +697,7 @@ declare module "@tanstack/react-router" {
     "/_authenticated": {
       id: "/_authenticated"
       path: ""
-      fullPath: ""
+      fullPath: "/"
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -725,7 +725,7 @@ declare module "@tanstack/react-router" {
     "/blog/": {
       id: "/blog/"
       path: "/blog"
-      fullPath: "/blog"
+      fullPath: "/blog/"
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -830,7 +830,7 @@ declare module "@tanstack/react-router" {
     "/support/$supportTicket/": {
       id: "/support/$supportTicket/"
       path: "/$supportTicket"
-      fullPath: "/support/$supportTicket"
+      fullPath: "/support/$supportTicket/"
       preLoaderRoute: typeof SupportSupportTicketIndexRouteImport
       parentRoute: typeof SupportRouteRoute
     }
@@ -942,14 +942,14 @@ declare module "@tanstack/react-router" {
     "/_authenticated/admin/courses/": {
       id: "/_authenticated/admin/courses/"
       path: "/courses"
-      fullPath: "/admin/courses"
+      fullPath: "/admin/courses/"
       preLoaderRoute: typeof AuthenticatedAdminCoursesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     "/_authenticated/admin/coupons/": {
       id: "/_authenticated/admin/coupons/"
       path: "/coupons"
-      fullPath: "/admin/coupons"
+      fullPath: "/admin/coupons/"
       preLoaderRoute: typeof AuthenticatedAdminCouponsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
