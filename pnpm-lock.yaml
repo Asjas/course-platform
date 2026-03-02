@@ -330,8 +330,8 @@ importers:
         specifier: 3.23.0
         version: 3.23.0
       '@tanstack/offline-transactions':
-        specifier: 1.0.15
-        version: 1.0.15(typescript@5.9.3)
+        specifier: 1.0.20
+        version: 1.0.20(typescript@5.9.3)
       '@tanstack/query-async-storage-persister':
         specifier: 5.90.22
         version: 5.90.22
@@ -4499,6 +4499,11 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
+  '@tanstack/db@0.5.30':
+    resolution: {integrity: sha512-kgBbmGrWSrDdKPzl465OEGy2Epyc6HsoI2U/jUrMSHuGgUEtgowpnBCTyPJCGBrHL8+bYgASFV4ULsFn4L6pLg==}
+    peerDependencies:
+      typescript: '>=4.7'
+
   '@tanstack/devtools-client@0.0.5':
     resolution: {integrity: sha512-hsNDE3iu4frt9cC2ppn1mNRnLKo2uc1/1hXAyY9z4UYb+o40M2clFAhiFoo4HngjfGJDV3x18KVVIq7W4Un+zA==}
     engines: {node: '>=18'}
@@ -4572,8 +4577,8 @@ packages:
     resolution: {integrity: sha512-Kp/WSt411ZWYvgXy6uiv5RmhHrz9cAml05AQPrtdAp7eUqvIDbMGPnML25OKbzR3RJ1q4wgENxDTvlGPa9+Mww==}
     engines: {node: '>=20.19'}
 
-  '@tanstack/offline-transactions@1.0.15':
-    resolution: {integrity: sha512-S/BJ1XCW5lUU9DRVLHqWbAbF2y/dhGSOF3+7of52wKDSHTB2/6nwH75+WAdDYQVwOXJyik3gTTs3skO69MvvVA==}
+  '@tanstack/offline-transactions@1.0.20':
+    resolution: {integrity: sha512-kjw+hAJD4yU2XqQd702GZt9BgJlPu+QOc8MkXWdYBLaLb3ig8/ui+vhJFRXigk+XqyKxuQ6JF9jLXKsnB3ZDRQ==}
     peerDependencies:
       '@react-native-community/netinfo': '>=11.0.0'
       react-native: '>=0.70.0'
@@ -15012,6 +15017,13 @@ snapshots:
       '@tanstack/pacer-lite': 0.2.1
       typescript: 5.9.3
 
+  '@tanstack/db@0.5.30(typescript@5.9.3)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@tanstack/db-ivm': 0.1.17(typescript@5.9.3)
+      '@tanstack/pacer-lite': 0.2.1
+      typescript: 5.9.3
+
   '@tanstack/devtools-client@0.0.5':
     dependencies:
       '@tanstack/devtools-event-client': 0.4.0
@@ -15118,9 +15130,9 @@ snapshots:
 
   '@tanstack/history@1.161.4': {}
 
-  '@tanstack/offline-transactions@1.0.15(typescript@5.9.3)':
+  '@tanstack/offline-transactions@1.0.20(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.5.25(typescript@5.9.3)
+      '@tanstack/db': 0.5.30(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
