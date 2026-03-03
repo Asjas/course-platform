@@ -68,6 +68,6 @@
     "vitest": "4.0.18"
   },
   "optionalDependencies": {
-    "pg-native": "3.5.2"
+    "pg-native": "3.6.0"
   }
 }
