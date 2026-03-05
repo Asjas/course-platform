@@ -507,6 +507,9 @@ importers:
       '@types/hast':
         specifier: 3.0.4
         version: 3.0.4
+      '@types/pg':
+        specifier: 8.16.0
+        version: 8.16.0
       '@types/react':
         specifier: 19.2.14
         version: 19.2.14
@@ -528,6 +531,9 @@ importers:
       lightningcss:
         specifier: 1.31.1
         version: 1.31.1
+      pg:
+        specifier: 8.18.0
+        version: 8.18.0(pg-native@3.6.0)
       tailwindcss:
         specifier: 4.1.18
         version: 4.1.18
@@ -14368,7 +14374,7 @@ snapshots:
       '@react-types/shared': 3.32.1(react@19.2.4)
       react: 19.2.4
 
-  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1))(react@19.2.4)':
+  '@reduxjs/toolkit@2.11.2(react-redux@9.2.0(react@19.2.4)(redux@5.0.1))(react@19.2.4)':
     dependencies:
       '@standard-schema/spec': 1.1.0
       '@standard-schema/utils': 0.3.0
@@ -20075,7 +20081,7 @@ snapshots:
 
   recharts@3.6.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@17.0.2)(react@19.2.4)(redux@5.0.1):
     dependencies:
-      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(@types/react@19.2.14)(react@19.2.4)(redux@5.0.1))(react@19.2.4)
+      '@reduxjs/toolkit': 2.11.2(react-redux@9.2.0(react@19.2.4)(redux@5.0.1))(react@19.2.4)
       clsx: 2.1.1
       decimal.js-light: 2.5.1
       es-toolkit: 1.44.0

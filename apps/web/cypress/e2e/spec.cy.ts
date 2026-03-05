@@ -59,21 +59,65 @@ describe("Privacy Policy Page", () => {
   });
 });
 
-// describe("The Sign In Page", () => {
-//   it("successfully loads and contains critical information", () => {
-//     cy.visit("/signin");
+describe("The Sign Up Page", () => {
+  it("successfully loads and contains the signup form", () => {
+    cy.visit("/signup");
 
-//     // Verify that the Sign In page contains a heading
-//     cy.get("h2").contains("Sign In to Your Account");
+    // Verify the signup form is visible
+    cy.get("form").should("be.visible");
+    cy.get("#name").should("be.visible");
+    cy.get("#email").should("be.visible");
+    cy.get("#password").should("be.visible");
+    cy.get("#confirmPassword").should("be.visible");
+    cy.get('button[type="submit"]').should("be.visible");
+  });
+});
 
-//     // Check for presence of form fields and buttons
-//     cy.get('input[type="email"]').should("exist");
-//     cy.get('input[type="password"]').should("exist");
-//     cy.get('input[type="checkbox"][id="remember"]').should("exist");
-//     cy.get('button[type="submit"]').should("exist");
+describe("User Authentication Flow", () => {
+  const testUser = {
+    name: "E2E Test User",
+    email: `e2e-test-${Date.now()}@codewizard.training`,
+    password: "E2eTestPass123!",
+  };
 
-//     // Check for presence of links to Sign Up and Reset Password pages
-//     cy.get('a[href="/signup"]').contains("Sign Up");
-//     cy.get('a[href="/reset-password"]').contains("Reset Password");
-//   });
-// });
+  it("should sign up a new user and redirect to dashboard", () => {
+    cy.signUp(testUser);
+
+    // Should be on the dashboard after signup
+    cy.url().should("include", "/dashboard");
+  });
+
+  it("should sign in with the newly created user", () => {
+    // First sign up the user
+    cy.signUp(testUser);
+
+    // Clear cookies to simulate a new session
+    cy.clearCookies();
+    cy.clearLocalStorage();
+
+    // Now sign in with the same credentials
+    cy.signIn({ email: testUser.email, password: testUser.password });
+
+    // Should be on the dashboard after signin
+    cy.url().should("include", "/dashboard");
+  });
+});
+
+describe("The Sign In Page", () => {
+  it("successfully loads and contains the signin form", () => {
+    cy.visit("/signin");
+
+    // Verify that the Sign In page contains a heading
+    cy.get("h2").contains("Sign In to Your Account");
+
+    // Check for presence of form fields and buttons
+    cy.get("#email").should("be.visible");
+    cy.get("#password").should("be.visible");
+    cy.get("#remember").should("exist");
+    cy.get('button[type="submit"]').should("be.visible");
+
+    // Check for presence of links to Sign Up and Reset Password pages
+    cy.get('a[href="/signup"]').contains("Sign Up");
+    cy.get('a[href="/reset-password"]').contains("Reset Password");
+  });
+});
