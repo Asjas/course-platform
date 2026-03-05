@@ -274,6 +274,24 @@ jobs:
           wait-on-timeout: 120
           browser: chrome
 
+      - name: Upload Cypress screenshots
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-screenshots-${{ matrix.node-version }}
+          path: apps/web/cypress/screenshots
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Cypress videos
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: cypress-videos-${{ matrix.node-version }}
+          path: apps/web/cypress/videos
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Stop backend server
         if: always()
         run: |
