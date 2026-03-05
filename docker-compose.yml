@@ -17,6 +17,7 @@ services:
     ports:
       - "5432:5432"
     mem_limit: 256m
+    cpus: 0.5
     restart: always
   cw-dragonfly:
     container_name: cw-dragonfly
@@ -33,6 +34,7 @@ services:
     ulimits:
       memlock: -1
     mem_limit: 256m
+    cpus: 0.5
     restart: always
 
 volumes:
