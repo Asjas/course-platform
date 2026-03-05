@@ -1,15 +1,22 @@
 services:
   cw-postgres:
     container_name: cw-postgres
-    image: postgres:18.1-bookworm
+    image: postgres:18.3-bookworm
     environment:
       - POSTGRES_USER=cw_user
       - POSTGRES_PASSWORD=cw_pass
       - POSTGRES_DB=cw_db
+    command: >
+      postgres
+      -c shared_buffers=64MB
+      -c effective_cache_size=192MB
+      -c work_mem=4MB
+      -c maintenance_work_mem=32MB
     volumes:
       - cw-postgres-data:/var/lib/postgresql
     ports:
       - "5432:5432"
+    mem_limit: 256m
     restart: always
   cw-dragonfly:
     container_name: cw-dragonfly
@@ -19,10 +26,13 @@ services:
     environment:
       - DFLY_cache_mode=true
       - DFLY_snapshot_cron=0 */5 * * *
+      - DFLY_maxmemory=256mb
+      - DFLY_proactor_threads=1
     ports:
       - "6379:6379"
     ulimits:
       memlock: -1
+    mem_limit: 256m
     restart: always
 
 volumes:
