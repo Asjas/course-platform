@@ -77,9 +77,10 @@ Cypress.Commands.add(
   "signUpViaApi",
   (user: { name: string; email: string; password: string }) => {
     const makeRequest = (attempt: number): void => {
+      const apiUrl = Cypress.expose("apiUrl") || "http://localhost:5000";
       cy.request({
         method: "POST",
-        url: "http://localhost:5000/api/auth/sign-up/email",
+        url: `${apiUrl}/api/auth/sign-up/email`,
         body: {
           name: user.name,
           email: user.email,
