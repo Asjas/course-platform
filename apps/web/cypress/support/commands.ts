@@ -43,14 +43,16 @@ declare global {
 }
 
 // Generate unique user data per test run using faker to avoid conflicts in concurrent CI
+// Emails MUST be lowercased because Better Auth normalizes emails to lowercase,
+// but the setUserRole SQL query uses case-sensitive matching.
 const adminUser = {
   name: faker.person.fullName(),
-  email: faker.internet.email({ provider: "e2e-admin.test" }),
+  email: faker.internet.email({ provider: "e2e-admin.test" }).toLowerCase(),
   password: "AdminTest123!",
 };
 const regularUser = {
   name: faker.person.fullName(),
-  email: faker.internet.email({ provider: "e2e-user.test" }),
+  email: faker.internet.email({ provider: "e2e-user.test" }).toLowerCase(),
   password: "UserTest123!",
 };
 
@@ -91,22 +93,26 @@ Cypress.Commands.add(
 
 Cypress.Commands.add("signIn", (user: { email: string; password: string }) => {
   cy.visit("/signin");
-  cy.get("#email").clear();
+  cy.get("#email", { timeout: 10000 }).clear();
   cy.get("#email").type(user.email);
   cy.get("#password").clear();
   cy.get("#password").type(user.password);
   cy.get('button[type="submit"]').click();
-  cy.url().should("include", "/dashboard");
+  cy.url({ timeout: 10000 }).should("include", "/dashboard");
 });
 
 Cypress.Commands.add("loginAsAdmin", () => {
   cy.signUpViaApi(adminUser);
   cy.task("setUserRole", { email: adminUser.email, role: "admin" });
+  // Clear cookies from signUpViaApi to avoid session conflicts with signIn
+  cy.clearAllCookies();
   cy.signIn({ email: adminUser.email, password: adminUser.password });
 });
 
 Cypress.Commands.add("loginAsRegularUser", () => {
   cy.signUpViaApi(regularUser);
+  // Clear cookies from signUpViaApi to avoid session conflicts with signIn
+  cy.clearAllCookies();
   cy.signIn({ email: regularUser.email, password: regularUser.password });
 });
 

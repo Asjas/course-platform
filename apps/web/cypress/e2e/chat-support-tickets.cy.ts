@@ -101,7 +101,8 @@ describe("Chat Support Ticket Management", () => {
     // Save button should now be enabled (form is dirty)
     cy.contains("button", "Save").should("not.be.disabled");
 
-    // Submit the form
+    // Submit the form - scrollIntoView to avoid being covered by sticky header
+    cy.contains("button", "Save").scrollIntoView();
     cy.contains("button", "Save").click();
 
     // Verify the form submission was triggered - button should show "Saving..." state
