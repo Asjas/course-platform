@@ -1,5 +1,21 @@
 import { defineConfig } from "cypress";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import pg from "pg";
+
+// Load DATABASE_URL from server .env if not already set
+if (!process.env.DATABASE_URL) {
+  try {
+    const envPath = resolve(__dirname, "../server/.env");
+    const envContent = readFileSync(envPath, "utf-8");
+    const match = envContent.match(/^DATABASE_URL=(.+)$/m);
+    if (match) {
+      process.env.DATABASE_URL = match[1];
+    }
+  } catch {
+    // Ignore if file doesn't exist (CI sets DATABASE_URL directly)
+  }
+}
 
 export default defineConfig({
   e2e: {

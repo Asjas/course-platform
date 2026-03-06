@@ -114,14 +114,14 @@ describe("Cross-Page Navigation", () => {
 
   it("should navigate from signin to signup", () => {
     cy.visit("/signin");
-    cy.get('a[href="/signup"]').click();
+    cy.get('a[href="/signup"]').first().click();
     cy.url().should("include", "/signup");
     cy.contains("Account Signup").should("be.visible");
   });
 
   it("should navigate from signup to signin", () => {
     cy.visit("/signup");
-    cy.get('a[href="/signin"]').click();
+    cy.get('a[href="/signin"]').first().click();
     cy.url().should("include", "/signin");
     cy.contains("Sign In to Your Account").should("be.visible");
   });

@@ -76,18 +76,28 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   "signUpViaApi",
   (user: { name: string; email: string; password: string }) => {
-    cy.request({
-      method: "POST",
-      url: "http://localhost:3000/api/auth/sign-up/email",
-      body: {
-        name: user.name,
-        email: user.email,
-        password: user.password,
-      },
-      failOnStatusCode: false,
-    })
-      .its("status")
-      .should("be.oneOf", [200, 422]);
+    const makeRequest = (attempt: number): void => {
+      cy.request({
+        method: "POST",
+        url: "http://localhost:5000/api/auth/sign-up/email",
+        body: {
+          name: user.name,
+          email: user.email,
+          password: user.password,
+        },
+        failOnStatusCode: false,
+      }).then((response) => {
+        if (response.status === 429 && attempt < 3) {
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
+          cy.wait(2000);
+          makeRequest(attempt + 1);
+        } else {
+          expect(response.status).to.be.oneOf([200, 422]);
+        }
+        return null;
+      });
+    };
+    makeRequest(1);
   },
 );
 
