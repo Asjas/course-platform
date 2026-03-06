@@ -96,8 +96,13 @@ describe("Chat Support Ticket Management", () => {
     // Submit the form
     cy.contains("button", "Save").click();
 
+    // Wait for success toast confirming the ticket was created
+    cy.contains("Support ticket created successfully", {
+      timeout: 10000,
+    }).should("be.visible");
+
     // Should navigate to the ticket details page after creation
-    cy.url().should("include", "/support/suptick:");
+    cy.url({ timeout: 10000 }).should("include", "/support/suptick:");
 
     // Verify we're on the support ticket details page
     cy.contains("Test Support Ticket").should("be.visible");
@@ -117,7 +122,7 @@ describe("Chat Support Ticket Management", () => {
 
 describe("Chat Access After Setting Username on Profile Page", () => {
   it("should access chat without modal after setting username on profile page", () => {
-    // Sign up a fresh user specifically for this test
+    // Sign up a fresh user via the UI form (this also logs them in)
     const timestamp = Date.now();
     const freshUser = {
       name: "E2E Profile User",
@@ -125,8 +130,7 @@ describe("Chat Access After Setting Username on Profile Page", () => {
       password: "ProfileTest123!",
     };
 
-    cy.signUpViaApi(freshUser);
-    cy.signIn({ email: freshUser.email, password: freshUser.password });
+    cy.signUp(freshUser);
 
     // Navigate to the profile page
     cy.visit("/profile");
