@@ -51,6 +51,11 @@ export default function metricsPlugin(
     "onResponse",
     function metricsOnResponse(request, reply, done) {
       try {
+        if (typeof request.startTime !== "bigint") {
+          done();
+          return;
+        }
+
         const duration =
           Number(process.hrtime.bigint() - request.startTime) / 1e9;
 
@@ -82,6 +87,11 @@ export default function metricsPlugin(
     "onError",
     function metricsOnError(request, _reply, error, done) {
       try {
+        if (typeof request.startTime !== "bigint") {
+          done();
+          return;
+        }
+
         const duration =
           Number(process.hrtime.bigint() - request.startTime) / 1e9;
 
