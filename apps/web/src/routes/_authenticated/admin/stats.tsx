@@ -96,7 +96,7 @@ function StatsPage() {
       {/* Platform Overview Cards */}
       <section aria-labelledby="platform-overview-heading">
         <h2
-          className="sr-only"
+          className="mb-4 text-xl font-semibold text-gray-900 dark:text-white"
           id="platform-overview-heading"
         >
           Platform Overview
