@@ -113,18 +113,36 @@ Cypress.Commands.add("signIn", (user: { email: string; password: string }) => {
 });
 
 Cypress.Commands.add("loginAsAdmin", () => {
-  cy.signUpViaApi(adminUser);
-  cy.task("setUserRole", { email: adminUser.email, role: "admin" });
-  // Clear cookies from signUpViaApi to avoid session conflicts with signIn
-  cy.clearAllCookies();
-  cy.signIn({ email: adminUser.email, password: adminUser.password });
+  cy.session(
+    "admin",
+    () => {
+      cy.signUpViaApi(adminUser);
+      cy.task("setUserRole", { email: adminUser.email, role: "admin" });
+      cy.clearAllCookies();
+      cy.signIn({ email: adminUser.email, password: adminUser.password });
+    },
+    {
+      validate() {
+        cy.getCookies().should("have.length.greaterThan", 0);
+      },
+    },
+  );
 });
 
 Cypress.Commands.add("loginAsRegularUser", () => {
-  cy.signUpViaApi(regularUser);
-  // Clear cookies from signUpViaApi to avoid session conflicts with signIn
-  cy.clearAllCookies();
-  cy.signIn({ email: regularUser.email, password: regularUser.password });
+  cy.session(
+    "regularUser",
+    () => {
+      cy.signUpViaApi(regularUser);
+      cy.clearAllCookies();
+      cy.signIn({ email: regularUser.email, password: regularUser.password });
+    },
+    {
+      validate() {
+        cy.getCookies().should("have.length.greaterThan", 0);
+      },
+    },
+  );
 });
 
 export {};
