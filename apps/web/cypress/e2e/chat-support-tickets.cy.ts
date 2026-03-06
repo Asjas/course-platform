@@ -42,15 +42,17 @@ describe("Chat Username Requirement", () => {
     // Wait for modal to appear
     cy.contains("Username Required for Chat").should("be.visible");
 
-    // Enter a valid username
-    const username = faker.internet.username();
+    // Enter a valid username (no dots - must match /^[a-zA-Z0-9_-]+$/)
+    const username = `user_${faker.string.alphanumeric(8)}`;
     cy.get('input[name="username"]').type(username);
 
     // Submit the username
     cy.contains("button", "Set Username & Join Chat").click();
 
     // After setting username, the modal should close and chat should be accessible
-    cy.contains("Username Required for Chat").should("not.exist");
+    cy.contains("Username Required for Chat", { timeout: 10000 }).should(
+      "not.exist",
+    );
 
     // Verify the chat sidebar is visible with Channels heading
     cy.contains("Channels").should("be.visible");
@@ -65,10 +67,12 @@ describe("Chat Support Ticket Management", () => {
     cy.visit("/chat/general");
     cy.get("body").then(($body) => {
       if ($body.find(':contains("Username Required for Chat")').length > 0) {
-        const username = faker.internet.username();
+        const username = `user_${faker.string.alphanumeric(8)}`;
         cy.get('input[name="username"]').type(username);
         cy.contains("button", "Set Username & Join Chat").click();
-        cy.contains("Username Required for Chat").should("not.exist");
+        cy.contains("Username Required for Chat", { timeout: 10000 }).should(
+          "not.exist",
+        );
       }
       return undefined;
     });
@@ -137,8 +141,8 @@ describe("Chat Access After Setting Username on Profile Page", () => {
     // Verify we're on the profile page
     cy.contains("h1", "Profile").should("be.visible");
 
-    // Set a username in the profile form
-    const username = faker.internet.username();
+    // Set a username in the profile form (no dots - must match /^[a-zA-Z0-9_-]+$/)
+    const username = `user_${faker.string.alphanumeric(8)}`;
     cy.get('input[name="username"]').clear();
     cy.get('input[name="username"]').type(username);
 
