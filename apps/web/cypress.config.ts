@@ -4,6 +4,7 @@ import pg from "pg";
 export default defineConfig({
   e2e: {
     baseUrl: "http://localhost:4173",
+    allowCypressEnv: false,
     viewportWidth: 1280,
     viewportHeight: 720,
     video: true,
