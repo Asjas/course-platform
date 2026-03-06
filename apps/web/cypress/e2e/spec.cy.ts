@@ -88,12 +88,8 @@ describe("User Authentication Flow", () => {
   });
 
   it("should sign in with the newly created user", () => {
-    // First sign up the user
-    cy.signUp(testUser);
-
-    // Clear cookies to simulate a new session
-    cy.clearCookies();
-    cy.clearLocalStorage();
+    // Ensure the user exists (may already exist from previous test)
+    cy.signUpViaApi(testUser);
 
     // Now sign in with the same credentials
     cy.signIn({ email: testUser.email, password: testUser.password });

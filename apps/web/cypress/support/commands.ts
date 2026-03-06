@@ -85,7 +85,7 @@ Cypress.Commands.add(
       failOnStatusCode: false,
     })
       .its("status")
-      .should("be.oneOf", [200, 409]);
+      .should("be.oneOf", [200, 422]);
   },
 );
 
