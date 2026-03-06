@@ -151,3 +151,7 @@ target/
 
 # Astro
 .astro/
+
+# Cypress
+**/cypress/videos
+**/cypress/screenshots
