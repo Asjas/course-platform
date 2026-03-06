@@ -140,11 +140,14 @@ dist
 .dev.vars
 
 # Tanstack router
-.tanstack
+.tanstack/
 
 # Turborepo
-.turbo
+.turbo/
 
 # Tauri
 target/
 .tauri/build/
+
+# Astro
+.astro/
