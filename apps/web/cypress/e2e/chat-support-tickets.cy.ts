@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 describe("Chat Username Requirement", () => {
   beforeEach(() => {
     cy.loginAsRegularUser();
@@ -41,7 +43,7 @@ describe("Chat Username Requirement", () => {
     cy.contains("Username Required for Chat").should("be.visible");
 
     // Enter a valid username
-    const username = `e2euser${Date.now()}`;
+    const username = faker.internet.username();
     cy.get('input[name="username"]').type(username);
 
     // Submit the username
@@ -63,7 +65,7 @@ describe("Chat Support Ticket Management", () => {
     cy.visit("/chat/general");
     cy.get("body").then(($body) => {
       if ($body.find(':contains("Username Required for Chat")').length > 0) {
-        const username = `e2eticket${Date.now()}`;
+        const username = faker.internet.username();
         cy.get('input[name="username"]').type(username);
         cy.contains("button", "Set Username & Join Chat").click();
         cy.contains("Username Required for Chat").should("not.exist");
@@ -121,10 +123,9 @@ describe("Chat Support Ticket Management", () => {
 describe("Chat Access After Setting Username on Profile Page", () => {
   it("should access chat without modal after setting username on profile page", () => {
     // Sign up a fresh user via the UI form (this also logs them in)
-    const timestamp = Date.now();
     const freshUser = {
-      name: "E2E Profile User",
-      email: `e2e-profile-${timestamp}@codewizard.training`,
+      name: faker.person.fullName(),
+      email: faker.internet.email({ provider: "e2e-profile.test" }),
       password: "ProfileTest123!",
     };
 
@@ -137,7 +138,7 @@ describe("Chat Access After Setting Username on Profile Page", () => {
     cy.contains("h1", "Profile").should("be.visible");
 
     // Set a username in the profile form
-    const username = `profileuser${timestamp}`;
+    const username = faker.internet.username();
     cy.get('input[name="username"]').clear();
     cy.get('input[name="username"]').type(username);
 

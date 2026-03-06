@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import { faker } from "@faker-js/faker";
 
 /* eslint-disable @typescript-eslint/no-namespace */
 declare global {
@@ -41,16 +42,15 @@ declare global {
   }
 }
 
-// Generate unique email per test run to avoid conflicts
-const testRunId = Date.now();
+// Generate unique user data per test run using faker to avoid conflicts in concurrent CI
 const adminUser = {
-  name: "E2E Admin",
-  email: `e2e-admin-${testRunId}@codewizard.training`,
+  name: faker.person.fullName(),
+  email: faker.internet.email({ provider: "e2e-admin.test" }),
   password: "AdminTest123!",
 };
 const regularUser = {
-  name: "E2E User",
-  email: `e2e-user-${testRunId}@codewizard.training`,
+  name: faker.person.fullName(),
+  email: faker.internet.email({ provider: "e2e-user.test" }),
   password: "UserTest123!",
 };
 

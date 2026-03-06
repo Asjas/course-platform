@@ -1,3 +1,5 @@
+import { faker } from "@faker-js/faker";
+
 describe("The Home Page", () => {
   it("successfully loads and contains critical information", () => {
     cy.visit("/");
@@ -75,8 +77,8 @@ describe("The Sign Up Page", () => {
 
 describe("User Authentication Flow", () => {
   const testUser = {
-    name: "E2E Test User",
-    email: `e2e-test-${Date.now()}@codewizard.training`,
+    name: faker.person.fullName(),
+    email: faker.internet.email({ provider: "e2e-auth.test" }),
     password: "E2eTestPass123!",
   };
 

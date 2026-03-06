@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NotificationsBell } from "./notifications-bell";
+import { faker } from "@faker-js/faker";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import * as dbCollections from "~/lib/db.collections";
@@ -22,16 +23,16 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("NotificationsBell Component", () => {
-  const mockUserId = "user:123";
+  const mockUserId = faker.string.uuid();
 
   const createMockNotification = (
     type: string,
     overrides: Record<string, unknown> = {},
   ) => ({
-    id: `notif:${Math.random()}`,
-    title: "Test Notification",
-    message: "Test message",
-    createdAt: new Date().toISOString(),
+    id: faker.string.uuid(),
+    title: faker.lorem.sentence(),
+    message: faker.lorem.paragraph(),
+    createdAt: faker.date.recent().toISOString(),
     type,
     link: null,
     readAt: null,

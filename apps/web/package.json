@@ -73,6 +73,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@faker-js/faker": "10.3.0",
     "@mdx-js/react": "3.1.1",
     "@mdx-js/rollup": "3.1.1",
     "@polar-sh/better-auth": "1.6.4",
