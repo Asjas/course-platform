@@ -57,6 +57,9 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, t
 - Write tests using Vitest in `/tests/` directory.
 - Use `.spec.ts` or `.test.ts` extension.
 - Mock dependencies using `vi.mock`.
+- Server test imports must use `.js` extension for ESM resolution (e.g., `import { schema } from "~/config.js"`).
+- Use `vi.useFakeTimers()` for time-dependent tests. Always call `vi.useRealTimers()` in `afterEach`.
+- See [library-patterns-reference.md](../docs/library-patterns-reference.md#vitest-4) for full Vitest 4 patterns.
 
 ## File Organization
 
@@ -80,6 +83,8 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, t
 - `zod` - Schema validation
 - `pino` - Logging
 - `prom-client` - Prometheus metrics
+
+For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).
 
 ## Performance
 
