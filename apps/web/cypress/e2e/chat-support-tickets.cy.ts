@@ -121,6 +121,67 @@ describe("Chat Support Ticket Management", () => {
     // Should navigate back to the general chat channel
     cy.url().should("include", "/chat/general");
   });
+
+  it("should block a different user from accessing someone else's support ticket", () => {
+    const ownerUser = {
+      name: faker.person.fullName(),
+      email: faker.internet
+        .email({ provider: "e2e-owner-ticket.test" })
+        .toLowerCase(),
+      password: "OwnerTicket123!",
+    };
+    const otherUser = {
+      name: faker.person.fullName(),
+      email: faker.internet
+        .email({ provider: "e2e-other-ticket.test" })
+        .toLowerCase(),
+      password: "OtherTicket123!",
+    };
+
+    const ticketTitle = `Owner Ticket ${faker.string.alphanumeric(8)}`;
+    let ownerTicketId = "";
+
+    cy.signUpViaApi(ownerUser);
+    cy.signIn({ email: ownerUser.email, password: ownerUser.password });
+    ensureUsernameSetViaProfile();
+
+    cy.visit("/chat/support/new");
+    cy.get('input[name="title"]').type(ticketTitle);
+    cy.get('input[name="repo"]').type("https://github.com/test/repo");
+    cy.get("textarea").type("Owner-only support ticket content");
+    cy.contains("button", "Save").click({ force: true });
+
+    cy.url().should("include", "/support/");
+    cy.url().then((url) => {
+      ownerTicketId = url.split("/support/")[1]?.split("?")[0] ?? "";
+      expect(ownerTicketId).to.not.equal("");
+      return null;
+    });
+
+    cy.clearAllCookies();
+    cy.clearAllLocalStorage();
+    cy.window().then((win) => {
+      win.sessionStorage.clear();
+      return null;
+    });
+
+    cy.signUpViaApi(otherUser);
+    cy.signIn({ email: otherUser.email, password: otherUser.password });
+    ensureUsernameSetViaProfile();
+
+    cy.then(() => {
+      cy.visit(`/support/${ownerTicketId}`, {
+        failOnStatusCode: false,
+      });
+
+      cy.contains(/authorized|access denied|forbidden|permission/i, {
+        timeout: 15000,
+      }).should("be.visible");
+      cy.contains("Ticket Not Found").should("be.visible");
+
+      return null;
+    });
+  });
 });
 
 describe("Chat Access After Setting Username on Profile Page", () => {
