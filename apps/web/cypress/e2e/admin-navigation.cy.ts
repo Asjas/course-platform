@@ -41,7 +41,10 @@ describe("Non-Admin Access Control", () => {
     cy.visit("/admin/courses");
 
     // Should redirect away from admin area
-    cy.url().should("not.include", "/admin");
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
   });
 
   it("should not display admin navigation for regular users", () => {
