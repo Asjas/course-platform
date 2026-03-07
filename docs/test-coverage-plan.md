@@ -3,8 +3,8 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-07.
 >
-> **Latest run:** Server 19.48% stmts / 19.37% lines (32 files, 377 tests) | Web
-> 19.71% stmts / 18.75% lines (41 files, 450 tests)
+> **Latest run (2026-03-07):** Server 28.38% stmts / 28.42% lines (38 files, 436
+> tests) | Web 19.71% stmts / 18.75% lines (41 files, 450 tests)
 
 ## Coverage Baseline
 
@@ -12,10 +12,10 @@
 
 | App        | Statements        | Branches          | Functions        | Lines             | Test Files |
 | ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ---------- |
-| **Server** | 19.48% (608/3121) | 16.66% (194/1164) | 22.70% (166/731) | 19.37% (589/3040) | 32         |
+| **Server** | 28.38% (886/3121) | 23.10% (269/1164) | 28.18% (206/731) | 28.42% (864/3040) | 38         |
 | **Web**    | 19.71% (976/4951) | 16.03% (556/3467) | 9.71% (128/1318) | 18.75% (801/4270) | 41         |
 
-### Server (`apps/server`) — 19.37% Line Coverage
+### Server (`apps/server`) — 28.42% Line Coverage
 
 **137 total files: 122 untested, 10 partial, 5 fully covered**
 
@@ -559,15 +559,16 @@ These are the largest untested areas containing core business logic.
 | --- | --------------------------------------------------- | ----------------------- | ----- | ---------- |
 | 18  | `src/db/queries/__tests__/*.test.ts`                | All DB query files      | 143   | - [x] Done |
 | 19  | `src/db/mutations/__tests__/*.test.ts`              | All DB mutation files   | 117   | - [x] Done |
-| 20  | `src/routers/chat/__tests__/dmValidation.test.ts`   | DM validation logic     | —     | - [ ] Todo |
-| 21  | `src/lib/tests/logging.test.ts`                     | Logging (currently 20%) | 306   | - [ ] Todo |
+| 20  | `src/routers/chat/__tests__/dmValidation.test.ts`   | DM validation logic     | —     | - [x] Done |
+| 21  | `src/lib/tests/logging.test.ts`                     | Logging (currently 20%) | 306   | - [x] Done |
 | 22  | `src/lib/tests/cache.test.ts`                       | Cache module            | —     | - [ ] Todo |
 | 23  | `src/lib/tests/mailer.test.ts`                      | Email sending           | —     | - [ ] Todo |
 | 24  | `src/routes/courses/__tests__/handlers.test.ts`     | REST course handlers    | 150   | - [x] Done |
 | 25  | `src/routers/chatReports/__tests__/*.test.ts`       | Chat reports            | 68    | - [x] Done |
-| 26  | `src/routers/announcements/__tests__/index.test.ts` | Announcements router    | 66    | - [ ] Todo |
-| 27  | `src/routers/stats/__tests__/index.test.ts`         | Stats router            | 61    | - [ ] Todo |
-| 28  | `src/routers/mentions/__tests__/index.test.ts`      | Mentions router         | 46    | - [ ] Todo |
+| 26  | `src/routers/announcements/__tests__/index.test.ts` | Announcements router    | 66    | - [x] Done |
+| 27  | `src/routers/stats/__tests__/index.test.ts`         | Stats router            | 61    | - [x] Done |
+| 28  | `src/routers/mentions/__tests__/index.test.ts`      | Mentions router         | 46    | - [x] Done |
+| 28a | `src/routers/supportStatus/__tests__/index.test.ts` | Support status router   | —     | - [x] Done |
 | 28b | `src/routers/syncStatus/__tests__/*.test.ts`        | Sync status             | —     | - [x] Done |
 
 ### Phase 3: Web Components (Highest Untested Line Count)
@@ -689,7 +690,7 @@ Reports are generated in:
 
 ## Existing Test Files
 
-### Server (32 test files, 377 tests)
+### Server (38 test files, 436 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
 - `src/lib/tests/config.test.ts` — 49 tests
@@ -698,12 +699,14 @@ Reports are generated in:
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
 - `src/lib/tests/sse-sync.test.ts` — 18 tests
+- `src/lib/tests/logging.test.ts` — 6 tests _(new)_
 - `src/db/queries/__tests__/courseWishlist.test.ts` — 12 tests _(new)_
 - `src/db/queries/__tests__/user.test.ts` — 5 tests _(new)_
 - `src/db/mutations/__tests__/courseWishlist.test.ts` — 5 tests _(new)_
 - `src/routers/chat/__tests__/queries.test.ts` — 17 tests
-- `src/routers/chatReports/__tests__/queries.test.ts` — 5 tests _(new)_
-- `src/routers/chatReports/__tests__/mutations.test.ts` — 10 tests _(new)_
+- `src/routers/chat/__tests__/dmValidation.test.ts` — 7 tests _(new)_
+- `src/routers/chatReports/__tests__/queries.test.ts` — 7 tests _(new)_
+- `src/routers/chatReports/__tests__/mutations.test.ts` — 9 tests _(new)_
 - `src/routers/coupons/__tests__/queries.test.ts` — 6 tests
 - `src/routers/coupons/__tests__/mutations.test.ts` — 5 tests
 - `src/routers/courses/__tests__/queries.test.ts` — 3 tests
@@ -720,8 +723,12 @@ Reports are generated in:
 - `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests
 - `src/routers/support-tickets/__tests__/queries.test.ts` — 9 tests
 - `src/routers/support-tickets/__tests__/mutations.test.ts` — 6 tests
+- `src/routers/supportStatus/__tests__/index.test.ts` — 5 tests _(new)_
 - `src/routers/syncStatus/__tests__/queries.test.ts` — 6 tests _(new)_
 - `src/routers/syncStatus/__tests__/mutations.test.ts` — 9 tests _(new)_
+- `src/routers/announcements/__tests__/index.test.ts` — 12 tests _(new)_
+- `src/routers/mentions/__tests__/index.test.ts` — 8 tests _(new)_
+- `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
 ### Web (41 test files, 450 tests + 12 todo)
@@ -793,6 +800,25 @@ Reports are generated in:
 - `theme-toggle.cy.ts` _(new)_
 
 ---
+
+## Coverage Delta (2026-03-07)
+
+Compared to the previous baseline in this document:
+
+| App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
+| ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
+| **Server** | +8.90 pp   | +6.44 pp | +5.48 pp  | +9.05 pp | +6         | +59   |
+| **Web**    | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
+
+## Coverage Update Rule
+
+After every test batch:
+
+1. Run `pnpm --filter @apps/server test:coverage` and
+   `pnpm --filter @apps/web test:coverage`.
+2. Record latest percentages and counts at the top of this document.
+3. Add or refresh a delta table versus the previous baseline.
+4. Update relevant phase checkboxes and test inventory counts.
 
 ## Notes
 
