@@ -240,3 +240,4 @@ Reference documentation for detailed best practices is in `.github/docs/`:
 - `performance-optimization-reference.md` - Comprehensive performance guide
 - `ai-instructions-consistency.md` - Cross-file source of truth and exception
   map
+- `doc-drift-checklist.md` - Pre-merge checklist to prevent instruction drift

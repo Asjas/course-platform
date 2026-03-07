@@ -1,7 +1,6 @@
 ---
 applyTo: "**"
 description: "CRITICAL: Setup and validation steps that MUST be run before EVERY commit"
-priority: 1
 ---
 
 # Setup and Validation - MANDATORY STEPS

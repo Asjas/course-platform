@@ -213,5 +213,6 @@ Detailed reference documentation lives in `.github/docs/`:
 - `package-catalog.md` - Complete dependency inventory, versions, homepage links, node_modules paths, and usage patterns
 - `performance-optimization-reference.md` - Comprehensive performance guide
 - `ai-instructions-consistency.md` - Cross-file source of truth and exception map
+- `doc-drift-checklist.md` - Pre-merge checklist to prevent instruction drift
 
 For cross-agent guidance (Claude Code, Cursor, Codex, Gemini CLI), see the `AGENTS.md` file in the repository root.
