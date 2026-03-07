@@ -208,6 +208,7 @@ These are automatically applied based on file paths.
 Detailed reference documentation lives in `.github/docs/`:
 - `a11y-reference.md` - Full accessibility patterns and code examples
 - `library-patterns-reference.md` - Zod 4, Vitest 4, Drizzle, and testing gotchas
+- `package-catalog.md` - Complete dependency inventory, versions, homepage links, node_modules paths, and usage patterns
 - `performance-optimization-reference.md` - Comprehensive performance guide
 
 For cross-agent guidance (Claude Code, Cursor, Codex, Gemini CLI), see the `AGENTS.md` file in the repository root.
