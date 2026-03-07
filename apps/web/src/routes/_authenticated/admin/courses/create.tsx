@@ -355,7 +355,7 @@ function CreateCoursePage() {
               )}
             </form.Field>
 
-            <div className="flex gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
+            <div className="relative z-10 flex gap-3 border-t border-gray-200 pt-6 dark:border-gray-700">
               <button
                 className="inline-flex cursor-pointer items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                 type="submit"

@@ -88,7 +88,9 @@ Cypress.Commands.add(
         },
         failOnStatusCode: false,
       }).then((response) => {
-        if (response.status === 429 && attempt < 3) {
+        const isRetriable = response.status === 429 || response.status === 403;
+
+        if (isRetriable && attempt < 5) {
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(2000);
           makeRequest(attempt + 1);
