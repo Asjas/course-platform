@@ -22,20 +22,22 @@ describe("Admin Courses Management", () => {
 
     cy.get("body").then(($body) => {
       if ($body.text().includes("No courses found")) {
-        return cy.contains("No courses found").should("be.visible");
+        cy.contains("No courses found").should("be.visible");
+        return null;
       }
 
-      return cy
-        .get("button:has(svg)")
+      const deleteButton = $body
+        .find("button:has(svg)")
         .filter(":has(.lucide-trash2)")
-        .first()
-        .then(($deleteButton) => {
-          cy.wrap($deleteButton).click();
-          cy.contains("Delete Course").should("be.visible");
-          cy.contains("button", "Cancel").click();
-          cy.contains("Delete Course").should("not.exist");
-          return cy.wrap(null);
-        });
+        .first();
+
+      expect(deleteButton.length).to.be.greaterThan(0);
+      cy.wrap(deleteButton).click();
+      cy.contains("Delete Course").should("be.visible");
+      cy.contains("button", "Cancel").click();
+      cy.contains("Delete Course").should("not.exist");
+
+      return null;
     });
   });
 });

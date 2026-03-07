@@ -17,22 +17,24 @@ describe("Admin Course Editor", () => {
 
     cy.get("body").then(($body) => {
       if ($body.text().includes("No courses found")) {
-        return cy.contains("No courses found").should("be.visible");
+        cy.contains("No courses found").should("be.visible");
+        return null;
       }
 
-      return cy
-        .get('a[href*="/admin/courses/"][href$="/edit"]')
-        .first()
-        .then(($editLink) => {
-          cy.wrap($editLink).click();
-          cy.url().should("include", "/admin/courses/");
-          cy.url().should("include", "/edit");
-          cy.contains("Edit course structure, modules, and lessons").should(
-            "be.visible",
-          );
-          cy.contains("No selection").should("be.visible");
-          return cy.wrap(null);
-        });
+      const editLink = $body
+        .find('a[href*="/admin/courses/"][href$="/edit"]')
+        .first();
+
+      expect(editLink.length).to.be.greaterThan(0);
+      cy.wrap(editLink).click();
+      cy.url().should("include", "/admin/courses/");
+      cy.url().should("include", "/edit");
+      cy.contains("Edit course structure, modules, and lessons").should(
+        "be.visible",
+      );
+      cy.contains("No selection").should("be.visible");
+
+      return null;
     });
   });
 
