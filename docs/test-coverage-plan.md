@@ -2,6 +2,9 @@
 
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-07.
+>
+> **Latest run:** Server 17.71% stmts / 17.63% lines (25 files, 322 tests) | Web
+> 17.26% stmts / 16.26% lines (36 files, 400 tests)
 
 ## Coverage Baseline
 
@@ -9,10 +12,10 @@
 
 | App        | Statements        | Branches          | Functions        | Lines             | Test Files |
 | ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ---------- |
-| **Server** | 14.03% (438/3121) | 11.59% (135/1164) | 15.59% (114/731) | 13.84% (421/3040) | 17         |
-| **Web**    | 15.55% (730/4693) | 12.25% (401/3273) | 8.03% (106/1319) | 14.61% (603/4127) | 31         |
+| **Server** | 17.71% (553/3121) | 14.26% (166/1164) | 19.83% (145/731) | 17.63% (536/3040) | 25         |
+| **Web**    | 17.26% (826/4784) | 13.97% (468/3349) | 8.49% (112/1319) | 16.26% (679/4175) | 36         |
 
-### Server (`apps/server`) — 13.84% Line Coverage
+### Server (`apps/server`) — 17.63% Line Coverage
 
 **137 total files: 129 untested, 3 partial, 5 fully covered**
 
@@ -48,7 +51,7 @@
 #### Server — Untested Files (0% Coverage)
 
 <details>
-<summary>119 files with zero coverage (click to expand)</summary>
+<summary>107 files with zero coverage (click to expand)</summary>
 
 **Bootstrap & Core:**
 
@@ -139,7 +142,7 @@
 - `src/plugins/external/rate-limit.ts`
 - `src/plugins/external/sensible.ts`
 
-**tRPC Routers (32 files):**
+**tRPC Routers (20 files):**
 
 - `src/routers/index.ts`
 - `src/routers/announcements/index.ts`
@@ -150,8 +153,6 @@
 - `src/routers/chatReports/mutations.ts`
 - `src/routers/chatReports/queries.ts`
 - `src/routers/coupons/index.ts`
-- `src/routers/coupons/mutations.ts`
-- `src/routers/coupons/queries.ts`
 - `src/routers/courseWishlist/index.ts`
 - `src/routers/courses/index.ts`
 - `src/routers/dataExport/index.ts`
@@ -160,16 +161,10 @@
 - `src/routers/images/index.ts`
 - `src/routers/mentions/index.ts`
 - `src/routers/notifications/index.ts`
-- `src/routers/notifications/mutations.ts`
-- `src/routers/notifications/queries.ts`
 - `src/routers/purchases/index.ts`
-- `src/routers/purchases/mutations.ts`
-- `src/routers/purchases/queries.ts`
 - `src/routers/reviews/index.ts`
 - `src/routers/stats/index.ts`
 - `src/routers/support-tickets/index.ts`
-- `src/routers/support-tickets/mutations.ts`
-- `src/routers/support-tickets/queries.ts`
 - `src/routers/supportStatus/index.ts`
 - `src/routers/supportStatus/queries.ts`
 - `src/routers/syncStatus/index.ts`
@@ -201,15 +196,15 @@
 
 ---
 
-### Web (`apps/web`) — 14.61% Line Coverage
+### Web (`apps/web`) — 16.26% Line Coverage
 
-**214 total files: 164 untested, 31 partial, 19 fully covered**
+**214 total files: 160 untested, 35 partial, 19 fully covered**
 
 #### Web Coverage by Area
 
 | Area            | Files Tested | Line Coverage | Lines   |
 | --------------- | ------------ | ------------- | ------- |
-| Components      | 14/47        | partial       | —       |
+| Components      | 18/47        | partial       | —       |
 | Forms           | 0/13         | 0%            | 0/303   |
 | Hooks           | 1/1          | partial       | —       |
 | Lib/Collections | 1/36         | 1.8%          | 5/276   |
@@ -274,21 +269,24 @@
 | `src/components/footer.tsx`                                        | new   | new      |
 | `src/components/loading.tsx`                                       | new   | new      |
 | `src/components/not-found.tsx`                                     | new   | new      |
+| `src/components/auth-links.tsx`                                    | new   | new      |
+| `src/components/instructor-card.tsx`                               | new   | new      |
+| `src/components/theme-toggle.tsx`                                  | new   | new      |
+| `src/components/video-player.tsx`                                  | new   | new      |
 | `src/lib/markdown.ts`                                              | new   | new      |
 
 #### Web — Untested Files (0% Coverage)
 
 <details>
-<summary>164 files with zero coverage (click to expand)</summary>
+<summary>160 files with zero coverage (click to expand)</summary>
 
 **App Bootstrap:**
 
 - `src/main.tsx`
 - `src/reportWebVitals.ts`
 
-**Components (35 files):**
+**Components (31 files):**
 
-- `src/components/auth-links.tsx`
 - `src/components/blocker.tsx`
 - `src/components/chat-message-editor.tsx`
 - `src/components/chat-message.tsx`
@@ -306,7 +304,6 @@
 - `src/components/file-attachment.tsx`
 - `src/components/giphy-picker.tsx`
 - `src/components/header.tsx`
-- `src/components/instructor-card.tsx`
 - `src/components/markdown-content.tsx`
 - `src/components/mention-picker.tsx`
 - `src/components/pricing-section.tsx`
@@ -314,12 +311,10 @@
 - `src/components/report-message-dialog.tsx`
 - `src/components/review-details-sheet.tsx`
 - `src/components/support-comment.tsx`
-- `src/components/theme-toggle.tsx`
 - `src/components/thread-panel.tsx`
 - `src/components/user-profile-sheet.tsx`
 - `src/components/user-search-modal.tsx`
 - `src/components/username-requirement-modal.tsx`
-- `src/components/video-player.tsx`
 - `src/components/view-purchase-sheet.tsx`
 - `src/components/announcements/AnnouncementsBanner.tsx`
 
@@ -545,18 +540,18 @@ These are the largest untested areas containing core business logic.
 | 3   | `src/routers/reviews/__tests__/queries.test.ts`           | Review queries         | 174   | - [x] Done |
 | 4   | `src/routers/reviews/__tests__/mutations.test.ts`         | Review mutations       | —     | - [x] Done |
 | 5   | `src/routers/chat/__tests__/queries.test.ts`              | Chat queries           | 286   | - [x] Done |
-| 6   | `src/routers/support-tickets/__tests__/queries.test.ts`   | Ticket queries         | 115   | - [ ] Todo |
-| 7   | `src/routers/support-tickets/__tests__/mutations.test.ts` | Ticket mutations       | —     | - [ ] Todo |
-| 8   | `src/routers/purchases/__tests__/queries.test.ts`         | Purchase queries       | 80    | - [ ] Todo |
-| 9   | `src/routers/purchases/__tests__/mutations.test.ts`       | Purchase mutations     | —     | - [ ] Todo |
-| 10  | `src/routers/coupons/__tests__/queries.test.ts`           | Coupon queries         | 109   | - [ ] Todo |
-| 11  | `src/routers/coupons/__tests__/mutations.test.ts`         | Coupon mutations       | —     | - [ ] Todo |
+| 6   | `src/routers/support-tickets/__tests__/queries.test.ts`   | Ticket queries         | 115   | - [x] Done |
+| 7   | `src/routers/support-tickets/__tests__/mutations.test.ts` | Ticket mutations       | —     | - [x] Done |
+| 8   | `src/routers/purchases/__tests__/queries.test.ts`         | Purchase queries       | 80    | - [x] Done |
+| 9   | `src/routers/purchases/__tests__/mutations.test.ts`       | Purchase mutations     | —     | - [x] Done |
+| 10  | `src/routers/coupons/__tests__/queries.test.ts`           | Coupon queries         | 109   | - [x] Done |
+| 11  | `src/routers/coupons/__tests__/mutations.test.ts`         | Coupon mutations       | —     | - [x] Done |
 | 12  | `src/routers/dataExport/__tests__/csvUtils.test.ts`       | CSV utility functions  | 116   | - [x] Done |
 | 13  | `src/routers/dataExport/__tests__/rateLimit.test.ts`      | Rate limit logic       | —     | - [x] Done |
 | 14  | `src/routers/directMessages/__tests__/queries.test.ts`    | DM queries             | 171   | - [x] Done |
 | 15  | `src/routers/directMessages/__tests__/mutations.test.ts`  | DM mutations           | —     | - [x] Done |
-| 16  | `src/routers/notifications/__tests__/queries.test.ts`     | Notification queries   | 69    | - [ ] Todo |
-| 17  | `src/routers/notifications/__tests__/mutations.test.ts`   | Notification mutations | —     | - [ ] Todo |
+| 16  | `src/routers/notifications/__tests__/queries.test.ts`     | Notification queries   | 69    | - [x] Done |
+| 17  | `src/routers/notifications/__tests__/mutations.test.ts`   | Notification mutations | —     | - [x] Done |
 
 ### Phase 2: Server DB and Infrastructure
 
@@ -583,9 +578,9 @@ These are the largest untested areas containing core business logic.
 | 31  | `src/components/__tests__/footer.test.tsx`          | Footer component  | —     | - [x] Done |
 | 32  | `src/components/__tests__/error-boundary.test.tsx`  | Error boundary    | —     | - [x] Done |
 | 33  | `src/components/__tests__/confirm-dialog.test.tsx`  | Confirm dialog    | —     | - [x] Done |
-| 34  | `src/components/__tests__/video-player.test.tsx`    | Video player      | —     | - [ ] Todo |
+| 34  | `src/components/__tests__/video-player.test.tsx`    | Video player      | —     | - [x] Done |
 | 35  | `src/components/__tests__/course-card.test.tsx`     | Course card (11%) | —     | - [x] Done |
-| 36  | `src/components/__tests__/theme-toggle.test.tsx`    | Theme toggle      | —     | - [ ] Todo |
+| 36  | `src/components/__tests__/theme-toggle.test.tsx`    | Theme toggle      | —     | - [x] Done |
 | 37  | `src/components/__tests__/loading.test.tsx`         | Loading component | —     | - [x] Done |
 | 38  | `src/components/__tests__/empty-state.test.tsx`     | Empty state       | —     | - [x] Done |
 | 39  | `src/components/__tests__/chat-message.test.tsx`    | Chat message      | —     | - [ ] Todo |
@@ -688,7 +683,7 @@ Reports are generated in:
 
 ## Existing Test Files
 
-### Server (17 test files, 272 tests)
+### Server (25 test files, 322 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
 - `src/lib/tests/config.test.ts` — 49 tests
@@ -697,41 +692,53 @@ Reports are generated in:
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
 - `src/lib/tests/sse-sync.test.ts` — 18 tests
-- `src/routers/chat/__tests__/queries.test.ts` — 17 tests _(new)_
-- `src/routers/courses/__tests__/queries.test.ts` — 3 tests _(new)_
-- `src/routers/courses/__tests__/mutations.test.ts` — 13 tests _(new)_
-- `src/routers/dataExport/__tests__/csvUtils.test.ts` — 25 tests _(new)_
-- `src/routers/dataExport/__tests__/rateLimit.test.ts` — 8 tests _(new)_
-- `src/routers/directMessages/__tests__/queries.test.ts` — 3 tests _(new)_
-- `src/routers/directMessages/__tests__/mutations.test.ts` — 2 tests _(new)_
-- `src/routers/reviews/__tests__/queries.test.ts` — 4 tests _(new)_
-- `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests _(new)_
-- `src/routes/courses/__tests__/handlers.test.ts` — 18 tests _(new)_
+- `src/routers/chat/__tests__/queries.test.ts` — 17 tests
+- `src/routers/coupons/__tests__/queries.test.ts` — 6 tests _(new)_
+- `src/routers/coupons/__tests__/mutations.test.ts` — 5 tests _(new)_
+- `src/routers/courses/__tests__/queries.test.ts` — 3 tests
+- `src/routers/courses/__tests__/mutations.test.ts` — 13 tests
+- `src/routers/dataExport/__tests__/csvUtils.test.ts` — 25 tests
+- `src/routers/dataExport/__tests__/rateLimit.test.ts` — 8 tests
+- `src/routers/directMessages/__tests__/queries.test.ts` — 3 tests
+- `src/routers/directMessages/__tests__/mutations.test.ts` — 2 tests
+- `src/routers/notifications/__tests__/queries.test.ts` — 6 tests _(new)_
+- `src/routers/notifications/__tests__/mutations.test.ts` — 5 tests _(new)_
+- `src/routers/purchases/__tests__/queries.test.ts` — 9 tests _(new)_
+- `src/routers/purchases/__tests__/mutations.test.ts` — 4 tests _(new)_
+- `src/routers/reviews/__tests__/queries.test.ts` — 4 tests
+- `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests
+- `src/routers/support-tickets/__tests__/queries.test.ts` — 9 tests _(new)_
+- `src/routers/support-tickets/__tests__/mutations.test.ts` — 6 tests _(new)_
+- `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (32 test files, 385 tests)
+### Web (36 test files, 400 tests + 12 todo)
 
-- `src/components/__tests__/chat-date-divider.test.tsx` — 6 tests _(new)_
-- `src/components/__tests__/code-block-copy.test.tsx` — 5 tests _(new)_
-- `src/components/__tests__/confirm-dialog.test.tsx` — 7 tests _(new)_
-- `src/components/__tests__/course-card.test.tsx` — 23 tests _(new)_
-- `src/components/__tests__/empty-state.test.tsx` — 5 tests _(new)_
-- `src/components/__tests__/error-boundary.test.tsx` — 5 tests _(new)_
-- `src/components/__tests__/field-info.test.tsx` — 5 tests _(new)_
-- `src/components/__tests__/footer.test.tsx` — 10 tests _(new)_
+- `src/components/__tests__/auth-links.test.tsx` — 9 tests _(new)_
+- `src/components/__tests__/chat-date-divider.test.tsx` — 6 tests
+- `src/components/__tests__/code-block-copy.test.tsx` — 5 tests
+- `src/components/__tests__/confirm-dialog.test.tsx` — 7 tests
+- `src/components/__tests__/course-card.test.tsx` — 23 tests
+- `src/components/__tests__/empty-state.test.tsx` — 5 tests
+- `src/components/__tests__/error-boundary.test.tsx` — 5 tests
+- `src/components/__tests__/field-info.test.tsx` — 5 tests
+- `src/components/__tests__/footer.test.tsx` — 10 tests
 - `src/components/__tests__/format-duration.test.ts` — 7 tests
-- `src/components/__tests__/loading.test.tsx` — 4 tests _(new)_
+- `src/components/__tests__/instructor-card.test.tsx` — 6 tests _(new)_
+- `src/components/__tests__/loading.test.tsx` — 4 tests
 - `src/components/__tests__/message-reactions-helpers.test.ts` — 10 tests
-- `src/components/__tests__/not-found.test.tsx` — 2 tests _(new)_
+- `src/components/__tests__/not-found.test.tsx` — 2 tests
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
+- `src/components/__tests__/theme-toggle.test.tsx` — 6 tests _(new)_
+- `src/components/__tests__/video-player.test.tsx` — 6 tests _(new)_
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
 - `src/components/notifications-bell.test.tsx` — 11 tests
-- `src/hooks/__tests__/useSseSync.test.ts` — 5 tests _(new)_
-- `src/lib/__tests__/markdown.test.ts` — 15 tests _(new)_
+- `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
+- `src/lib/__tests__/markdown.test.ts` — 15 tests
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
 - `src/lib/collections/__tests__/utils.test.ts` — 7 tests
 - `src/lib/collapsed-media.spec.ts` — 15 tests
-- `src/lib/course-access.test.ts` — 12 tests (all skipped)
+- `src/lib/course-access.test.ts` — 12 tests (all skipped/todo)
 - `src/lib/utils.spec.ts` — 24 tests
 - `src/schema/__tests__/auth-schemas.test.ts` — 18 tests
 - `src/schema/__tests__/coupon.test.ts` — 12 tests
