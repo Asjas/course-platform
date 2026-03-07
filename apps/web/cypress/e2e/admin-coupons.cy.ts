@@ -4,6 +4,12 @@ describe("Admin Coupons Management", () => {
   let couponCode: string;
   let couponDescription: string;
 
+  function waitForCouponRow(code: string) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- small settle delay requested to account for query invalidation rendering
+    cy.wait(50);
+    cy.contains("tr", code).should("be.visible");
+  }
+
   beforeEach(() => {
     cy.loginAsAdmin();
     couponCode = faker.string.alphanumeric(8).toUpperCase();
@@ -42,7 +48,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
-    cy.contains(couponCode).should("be.visible");
+    waitForCouponRow(couponCode);
   });
 
   it("should display coupon details in table", () => {
@@ -58,6 +64,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     // Verify table displays coupon
+    waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("15 %").should("be.visible");
       cy.contains("0 / 50").should("be.visible");
@@ -76,8 +83,9 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     // Click copy button
+    waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.get('button[aria-label*="Copy"]').first().click();
+      cy.contains("button", `Copy coupon code ${couponCode}`).click();
     });
 
     cy.contains(/copied/i).should("be.visible");
@@ -94,8 +102,9 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     // Edit the coupon
+    waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.get('button[aria-label*="Edit"]').click();
+      cy.contains("button", `Edit coupon ${couponCode}`).click();
     });
 
     cy.contains("Edit Coupon").should("be.visible");
@@ -120,8 +129,9 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     // Delete the coupon
+    waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.get('button[aria-label*="Delete"]').click();
+      cy.contains("button", `Delete coupon ${couponCode}`).click();
     });
 
     // Confirm deletion
@@ -137,7 +147,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create New Coupon").click();
 
     // Try to submit without filling required fields
-    cy.contains("button", "Create Coupon").click();
+    cy.contains("button", "Create Coupon").should("be.disabled");
 
     // Form should show validation errors
     cy.contains("Create Coupon").should("be.visible");
@@ -154,6 +164,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
+    waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("Fixed Amount").should("be.visible");
       cy.contains("$ 50.00").should("be.visible");
