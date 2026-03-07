@@ -54,7 +54,9 @@ function AnnouncementsPage() {
   const [announcementToDelete, setAnnouncementToDelete] = useState<
     string | null
   >(null);
+  const [lastModifiedId, setLastModifiedId] = useState<string | null>(null);
   const selectedAnnouncementRef = useRef<HTMLButtonElement | null>(null);
+  const announcementRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const {
     data: announcementsData,
@@ -97,14 +99,16 @@ function AnnouncementsPage() {
           });
           toast.success("Announcement updated successfully");
           setStatusMessage("Announcement updated successfully");
+          setLastModifiedId(selectedAnnouncement.id);
           refetch();
           // Delay form clearing to ensure status message is visible
           setTimeout(() => {
             handleCancel();
           }, 500);
         } else {
+          const newId = ulid();
           await createMutation.mutateAsync({
-            id: ulid(),
+            id: newId,
             title: value.title,
             message: value.message,
             type: value.type,
@@ -112,6 +116,7 @@ function AnnouncementsPage() {
           });
           toast.success("Announcement created successfully");
           setStatusMessage("Announcement created successfully");
+          setLastModifiedId(newId);
           refetch();
           // Delay form clearing to ensure status message is visible
           setTimeout(() => {
@@ -151,6 +156,25 @@ function AnnouncementsPage() {
       });
     }
   }, [selectedAnnouncement?.id]);
+
+  // Scroll to the last modified/created announcement after refetch
+  useEffect(() => {
+    if (lastModifiedId && announcementRefs.current[lastModifiedId]) {
+      // Use requestAnimationFrame to ensure DOM is fully updated before scrolling
+      const rafId = requestAnimationFrame(() => {
+        announcementRefs.current[lastModifiedId]?.scrollIntoView({
+          behavior: "instant", // Use instant for E2E test reliability
+          block: "nearest",
+        });
+      });
+      // Clear the lastModifiedId after scrolling
+      const timer = setTimeout(() => setLastModifiedId(null), 1000);
+      return () => {
+        cancelAnimationFrame(rafId);
+        clearTimeout(timer);
+      };
+    }
+  }, [lastModifiedId, announcementsData]);
 
   function handleCancel() {
     setSelectedAnnouncement(null);
@@ -244,11 +268,12 @@ function AnnouncementsPage() {
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                     }`}
-                    ref={
-                      selectedAnnouncement?.id === announcement.id
-                        ? selectedAnnouncementRef
-                        : null
-                    }
+                    ref={(el) => {
+                      if (selectedAnnouncement?.id === announcement.id) {
+                        selectedAnnouncementRef.current = el;
+                      }
+                      announcementRefs.current[announcement.id] = el;
+                    }}
                     type="button"
                     key={announcement.id}
                     onClick={() => handleEdit(announcement)}
