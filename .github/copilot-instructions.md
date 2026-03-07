@@ -55,13 +55,15 @@ This generates `src/routeTree.gen.ts` which TypeScript needs for route type safe
 ### Validation (Run Before Every Commit)
 **ALWAYS** run these commands before committing code:
 ```bash
-pnpm format                                      # Auto-fix formatting issues
+pnpm format                                      # Auto-fix formatting issues (cached)
 pnpm lint                                        # ESLint (auto-fix when possible)
 pnpm typecheck                                   # TypeScript strict mode
 pnpm build                                       # Full Turborepo build
 ```
 
 These commands ensure code quality and catch errors early. Never commit without running all validation steps.
+
+**CRITICAL**: Always use `pnpm format` (which includes `--cache --cache-location .cache/prettier`). Never run `prettier --write` directly without cache flags - it bypasses the optimized configuration and is significantly slower.
 
 ### Database (Drizzle)
 ```bash

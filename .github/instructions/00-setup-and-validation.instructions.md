@@ -73,6 +73,8 @@ pnpm format
 
 This auto-fixes formatting issues. **Must pass with no errors**.
 
+**CRITICAL**: Always use `pnpm format` which includes `--cache --cache-location .cache/prettier` flags for fast performance. Never run `prettier --write` or `pnpm prettier --write` directly without cache flags - it's significantly slower and bypasses the optimized script configuration stored in `.cache/prettier`.
+
 ### 2. Lint code
 ```bash
 pnpm lint

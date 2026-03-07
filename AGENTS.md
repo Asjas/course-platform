@@ -94,7 +94,9 @@ pnpm --filter @apps/web dev         # Frontend only (port 4173)
 pnpm --filter @apps/server dev      # Backend only (port 5000)
 
 # Validation (REQUIRED before every commit)
-pnpm format                         # Auto-fix formatting (Prettier)
+pnpm format                         # Auto-fix formatting (Prettier with cache)
+#   CRITICAL: Always use `pnpm format` which includes --cache flags.
+#   Never use `prettier --write` directly without cache - it's much slower!
 pnpm lint                           # ESLint (auto-fix when possible)
 pnpm typecheck                      # TypeScript strict mode
 pnpm build                          # Full Turborepo build
