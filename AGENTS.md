@@ -129,6 +129,7 @@ Critical guardrails:
 - Do NOT run Cypress until both backend and frontend are confirmed reachable.
 - After creating or editing any E2E spec, run that spec immediately.
 - Never run the full E2E suite when validating a targeted change unless explicitly requested.
+- Prefer direct scoped execution from `apps/web`: `pnpm cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"` to avoid accidental broader suite runs.
 - E2E CRUD tests must clean up data through normal UI delete flows. Cleanup should double as delete-path coverage.
 - E2E authorization tests must cover ownership boundaries: user A can access user A data, user B cannot access user A data.
 - E2E authorization tests must cover role boundaries: admin can access admin routes/data, non-admin users cannot.
