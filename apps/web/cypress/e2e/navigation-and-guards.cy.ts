@@ -30,6 +30,21 @@ describe("Auth Guards - Unauthenticated Access", () => {
   });
 });
 
+describe("Auth Guards - Role-Based Access", () => {
+  beforeEach(() => {
+    cy.loginAsRegularUser();
+  });
+
+  it("should redirect non-admin users and show an access denied popup", () => {
+    cy.visit("/admin/stats");
+
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
+  });
+});
+
 describe("Public Page Access", () => {
   it("should allow unauthenticated access to the home page", () => {
     cy.visit("/");

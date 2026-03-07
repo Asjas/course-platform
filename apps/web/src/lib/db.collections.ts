@@ -20,6 +20,7 @@ import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ulid } from "ulid";
+import { getBackendErrorMessage } from "~/lib/api-error";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -59,7 +60,10 @@ export const SupportTicketsCollection = createCollection(
       } catch (error) {
         console.error("Error inserting support ticket: ", error);
         toast.error(
-          "An error occurred while creating the support ticket. Please try again.",
+          getBackendErrorMessage(
+            error,
+            "An error occurred while creating the support ticket. Please try again.",
+          ),
         );
         throw error;
       }
@@ -75,7 +79,10 @@ export const SupportTicketsCollection = createCollection(
       } catch (error) {
         console.error("Error deleting support ticket: ", error);
         toast.error(
-          "An error occurred while deleting the support ticket. Please try again.",
+          getBackendErrorMessage(
+            error,
+            "An error occurred while deleting the support ticket. Please try again.",
+          ),
         );
         throw error;
       }

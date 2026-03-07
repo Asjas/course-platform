@@ -17,6 +17,9 @@ export const Route = createFileRoute("/_authenticated/admin")({
     if (!auth.hasRole("admin")) {
       throw redirect({
         to: "/dashboard",
+        search: {
+          accessDenied: "admin",
+        },
       });
     }
 

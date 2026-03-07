@@ -1,13 +1,20 @@
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { toast } from "sonner";
+import * as z from "zod";
 import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
 import { CourseCard } from "~/components/course-card";
 import { EmptyState } from "~/components/empty-state";
+import { getBackendErrorMessage } from "~/lib/api-error";
 import { useAuth } from "~/lib/auth.context";
 import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  validateSearch: z.object({
+    accessDenied: z.enum(["admin"]).optional(),
+  }),
   component: AuthenticatedDashboardPage,
   loader: async () => {
     await CoursesCollection.preload();
@@ -17,6 +24,8 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 function AuthenticatedDashboardPage() {
   const { data: courses, isLoading } = useCourses();
   const { session } = useAuth();
+  const search = Route.useSearch();
+  const isAdmin = session?.user?.role === "admin";
 
   // Fetch progress for all courses
   const courseIds = courses?.map((course) => course.id) ?? [];
@@ -35,9 +44,37 @@ function AuthenticatedDashboardPage() {
   );
 
   // Fetch support ticket counts
-  const { data: ticketCounts } = useQuery(
-    trpc.supportTickets.getSupportTicketCountsByCourse.queryOptions(),
-  );
+  const ticketCountsQuery = useQuery({
+    ...trpc.supportTickets.getSupportTicketCountsByCourse.queryOptions(),
+    enabled: isAdmin,
+  });
+  const ticketCounts =
+    (ticketCountsQuery.data as Record<string, number> | undefined) ?? {};
+  const ticketCountError = ticketCountsQuery.error;
+
+  useEffect(() => {
+    if (search.accessDenied === "admin") {
+      toast.error("Access denied. Admin privileges are required.", {
+        id: "admin-access-denied",
+      });
+    }
+  }, [search.accessDenied]);
+
+  useEffect(() => {
+    if (!ticketCountError) {
+      return;
+    }
+
+    toast.error(
+      getBackendErrorMessage(
+        ticketCountError,
+        "Failed to load support ticket counts.",
+      ),
+      {
+        id: "ticket-count-error",
+      },
+    );
+  }, [ticketCountError]);
 
   if (isLoading) {
     return (
