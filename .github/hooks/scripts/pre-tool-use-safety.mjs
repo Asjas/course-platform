@@ -86,7 +86,29 @@ function isDestructiveCommand(command) {
 
 function isHardBlockedCommand(command) {
   const text = String(command || "").toLowerCase().trim();
-  return /(^|\s)(sudo\s+)?rm\s+-rf\s+\/(\s|$|;|&&|\|\|)/.test(text);
+
+  // Block rm with recursive+force flags targeting root /.
+  // Catches: rm -rf /, rm -r -f /, rm -fr /, rm -rf /*, sudo rm -rf /, etc.
+  // Allows: rm file.txt, rm -rf ./dir, rm -rf /home/user/dir, etc.
+  const rmMatch = text.match(
+    /(^|[;&|]\s*)(sudo\s+)?rm\s+(.*)/,
+  );
+  if (rmMatch) {
+    const rmArgs = rmMatch[3];
+    const hasRecursive =
+      /(?:^|\s)-[a-z]*r[a-z]*(?:\s|$)/.test(rmArgs) ||
+      /(?:^|\s)--recursive(?:\s|$)/.test(rmArgs);
+    const hasForce =
+      /(?:^|\s)-[a-z]*f[a-z]*(?:\s|$)/.test(rmArgs) ||
+      /(?:^|\s)--force(?:\s|$)/.test(rmArgs);
+    const targetsRoot = /(?:^|\s)\/(\s|$|;|&&|\|\||\*)/.test(rmArgs);
+
+    if (hasRecursive && hasForce && targetsRoot) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 function printDeny(reason) {
