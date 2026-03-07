@@ -7,19 +7,57 @@ import {
 } from "../platformAnnouncements.js";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-const { mockExecute } = vi.hoisted(() => ({
-  mockExecute: vi.fn(),
-}));
+const { mockExecute, mockFindMany, createQueryBuilder } = vi.hoisted(() => {
+  const mockExecute = vi.fn();
+  const mockFindMany = vi.fn();
+
+  // Create a chainable query builder mock
+  const createQueryBuilder = () => {
+    const builder = {
+      select: vi.fn(() => builder),
+      from: vi.fn(() => builder),
+      leftJoin: vi.fn(() => builder),
+      innerJoin: vi.fn(() => builder),
+      where: vi.fn(() => builder),
+      orderBy: vi.fn(() => builder),
+      prepare: vi.fn(() => ({
+        execute: mockExecute,
+      })),
+    };
+    return builder;
+  };
+
+  return { mockExecute, mockFindMany, createQueryBuilder };
+});
 
 vi.mock("~/db/index.js", () => ({
   db: {
+    ...createQueryBuilder(),
     query: {
       platformAnnouncement: {
-        findMany: vi.fn(),
-        findFirst: vi.fn(),
+        findMany: vi.fn(() => {
+          // Return a thenable object with a prepare method
+          const queryResult = {
+            then: (resolve: (value: unknown) => void) =>
+              mockFindMany().then(resolve),
+            prepare: () => ({
+              execute: mockExecute,
+            }),
+          };
+          return queryResult;
+        }),
+        findFirst: vi.fn().mockReturnValue({
+          prepare: () => ({
+            execute: mockExecute,
+          }),
+        }),
       },
       platformAnnouncementRead: {
-        findFirst: vi.fn(),
+        findFirst: vi.fn().mockReturnValue({
+          prepare: () => ({
+            execute: mockExecute,
+          }),
+        }),
       },
     },
   },
@@ -53,7 +91,9 @@ describe("getAllAnnouncements", () => {
 
     const result = await getAllAnnouncements();
 
-    expect(Array.isArray(result)).toBe(true);
+    expect(result).toHaveProperty("announcements");
+    expect(result).toHaveProperty("count");
+    expect(Array.isArray(result.announcements)).toBe(true);
   });
 });
 
@@ -74,7 +114,7 @@ describe("getAnnouncementById", () => {
 
 describe("getPublishedAnnouncements", () => {
   test("returns only published announcements", async () => {
-    mockExecute.mockResolvedValue([
+    mockFindMany.mockResolvedValue([
       {
         id: "ann:1",
         title: "Published",
