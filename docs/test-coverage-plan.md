@@ -1,21 +1,27 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Last updated 2026-03-07.
+> the course platform. Last updated 2026-03-08.
 >
-> **Latest run (2026-03-07):** Server 28.38% stmts / 28.42% lines (38 files, 436
-> tests) | Web 27.60% stmts / 26.00% lines (50 files, 477 tests)
+> **Latest run (2026-03-08):** Server 31.56% stmts / 31.57% lines (38 files, 436
+> tests) | Web 27.49% stmts / 25.89% lines (49 files, 471 tests)
+>
+> **Coverage Delta (vs 2026-03-07):**
+>
+> - Server: **+3.15% lines** (28.42% → 31.57%) ✅ IMPROVED
+> - Web: **-0.11% lines** (26.00% → 25.89%) ⚠️ Slight decrease (1 test file now
+>   skipped)
 
 ## Coverage Baseline
 
 ### Overall Summary
 
-| App        | Statements         | Branches          | Functions         | Lines              | Test Files |
-| ---------- | ------------------ | ----------------- | ----------------- | ------------------ | ---------- |
-| **Server** | 28.38% (886/3121)  | 23.10% (269/1164) | 28.18% (206/731)  | 28.42% (864/3040)  | 38         |
-| **Web**    | 27.60% (1451/5257) | 22.00% (815/3704) | 14.86% (188/1265) | 26.00% (1145/4403) | 50         |
+| App        | Statements         | Branches          | Functions         | Lines              | Test Files  |
+| ---------- | ------------------ | ----------------- | ----------------- | ------------------ | ----------- |
+| **Server** | 31.56% (985/3121)  | 36.85% (429/1164) | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
+| **Web**    | 27.49% (1453/5284) | 21.91% (815/3721) | 14.88% (189/1270) | 25.89% (1147/4430) | 49 (1 skip) |
 
-### Server (`apps/server`) — 28.42% Line Coverage
+### Server (`apps/server`) — 31.57% Line Coverage (+3.15%)
 
 #### Server Coverage Snapshot
 
