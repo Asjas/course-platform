@@ -1,3 +1,4 @@
+import codeCoverageTask from "@cypress/code-coverage/task";
 import { defineConfig } from "cypress";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -33,7 +34,9 @@ export default defineConfig({
       runMode: 2,
       openMode: 0,
     },
-    setupNodeEvents(on) {
+    setupNodeEvents(on, config) {
+      codeCoverageTask(on, config);
+
       on("task", {
         async setUserRole({ email, role }: { email: string; role: string }) {
           const client = new pg.Client({
@@ -51,6 +54,8 @@ export default defineConfig({
           }
         },
       });
+
+      return config;
     },
   },
 });

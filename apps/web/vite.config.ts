@@ -10,9 +10,12 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeHighlight from "rehype-highlight";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
-import { defineConfig } from "vite";
+import { type PluginOption, defineConfig } from "vite";
+import istanbul from "vite-plugin-istanbul";
 
 const host = process.env.TAURI_DEV_HOST || "localhost";
+
+const cypressCoverage = process.env.CYPRESS_COVERAGE === "true";
 
 export default defineConfig({
   plugins: [
@@ -26,6 +29,20 @@ export default defineConfig({
     }),
     devtools({ removeDevtoolsOnBuild: true }),
     tailwindcss(),
+    cypressCoverage &&
+      (istanbul({
+        include: "src/**/*.{ts,tsx}",
+        exclude: [
+          "node_modules",
+          "cypress",
+          "src/routeTree.gen.ts",
+          "src/test-setup.ts",
+          "src/**/*.test.{ts,tsx}",
+          "src/**/*.spec.{ts,tsx}",
+        ],
+        cypress: true,
+        requireEnv: true,
+      }) as PluginOption),
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [
