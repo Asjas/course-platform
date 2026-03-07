@@ -186,6 +186,8 @@ export default function myRoutes(fastify, opts) {
 - Run changed E2E specs immediately after creating/editing them
 - CRUD tests must include UI-based cleanup by deleting created entities through the normal product flow
 - Do NOT run bare `pnpm preview` from repo root for web E2E setup
+- Authorization coverage is mandatory: include owner-vs-non-owner tests (a user must not access another user's content)
+- Permission-failure UX is mandatory: assert blocked behavior and a visible permission/access popup message from backend errors
 
 Known failure mode (2026-03-07): Bare `pnpm preview` at repository root fails
 with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL` and blocks E2E progress. Always use

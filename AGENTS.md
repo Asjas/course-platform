@@ -130,6 +130,8 @@ Critical guardrails:
 - After creating or editing any E2E spec, run that spec immediately.
 - Never run the full E2E suite when validating a targeted change unless explicitly requested.
 - E2E CRUD tests must clean up data through normal UI delete flows. Cleanup should double as delete-path coverage.
+- E2E authorization tests must cover ownership boundaries: user A can access user A data, user B cannot access user A data.
+- For permission failures, assert both blocked behavior and a visible user-facing popup/toast with the backend access/permission error.
 
 Readiness checks before running E2E:
 
