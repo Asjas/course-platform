@@ -4,16 +4,16 @@
 > the course platform. Last updated 2026-03-07.
 >
 > **Latest run (2026-03-07):** Server 28.38% stmts / 28.42% lines (38 files, 436
-> tests) | Web 19.71% stmts / 18.75% lines (41 files, 450 tests)
+> tests) | Web 23.03% stmts / 21.74% lines (44 files, 459 tests)
 
 ## Coverage Baseline
 
 ### Overall Summary
 
-| App        | Statements        | Branches          | Functions        | Lines             | Test Files |
-| ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ---------- |
-| **Server** | 28.38% (886/3121) | 23.10% (269/1164) | 28.18% (206/731) | 28.42% (864/3040) | 38         |
-| **Web**    | 19.71% (976/4951) | 16.03% (556/3467) | 9.71% (128/1318) | 18.75% (801/4270) | 41         |
+| App        | Statements         | Branches          | Functions         | Lines             | Test Files |
+| ---------- | ------------------ | ----------------- | ----------------- | ----------------- | ---------- |
+| **Server** | 28.38% (886/3121)  | 23.10% (269/1164) | 28.18% (206/731)  | 28.42% (864/3040) | 38         |
+| **Web**    | 23.03% (1166/5061) | 19.25% (685/3558) | 11.93% (155/1299) | 21.74% (939/4319) | 44         |
 
 ### Server (`apps/server`) — 28.42% Line Coverage
 
@@ -196,7 +196,7 @@
 
 ---
 
-### Web (`apps/web`) — 18.75% Line Coverage
+### Web (`apps/web`) — 21.74% Line Coverage
 
 **214 total files: 155 untested, 40 partial, 19 fully covered**
 
@@ -597,9 +597,9 @@ These are the largest untested areas containing core business logic.
 
 | #   | Test to Create                                                       | Target               | Lines     | Status     |
 | --- | -------------------------------------------------------------------- | -------------------- | --------- | ---------- |
-| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`               | Sign in form         | 303 total | - [ ] Todo |
-| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`               | Sign up form         | —         | - [ ] Todo |
-| 43  | `src/components/forms/__tests__/profile-form.test.tsx`               | Profile form         | —         | - [ ] Todo |
+| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`               | Sign in form         | 303 total | - [x] Done |
+| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`               | Sign up form         | —         | - [x] Done |
+| 43  | `src/components/forms/__tests__/profile-form.test.tsx`               | Profile form         | —         | - [x] Done |
 | 44  | `src/components/forms/__tests__/create-course-form.test.tsx`         | Course creation form | —         | - [ ] Todo |
 | 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx` | Support ticket form  | —         | - [ ] Todo |
 | 46  | `src/components/forms/__tests__/change-password-form.test.tsx`       | Change password form | —         | - [ ] Todo |
@@ -651,7 +651,8 @@ Tests that would cover the most untested lines with the least effort:
    **Done** (17 tests)
 3. ~~**`src/routers/courses/`** — 267 untested lines across queries/mutations.~~
    **Done** (16 tests)
-4. **Forms components** — 303 untested lines across 13 form files.
+4. ~~**Forms components** — 303 untested lines across 13 form files.~~ **In
+   progress** (sign-in/sign-up/profile covered; remaining form files pending).
 5. ~~**`src/routers/reviews/`** — 174 untested lines.~~ **Done** (11 tests)
 6. ~~**`src/routers/directMessages/`** — 171 untested lines.~~ **Done** (5
    tests)
@@ -731,7 +732,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (41 test files, 450 tests + 12 todo)
+### Web (44 test files, 459 tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
@@ -758,6 +759,9 @@ Reports are generated in:
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
 - `src/components/notifications-bell.test.tsx` — 11 tests
+- `src/components/forms/__tests__/sign-in-form.test.tsx` — 3 tests _(new)_
+- `src/components/forms/__tests__/sign-up-form.test.tsx` — 3 tests _(new)_
+- `src/components/forms/__tests__/profile-form.test.tsx` — 3 tests _(new)_
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
@@ -808,7 +812,7 @@ Compared to the previous baseline in this document:
 | App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
 | ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
 | **Server** | +8.90 pp   | +6.44 pp | +5.48 pp  | +9.05 pp | +6         | +59   |
-| **Web**    | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
+| **Web**    | +3.32 pp   | +3.22 pp | +2.22 pp  | +2.99 pp | +3         | +9    |
 
 ## Coverage Update Rule
 
