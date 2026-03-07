@@ -96,6 +96,11 @@ function AnnouncementsPage() {
           });
           toast.success("Announcement updated successfully");
           setStatusMessage("Announcement updated successfully");
+          refetch();
+          // Delay form clearing to ensure status message is visible
+          setTimeout(() => {
+            handleCancel();
+          }, 500);
         } else {
           await createMutation.mutateAsync({
             id: ulid(),
@@ -106,9 +111,12 @@ function AnnouncementsPage() {
           });
           toast.success("Announcement created successfully");
           setStatusMessage("Announcement created successfully");
+          refetch();
+          // Delay form clearing to ensure status message is visible
+          setTimeout(() => {
+            handleCancel();
+          }, 500);
         }
-        refetch();
-        handleCancel();
       } catch {
         const message = selectedAnnouncement
           ? "Failed to update announcement"
