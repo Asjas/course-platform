@@ -1,5 +1,5 @@
 ---
-applyTo: "apps/server/src/routers/**/*.ts, apps/server/src/db/queries/**/*.ts, apps/web/src/lib/collections/**/*.ts"
+applyTo: "apps/server/src/routers/**/*.ts, apps/server/src/db/queries/**/*.ts, apps/web/src/lib/collections/**/*.ts, apps/web/src/components/**/*.tsx, apps/web/src/routes/**/*.tsx"
 description: "tRPC endpoint patterns, type exports, and frontend collection integration"
 ---
 

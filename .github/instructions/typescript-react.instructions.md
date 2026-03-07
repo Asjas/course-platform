@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.ts, **/*.tsx, **/*.css"
+applyTo: "apps/web/**/*.ts, apps/web/**/*.tsx, apps/web/**/*.css, packages/**/*.ts, packages/**/*.tsx, packages/**/*.css, marketing/**/*.ts, marketing/**/*.tsx, marketing/**/*.css"
 description: "Guidelines for building React applications with TanStack Router and TypeScript"
 ---
 
@@ -89,6 +89,8 @@ Instructions for building high-quality React.js applications with modern pattern
 ## Data Fetching Patterns
 
 ### Collection-First (Offline-First) Pattern
+
+**Architectural Exception:** This project uses an offline-first architecture for web and Tauri native apps. Standard TanStack Router patterns (returning data from loaders for component consumption via `useLoaderData()`) are intentionally replaced with a preload-plus-collection-hook pattern to enable offline sync and local-first data access. Loader-returned data is still preferred for non-synced, request-scoped data (auth checks, route metadata).
 
 All component-level data operations must use collection hooks/utilities from
 `~/lib/collections`.
