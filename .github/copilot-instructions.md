@@ -187,6 +187,7 @@ export default function myRoutes(fastify, opts) {
 - CRUD tests must include UI-based cleanup by deleting created entities through the normal product flow
 - Do NOT run bare `pnpm preview` from repo root for web E2E setup
 - Authorization coverage is mandatory: include owner-vs-non-owner tests (a user must not access another user's content)
+- Authorization coverage is mandatory: include admin-vs-non-admin tests (admin can access admin routes/data, regular users cannot)
 - Permission-failure UX is mandatory: assert blocked behavior and a visible permission/access popup message from backend errors
 
 Known failure mode (2026-03-07): Bare `pnpm preview` at repository root fails

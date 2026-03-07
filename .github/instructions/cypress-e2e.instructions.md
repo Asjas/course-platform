@@ -97,6 +97,7 @@ For authorization scenarios, assert both behaviors:
 1. Route/data access is blocked (redirect, forbidden state, or missing data)
 2. A user-facing popup/toast shows the backend permission/access error message
 3. Ownership boundaries are enforced: user A can access user A content, and user B is blocked from user A content
+4. Role boundaries are enforced: admins can access admin content, non-admin users cannot access admin content
 
 ### Known Failure Modes (Do Not Repeat)
 
