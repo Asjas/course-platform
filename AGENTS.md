@@ -125,6 +125,7 @@ causes wasted E2E cycles. Always use the filtered preview command above.
 
 Critical guardrails:
 
+- **ALWAYS scan implementation BEFORE writing tests**. Read the actual page component, sheet components, and form fields to understand exact button text, field names, form structure, and UI behavior. NEVER write tests based on assumptions or invented field names. This is mandatory - no exceptions.
 - Do NOT run bare `pnpm preview` from repository root. Use `pnpm --filter @apps/web preview`.
 - Do NOT run Cypress until both backend and frontend are confirmed reachable.
 - When you start backend or frontend services for testing, stop them when finished. Prefer sending `Ctrl+C` and confirm the terminal exits; if that is not available or the process remains alive, kill the listeners on the ports in use so `5000` and `4173` can be reused.
