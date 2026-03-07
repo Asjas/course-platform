@@ -9,6 +9,7 @@
     "dev": "tsx src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest watch",
+    "test:coverage": "vitest run --coverage",
     "drizzle:migrate": "drizzle-kit migrate --config ./src/drizzle.config.ts",
     "drizzle:generate": "drizzle-kit generate --config ./src/drizzle.config.ts",
     "drizzle:migrate:prod": "drizzle-kit migrate --config ./dist/drizzle.config.js",

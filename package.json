@@ -8,6 +8,7 @@
     "tauri:build": "turbo run tauri:build --filter \"./apps/web\"",
     "build": "turbo build --filter \"./apps/**\"",
     "test": "turbo test --filter \"./apps/**\"",
+    "test:coverage": "turbo test:coverage --filter \"./apps/**\"",
     "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
     "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
