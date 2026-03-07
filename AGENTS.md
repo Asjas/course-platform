@@ -127,6 +127,7 @@ Critical guardrails:
 
 - Do NOT run bare `pnpm preview` from repository root. Use `pnpm --filter @apps/web preview`.
 - Do NOT run Cypress until both backend and frontend are confirmed reachable.
+- When you start backend or frontend services for testing, stop them when finished. Prefer sending `Ctrl+C` and confirm the terminal exits; if that is not available or the process remains alive, kill the listeners on the ports in use so `5000` and `4173` can be reused.
 - After creating or editing any E2E spec, run that spec immediately.
 - Never run the full E2E suite when validating a targeted change unless explicitly requested.
 - Prefer direct scoped execution from `apps/web`: `pnpm cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"` to avoid accidental broader suite runs.
@@ -134,6 +135,9 @@ Critical guardrails:
 - E2E authorization tests must cover ownership boundaries: user A can access user A data, user B cannot access user A data.
 - E2E authorization tests must cover role boundaries: admin can access admin routes/data, non-admin users cannot.
 - For permission failures, assert both blocked behavior and a visible user-facing popup/toast with the backend access/permission error.
+- Always inspect the failing test output and identify the exact failing condition before editing code.
+- If a failing assertion may represent important or expected behavior, fix the underlying code rather than weakening the test.
+- If it is ambiguous whether the failure should be fixed in the spec or the product code, stop and ask the user before making that change. This is mandatory for security-sensitive behavior so tests do not accidentally remove protections.
 
 Readiness checks before running E2E:
 
