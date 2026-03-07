@@ -1,18 +1,18 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Generated 2026-03-07.
+> the course platform. Last updated 2026-03-07.
 
 ## Coverage Baseline
 
 ### Overall Summary
 
-| App        | Statements        | Branches         | Functions       | Lines             | Test Files |
-| ---------- | ----------------- | ---------------- | --------------- | ----------------- | ---------- |
-| **Server** | 4.67% (146/3121)  | 3% (35/1164)     | 8.2% (60/731)   | 4.27% (130/3040)  | 7          |
-| **Web**    | 11.04% (503/4555) | 8.49% (269/3166) | 5.75% (76/1320) | 10.32% (419/4059) | 20         |
+| App        | Statements        | Branches          | Functions        | Lines             | Test Files |
+| ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ---------- |
+| **Server** | 14.03% (438/3121) | 11.59% (135/1164) | 15.59% (114/731) | 13.84% (421/3040) | 17         |
+| **Web**    | 15.55% (730/4693) | 12.25% (401/3273) | 8.03% (106/1319) | 14.61% (603/4127) | 31         |
 
-### Server (`apps/server`) — 4.27% Line Coverage
+### Server (`apps/server`) — 13.84% Line Coverage
 
 **137 total files: 129 untested, 3 partial, 5 fully covered**
 
@@ -201,19 +201,19 @@
 
 ---
 
-### Web (`apps/web`) — 10.96% Line Coverage
+### Web (`apps/web`) — 14.61% Line Coverage
 
-**214 total files: 174 untested, 21 partial, 19 fully covered**
+**214 total files: 164 untested, 31 partial, 19 fully covered**
 
 #### Web Coverage by Area
 
 | Area            | Files Tested | Line Coverage | Lines   |
 | --------------- | ------------ | ------------- | ------- |
-| Components      | 5/47         | 4.1%          | 76/1870 |
+| Components      | 14/47        | partial       | —       |
 | Forms           | 0/13         | 0%            | 0/303   |
 | Hooks           | 1/1          | partial       | —       |
 | Lib/Collections | 1/36         | 1.8%          | 5/276   |
-| Lib             | 6/14         | 15.1%         | 73/482  |
+| Lib             | 7/14         | partial       | —       |
 | Components/UI   | 1/15         | 0.9%          | 1/116   |
 | Markdown Editor | 9/14         | 54.9%         | 237/432 |
 | Routes (all)    | 0/52         | 0%            | 0/166   |
@@ -262,29 +262,36 @@
 | `src/lib/rehype-media-embed.ts`                                    | 23%   | 11%      |
 | `src/components/SyncStatusIndicator.tsx`                           | 13%   | 10%      |
 | `src/components/ui/button.tsx`                                     | 13%   | 0%       |
-| `src/components/course-card.tsx`                                   | 11%   | 3%       |
 | `src/components/markdown-editor/hooks/use-file-upload.ts`          | 6%    | 0%       |
 | `src/components/emoji-reaction-picker.tsx`                         | 4%    | 0%       |
+| `src/components/chat-date-divider.tsx`                             | new   | new      |
+| `src/components/code-block-copy.tsx`                               | new   | new      |
+| `src/components/confirm-dialog.tsx`                                | new   | new      |
+| `src/components/course-card.tsx`                                   | new   | new      |
+| `src/components/empty-state.tsx`                                   | new   | new      |
+| `src/components/error-boundary.tsx`                                | new   | new      |
+| `src/components/field-info.tsx`                                    | new   | new      |
+| `src/components/footer.tsx`                                        | new   | new      |
+| `src/components/loading.tsx`                                       | new   | new      |
+| `src/components/not-found.tsx`                                     | new   | new      |
+| `src/lib/markdown.ts`                                              | new   | new      |
 
 #### Web — Untested Files (0% Coverage)
 
 <details>
-<summary>174 files with zero coverage (click to expand)</summary>
+<summary>164 files with zero coverage (click to expand)</summary>
 
 **App Bootstrap:**
 
 - `src/main.tsx`
 - `src/reportWebVitals.ts`
 
-**Components (45 files):**
+**Components (35 files):**
 
 - `src/components/auth-links.tsx`
 - `src/components/blocker.tsx`
-- `src/components/chat-date-divider.tsx`
 - `src/components/chat-message-editor.tsx`
 - `src/components/chat-message.tsx`
-- `src/components/code-block-copy.tsx`
-- `src/components/confirm-dialog.tsx`
 - `src/components/course-editor-sidebar.tsx`
 - `src/components/create-coupon-sheet.tsx`
 - `src/components/create-course-sheet.tsx`
@@ -296,18 +303,12 @@
 - `src/components/edit-course-sheet.tsx`
 - `src/components/edit-message-sheet.tsx`
 - `src/components/edit-user-sheet.tsx`
-- `src/components/empty-state.tsx`
-- `src/components/error-boundary.tsx`
-- `src/components/field-info.tsx`
 - `src/components/file-attachment.tsx`
-- `src/components/footer.tsx`
 - `src/components/giphy-picker.tsx`
 - `src/components/header.tsx`
 - `src/components/instructor-card.tsx`
-- `src/components/loading.tsx`
 - `src/components/markdown-content.tsx`
 - `src/components/mention-picker.tsx`
-- `src/components/not-found.tsx`
 - `src/components/pricing-section.tsx`
 - `src/components/refund-purchase-modal.tsx`
 - `src/components/report-message-dialog.tsx`
@@ -372,14 +373,13 @@
 
 _(All hooks now have tests)_
 
-**Lib (8 untested files):**
+**Lib (7 untested files):**
 
 - `src/lib/auth.client.ts`
 - `src/lib/auth.context.ts`
 - `src/lib/auth.provider.tsx`
 - `src/lib/db.collections.ts`
 - `src/lib/form.context.tsx`
-- `src/lib/markdown.ts`
 - `src/lib/theme.context.ts`
 - `src/lib/theme.provider.tsx`
 
@@ -492,7 +492,7 @@ _(All hooks now have tests)_
 
 ---
 
-### Cypress E2E Tests — 17 Spec Files
+### Cypress E2E Tests — 20 Spec Files
 
 #### Features Covered by E2E
 
@@ -514,6 +514,11 @@ _(All hooks now have tests)_
 - `admin-course-editor.cy.ts` — Admin course editor
 - `admin-course-creation-flow.cy.ts` — Admin course creation flow
 - `admin-announcements.cy.ts` — Admin announcements management
+- `blog.cy.ts` — Blog index page, post links, page structure _(new)_
+- `theme-toggle.cy.ts` — Theme toggle visibility, light/dark switching,
+  persistence _(new)_
+- `notifications.cy.ts` — Notification bell visibility, panel interaction
+  _(new)_
 
 #### Features NOT Covered by E2E
 
@@ -521,12 +526,9 @@ _(All hooks now have tests)_
 - Purchases and payments flow
 - Course reviews
 - Coupon management (admin)
-- Notifications
 - Direct messages
 - User search and mentions
-- Blog pages
 - Sync status page
-- Theme toggling (dark/light mode)
 
 ---
 
@@ -578,16 +580,16 @@ These are the largest untested areas containing core business logic.
 | --- | --------------------------------------------------- | ----------------- | ----- | ---------- |
 | 29  | `src/hooks/__tests__/useSseSync.test.ts`            | SSE sync hook     | 327   | - [x] Done |
 | 30  | `src/components/__tests__/header.test.tsx`          | Header component  | —     | - [ ] Todo |
-| 31  | `src/components/__tests__/footer.test.tsx`          | Footer component  | —     | - [ ] Todo |
-| 32  | `src/components/__tests__/error-boundary.test.tsx`  | Error boundary    | —     | - [ ] Todo |
-| 33  | `src/components/__tests__/confirm-dialog.test.tsx`  | Confirm dialog    | —     | - [ ] Todo |
+| 31  | `src/components/__tests__/footer.test.tsx`          | Footer component  | —     | - [x] Done |
+| 32  | `src/components/__tests__/error-boundary.test.tsx`  | Error boundary    | —     | - [x] Done |
+| 33  | `src/components/__tests__/confirm-dialog.test.tsx`  | Confirm dialog    | —     | - [x] Done |
 | 34  | `src/components/__tests__/video-player.test.tsx`    | Video player      | —     | - [ ] Todo |
-| 35  | `src/components/__tests__/course-card.test.tsx`     | Course card (11%) | —     | - [ ] Todo |
+| 35  | `src/components/__tests__/course-card.test.tsx`     | Course card (11%) | —     | - [x] Done |
 | 36  | `src/components/__tests__/theme-toggle.test.tsx`    | Theme toggle      | —     | - [ ] Todo |
-| 37  | `src/components/__tests__/loading.test.tsx`         | Loading component | —     | - [ ] Todo |
-| 38  | `src/components/__tests__/empty-state.test.tsx`     | Empty state       | —     | - [ ] Todo |
+| 37  | `src/components/__tests__/loading.test.tsx`         | Loading component | —     | - [x] Done |
+| 38  | `src/components/__tests__/empty-state.test.tsx`     | Empty state       | —     | - [x] Done |
 | 39  | `src/components/__tests__/chat-message.test.tsx`    | Chat message      | —     | - [ ] Todo |
-| 40  | `src/components/__tests__/code-block-copy.test.tsx` | Code block copy   | —     | - [ ] Todo |
+| 40  | `src/components/__tests__/code-block-copy.test.tsx` | Code block copy   | —     | - [x] Done |
 
 ### Phase 4: Web Forms and UI Components
 
@@ -601,7 +603,7 @@ These are the largest untested areas containing core business logic.
 | 46  | `src/components/forms/__tests__/change-password-form.test.tsx`       | Change password form | —         | - [ ] Todo |
 | 47  | `src/components/forms/__tests__/change-email-form.test.tsx`          | Change email form    | —         | - [ ] Todo |
 | 48  | `src/lib/__tests__/auth.client.test.ts`                              | Auth client          | —         | - [ ] Todo |
-| 49  | `src/lib/__tests__/markdown.test.ts`                                 | Markdown utils       | —         | - [ ] Todo |
+| 49  | `src/lib/__tests__/markdown.test.ts`                                 | Markdown utils       | —         | - [x] Done |
 
 ### Phase 5: Missing E2E Tests
 
@@ -610,11 +612,11 @@ These are the largest untested areas containing core business logic.
 | 50  | `cypress/e2e/course-enrollment.cy.ts` | Course enrollment and lesson viewing | - [ ] Todo |
 | 51  | `cypress/e2e/purchases.cy.ts`         | Purchases flow                       | - [ ] Todo |
 | 52  | `cypress/e2e/reviews.cy.ts`           | Course reviews                       | - [ ] Todo |
-| 53  | `cypress/e2e/notifications.cy.ts`     | Notifications                        | - [ ] Todo |
+| 53  | `cypress/e2e/notifications.cy.ts`     | Notifications                        | - [x] Done |
 | 54  | `cypress/e2e/coupons.cy.ts`           | Coupon management                    | - [ ] Todo |
-| 55  | `cypress/e2e/blog.cy.ts`              | Blog pages                           | - [ ] Todo |
+| 55  | `cypress/e2e/blog.cy.ts`              | Blog pages                           | - [x] Done |
 | 56  | `cypress/e2e/direct-messages.cy.ts`   | Direct messages                      | - [ ] Todo |
-| 57  | `cypress/e2e/theme-toggle.cy.ts`      | Theme toggling                       | - [ ] Todo |
+| 57  | `cypress/e2e/theme-toggle.cy.ts`      | Theme toggling                       | - [x] Done |
 
 ### Phase 6: Improve Partial Coverage
 
@@ -630,7 +632,7 @@ These are the largest untested areas containing core business logic.
 | 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [ ] Todo |
 | 66  | `src/components/emoji-reaction-picker.tsx`                | 4%            | 0%               | - [ ] Todo |
 | 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [ ] Todo |
-| 68  | `src/components/course-card.tsx`                          | 11%           | 3%               | - [ ] Todo |
+| 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done |
 | 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [ ] Todo |
 | 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [ ] Todo |
 | 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [ ] Todo |
@@ -706,15 +708,26 @@ Reports are generated in:
 - `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests _(new)_
 
-### Web (21 test files, 298 tests)
+### Web (32 test files, 385 tests)
 
+- `src/components/__tests__/chat-date-divider.test.tsx` — 6 tests _(new)_
+- `src/components/__tests__/code-block-copy.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/confirm-dialog.test.tsx` — 7 tests _(new)_
+- `src/components/__tests__/course-card.test.tsx` — 23 tests _(new)_
+- `src/components/__tests__/empty-state.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/error-boundary.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/field-info.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/footer.test.tsx` — 10 tests _(new)_
 - `src/components/__tests__/format-duration.test.ts` — 7 tests
+- `src/components/__tests__/loading.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/message-reactions-helpers.test.ts` — 10 tests
+- `src/components/__tests__/not-found.test.tsx` — 2 tests _(new)_
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
 - `src/components/notifications-bell.test.tsx` — 11 tests
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests _(new)_
+- `src/lib/__tests__/markdown.test.ts` — 15 tests _(new)_
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
 - `src/lib/collections/__tests__/utils.test.ts` — 7 tests
 - `src/lib/collapsed-media.spec.ts` — 15 tests
@@ -731,7 +744,7 @@ Reports are generated in:
 - `src/schema/__tests__/sign-up.test.ts` — 8 tests
 - `src/schema/__tests__/support-ticket.test.ts` — 16 tests
 
-### Cypress E2E (17 spec files)
+### Cypress E2E (20 spec files)
 
 - `account.cy.ts`
 - `admin-announcements.cy.ts`
@@ -741,15 +754,18 @@ Reports are generated in:
 - `admin-navigation.cy.ts`
 - `admin-stats.cy.ts`
 - `auth-forms.cy.ts`
+- `blog.cy.ts` _(new)_
 - `chat-support-tickets.cy.ts`
 - `cookie-policy.cy.ts`
 - `dashboard.cy.ts`
 - `data-export.cy.ts`
 - `downloads.cy.ts`
 - `navigation-and-guards.cy.ts`
+- `notifications.cy.ts` _(new)_
 - `profile.cy.ts`
 - `reset-password.cy.ts`
 - `spec.cy.ts`
+- `theme-toggle.cy.ts` _(new)_
 
 ---
 
