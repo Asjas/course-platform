@@ -1,3 +1,3 @@
-export { EditorToolbar } from "./editor-toolbar.js";
-export { EditorTabs } from "./editor-tabs.js";
-export { FileUploadFooter } from "./file-upload-footer.js";
+export { EditorToolbar } from "./editor-toolbar";
+export { EditorTabs } from "./editor-tabs";
+export { FileUploadFooter } from "./file-upload-footer";

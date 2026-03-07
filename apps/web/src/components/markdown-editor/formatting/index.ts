@@ -7,11 +7,11 @@ export {
   insertLink,
   insertBulletList,
   insertNumberedList,
-} from "./handlers.js";
+} from "./handlers";
 
 export {
   isAtStartOfLine,
   getPreviousLine,
   findMarkersAroundCursor,
   findSingleCharMarker,
-} from "./text-utils.js";
+} from "./text-utils";
