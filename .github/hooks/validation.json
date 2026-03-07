@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "command": "pnpm format && pnpm lint && pnpm typecheck && pnpm build",
+        "timeout": 1800,
+        "type": "command"
+      }
+    ]
+  }
+}
