@@ -14,6 +14,7 @@
 // ***********************************************************
 // Import commands.js using ES2015 syntax:
 import "./commands";
+import "@cypress/code-coverage/support";
 
 // Clear cookies and local storage before each test to ensure clean state
 beforeEach(() => {
