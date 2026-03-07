@@ -238,3 +238,5 @@ Reference documentation for detailed best practices is in `.github/docs/`:
 - `package-catalog.md` - Complete dependency inventory, versions, homepage
   links, node_modules paths, and usage patterns
 - `performance-optimization-reference.md` - Comprehensive performance guide
+- `ai-instructions-consistency.md` - Cross-file source of truth and exception
+  map

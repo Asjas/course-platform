@@ -68,7 +68,7 @@ These commands ensure code quality and catch errors early. Never commit without 
 ### Database (Drizzle)
 ```bash
 # Generate migration from schema (use this command in apps/server folder)
-cd apps/server && pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
+cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
 
 pnpm --filter @apps/server drizzle:migrate       # Apply migrations
 pnpm --filter @apps/server drizzle:studio        # Open Drizzle Studio GUI
@@ -212,5 +212,6 @@ Detailed reference documentation lives in `.github/docs/`:
 - `library-patterns-reference.md` - Zod 4, Vitest 4, Drizzle, and testing gotchas
 - `package-catalog.md` - Complete dependency inventory, versions, homepage links, node_modules paths, and usage patterns
 - `performance-optimization-reference.md` - Comprehensive performance guide
+- `ai-instructions-consistency.md` - Cross-file source of truth and exception map
 
 For cross-agent guidance (Claude Code, Cursor, Codex, Gemini CLI), see the `AGENTS.md` file in the repository root.

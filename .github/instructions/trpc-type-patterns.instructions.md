@@ -5,7 +5,7 @@ description: "tRPC endpoint patterns, type exports, and frontend collection inte
 
 # tRPC Type Patterns and Frontend Integration
 
-This guide establishes consistent patterns for tRPC endpoints, type exports, and frontend TanStack Query collections.
+This guide establishes consistent patterns for tRPC endpoints, type exports, and frontend TanStack React-DB collections.
 
 ## ⚠️ CRITICAL: Offline-First Data Fetching
 
@@ -78,6 +78,7 @@ tRPC can ONLY be used in these specific contexts:
 2. **Inside route loaders** - for preloading collections via `Collection.preload()`
 3. **Inside SSE sync hooks** - for `getUpdatesSince` queries
 4. **Server-side only code** - not in React components
+5. **Temporary transitional modules only** - exceptions documented in `docs/offline-first-architecture.md`
 
 ---
 
@@ -239,24 +240,45 @@ export const itemsRouter = router({
 
 ---
 
-## 4. Frontend db.collections.ts Integration
+## 4. Frontend Collections Integration
 
-The frontend uses TanStack Query with SignalDB for reactive local collections.
+The frontend uses TanStack React-DB collections for reactive local data.
 
 ### Location
-`apps/web/src/lib/db.collections.ts`
+`apps/web/src/lib/collections/<entity>/<entity>.collection.ts`
 
 ### Pattern
 ```typescript
-import { reactiveCollection } from "./db.reactive";
+import { createCollection, localOnlyCollectionOptions } from "@tanstack/react-db";
+import { electricCollectionOptions } from "@tanstack/electric-db-collection";
 // Import types from server
 import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platformAnnouncements.js";
+import { idbCollection } from "~/lib/idb";
+import { trpcClient } from "~/lib/trpc.client";
 
 // Derive singular type from array type
 export type Announcement = PublishedAnnouncements[number];
 
 // Create reactive collection
-export const AnnouncementsCollection = reactiveCollection<Announcement>("id");
+export const AnnouncementsCollection = createCollection(
+  electricCollectionOptions<Announcement>({
+    id: "announcements",
+    shapeOptions: {
+      url: `${import.meta.env.VITE_SERVER_URL}/v1/shape`,
+      params: { table: "platform_announcements" },
+    },
+    getKey: (item) => item.id,
+    schema: idbCollection<Announcement>("announcements"),
+    startSync: true,
+    sync: {
+      sync: async () => {
+        const data = await trpcClient.platformAnnouncements.getPublished.query();
+        return { data };
+      },
+    },
+  }),
+  localOnlyCollectionOptions({ getKey: (item) => item.id }),
+);
 ```
 
 ### Guidelines
@@ -273,11 +295,11 @@ Components should use collections without manual type casting.
 
 ### Pattern
 ```tsx
-import { ReviewsCollection } from "~/lib/db.collections";
+import { useReviews } from "~/lib/collections";
 
 function ReviewsList() {
   // Collection items are properly typed from server
-  const reviews = ReviewsCollection.find().fetch();
+  const { data: reviews } = useReviews();
 
   return (
     <ul>
@@ -335,7 +357,7 @@ export type AllReviews = Awaited<ReturnType<typeof getAllReviews>>;
 import { getAllReviews, type AllReviews } from "./queries.js";
 
 export const reviewsRouter = router({
-  getAllReviews: publicProcedure
+  getAll: publicProcedure
     .use(isAdmin)
     .query(async ({ ctx }): Promise<AllReviews> => {
       return getAllReviews();
@@ -345,20 +367,20 @@ export const reviewsRouter = router({
 
 ### Step 3: Collection (Frontend)
 ```typescript
-// apps/web/src/lib/db.collections.ts
+// apps/web/src/lib/collections/reviews/reviews.collection.ts
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries.js";
 
 export type Review = AllReviews[number];
-export const ReviewsCollection = reactiveCollection<Review>("id");
+export const ReviewsCollection = createCollection(/* ... */);
 ```
 
 ### Step 4: Component (Frontend)
 ```tsx
 // apps/web/src/routes/_authenticated/admin/reviews.tsx
-import { ReviewsCollection } from "~/lib/db.collections";
+import { useReviews } from "~/lib/collections";
 
 function AdminReviews() {
-  const reviews = ReviewsCollection.find().fetch();
+  const { data: reviews } = useReviews();
   // reviews is properly typed as Review[]
 }
 ```
@@ -373,11 +395,11 @@ When creating a new tRPC endpoint:
 - [ ] Export type using `Awaited<ReturnType<typeof functionName>>`
 - [ ] Import both function and type in router file
 - [ ] Add explicit `Promise<TypeName>` return type to endpoint
-- [ ] Add collection type import to `db.collections.ts` (if needed on frontend)
+- [ ] Add/update collection type import in `apps/web/src/lib/collections/` (if needed on frontend)
 - [ ] Derive singular type from array type using `[number]`
 - [ ] Create reactive collection with primary key
 - [ ] Use collection in components without type casting
-- [ ] **Preload collection in route loader** (see Section 7)
+- [ ] **Preload collection in route loader** (see Section 8)
 - [ ] Run `pnpm typecheck` to verify type flow
 
 ---
@@ -392,7 +414,7 @@ For collections that don't require route parameters:
 
 ```typescript
 // apps/web/src/routes/_authenticated/admin/reviews.tsx
-import { ReviewsCollection, useReviews } from "~/lib/db.collections";
+import { ReviewsCollection, useReviews } from "~/lib/collections";
 
 export const Route = createFileRoute("/_authenticated/admin/reviews")({
   loader: async () => {
@@ -431,7 +453,7 @@ For collections created dynamically (e.g., per channel/conversation), use trpcCl
 
 ```typescript
 // apps/web/src/routes/_authenticated/chat.$channelId.tsx
-import { createChannelMessagesCollection } from "~/lib/db.collections";
+import { createChannelMessagesCollection } from "~/lib/collections";
 import { trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/$channelId")({
@@ -475,7 +497,7 @@ function AdminAuditPage() {
 // ❌ BAD: Using trpcClient directly instead of Collection.preload()
 export const Route = createFileRoute("/_authenticated/admin/reviews")({
   loader: async () => {
-    await trpcClient.reviews.getAllReviews.query();
+    await trpcClient.reviews.getAll.query();
   },
 });
 
@@ -743,8 +765,8 @@ The sync system handles offline reconnection automatically:
 // Timestamps stored in localStorage
 const SYNC_STORAGE_KEY_PREFIX = "sync:lastTimestamp:";
 
-// syncUtils available from db.collections.ts
-import { syncUtils } from "~/lib/db.collections";
+// syncUtils is exported from collections utilities
+import { syncUtils } from "~/lib/collections";
 
 // Get last sync time
 const lastSync = syncUtils.getLastSyncTimestamp("support-tickets");

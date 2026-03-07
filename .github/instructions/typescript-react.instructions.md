@@ -21,11 +21,11 @@ Instructions for building high-quality React.js applications with modern pattern
 - Use functional components exclusively. Avoid class-based components.
 - Frontend stack:
   - TanStack Router for routing and navigation with file-based routing.
-  - TanStack Query for data fetching and server state management.
+  - TanStack Query as an internal dependency for collection sync/caching layers.
   - TanStack Form for form building and validation.
   - Better Auth client for authentication (login/logout flows).
   - Zod 4 for schema validation.
-  - tRPC client for type-safe API calls.
+  - tRPC client for collection internals and non-component service code.
 - UI Libraries:
   - Radix UI primitives via `@packages/shared-ui`.
   - React Aria Components for accessible interactive components.
@@ -58,12 +58,12 @@ Instructions for building high-quality React.js applications with modern pattern
 - Define components using ES5 function declarations (e.g., `function MyComponent() {}`).
 - Use `export default function` for page/route components.
 - Use React hooks appropriately (`useState`, `useEffect`, etc.).
-- Use TanStack Query for server state (`useQuery`, `useMutation`).
+- Use collection hooks from `~/lib/collections` for server state in components.
 
 ## Code Style
 
 - Always validate external data with Zod schemas.
-- **Zod 4 trim + validation**: Use `z.string().trim().check(z.email())` pattern — `.trim()` is not available on standalone types like `z.email()`. See [library-patterns-reference.md](../docs/library-patterns-reference.md#zod-4) for details.
+- **Zod 4 trim + validation**: Use `z.string().trim().check(z.email())` pattern — `.trim()` is not available on standalone types like `z.email()`. See [library-patterns-reference.md](../docs/library-patterns-reference.md) for details.
 - Follow ESLint rules defined in `eslint.config.mjs`.
 - Prefer `const` over `let` for variable declarations.
 - Use double quotes (`"`) for string literals.
@@ -88,49 +88,23 @@ Instructions for building high-quality React.js applications with modern pattern
 
 ## Data Fetching Patterns
 
-### tRPC with TanStack Query
+### Collection-First (Offline-First) Pattern
 
-Use `trpc.<router>.<method>.queryOptions()` with `useQuery` for queries:
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-import { trpc, trpcClient } from "~/lib/trpc.client";
-
-// Fetching data with useQuery
-const { data, isLoading, refetch } = useQuery({
-  ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
-  enabled: !!courseId, // Conditional fetching
-});
-```
-
-Use `trpcClient` directly for mutations (not `useMutation`):
+All component-level data operations must use collection hooks/utilities from
+`~/lib/collections`.
 
 ```tsx
-// Direct mutation call
-await trpcClient.reviews.updateUserReview.mutate({
-  reviewId: existingReview.id,
-  rating,
-  title,
-  comment,
-});
-```
-
-### Collections with TanStack Query DB
-
-Use collections from `~/lib/db.collections` for reactive data. **CRITICAL**: Always preload collections in the route loader to eliminate loading spinners.
-
-```tsx
-import { CoursesCollection, useCourseById } from "~/lib/db.collections";
+import { CoursesCollection, useCourseById } from "~/lib/collections";
 
 // ALWAYS preload in route loader
 export const Route = createFileRoute("/_authenticated/courses/$courseId")({
-  loader: async ({ params }) => {
+  loader: async () => {
     await CoursesCollection.preload();
   },
   component: CoursePage,
 });
 
-// Use reactive query in component - data is already available
+// Use reactive collection hook in component
 const { data: course, isLoading } = useCourseById({ courseId });
 ```
 
@@ -153,8 +127,12 @@ Insert with optimistic updates:
 ```tsx
 const tx = ReviewsCollection.insert(newReview);
 await tx.isPersisted.promise;
-await ReviewsCollection.utils.refetch();
 ```
+
+### Temporary Exception Policy
+
+Direct component usage of tRPC/React Query is prohibited, except for explicitly
+documented transitional modules in `docs/offline-first-architecture.md`.
 
 ## Form Patterns
 
@@ -163,11 +141,8 @@ await ReviewsCollection.utils.refetch();
 For forms that handle both create and update operations:
 
 ```tsx
-// Fetch existing data
-const { data: existingItem, refetch } = useQuery({
-  ...trpc.items.getById.queryOptions({ id }),
-  enabled: !!id,
-});
+// Fetch existing data via collection hook
+const { data: existingItem } = useItemById({ id });
 
 // Determine mode
 const isEditing = !!existingItem;
@@ -191,8 +166,10 @@ async function handleSubmit() {
 
   try {
     if (isEditing && existingItem) {
-      await trpcClient.items.update.mutate({ id: existingItem.id, title, content });
-      await refetch();
+      await ItemsCollection.update(existingItem.id, (draft) => {
+        draft.title = title;
+        draft.content = content;
+      });
       toast.success("Updated successfully!", { id: toastId });
     } else {
       // Create new item
