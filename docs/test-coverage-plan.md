@@ -726,7 +726,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (50 test files, 477 tests + 12 todo)
+### Web (50 test files, 483 tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
@@ -761,11 +761,11 @@ Reports are generated in:
 - `src/components/forms/__tests__/change-password-form.test.tsx` — 3 tests
   _(new)_
 - `src/components/forms/__tests__/change-email-form.test.tsx` — 3 tests _(new)_
-- `src/components/forms/__tests__/request-password-reset-form.test.tsx` — 3
+- `src/components/forms/__tests__/request-password-reset-form.test.tsx` — 5
   tests _(new)_
-- `src/components/forms/__tests__/password-reset-form.test.tsx` — 3 tests
+- `src/components/forms/__tests__/password-reset-form.test.tsx` — 5 tests
   _(new)_
-- `src/components/forms/__tests__/delete-account-form.test.tsx` — 3 tests
+- `src/components/forms/__tests__/delete-account-form.test.tsx` — 5 tests
   _(new)_
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
@@ -813,6 +813,8 @@ Reports are generated in:
 ## Coverage Delta (2026-03-07)
 
 Compared to the previous baseline in this document:
+
+> Pending next coverage rerun: +6 web tests were added after this snapshot.
 
 | App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
 | ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |

@@ -91,4 +91,42 @@ describe("DeleteAccountForm", () => {
     });
     expect(mockNavigate).not.toHaveBeenCalled();
   });
+
+  it("uses fallback error message when delete response has no message", async () => {
+    const user = userEvent.setup();
+    mockAuthClient.deleteUser.mockResolvedValue({
+      error: { message: "" },
+    });
+
+    render(<DeleteAccountForm />);
+
+    await user.type(screen.getByLabelText(/current password/i), "Password123!");
+    await user.click(screen.getByRole("button", { name: /delete account/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith("Failed to delete account");
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("resets the form when cancel is clicked", async () => {
+    const user = userEvent.setup();
+
+    render(<DeleteAccountForm />);
+
+    const passwordInput = screen.getByLabelText(/current password/i);
+    await user.type(passwordInput, "Password123!");
+
+    expect(
+      screen.getByRole("button", { name: /delete account/i }),
+    ).toBeEnabled();
+
+    await user.click(screen.getByRole("button", { name: /cancel/i }));
+
+    expect(passwordInput).toHaveValue("");
+    expect(
+      screen.getByRole("button", { name: /delete account/i }),
+    ).toBeDisabled();
+  });
 });

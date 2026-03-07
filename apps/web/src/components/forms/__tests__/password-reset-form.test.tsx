@@ -94,4 +94,42 @@ describe("PasswordResetForm", () => {
     });
     expect(mockNavigate).not.toHaveBeenCalled();
   });
+
+  it("uses fallback error message when reset response has no message", async () => {
+    const user = userEvent.setup();
+    mockAuthClient.resetPassword.mockResolvedValue({
+      error: { message: "" },
+    });
+
+    render(<PasswordResetForm token="token-with-empty-error" />);
+
+    await user.type(screen.getByLabelText(/new password/i), "Password123!");
+    await user.type(screen.getByLabelText(/confirm password/i), "Password123!");
+    await user.click(screen.getByRole("button", { name: /reset password/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith("Failed to reset password");
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
+
+  it("does not submit when passwords do not match", async () => {
+    const user = userEvent.setup();
+
+    render(<PasswordResetForm token="token-mismatch" />);
+
+    await user.type(screen.getByLabelText(/new password/i), "Password123!");
+    await user.type(
+      screen.getByLabelText(/confirm password/i),
+      "Password123?X",
+    );
+    await user.click(screen.getByRole("button", { name: /reset password/i }));
+
+    await waitFor(() => {
+      expect(mockAuthClient.resetPassword).not.toHaveBeenCalled();
+    });
+
+    expect(mockNavigate).not.toHaveBeenCalled();
+  });
 });

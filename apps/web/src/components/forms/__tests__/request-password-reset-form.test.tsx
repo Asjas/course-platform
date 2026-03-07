@@ -77,4 +77,35 @@ describe("RequestPasswordResetForm", () => {
       expect(mockToast.error).toHaveBeenCalledWith("User not found");
     });
   });
+
+  it("uses fallback error message when request response has no message", async () => {
+    const user = userEvent.setup();
+    mockAuthClient.requestPasswordReset.mockResolvedValue({
+      error: { message: "" },
+    });
+
+    render(<RequestPasswordResetForm />);
+
+    await user.type(screen.getByLabelText(/email/i), "user@example.com");
+    await user.click(screen.getByRole("button", { name: /send reset link/i }));
+
+    await waitFor(() => {
+      expect(mockToast.error).toHaveBeenCalledWith(
+        "Failed to request password reset",
+      );
+    });
+  });
+
+  it("does not submit when email is invalid", async () => {
+    const user = userEvent.setup();
+
+    render(<RequestPasswordResetForm />);
+
+    await user.type(screen.getByLabelText(/email/i), "not-an-email");
+    await user.click(screen.getByRole("button", { name: /send reset link/i }));
+
+    await waitFor(() => {
+      expect(mockAuthClient.requestPasswordReset).not.toHaveBeenCalled();
+    });
+  });
 });
