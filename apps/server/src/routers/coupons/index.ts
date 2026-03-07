@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
-import type { Coupon, NewCoupon } from "~/db/schema/coupon.js";
+import type { Coupon } from "~/db/schema/coupon.js";
 import { notifyAdminCouponUsageThreshold } from "~/lib/notifications.js";
 import {
   type EntitySyncUpdate,
@@ -131,6 +131,7 @@ export const couponsRouter = router({
   insertCoupon: publicProcedure
     .input(
       z.object({
+        id: z.string().optional(),
         active: z.boolean(),
         code: z.string(),
         courseId: z.string().nullable(),
@@ -144,7 +145,7 @@ export const couponsRouter = router({
       }),
     )
     .use(isAdmin)
-    .mutation(async ({ ctx, input }): Promise<NewCoupon> => {
+    .mutation(async ({ ctx, input }): Promise<Coupon> => {
       const fastify = ctx.reply.server;
 
       const [err, newCoupon] = await fastify.to(

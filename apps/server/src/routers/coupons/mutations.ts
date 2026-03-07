@@ -9,8 +9,14 @@ import {
 } from "~/db/schema/coupon.js";
 import { preparedGetCouponByCode } from "~/routers/coupons/queries.js";
 
-export async function insertCoupon({ newCoupon }: { newCoupon: NewCoupon }) {
-  const id = `coup:${ulid()}`;
+type NewCouponWithOptionalId = NewCoupon & { id?: string };
+
+export async function insertCoupon({
+  newCoupon,
+}: {
+  newCoupon: NewCouponWithOptionalId;
+}) {
+  const id = newCoupon.id ?? `coup:${ulid()}`;
   const newCouponWithId = { id, ...newCoupon };
 
   const [result] = await db.insert(coupon).values(newCouponWithId).returning();

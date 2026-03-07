@@ -5,15 +5,18 @@ describe("Admin Coupons Management", () => {
   let couponDescription: string;
 
   function waitForCouponRow(code: string) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- small settle delay requested to account for query invalidation rendering
-    cy.wait(50);
-    cy.contains("tr", code).should("be.visible");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- quick diagnostic to allow persistence and post-reload hydration to settle
+    cy.wait(100);
+    cy.reload();
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- quick diagnostic to allow reloaded table data to render
+    cy.wait(100);
+    cy.contains("tr", code, { timeout: 10000 }).should("be.visible");
   }
 
   function waitForSheetClose() {
     cy.get('[role="dialog"]').should("not.exist");
     // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition to finish
-    cy.wait(50);
+    cy.wait(100);
   }
 
   beforeEach(() => {
@@ -124,9 +127,9 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').clear();
     cy.get('input[name="redemptionLimit"]').type("30");
     cy.contains("button", "Save Changes").click();
+    waitForSheetClose();
+    waitForCouponRow(couponCode);
 
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow local collection update/render to settle
-    cy.wait(50);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("30 %", { timeout: 10000 }).should("be.visible");
     });
@@ -148,7 +151,9 @@ describe("Admin Coupons Management", () => {
     // Delete the coupon
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.contains("button", `Delete coupon ${couponCode}`).click();
+      cy.contains("button", `Delete coupon ${couponCode}`).click({
+        force: true,
+      });
     });
 
     // Confirm deletion

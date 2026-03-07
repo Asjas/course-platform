@@ -102,7 +102,7 @@ export const CouponsCollection = createCollection(
       try {
         const { modified } = transaction.mutations[0];
 
-        await trpcClient.coupons.insertCoupon.mutate(modified);
+        return await trpcClient.coupons.insertCoupon.mutate(modified);
       } catch (error) {
         console.error("Error inserting coupon: ", error);
         toast.error(
@@ -115,7 +115,7 @@ export const CouponsCollection = createCollection(
       try {
         const { modified } = transaction.mutations[0];
 
-        await trpcClient.coupons.updateCouponById.mutate({
+        return await trpcClient.coupons.updateCouponById.mutate({
           id: modified.id,
           active: modified.active,
           code: modified.code,

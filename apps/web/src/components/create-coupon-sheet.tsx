@@ -12,6 +12,8 @@ import {
   SheetTitle,
 } from "~/components/ui/sheet";
 import { CouponsCollection } from "~/lib/db.collections";
+import { queryClient } from "~/lib/query.client";
+import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";
 
@@ -70,6 +72,9 @@ export default function CreateCouponSheet({
         onOpenChange(false);
 
         await tx.isPersisted.promise;
+        await queryClient.invalidateQueries({
+          queryKey: trpc.coupons.getAll.queryKey(),
+        });
         await CouponsCollection.utils.refetch();
 
         toast.success(`Coupon ${value.code} created successfully!`, {
