@@ -47,7 +47,8 @@ describe("Admin Announcements Management", () => {
     cy.contains(/Announcement created successfully/i, {
       timeout: 15000,
     }).should("be.visible");
-    cy.contains(announcementTitle).should("be.visible");
+    cy.contains("button", announcementTitle).scrollIntoView();
+    cy.contains("button", announcementTitle).should("be.visible");
 
     cy.contains("button", announcementTitle).click();
     cy.get("#title").as("editTitleInput");
@@ -57,10 +58,12 @@ describe("Admin Announcements Management", () => {
     cy.get("@editMessageInput").clear();
     cy.get("@editMessageInput").type(updatedAnnouncementMessage);
     cy.get("#type").select("warning");
+    cy.contains("button", "Update").scrollIntoView();
     cy.contains("button", "Update").click();
 
     cy.contains(/Announcement updated successfully/i).should("be.visible");
-    cy.contains(updatedAnnouncementTitle).should("be.visible");
+    cy.contains("button", updatedAnnouncementTitle).scrollIntoView();
+    cy.contains("button", updatedAnnouncementTitle).should("be.visible");
 
     cy.contains("button", updatedAnnouncementTitle).click();
     cy.contains("button", "Delete").click();
