@@ -196,4 +196,9 @@ For deeper, context-specific guidance, see the instruction files in
 | `typescript-node.instructions.md`                     | `apps/server/**`              | Fastify + Drizzle + tRPC patterns |
 | `typescript-react.instructions.md`                    | `**/*.ts, **/*.tsx, **/*.css` | React + TanStack patterns         |
 
-Reference documentation for detailed best practices is in `.github/docs/`.
+Reference documentation for detailed best practices is in `.github/docs/`:
+
+- `a11y-reference.md` - Full accessibility patterns and code examples
+- `library-patterns-reference.md` - Zod 4, Vitest 4, Drizzle, and testing
+  gotchas
+- `performance-optimization-reference.md` - Comprehensive performance guide
