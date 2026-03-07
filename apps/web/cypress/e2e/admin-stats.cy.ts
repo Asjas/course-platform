@@ -31,3 +31,18 @@ describe("Admin Stats Dashboard", () => {
     cy.contains("Users").should("be.visible");
   });
 });
+
+describe("Admin Stats Access Control", () => {
+  beforeEach(() => {
+    cy.loginAsRegularUser();
+  });
+
+  it("should block non-admin users from admin stats page", () => {
+    cy.visit("/admin/stats");
+
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
+  });
+});

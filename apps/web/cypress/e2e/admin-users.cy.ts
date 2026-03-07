@@ -146,3 +146,18 @@ describe("Admin Users Management - Full CRUD", () => {
     });
   });
 });
+
+describe("Admin Users Access Control", () => {
+  beforeEach(() => {
+    cy.loginAsRegularUser();
+  });
+
+  it("should block non-admin users from admin users page", () => {
+    cy.visit("/admin/users");
+
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
+  });
+});

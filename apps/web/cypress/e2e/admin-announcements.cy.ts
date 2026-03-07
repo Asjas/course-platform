@@ -107,3 +107,18 @@ describe("User-Facing Announcement Notifications", () => {
     cy.get("button").contains("Notifications").should("exist");
   });
 });
+
+describe("Admin Announcements Access Control", () => {
+  beforeEach(() => {
+    cy.loginAsRegularUser();
+  });
+
+  it("should block non-admin users from admin announcements", () => {
+    cy.visit("/admin/announcements");
+
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
+  });
+});

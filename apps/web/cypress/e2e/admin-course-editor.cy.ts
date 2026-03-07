@@ -49,3 +49,18 @@ describe("Admin Course Editor", () => {
     cy.contains("Back to Courses").should("be.visible");
   });
 });
+
+describe("Admin Course Editor Access Control", () => {
+  beforeEach(() => {
+    cy.loginAsRegularUser();
+  });
+
+  it("should block non-admin users from admin course editor routes", () => {
+    cy.visit("/admin/courses");
+
+    cy.url().should("include", "/dashboard");
+    cy.contains("Access denied. Admin privileges are required.").should(
+      "be.visible",
+    );
+  });
+});
