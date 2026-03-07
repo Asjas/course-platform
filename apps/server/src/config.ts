@@ -3,7 +3,7 @@ import * as z from "zod";
 
 dotenvx.config();
 
-const schema = z.object({
+export const schema = z.object({
   // Application variables
   PORT: z
     .string()
