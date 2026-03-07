@@ -54,6 +54,35 @@ export default defineConfig({
             await client.end();
           }
         },
+        async createTestUser({
+          id,
+          name,
+          email,
+          role,
+        }: {
+          id: string;
+          name: string;
+          email: string;
+          role?: "member" | "admin";
+        }) {
+          const client = new pg.Client({
+            connectionString: process.env.DATABASE_URL,
+          });
+          await client.connect();
+          try {
+            await client.query(
+              `
+                INSERT INTO my_schema."user" (id, name, email, role)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT (email) DO NOTHING
+              `,
+              [id, name, email, role ?? "member"],
+            );
+            return null;
+          } finally {
+            await client.end();
+          }
+        },
       });
 
       return config;

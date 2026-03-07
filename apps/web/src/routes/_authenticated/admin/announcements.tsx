@@ -49,6 +49,7 @@ function AnnouncementsPage() {
   const [selectedAnnouncement, setSelectedAnnouncement] =
     useState<Announcement | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [announcementToDelete, setAnnouncementToDelete] = useState<
     string | null
@@ -94,6 +95,7 @@ function AnnouncementsPage() {
             },
           });
           toast.success("Announcement updated successfully");
+          setStatusMessage("Announcement updated successfully");
         } else {
           await createMutation.mutateAsync({
             id: ulid(),
@@ -103,15 +105,16 @@ function AnnouncementsPage() {
             publishedAt: publishedAtISO,
           });
           toast.success("Announcement created successfully");
+          setStatusMessage("Announcement created successfully");
         }
         refetch();
         handleCancel();
       } catch {
-        toast.error(
-          selectedAnnouncement
-            ? "Failed to update announcement"
-            : "Failed to create announcement",
-        );
+        const message = selectedAnnouncement
+          ? "Failed to update announcement"
+          : "Failed to create announcement";
+        toast.error(message);
+        setStatusMessage(message);
       }
     },
   });
@@ -147,12 +150,14 @@ function AnnouncementsPage() {
     try {
       await deleteMutation.mutateAsync(announcementToDelete);
       toast.success("Announcement deleted successfully");
+      setStatusMessage("Announcement deleted successfully");
       refetch();
       if (selectedAnnouncement?.id === announcementToDelete) {
         handleCancel();
       }
     } catch {
       toast.error("Failed to delete announcement");
+      setStatusMessage("Failed to delete announcement");
     } finally {
       setAnnouncementToDelete(null);
     }
@@ -180,6 +185,16 @@ function AnnouncementsPage() {
           Create Announcement
         </button>
       </header>
+
+      {statusMessage ? (
+        <p
+          className="mb-4 rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+          role="status"
+          aria-live="polite"
+        >
+          {statusMessage}
+        </p>
+      ) : null}
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Announcements List */}

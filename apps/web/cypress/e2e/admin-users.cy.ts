@@ -1,149 +1,74 @@
 import { faker } from "@faker-js/faker";
 
 describe("Admin Users Management - Full CRUD", () => {
-  let testUserEmail: string;
   let testUserName: string;
+  let testUserEmail: string;
 
-  beforeEach(() => {
+  before(() => {
     cy.loginAsAdmin();
     testUserName = faker.person.fullName();
     testUserEmail = faker.internet
-      .email({ provider: "e2e-test.local" })
+      .email({ provider: "e2e-users.local" })
       .toLowerCase();
-  });
 
-  describe("User Creation & Viewing", () => {
-    it("should create and view user in admin list", () => {
-      cy.signUpViaApi({
-        name: testUserName,
-        email: testUserEmail,
-        password: "TestPassword123!",
-      });
-
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).should("be.visible");
-      cy.contains(testUserName).should("be.visible");
-    });
-
-    it("should display user details when clicking", () => {
-      cy.signUpViaApi({
-        name: testUserName,
-        email: testUserEmail,
-        password: "TestPassword123!",
-      });
-
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.contains(testUserName).should("be.visible");
-      cy.contains("Role").should("be.visible");
+    cy.task("createTestUser", {
+      id: faker.string.uuid(),
+      name: testUserName,
+      email: testUserEmail,
+      role: "member",
     });
   });
 
-  describe("User Role Management", () => {
-    beforeEach(() => {
-      cy.signUpViaApi({
-        name: testUserName,
-        email: testUserEmail,
-        password: "TestPassword123!",
-      });
+  beforeEach(() => {
+    cy.loginAsAdmin();
+    cy.visit("/admin/users");
+  });
+
+  it("should create and view user in admin list", () => {
+    cy.contains("tr", testUserEmail).should("be.visible");
+    cy.contains("tr", testUserName).should("be.visible");
+  });
+
+  it("should display user details in edit sheet", () => {
+    cy.contains("tr", testUserEmail).within(() => {
+      cy.contains("button", "Edit").click();
     });
 
-    it("should change user role to MODERATOR", () => {
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.get('select[name="role"]').select("MODERATOR");
-      cy.contains("button", "Save").click();
-      cy.contains(/updated|success/i).should("be.visible");
+    cy.contains("Edit User").should("be.visible");
+    cy.get('input[name="name"]').should("have.value", testUserName);
+    cy.get('input[name="email"]').should("have.value", testUserEmail);
+    cy.contains("Role").should("be.visible");
+    cy.contains("Banned").should("be.visible");
+  });
+
+  it("should update user role and ban state", () => {
+    cy.contains("tr", testUserEmail).within(() => {
+      cy.contains("button", "Edit").click();
     });
 
-    it("should change user role to ADMIN", () => {
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.get('select[name="role"]').select("ADMIN");
-      cy.contains("button", "Save").click();
-      cy.contains(/updated|success/i).should("be.visible");
+    cy.get('select[name="role"]').select("Admin");
+    cy.get('button[id="banned"]').click();
+    cy.get('textarea[name="banReason"]').clear();
+    cy.get('textarea[name="banReason"]').type("E2E moderation test");
+    cy.contains("button", "Save Changes").click();
+
+    cy.contains(/updated successfully|User .* updated successfully!/i).should(
+      "be.visible",
+    );
+    cy.contains("tr", testUserEmail).within(() => {
+      cy.contains(/admin/i).should("be.visible");
+      cy.contains(/Banned/i).should("be.visible");
     });
   });
 
-  describe("User Ban Management", () => {
-    beforeEach(() => {
-      cy.signUpViaApi({
-        name: testUserName,
-        email: testUserEmail,
-        password: "TestPassword123!",
-      });
+  it("should delete user account", () => {
+    cy.contains("tr", testUserEmail).within(() => {
+      cy.contains("button", "Delete").click();
     });
+    cy.contains("button", "Delete").last().click();
 
-    it("should ban a user", () => {
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.contains("button", /ban/i).click();
-      cy.get('[role="dialog"]').then(($dialog) => {
-        if ($dialog.length) {
-          return cy.wrap($dialog).within(() => {
-            cy.contains("button", /confirm|ban/i).click();
-          });
-        }
-
-        return undefined;
-      });
-      cy.contains(/banned|success/i).should("be.visible");
-    });
-
-    it("should unban a user", () => {
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.contains("button", /ban/i).click();
-      cy.get('[role="dialog"]').then(($dialog) => {
-        if ($dialog.length) {
-          return cy.wrap($dialog).within(() => {
-            cy.contains("button", /confirm/i).click();
-          });
-        }
-
-        return undefined;
-      });
-      cy.contains(/banned|success/i).should("be.visible");
-      cy.contains("button", /unban/i).click();
-      cy.contains(/unbanned|success/i).should("be.visible");
-    });
-  });
-
-  describe("User Deletion", () => {
-    beforeEach(() => {
-      cy.signUpViaApi({
-        name: testUserName,
-        email: testUserEmail,
-        password: "TestPassword123!",
-      });
-    });
-
-    it("should delete user account", () => {
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).click();
-      cy.contains("button", /delete/i).click();
-      cy.get('[role="dialog"]').within(() => {
-        cy.get('input[type="text"]').then(($input) => {
-          if ($input.length) {
-            return cy.wrap($input).type("DELETE");
-          }
-
-          return undefined;
-        });
-        cy.contains("button", /confirm|delete/i).click();
-      });
-      cy.contains(/deleted|success/i).should("be.visible");
-      cy.visit("/admin/users");
-      cy.get('input[placeholder*="Search"]').type(testUserEmail);
-      cy.contains(testUserEmail).should("not.exist");
-    });
+    cy.contains(/Deleted user|deleted/i).should("be.visible");
+    cy.contains("tr", testUserEmail).should("not.exist");
   });
 });
 

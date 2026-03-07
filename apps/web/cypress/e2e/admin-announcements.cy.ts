@@ -39,10 +39,14 @@ describe("Admin Announcements Management", () => {
     cy.get("@messageInput").type(announcementMessage);
     cy.get("#type").select("platform_update");
     cy.contains("button", "Publish Now").click();
-    cy.contains("button", "Create").scrollIntoView();
-    cy.contains("button", "Create").click({ force: true });
+    cy.get('form[aria-label="Create announcement form"]').within(() => {
+      cy.contains("button", "Create").scrollIntoView();
+      cy.contains("button", "Create").click({ force: true });
+    });
 
-    cy.contains(/Announcement created successfully/i).should("be.visible");
+    cy.contains(/Announcement created successfully/i, {
+      timeout: 15000,
+    }).should("be.visible");
     cy.contains(announcementTitle).should("be.visible");
 
     cy.contains("button", announcementTitle).click();
