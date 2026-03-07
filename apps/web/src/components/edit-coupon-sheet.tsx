@@ -10,7 +10,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CouponsCollection } from "~/lib/db.collections";
+import { CouponsCollection } from "~/lib/collections";
 import { cn } from "~/lib/utils";
 import {
   type EditCouponFormData,

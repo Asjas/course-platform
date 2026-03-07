@@ -22,7 +22,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { CouponsCollection, useCoupons } from "~/lib/db.collections";
+import { CouponsCollection, useCoupons } from "~/lib/collections";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({
