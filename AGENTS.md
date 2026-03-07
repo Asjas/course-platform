@@ -24,7 +24,7 @@ pnpm 10
 
 Single-page application with file-based routing and offline-first data layer.
 
-```
+```sh
 apps/web/src/
 ├── routes/           # TanStack Router (file-based)
 ├── components/       # React components (PascalCase)
@@ -49,7 +49,7 @@ Key patterns:
 
 REST + tRPC API server with PostgreSQL database.
 
-```
+```sh
 apps/server/src/
 ├── routes/           # Fastify REST routes
 ├── routers/          # tRPC routers
