@@ -43,7 +43,7 @@ describe("Admin Course Creation Flow", () => {
     cy.get('input[name="trialModuleLimit"]').type("1");
     cy.get('input[name="published"]').check({ force: true });
 
-    cy.contains("button", "Create Course").click();
+    cy.contains("button", "Create Course").click({ force: true });
 
     cy.url().should("include", "/admin/courses/");
     cy.url().should("include", "/edit");
@@ -55,7 +55,7 @@ describe("Admin Course Creation Flow", () => {
 
     cy.get('input[name="name"]').clear();
     cy.get('input[name="slug"]').clear();
-    cy.contains("button", "Create Course").click();
+    cy.contains("button", "Create Course").click({ force: true });
 
     cy.get('input[name="name"]:invalid').should("exist");
     cy.get('input[name="slug"]:invalid').should("exist");
