@@ -93,6 +93,10 @@ Do not run the full E2E suite for targeted validation unless explicitly requeste
 
 For CRUD scenarios, cleanup must be done using normal UI delete actions so cleanup also validates delete behavior.
 
+For authorization scenarios, assert both behaviors:
+1. Route/data access is blocked (redirect, forbidden state, or missing data)
+2. A user-facing popup/toast shows the backend permission/access error message
+
 ### Known Failure Modes (Do Not Repeat)
 
 - 2026-03-07: Running `pnpm preview` from repository root failed with
