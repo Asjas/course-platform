@@ -22,12 +22,9 @@ describe("Notifications - Authenticated", () => {
     cy.get("button").filter('[aria-label*="otification"]').first().click();
 
     // Should show some notification content after clicking the bell
-    cy.get("body").then(($body) => {
-      const hasDialog = $body.find('[role="dialog"]').length > 0;
-      const hasMenu = $body.find('[role="menu"]').length > 0;
-      const hasPanel =
-        $body.find('[data-testid="notifications-panel"]').length > 0;
-      expect(hasDialog || hasMenu || hasPanel).to.be.true;
-    });
+    // At least one of these containers should appear
+    cy.get(
+      '[role="dialog"], [role="menu"], [data-testid="notifications-panel"]',
+    ).should("exist");
   });
 });
