@@ -1,8 +1,8 @@
 import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
-import { useMutation } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { ulid } from "ulid";
 import FieldInfo from "~/components/field-info";
 import {
   Sheet,
@@ -11,8 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
+import { CouponsCollection } from "~/lib/collections";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";
 
@@ -25,10 +24,6 @@ export default function CreateCouponSheet({
   open,
   onOpenChange,
 }: CreateCouponSheetProps) {
-  const createCouponMutation = useMutation(
-    trpc.coupons.insertCoupon.mutationOptions(),
-  );
-
   const form = useForm({
     defaultValues: {
       active: true,
@@ -49,18 +44,37 @@ export default function CreateCouponSheet({
       const toastId = toast.loading(`Creating coupon ${value.code}...`);
 
       try {
-        const newCoupon = await createCouponMutation.mutateAsync(value);
+        // The DB enforces redemption_limit > 0.
+        const normalizedRedemptionLimit =
+          value.redemptionLimit > 0 ? value.redemptionLimit : 1;
 
-        queryClient.invalidateQueries({
-          queryKey: trpc.coupons.getAll.queryKey(),
+        // @ts-expect-error collection insert accepts optimistic client shape and
+        // is reconciled by collection sync.
+        const tx = CouponsCollection.insert({
+          id: `coup:${ulid()}`,
+          active: value.active,
+          code: value.code,
+          courseId: value.courseId,
+          description: value.description,
+          discountType: value.discountType,
+          discountValue: value.discountValue,
+          redemptionLimit: normalizedRedemptionLimit,
+          validFrom: value.validFrom,
+          validUntil: value.validUntil,
+          redemptions: [],
         });
 
-        toast.success(`Coupon ${newCoupon.code} created successfully!`, {
-          id: toastId,
-        });
-
+        // Close immediately after optimistic insert so UI interaction is not blocked
+        // by network persistence timing.
         form.reset();
         onOpenChange(false);
+
+        await tx.isPersisted.promise;
+        await CouponsCollection.utils.refetch();
+
+        toast.success(`Coupon ${value.code} created successfully!`, {
+          id: toastId,
+        });
       } catch (error) {
         console.error("createCoupon error", error);
         toast.error("Failed to create coupon. Please try again.", {

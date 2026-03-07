@@ -63,6 +63,38 @@ function AdminCouponsPage() {
     setDeleteConfirmOpen(true);
   }
 
+  async function handleCopyCouponCode(couponId: string, couponCode: string) {
+    try {
+      const canUseNavigatorClipboard =
+        typeof navigator !== "undefined" &&
+        !!navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function";
+
+      if (canUseNavigatorClipboard) {
+        await navigator.clipboard.writeText(couponCode);
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = couponCode;
+        textArea.setAttribute("readonly", "");
+        textArea.style.position = "absolute";
+        textArea.style.left = "-9999px";
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+
+      setCopiedCouponId(couponId);
+      setTimeout(() => {
+        setCopiedCouponId(null);
+      }, 2000);
+
+      toast.success(`Copied coupon code ${couponCode} to clipboard!`);
+    } catch {
+      toast.error("Failed to copy coupon code. Please try again.");
+    }
+  }
+
   function handleConfirmDelete() {
     if (!couponToDelete) return;
 
@@ -212,18 +244,9 @@ function AdminCouponsPage() {
                         <div className="flex justify-around gap-2">
                           <button
                             className="cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                            onClick={() => {
-                              navigator.clipboard.writeText(coupon.code);
-                              setCopiedCouponId(coupon.id);
-
-                              setTimeout(() => {
-                                setCopiedCouponId(null);
-                              }, 2000);
-
-                              toast.success(
-                                `Copied coupon code ${coupon.code} to clipboard!`,
-                              );
-                            }}
+                            onClick={() =>
+                              handleCopyCouponCode(coupon.id, coupon.code)
+                            }
                           >
                             {copiedCouponId === coupon.id ? (
                               <ClipboardCheckIcon

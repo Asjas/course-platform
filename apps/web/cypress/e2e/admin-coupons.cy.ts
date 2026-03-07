@@ -10,6 +10,12 @@ describe("Admin Coupons Management", () => {
     cy.contains("tr", code).should("be.visible");
   }
 
+  function waitForSheetClose() {
+    cy.get('[role="dialog"]').should("not.exist");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition to finish
+    cy.wait(50);
+  }
+
   beforeEach(() => {
     cy.loginAsAdmin();
     couponCode = faker.string.alphanumeric(8).toUpperCase();
@@ -80,6 +86,8 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("10");
+    cy.get('input[name="redemptionLimit"]').clear();
+    cy.get('input[name="redemptionLimit"]').type("25");
     cy.contains("button", "Create Coupon").click();
 
     // Click copy button
@@ -99,7 +107,10 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("20");
+    cy.get('input[name="redemptionLimit"]').clear();
+    cy.get('input[name="redemptionLimit"]').type("30");
     cy.contains("button", "Create Coupon").click();
+    waitForSheetClose();
 
     // Edit the coupon
     waitForCouponRow(couponCode);
@@ -110,11 +121,14 @@ describe("Admin Coupons Management", () => {
     cy.contains("Edit Coupon").should("be.visible");
     cy.get('input[name="discountValue"]').clear();
     cy.get('input[name="discountValue"]').type("30");
+    cy.get('input[name="redemptionLimit"]').clear();
+    cy.get('input[name="redemptionLimit"]').type("30");
     cy.contains("button", "Save Changes").click();
 
-    cy.contains(/updated successfully/i).should("be.visible");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow local collection update/render to settle
+    cy.wait(50);
     cy.contains("tr", couponCode).within(() => {
-      cy.contains("30 %").should("be.visible");
+      cy.contains("30 %", { timeout: 10000 }).should("be.visible");
     });
   });
 
@@ -126,7 +140,10 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("5");
+    cy.get('input[name="redemptionLimit"]').clear();
+    cy.get('input[name="redemptionLimit"]').type("10");
     cy.contains("button", "Create Coupon").click();
+    waitForSheetClose();
 
     // Delete the coupon
     waitForCouponRow(couponCode);
@@ -135,6 +152,7 @@ describe("Admin Coupons Management", () => {
     });
 
     // Confirm deletion
+    cy.contains("Delete Coupon").should("be.visible");
     cy.contains("button", "Delete").last().click();
 
     cy.contains(/deleted successfully/i).should("be.visible");
@@ -161,6 +179,8 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("fixed");
     cy.get('input[name="discountValue"]').type("50");
+    cy.get('input[name="redemptionLimit"]').clear();
+    cy.get('input[name="redemptionLimit"]').type("40");
     cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");

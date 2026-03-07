@@ -1,4 +1,3 @@
-import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
@@ -19,9 +18,7 @@ import {
   type AdminCourseDetail,
   CoursesAdminCollection,
   useCoursesAdmin,
-} from "~/lib/db.collections";
-import { queryClient } from "~/lib/query.client";
-import { trpc } from "~/lib/trpc.client";
+} from "~/lib/collections";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/")({
@@ -37,10 +34,6 @@ function AdminCoursesPage() {
   const [courseToDelete, setCourseToDelete] =
     useState<AdminCourseDetail | null>(null);
 
-  const deleteCourseMutation = useMutation(
-    trpc.courses.deleteCourse.mutationOptions(),
-  );
-
   function handleDeleteClick(course: AdminCourseDetail) {
     setCourseToDelete(course);
     setDeleteConfirmOpen(true);
@@ -52,11 +45,7 @@ function AdminCoursesPage() {
     const toastId = toast.loading(`Deleting course ${courseToDelete.name}...`);
 
     try {
-      await deleteCourseMutation.mutateAsync({ courseId: courseToDelete.id });
-
-      queryClient.invalidateQueries({
-        queryKey: ["admin", "courses"],
-      });
+      await CoursesAdminCollection.delete(courseToDelete.id);
 
       toast.success(`Course ${courseToDelete.name} deleted successfully.`, {
         id: toastId,

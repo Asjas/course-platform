@@ -13,8 +13,8 @@ import {
   SheetTitle,
 } from "~/components/ui/sheet";
 import { authClient } from "~/lib/auth.client";
-import { ReviewsCollection } from "~/lib/db.collections";
-import { trpc, trpcClient } from "~/lib/trpc.client";
+import { ReviewsCollection, useCoursesAdmin } from "~/lib/collections";
+import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createReviewSchema } from "~/schema/create-review";
 
@@ -38,9 +38,7 @@ export default function CreateReviewSheet({
     },
   });
 
-  const { data: courses } = useSuspenseQuery(
-    trpc.courses.getAllAsAdmin.queryOptions(),
-  );
+  const { data: courses } = useCoursesAdmin();
 
   const createReviewMutation = useMutation({
     mutationFn: async (data: {

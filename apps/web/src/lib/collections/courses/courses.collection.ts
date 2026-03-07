@@ -51,6 +51,13 @@ export const CoursesAdminCollection = createCollection(
     getKey: (item) => item.id,
     queryKey: ["admin", "courses"],
     queryFn: () => trpcClient.courses.getAllAsAdmin.query(),
+    onDelete: async ({ transaction }) => {
+      const { original } = transaction.mutations[0];
+
+      await trpcClient.courses.deleteCourse.mutate({
+        courseId: original.id,
+      });
+    },
   }),
 );
 
