@@ -18,28 +18,31 @@ interface MessageReactionsProps {
   messageAuthor?: string;
 }
 
+// Check if a specific user has reacted with a specific emoji
+export function hasUserReacted(
+  reaction: Reaction,
+  currentUserId: string | undefined,
+): boolean {
+  return reaction.users.some((user) => user.userId === currentUserId);
+}
+
+// Format tooltip text showing users who reacted
+export function getReactionTooltip(reaction: Reaction): string {
+  const userNames = reaction.users.map((u) => u.userName);
+  if (userNames.length === 0) return "";
+  if (userNames.length === 1) return userNames[0];
+  if (userNames.length === 2) return `${userNames[0]} and ${userNames[1]}`;
+  if (userNames.length === 3)
+    return `${userNames[0]}, ${userNames[1]}, and ${userNames[2]}`;
+  return `${userNames[0]}, ${userNames[1]}, and ${userNames.length - 2} others`;
+}
+
 export function MessageReactions({
   reactions = [],
   onToggleReaction,
   currentUserId,
   messageAuthor,
 }: MessageReactionsProps) {
-  // Check if the current user has reacted with a specific emoji
-  function hasUserReacted(reaction: Reaction): boolean {
-    return reaction.users.some((user) => user.userId === currentUserId);
-  }
-
-  // Format tooltip text showing users who reacted
-  function getReactionTooltip(reaction: Reaction): string {
-    const userNames = reaction.users.map((u) => u.userName);
-    if (userNames.length === 0) return "";
-    if (userNames.length === 1) return userNames[0];
-    if (userNames.length === 2) return `${userNames[0]} and ${userNames[1]}`;
-    if (userNames.length === 3)
-      return `${userNames[0]}, ${userNames[1]}, and ${userNames[2]}`;
-    return `${userNames[0]}, ${userNames[1]}, and ${userNames.length - 2} others`;
-  }
-
   // Only show the reactions UI if there are reactions
   if (reactions.length === 0) {
     return null;
@@ -54,13 +57,13 @@ export function MessageReactions({
         >
           <button
             className={`inline-flex cursor-pointer items-center gap-1 rounded-md px-1.5 py-0.5 text-sm transition-colors ${
-              hasUserReacted(reaction)
+              hasUserReacted(reaction, currentUserId)
                 ? "bg-blue-600/80 text-white hover:bg-blue-600"
                 : "bg-gray-600/60 text-gray-200 hover:bg-gray-600/80"
             }`}
             type="button"
             onClick={() => onToggleReaction(reaction.emoji)}
-            aria-label={`${reaction.emoji} reaction from ${getReactionTooltip(reaction)}. Click to ${hasUserReacted(reaction) ? "remove" : "add"} your reaction.`}
+            aria-label={`${reaction.emoji} reaction from ${getReactionTooltip(reaction)}. Click to ${hasUserReacted(reaction, currentUserId) ? "remove" : "add"} your reaction.`}
           >
             <span aria-hidden="true">{reaction.emoji}</span>
             <span className="text-xs font-medium">{reaction.users.length}</span>

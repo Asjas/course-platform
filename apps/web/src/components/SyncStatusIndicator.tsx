@@ -52,7 +52,7 @@ interface SyncStatusIndicatorProps {
 /**
  * Format a timestamp to a human-readable relative time
  */
-function formatRelativeTime(timestamp: number | null): string {
+export function formatRelativeTime(timestamp: number | null): string {
   if (!timestamp) return "Never";
 
   const now = Date.now();
@@ -68,7 +68,7 @@ function formatRelativeTime(timestamp: number | null): string {
 /**
  * Get the overall sync status from a list of collection statuses
  */
-function getOverallStatus(
+export function getOverallStatus(
   collections: CollectionSyncStatus[],
 ): "connected" | "syncing" | "disconnected" | "error" {
   if (collections.some((c) => c.error)) return "error";
