@@ -1,16 +1,5 @@
 {
   "tailwindCSS.experimental.configFile": {
     "apps/web/src/tailwind.css": "apps/web/src/**"
-  },
-  "files.watcherExclude": {
-    "**/.config/Code*/User/workspaceStorage/**/content.txt": true,
-    "**/chat-session-resources/**/content.txt": true
-  },
-  "prettier.ignorePath": ".prettierignore",
-  "[typescript]": {
-    "editor.formatOnSave": true
-  },
-  "[typescriptreact]": {
-    "editor.formatOnSave": true
   }
 }
