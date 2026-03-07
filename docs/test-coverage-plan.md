@@ -195,6 +195,35 @@
 
 ---
 
+---
+
+## Deferred E2E Tests
+
+Tests that have been temporarily disabled and need to be re-enabled after fixes:
+
+### Admin Announcements CRUD Test
+
+**File:** `apps/web/cypress/e2e/admin-announcements.cy.ts` **Test:**
+`should support full CRUD lifecycle for announcement` **Issue:** CSS overflow
+clipping on announcements list causes element visibility failures after update
+**Status:** Skipped with `it.skip()` on 2026-03-07 **Blockers:**
+
+- The announcements list has `max-h-125 overflow-y-auto` causing updated
+  announcements to scroll out of view
+- React state updates, data refetching, and DOM scrolling coordination is
+  timing-dependent and fragile
+- Need to refactor the UI to either remove overflow constraints or implement
+  more reliable scrolling
+
+**Workaround Options:**
+
+1. Remove max-height constraint on announcements list
+2. Implement virtual scrolling with proper focus management
+3. Use a modal/dialog for editing instead of inline editing
+4. Add explicit scroll management in the component with better timing control
+
+---
+
 ### Web (`apps/web`) — 26.00% Line Coverage
 
 #### Web Coverage Snapshot
