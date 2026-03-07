@@ -74,6 +74,34 @@ describe("User Authentication", () => {
 
 ## Test Execution
 
+### Mandatory Local E2E Workflow
+
+1. Start backend API first: `pnpm --filter @apps/server dev`
+2. Start web preview next: `pnpm --filter @apps/web preview`
+3. Wait for both services to be ready (`http://localhost:5000` and `http://localhost:4173`)
+4. Run only the changed spec file(s)
+
+**Do not run** `pnpm preview` from repository root for web E2E setup. Use the filtered command above.
+Use this form for targeted runs:
+
+```bash
+pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<changed-spec>.cy.ts"
+```
+
+After creating or editing an E2E spec, run that spec immediately.
+Do not run the full E2E suite for targeted validation unless explicitly requested.
+
+For CRUD scenarios, cleanup must be done using normal UI delete actions so cleanup also validates delete behavior.
+
+### Known Failure Modes (Do Not Repeat)
+
+- 2026-03-07: Running `pnpm preview` from repository root failed with
+  `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "preview" not found`.
+  Always run `pnpm --filter @apps/web preview`.
+- 2026-03-07: Running Cypress before backend startup caused `cy.request`
+  failures for `http://localhost:5000/api/auth/sign-up/email`.
+  Always start backend first and verify readiness before test runs.
+
 ### Commands
 ```bash
 # Open Cypress interactive mode

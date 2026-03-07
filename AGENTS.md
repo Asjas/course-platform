@@ -109,6 +109,33 @@ pnpm --filter @apps/web e2e         # Cypress interactive
 pnpm --filter @apps/web e2e:run     # Cypress headless
 
 # Database (Drizzle)
+
+### E2E Workflow (Mandatory)
+
+For Cypress E2E runs, follow this exact order:
+
+1. Start backend API first: `pnpm --filter @apps/server dev`
+2. Start frontend preview next: `pnpm --filter @apps/web preview`
+3. Wait until both are ready (`http://localhost:5000` and `http://localhost:4173`)
+4. Run only changed spec files: `pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<changed-spec>.cy.ts"`
+
+Known failure mode (2026-03-07): Running `pnpm preview` from repository root
+fails (`ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "preview" not found`) and
+causes wasted E2E cycles. Always use the filtered preview command above.
+
+Critical guardrails:
+
+- Do NOT run bare `pnpm preview` from repository root. Use `pnpm --filter @apps/web preview`.
+- Do NOT run Cypress until both backend and frontend are confirmed reachable.
+- After creating or editing any E2E spec, run that spec immediately.
+- Never run the full E2E suite when validating a targeted change unless explicitly requested.
+- E2E CRUD tests must clean up data through normal UI delete flows. Cleanup should double as delete-path coverage.
+
+Readiness checks before running E2E:
+
+- Confirm API is reachable on port 5000.
+- Confirm web preview is reachable on port 4173.
+- If either is unavailable, fix startup first instead of running tests.
 cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
 pnpm --filter @apps/server drizzle:migrate
 pnpm --filter @apps/server drizzle:studio

@@ -179,6 +179,21 @@ export default function myRoutes(fastify, opts) {
 - Located in `apps/web/cypress/e2e/`
 - Use `data-testid` for stable selectors
 - Use `cy.intercept()` for API mocking
+- Start backend before E2E: `pnpm --filter @apps/server dev`
+- Start frontend preview before E2E: `pnpm --filter @apps/web preview`
+- Wait until both servers are available before running Cypress
+- Run only changed/created spec files during development (never full suite by default)
+- Run changed E2E specs immediately after creating/editing them
+- CRUD tests must include UI-based cleanup by deleting created entities through the normal product flow
+- Do NOT run bare `pnpm preview` from repo root for web E2E setup
+
+Known failure mode (2026-03-07): Bare `pnpm preview` at repository root fails
+with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL` and blocks E2E progress. Always use
+`pnpm --filter @apps/web preview`.
+
+Known failure mode (2026-03-07): Running Cypress before backend startup causes
+`cy.request` failures to `http://localhost:5000/api/auth/sign-up/email`.
+Always start backend first and wait for both backend and frontend readiness.
 
 ---
 
