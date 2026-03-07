@@ -1,3 +1,7 @@
 .github/
 .astro/
 routeTree.gen.ts
+
+# Copilot temporary output files
+**/.config/Code*/User/workspaceStorage/**/content.txt
+**/chat-session-resources/**/content.txt
