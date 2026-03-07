@@ -23,6 +23,7 @@ export default defineConfig({
   allowCypressEnv: false,
   expose: {
     apiUrl: process.env.VITE_BETTER_AUTH_URL || "http://localhost:5000",
+    coverage: process.env.CYPRESS_COVERAGE === "true",
   },
   e2e: {
     baseUrl: "http://localhost:4173",
