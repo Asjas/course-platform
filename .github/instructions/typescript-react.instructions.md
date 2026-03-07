@@ -63,6 +63,7 @@ Instructions for building high-quality React.js applications with modern pattern
 ## Code Style
 
 - Always validate external data with Zod schemas.
+- **Zod 4 trim + validation**: Use `z.string().trim().check(z.email())` pattern — `.trim()` is not available on standalone types like `z.email()`. See [library-patterns-reference.md](../docs/library-patterns-reference.md#zod-4) for details.
 - Follow ESLint rules defined in `eslint.config.mjs`.
 - Prefer `const` over `let` for variable declarations.
 - Use double quotes (`"`) for string literals.
@@ -361,3 +362,5 @@ export default MyComponent;
 - `react-aria-components` - Accessible components
 - `sonner` - Toast notifications
 - `tailwindcss` - CSS framework
+
+For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).
