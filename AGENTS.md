@@ -164,6 +164,38 @@ When creating new route files in `apps/web/src/routes/`:
 Follow Conventional Commits: `<type>(<scope>): <subject>` Types: `feat`, `fix`,
 `docs`, `style`, `refactor`, `perf`, `test`, `chore`
 
+## Host Environment — Shell Aliases
+
+The development machine has modern CLI replacements aliased over standard
+commands. Agents should be aware of these when running terminal commands:
+
+| Alias    | Actual Command                | Notes                                      |
+| -------- | ----------------------------- | ------------------------------------------ |
+| `ls`     | `eza -F --octal-permissions`  | Enhanced `ls` with file-type indicators    |
+| `ll`     | `exa -lF --octal-permissions` | Long listing with permissions              |
+| `cat`    | `bat -pp`                     | Syntax-highlighted output, no paging       |
+| `find`   | `fdfind`                      | Faster find alternative                    |
+| `grep`   | `rg` (ripgrep)                | Faster grep alternative                    |
+| `du`     | `dust -b`                     | Disk usage viewer                          |
+| `df`     | `duf -only local`             | Disk free viewer                           |
+| `rm`     | `trash`                       | Moves to trash instead of permanent delete |
+| `ps`     | `procs -w`                    | Process viewer                             |
+| `top`    | `btop`                        | System monitor                             |
+| `vi/vim` | `nvim`                        | Neovim                                     |
+| `p`      | `pnpm`                        | Shorthand for pnpm                         |
+| `zs`     | `source ~/.zshrc`             | Reload shell config                        |
+
+**Key implications for agents:**
+
+- `rm` is safe (trash, not permanent delete). Use `/bin/rm` if permanent delete
+  is truly needed.
+- `cat` output includes syntax highlighting via `bat`. Use `command cat` or
+  `/bin/cat` if raw output is needed for piping.
+- `grep` is `rg` — flags differ from GNU grep. Use `command grep` for POSIX
+  grep.
+- `find` is `fdfind` — syntax differs from GNU find. Use `command find` for
+  POSIX find.
+
 ## Editing rules
 
 1. **NEVER edit migration files** (`.sql` files in `drizzle/` directories).
