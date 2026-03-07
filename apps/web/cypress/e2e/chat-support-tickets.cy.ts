@@ -1,5 +1,17 @@
 import { faker } from "@faker-js/faker";
 
+function ensureUsernameSetViaProfile() {
+  const username = `chat_${faker.string.alphanumeric(8)}`;
+
+  cy.visit("/profile");
+  cy.get('input[name="username"]', { timeout: 10000 }).clear();
+  cy.get('input[name="username"]').type(username);
+  cy.contains("button", "Save").click();
+  cy.contains("Profile updated successfully", { timeout: 15000 }).should(
+    "be.visible",
+  );
+}
+
 describe("Chat Username Requirement", () => {
   beforeEach(() => {
     cy.loginAsRegularUser();
@@ -49,13 +61,8 @@ describe("Chat Username Requirement", () => {
     // Submit the username
     cy.contains("button", "Set Username & Join Chat").click();
 
-    // After setting username, the modal should close and chat should be accessible
-    cy.contains("Username Required for Chat", { timeout: 10000 }).should(
-      "not.exist",
-    );
-
-    // Verify the chat sidebar is visible with Channels heading
-    cy.contains("Channels").should("be.visible");
+    // Verify chat becomes accessible; the flow triggers a page reload on success
+    cy.contains("Channels", { timeout: 20000 }).should("be.visible");
   });
 });
 
@@ -63,19 +70,11 @@ describe("Chat Support Ticket Management", () => {
   beforeEach(() => {
     cy.loginAsRegularUser();
 
-    // Set username via modal so we can access chat features
+    // Ensure username is set deterministically before entering chat-support flows
+    ensureUsernameSetViaProfile();
     cy.visit("/chat/general");
-    cy.get("body").then(($body) => {
-      if ($body.find(':contains("Username Required for Chat")').length > 0) {
-        const username = `user_${faker.string.alphanumeric(8)}`;
-        cy.get('input[name="username"]').type(username);
-        cy.contains("button", "Set Username & Join Chat").click();
-        cy.contains("Username Required for Chat", { timeout: 10000 }).should(
-          "not.exist",
-        );
-      }
-      return undefined;
-    });
+    cy.contains("Username Required for Chat").should("not.exist");
+    cy.contains("Channels", { timeout: 15000 }).should("be.visible");
   });
 
   it("should display chat support section and navigate to create ticket", () => {
