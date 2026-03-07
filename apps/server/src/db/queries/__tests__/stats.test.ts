@@ -31,12 +31,14 @@ vi.mock("drizzle-orm", async () => {
   const actual = await vi.importActual("drizzle-orm");
   return {
     ...actual,
-    count: vi.fn(() => "count()"),
+    count: vi.fn(() => ({
+      as: vi.fn((alias) => ({ _alias: alias })),
+    })),
     desc: vi.fn((field) => field),
     eq: vi.fn(() => true),
-    sql: {
-      placeholder: vi.fn((name) => `placeholder:${name}`),
-    } as never,
+    sql: vi.fn(() => ({
+      as: vi.fn((alias) => ({ _alias: alias })),
+    })),
   };
 });
 
