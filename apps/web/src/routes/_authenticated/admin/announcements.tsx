@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
 import { ConfirmDialog } from "~/components/confirm-dialog";
@@ -54,6 +54,7 @@ function AnnouncementsPage() {
   const [announcementToDelete, setAnnouncementToDelete] = useState<
     string | null
   >(null);
+  const selectedAnnouncementRef = useRef<HTMLButtonElement | null>(null);
 
   const {
     data: announcementsData,
@@ -140,6 +141,16 @@ function AnnouncementsPage() {
         : "",
     );
   }
+
+  // Scroll the selected announcement into view when it changes
+  useEffect(() => {
+    if (selectedAnnouncementRef.current) {
+      selectedAnnouncementRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [selectedAnnouncement?.id]);
 
   function handleCancel() {
     setSelectedAnnouncement(null);
@@ -233,6 +244,11 @@ function AnnouncementsPage() {
                         ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
                         : "border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                     }`}
+                    ref={
+                      selectedAnnouncement?.id === announcement.id
+                        ? selectedAnnouncementRef
+                        : null
+                    }
                     type="button"
                     key={announcement.id}
                     onClick={() => handleEdit(announcement)}
