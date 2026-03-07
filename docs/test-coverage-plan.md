@@ -4,7 +4,7 @@
 > the course platform. Last updated 2026-03-07.
 >
 > **Latest run (2026-03-07):** Server 28.38% stmts / 28.42% lines (38 files, 436
-> tests) | Web 25.52% stmts / 24.13% lines (47 files, 468 tests)
+> tests) | Web 27.60% stmts / 26.00% lines (50 files, 477 tests)
 
 ## Coverage Baseline
 
@@ -13,11 +13,13 @@
 | App        | Statements         | Branches          | Functions         | Lines              | Test Files |
 | ---------- | ------------------ | ----------------- | ----------------- | ------------------ | ---------- |
 | **Server** | 28.38% (886/3121)  | 23.10% (269/1164) | 28.18% (206/731)  | 28.42% (864/3040)  | 38         |
-| **Web**    | 25.52% (1320/5172) | 20.54% (749/3645) | 13.57% (174/1282) | 24.13% (1054/4368) | 47         |
+| **Web**    | 27.60% (1451/5257) | 22.00% (815/3704) | 14.86% (188/1265) | 26.00% (1145/4403) | 50         |
 
 ### Server (`apps/server`) — 28.42% Line Coverage
 
-**137 total files: 122 untested, 10 partial, 5 fully covered**
+#### Server Coverage Snapshot
+
+137 total files: 122 untested, 10 partial, 5 fully covered
 
 #### Server Coverage by Area
 
@@ -57,8 +59,7 @@
 
 #### Server — Untested Files (0% Coverage)
 
-<details>
-<summary>107 files with zero coverage (click to expand)</summary>
+#### 107 Files With Zero Coverage
 
 **Bootstrap & Core:**
 
@@ -192,20 +193,20 @@
 - `src/routes/team-licenses/handlers/updateTeamLicense.ts`
 - `src/routes/team-licenses/handlers/updateTeamLicenseInvite.ts`
 
-</details>
-
 ---
 
-### Web (`apps/web`) — 24.13% Line Coverage
+### Web (`apps/web`) — 26.00% Line Coverage
 
-**214 total files: 155 untested, 40 partial, 19 fully covered**
+#### Web Coverage Snapshot
+
+214 total files: 152 untested, 43 partial, 19 fully covered
 
 #### Web Coverage by Area
 
 | Area            | Files Tested | Line Coverage | Lines   |
 | --------------- | ------------ | ------------- | ------- |
 | Components      | 23/47        | partial       | —       |
-| Forms           | 6/13         | partial       | —       |
+| Forms           | 9/13         | partial       | —       |
 | Hooks           | 1/1          | partial       | —       |
 | Lib/Collections | 1/36         | 1.8%          | 5/276   |
 | Lib             | 7/14         | partial       | —       |
@@ -282,8 +283,7 @@
 
 #### Web — Untested Files (0% Coverage)
 
-<details>
-<summary>160 files with zero coverage (click to expand)</summary>
+#### 160 Files With Zero Coverage
 
 **App Bootstrap:**
 
@@ -318,21 +318,12 @@
 - `src/components/view-purchase-sheet.tsx`
 - `src/components/announcements/AnnouncementsBanner.tsx`
 
-**Forms (13 files):**
+**Forms (4 files):**
 
-- `src/components/forms/change-email-form.tsx`
-- `src/components/forms/change-password-form.tsx`
 - `src/components/forms/chat-message-form.tsx`
 - `src/components/forms/course-redemption-form.tsx`
 - `src/components/forms/create-course-form.tsx`
 - `src/components/forms/create-support-comment-form.tsx`
-- `src/components/forms/create-support-ticket-form.tsx`
-- `src/components/forms/delete-account-form.tsx`
-- `src/components/forms/password-reset-form.tsx`
-- `src/components/forms/profile-form.tsx`
-- `src/components/forms/request-password-reset-form.tsx`
-- `src/components/forms/sign-in-form.tsx`
-- `src/components/forms/sign-up-form.tsx`
 
 **Layouts:**
 
@@ -366,7 +357,7 @@
 
 **Hooks:**
 
-_(All hooks now have tests)_
+All hooks now have tests.
 
 **Lib (7 untested files):**
 
@@ -483,8 +474,6 @@ _(All hooks now have tests)_
 - `src/routes/support/$supportTicket/edit/index.tsx`
 - `src/routes/support/$supportTicket/edit/route.tsx`
 
-</details>
-
 ---
 
 ### Cypress E2E Tests — 20 Spec Files
@@ -595,17 +584,20 @@ These are the largest untested areas containing core business logic.
 
 ### Phase 4: Web Forms and UI Components
 
-| #   | Test to Create                                                       | Target               | Lines     | Status     |
-| --- | -------------------------------------------------------------------- | -------------------- | --------- | ---------- |
-| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`               | Sign in form         | 303 total | - [x] Done |
-| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`               | Sign up form         | —         | - [x] Done |
-| 43  | `src/components/forms/__tests__/profile-form.test.tsx`               | Profile form         | —         | - [x] Done |
-| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`         | Course creation form | —         | - [ ] Todo |
-| 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx` | Support ticket form  | —         | - [x] Done |
-| 46  | `src/components/forms/__tests__/change-password-form.test.tsx`       | Change password form | —         | - [x] Done |
-| 47  | `src/components/forms/__tests__/change-email-form.test.tsx`          | Change email form    | —         | - [x] Done |
-| 48  | `src/lib/__tests__/auth.client.test.ts`                              | Auth client          | —         | - [ ] Todo |
-| 49  | `src/lib/__tests__/markdown.test.ts`                                 | Markdown utils       | —         | - [x] Done |
+| #   | Test to Create                                                        | Target               | Lines     | Status     |
+| --- | --------------------------------------------------------------------- | -------------------- | --------- | ---------- |
+| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`                | Sign in form         | 303 total | - [x] Done |
+| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`                | Sign up form         | —         | - [x] Done |
+| 43  | `src/components/forms/__tests__/profile-form.test.tsx`                | Profile form         | —         | - [x] Done |
+| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`          | Course creation form | —         | - [ ] Todo |
+| 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx`  | Support ticket form  | —         | - [x] Done |
+| 46  | `src/components/forms/__tests__/change-password-form.test.tsx`        | Change password form | —         | - [x] Done |
+| 47  | `src/components/forms/__tests__/change-email-form.test.tsx`           | Change email form    | —         | - [x] Done |
+| 47a | `src/components/forms/__tests__/request-password-reset-form.test.tsx` | Request reset form   | —         | - [x] Done |
+| 47b | `src/components/forms/__tests__/password-reset-form.test.tsx`         | Password reset form  | —         | - [x] Done |
+| 47c | `src/components/forms/__tests__/delete-account-form.test.tsx`         | Delete account form  | —         | - [x] Done |
+| 48  | `src/lib/__tests__/auth.client.test.ts`                               | Auth client          | —         | - [ ] Todo |
+| 49  | `src/lib/__tests__/markdown.test.ts`                                  | Markdown utils       | —         | - [x] Done |
 
 ### Phase 5: Missing E2E Tests
 
@@ -653,7 +645,7 @@ Tests that would cover the most untested lines with the least effort:
    **Done** (16 tests)
 4. ~~**Forms components** — 303 untested lines across 13 form files.~~ **In
    progress**
-   (sign-in/sign-up/profile/create-support-ticket/change-password/change-email
+   (sign-in/sign-up/profile/create-support-ticket/change-password/change-email/request-password-reset/password-reset/delete-account
    covered; remaining form files pending).
 5. ~~**`src/routers/reviews/`** — 174 untested lines.~~ **Done** (11 tests)
 6. ~~**`src/routers/directMessages/`** — 171 untested lines.~~ **Done** (5
@@ -734,7 +726,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (47 test files, 468 tests + 12 todo)
+### Web (50 test files, 477 tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
@@ -769,6 +761,12 @@ Reports are generated in:
 - `src/components/forms/__tests__/change-password-form.test.tsx` — 3 tests
   _(new)_
 - `src/components/forms/__tests__/change-email-form.test.tsx` — 3 tests _(new)_
+- `src/components/forms/__tests__/request-password-reset-form.test.tsx` — 3
+  tests _(new)_
+- `src/components/forms/__tests__/password-reset-form.test.tsx` — 3 tests
+  _(new)_
+- `src/components/forms/__tests__/delete-account-form.test.tsx` — 3 tests
+  _(new)_
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
@@ -819,7 +817,7 @@ Compared to the previous baseline in this document:
 | App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
 | ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
 | **Server** | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
-| **Web**    | +2.49 pp   | +1.29 pp | +1.64 pp  | +2.39 pp | +3         | +9    |
+| **Web**    | +2.08 pp   | +1.46 pp | +1.29 pp  | +1.87 pp | +3         | +9    |
 
 ## Coverage Update Rule
 
