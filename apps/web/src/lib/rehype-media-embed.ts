@@ -36,7 +36,7 @@ const VIDEO_EXTENSIONS = new Set(["mp4", "webm", "mov"]);
 /**
  * Get file extension from URL or filename
  */
-function getExtension(url: string): string {
+export function getExtension(url: string): string {
   try {
     const pathname = new URL(url).pathname;
     const match = pathname.match(/\.([^./?#]+)(?:[?#]|$)/);
@@ -50,7 +50,7 @@ function getExtension(url: string): string {
 /**
  * Get filename from URL
  */
-function getFilename(url: string): string {
+export function getFilename(url: string): string {
   try {
     const pathname = new URL(url).pathname;
     const segments = pathname.split("/");
@@ -160,7 +160,7 @@ export function rehypeMediaEmbed() {
   };
 }
 
-function isVideoUrl(url: string): boolean {
+export function isVideoUrl(url: string): boolean {
   const videoPatterns = [
     /(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]+)/,
     /vimeo\.com\/(\d+)/,
@@ -285,7 +285,7 @@ function getFileIcon(ext: string): string {
 /**
  * Get human-readable label for file type
  */
-function getFileLabel(ext: string): string {
+export function getFileLabel(ext: string): string {
   const labels: Record<string, string> = {
     "pdf": "PDF Document",
     "doc": "Word Document",
