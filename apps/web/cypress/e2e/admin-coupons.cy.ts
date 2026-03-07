@@ -39,7 +39,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').clear();
     cy.get('input[name="redemptionLimit"]').type("100");
 
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
     cy.contains(couponCode).should("be.visible");
@@ -55,7 +55,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="discountValue"]').type("15");
     cy.get('input[name="redemptionLimit"]').clear();
     cy.get('input[name="redemptionLimit"]').type("50");
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     // Verify table displays coupon
     cy.contains("tr", couponCode).within(() => {
@@ -73,7 +73,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("10");
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     // Click copy button
     cy.contains("tr", couponCode).within(() => {
@@ -91,7 +91,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("20");
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     // Edit the coupon
     cy.contains("tr", couponCode).within(() => {
@@ -101,7 +101,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("Edit Coupon").should("be.visible");
     cy.get('input[name="discountValue"]').clear();
     cy.get('input[name="discountValue"]').type("30");
-    cy.contains("button", "Save").click();
+    cy.contains("button", "Save Changes").click();
 
     cy.contains(/updated successfully/i).should("be.visible");
     cy.contains("tr", couponCode).within(() => {
@@ -117,7 +117,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("5");
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     // Delete the coupon
     cy.contains("tr", couponCode).within(() => {
@@ -137,7 +137,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create New Coupon").click();
 
     // Try to submit without filling required fields
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     // Form should show validation errors
     cy.contains("Create Coupon").should("be.visible");
@@ -151,7 +151,7 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("fixed");
     cy.get('input[name="discountValue"]').type("50");
-    cy.contains("button", "Create").click();
+    cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
     cy.contains("tr", couponCode).within(() => {
