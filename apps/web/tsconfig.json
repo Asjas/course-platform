@@ -2,6 +2,8 @@
   "include": ["**/*.ts", "**/*.tsx"],
   "references": [{ "path": "../server" }],
   "compilerOptions": {
+    "incremental": true,
+    "tsBuildInfoFile": ".cache/tsbuildinfo/web.tsbuildinfo",
     "allowImportingTsExtensions": true,
     "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
