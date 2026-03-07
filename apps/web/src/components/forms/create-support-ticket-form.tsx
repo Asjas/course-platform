@@ -117,6 +117,7 @@ export default function NewSupportTicketForm() {
                     <div className="mt-2">
                       <input
                         className="block w-full rounded-md border border-gray-300 bg-white px-3 py-1.5 text-base text-gray-900 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-green-500 sm:text-sm/6 dark:border-white/10 dark:bg-white/5 dark:text-white"
+                        id={field.name}
                         name={field.name}
                         type="text"
                         value={field.state.value as string}
