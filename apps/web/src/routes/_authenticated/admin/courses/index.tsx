@@ -18,7 +18,7 @@ import {
   type AdminCourseDetail,
   CoursesAdminCollection,
   useCoursesAdmin,
-} from "~/lib/collections";
+} from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/")({

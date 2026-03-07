@@ -6,7 +6,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { Purchase } from "~/lib/collections/purchases";
+import type { Purchase } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 
 interface ViewPurchaseSheetProps {

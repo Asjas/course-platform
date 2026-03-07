@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CouponsCollection } from "~/lib/collections";
+import { CouponsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";
 

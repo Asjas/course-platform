@@ -29,7 +29,7 @@ import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageEditor from "~/components/chat-message-editor";
 import { MarkdownContent } from "~/components/markdown-content";
 import { useAuth } from "~/lib/auth.context";
-import { createThreadMessagesCollection } from "~/lib/collections/chat-messages";
+import { createThreadMessagesCollection } from "~/lib/db.collections";
 import { useAppForm } from "~/lib/form.context";
 import { renderMarkdown } from "~/lib/markdown";
 import { trpc } from "~/lib/trpc.client";

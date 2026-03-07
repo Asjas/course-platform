@@ -3,6 +3,7 @@ import type { PublishedAnnouncements } from "@apps/server/src/db/queries/platfor
 import type {
   ChannelMessages,
   DMMessages,
+  ThreadReplies,
 } from "@apps/server/src/routers/chat/queries";
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
@@ -12,11 +13,12 @@ import type {
   CourseById,
 } from "@apps/server/src/routers/courses/queries";
 import type { SearchableUsers } from "@apps/server/src/routers/directMessages/queries";
+import type { AllPurchases } from "@apps/server/src/routers/purchases/queries";
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
 import type { AllSyncStatuses } from "@apps/server/src/routers/syncStatus/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
-import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
+import { createCollection, eq, gt, useLiveQuery } from "@tanstack/react-db";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ulid } from "ulid";
@@ -558,6 +560,7 @@ export function useSyncStatusByCollection({
 // Derive single message types from array types
 export type ChannelMessage = ChannelMessages[number];
 export type DMMessage = DMMessages[number];
+export type ThreadMessage = ThreadReplies[number];
 
 // Union type for all chat messages
 export type ChatMessage = ChannelMessage | DMMessage;
@@ -706,6 +709,134 @@ export function createDMMessagesCollection(conversationId: string) {
       },
     }),
   );
+}
+
+// Thread Messages Collection - stores replies for a specific parent message
+// Uses tRPC queryKey for proper cache integration
+export function createThreadMessagesCollection(
+  channelId: string,
+  parentMessageId: string,
+) {
+  return createCollection(
+    queryCollectionOptions<ThreadMessage>({
+      queryClient,
+      getKey: (item) => item.id,
+      queryKey: trpc.chat.getThreadReplies.queryKey({
+        channelId,
+        parentMessageId,
+        limit: 50,
+      }),
+      queryFn: async () => {
+        return trpcClient.chat.getThreadReplies.query({
+          channelId,
+          parentMessageId,
+        });
+      },
+      onInsert: async ({ transaction }) => {
+        try {
+          const { modified } = transaction.mutations[0];
+
+          if (!modified.channelId) {
+            throw new Error("Channel ID is required for thread messages");
+          }
+
+          await trpcClient.chat.postMessage.mutate({
+            channelId: modified.channelId,
+            message: modified.message,
+            parentMessageId: modified.parentMessageId,
+          });
+        } catch (error) {
+          console.error("Error posting thread message: ", error);
+          toast.error(
+            "An error occurred while posting the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onDelete: async ({ transaction }) => {
+        try {
+          const { original } = transaction.mutations[0];
+
+          await trpcClient.chat.deleteMessage.mutate({
+            id: original.id,
+          });
+        } catch (error) {
+          console.error("Error deleting thread message: ", error);
+          toast.error(
+            "An error occurred while deleting the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+      onUpdate: async ({ transaction }) => {
+        try {
+          const { original, modified } = transaction.mutations[0];
+
+          if (original.message === modified.message) {
+            return;
+          }
+
+          await trpcClient.chat.editMessage.mutate({
+            id: modified.id,
+            message: modified.message,
+          });
+        } catch (error) {
+          console.error("Error editing thread message: ", error);
+          toast.error(
+            "An error occurred while editing the reply. Please try again.",
+          );
+          throw error;
+        }
+      },
+    }),
+  );
+}
+
+// ========== Purchases ===========
+
+export type Purchase = AllPurchases[number];
+
+export const PurchasesCollection = createCollection(
+  queryCollectionOptions<Purchase>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.purchases.getAll.queryKey(),
+    queryFn: () => trpcClient.purchases.getAll.query(),
+  }),
+);
+
+export function usePurchases() {
+  return useLiveQuery(PurchasesCollection);
+}
+
+export function usePurchaseById({ purchaseId }: { purchaseId: string }) {
+  return useLiveQuery(
+    (query) => {
+      return query
+        .from({ purchase: PurchasesCollection })
+        .where(({ purchase }) => eq(purchase.id, purchaseId))
+        .findOne();
+    },
+    [purchaseId],
+  );
+}
+
+export function useRefundedPurchases() {
+  return useLiveQuery((query) => {
+    return query
+      .from({ purchase: PurchasesCollection })
+      .where(({ purchase }) => gt(purchase.refundedAmount, 0))
+      .select(({ purchase }) => purchase);
+  });
+}
+
+export function useActivePurchases() {
+  return useLiveQuery((query) => {
+    return query
+      .from({ purchase: PurchasesCollection })
+      .where(({ purchase }) => eq(purchase.refundedAmount, 0))
+      .select(({ purchase }) => purchase);
+  });
 }
 
 // ========== GDPR Audit Logs ==========

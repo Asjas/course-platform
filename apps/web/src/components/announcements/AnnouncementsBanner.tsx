@@ -11,7 +11,7 @@ import {
   markAnnouncementAsRead,
   useReadAnnouncements,
   useUnreadAnnouncements,
-} from "~/lib/collections";
+} from "~/lib/db.collections";
 
 interface Announcement {
   id: string;

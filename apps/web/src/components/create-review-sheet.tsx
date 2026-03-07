@@ -13,7 +13,7 @@ import {
   SheetTitle,
 } from "~/components/ui/sheet";
 import { authClient } from "~/lib/auth.client";
-import { ReviewsCollection, useCoursesAdmin } from "~/lib/collections";
+import { ReviewsCollection, useCoursesAdmin } from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createReviewSchema } from "~/schema/create-review";

@@ -11,7 +11,7 @@ import { useForm } from "@tanstack/react-form";
 import { useState } from "react";
 import { toast } from "sonner";
 import FieldInfo from "~/components/field-info";
-import type { Purchase } from "~/lib/collections/purchases";
+import type { Purchase } from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
