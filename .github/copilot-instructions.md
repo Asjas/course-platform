@@ -178,7 +178,7 @@ export default function myRoutes(fastify, opts) {
 ### E2E Tests (Cypress)
 - Located in `apps/web/cypress/e2e/`
 - Use `data-testid` for stable selectors
-- Use `cy.intercept()` for API mocking
+- Use `cy.intercept()` for observing/waiting on network calls when needed; do not mock auth/permission outcomes
 - Start backend before E2E: `pnpm --filter @apps/server dev`
 - Start frontend preview before E2E: `pnpm --filter @apps/web preview`
 - Wait until both servers are available before running Cypress
@@ -189,6 +189,8 @@ export default function myRoutes(fastify, opts) {
 - Authorization coverage is mandatory: include owner-vs-non-owner tests (a user must not access another user's content)
 - Authorization coverage is mandatory: include admin-vs-non-admin tests (admin can access admin routes/data, regular users cannot)
 - Permission-failure UX is mandatory: assert blocked behavior and a visible permission/access popup message from backend errors
+- For admin pages blocked by route guards, Cypress should assert route-level denial only; do not force mutation-level UI tests from blocked pages
+- Add server-side Vitest tests for protected tRPC endpoints to verify non-admin requests are rejected
 
 Known failure mode (2026-03-07): Bare `pnpm preview` at repository root fails
 with `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL` and blocks E2E progress. Always use

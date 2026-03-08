@@ -154,13 +154,11 @@ E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIE
    - Try to navigate to `/admin/*` page through UI
    - Expect page to FAIL TO LOAD or redirect back
    - Verify error message appears to user
-2. **Form submission with unauthorized user**:
-   - Login as non-admin
-   - Navigate to admin page (may or may not load depending on route guards)
-   - Try to submit admin form through UI (click button, await form submission)
-   - Backend rejects request in real time
-   - Error toast appears to user
-   - Verify user sees the error message
+2. **If route guard blocks page load, stop there in E2E**:
+  - Do NOT try to force mutation-level tests through UI when page cannot load
+  - E2E expectation is route-level denial (redirect/forbidden UI + user-facing message)
+  - Add server-side Vitest coverage for protected tRPC endpoints to verify non-admin requests are rejected
+  - Endpoint authorization checks belong in `apps/server` tests, not Cypress UI tests
 3. **Admin user can perform actions**:
    - Login as admin
    - Same actions succeed
@@ -169,7 +167,7 @@ E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIE
 
 E2E authorization tests should verify:
 - Route guards prevent non-admin access (or show error message)
-- Forms submitted by non-admin users are rejected by real backend
+- UI reflects denied access when non-admin users hit protected routes
 - Error messages are displayed properly in the UI
 - Admin users can perform their actions
 

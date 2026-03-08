@@ -101,10 +101,11 @@ For authorization scenarios, assert both behaviors by testing through the UI:
    - Verify error message appears (not hardcoded, but from real backend)
    - Navigate to protected page as admin → Page loads normally
 
-2. **Form submission with unauthorized user**:
-   - Try to submit admin form as non-admin → Backend rejects in real time
-   - Error toast appears to user (from real backend error)
-   - Verify user sees the actual error message
+2. **When route guards block page load**:
+  - Do not add impossible UI mutation tests for that page as non-admin
+  - E2E should assert the page is blocked (redirect/forbidden state) and user-facing error is visible
+  - Add server-side Vitest tests for protected tRPC endpoints to verify non-admin requests are rejected
+  - Keep endpoint permission assertions in `apps/server` tests as part of the overall strategy
 
 3. **Ownership boundaries**:
    - User A navigates to their own content → Loads successfully
@@ -117,6 +118,8 @@ For authorization scenarios, assert both behaviors by testing through the UI:
    - Verify appropriate user-facing messages
 
 **Key Principle**: "As a user, you expect the page to not load or show an error message. NOT for the app to make direct HTTP requests to test permissions."
+
+If an admin page is inaccessible to non-admin users by design, the Cypress test should stop at route-level denial and not attempt form submission from that state.
 
 ### Known Failure Modes (Do Not Repeat)
 
