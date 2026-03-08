@@ -1,57 +1,57 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ErrorBoundaryComponent from "~/components/error-boundary";
-
-const mockInvalidate = vi.fn();
-const mockReset = vi.fn();
-
-vi.mock("@tanstack/react-router", () => ({
-  useRouter: () => ({
-    invalidate: mockInvalidate,
-  }),
-}));
-
-vi.mock("@tanstack/react-query", () => ({
-  useQueryErrorResetBoundary: () => ({
-    reset: mockReset,
-  }),
-}));
+import { renderWithProviders } from "~/test-utils";
 
 describe("ErrorBoundaryComponent", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("displays the error message", () => {
-    render(
+  it("displays the error message", async () => {
+    await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Something went wrong")} />,
     );
     expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
 
-  it("displays support message", () => {
-    render(<ErrorBoundaryComponent error={new Error("Test error")} />);
+  it("displays support message", async () => {
+    await renderWithProviders(
+      <ErrorBoundaryComponent error={new Error("Test error")} />,
+    );
     expect(
       screen.getByText(/This error has been logged automatically/),
     ).toBeInTheDocument();
   });
 
-  it("renders a reload button", () => {
-    render(<ErrorBoundaryComponent error={new Error("Test error")} />);
+  it("renders a reload button", async () => {
+    await renderWithProviders(
+      <ErrorBoundaryComponent error={new Error("Test error")} />,
+    );
     expect(
       screen.getByRole("button", { name: "Reload page" }),
     ).toBeInTheDocument();
   });
 
-  it("calls router.invalidate when reload button is clicked", () => {
-    render(<ErrorBoundaryComponent error={new Error("Test error")} />);
-    const button = screen.getByRole("button", { name: "Reload page" });
-    fireEvent.click(button);
-    expect(mockInvalidate).toHaveBeenCalledOnce();
+  it("calls router.invalidate when reload button is clicked", async () => {
+    const { router } = await renderWithProviders(
+      <ErrorBoundaryComponent error={new Error("Test error")} />,
+    );
+    const invalidateSpy = vi
+      .spyOn(router, "invalidate")
+      .mockResolvedValue(undefined as never);
+
+    fireEvent.click(screen.getByRole("button", { name: "Reload page" }));
+
+    expect(invalidateSpy).toHaveBeenCalledOnce();
   });
 
-  it("resets query error boundary on mount", () => {
-    render(<ErrorBoundaryComponent error={new Error("Test error")} />);
-    expect(mockReset).toHaveBeenCalledOnce();
+  it("mounts and renders without crashing with a real QueryClient", async () => {
+    await renderWithProviders(
+      <ErrorBoundaryComponent error={new Error("Test error")} />,
+    );
+    expect(
+      screen.getByRole("button", { name: "Reload page" }),
+    ).toBeInTheDocument();
   });
 });

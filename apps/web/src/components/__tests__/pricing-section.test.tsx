@@ -1,54 +1,11 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import PricingSection from "~/components/pricing-section";
-
-vi.mock("~/components/ui/card", () => ({
-  Card: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="card">{children}</div>
-  ),
-  CardHeader: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="card-header">{children}</div>
-  ),
-  CardPrice: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="card-price">{children}</div>
-  ),
-  CardContentList: ({ children }: { children: React.ReactNode }) => (
-    <ul data-testid="card-content-list">{children}</ul>
-  ),
-  CardContentListItem: ({
-    children,
-  }: {
-    children: React.ReactNode;
-    customClasses?: string;
-  }) => <li data-testid="card-content-list-item">{children}</li>,
-  CardFooter: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="card-footer">{children}</div>
-  ),
-  CardAction: ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => (
-    <a
-      href={href}
-      data-testid="card-action"
-    >
-      {children}
-    </a>
-  ),
-}));
-
-vi.mock("~/components/ui/section", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <section data-testid="section">{children}</section>
-  ),
-}));
+import { renderWithProviders } from "~/test-utils";
 
 describe("PricingSection", () => {
-  it("renders the pricing heading", () => {
-    render(<PricingSection />);
+  it("renders the pricing heading", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(
       screen.getByRole("heading", {
         name: /simple, transparent pricing/i,
@@ -56,49 +13,51 @@ describe("PricingSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders two pricing cards", () => {
-    render(<PricingSection />);
-    const cards = screen.getAllByTestId("card");
-    expect(cards).toHaveLength(2);
+  it("renders both free ($0) and paid ($19) price tiers", async () => {
+    await renderWithProviders(<PricingSection />);
+    expect(screen.getByText("$0")).toBeInTheDocument();
+    expect(screen.getByText("$19")).toBeInTheDocument();
   });
 
-  it("renders free price ($0)", () => {
-    render(<PricingSection />);
-    const prices = screen.getAllByTestId("card-price");
-    expect(prices[0]).toHaveTextContent("$0");
+  it("renders 'Preview Course' and 'Full Course' tier names", async () => {
+    await renderWithProviders(<PricingSection />);
+    expect(
+      screen.getByRole("heading", { name: /preview course/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /full course/i }),
+    ).toBeInTheDocument();
   });
 
-  it("renders paid price ($19)", () => {
-    render(<PricingSection />);
-    const prices = screen.getAllByTestId("card-price");
-    expect(prices[1]).toHaveTextContent("$19");
+  it("renders a free call-to-action link to the signup page", async () => {
+    await renderWithProviders(<PricingSection />);
+    expect(screen.getByRole("link", { name: /free/i })).toHaveAttribute(
+      "href",
+      "/signup",
+    );
   });
 
-  it("renders preview course header", () => {
-    render(<PricingSection />);
-    const headers = screen.getAllByTestId("card-header");
-    expect(headers[0]).toHaveTextContent("Preview Course");
+  it("renders a paid call-to-action link to the checkout page", async () => {
+    await renderWithProviders(<PricingSection />);
+    expect(
+      screen.getByRole("link", { name: /buy full course/i }),
+    ).toHaveAttribute("href", "/checkout");
   });
 
-  it("renders full course header", () => {
-    render(<PricingSection />);
-    const headers = screen.getAllByTestId("card-header");
-    expect(headers[1]).toHaveTextContent("Full Course");
+  it("lists feature items for each tier", async () => {
+    await renderWithProviders(<PricingSection />);
+    expect(
+      screen.getAllByText(/stream and download/i).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.getAllByText(/unlimited content updates/i).length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
-  it("renders content list items", () => {
-    render(<PricingSection />);
-    const items = screen.getAllByTestId("card-content-list-item");
-    expect(items.length).toBeGreaterThan(0);
-  });
-
-  it("renders trust signals section", () => {
-    render(<PricingSection />);
+  it("renders trust signals — cancel anytime, 30-day guarantee, and secure payment", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(screen.getByText(/cancel anytime/i)).toBeInTheDocument();
-  });
-
-  it("renders within a Section wrapper", () => {
-    render(<PricingSection />);
-    expect(screen.getByTestId("section")).toBeInTheDocument();
+    expect(screen.getByText(/30-day guarantee/i)).toBeInTheDocument();
+    expect(screen.getByText(/secure payment/i)).toBeInTheDocument();
   });
 });
