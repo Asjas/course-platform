@@ -11,6 +11,14 @@
 > - Server: **+3.15% lines** (28.42% → 31.57%) ✅ IMPROVED
 > - Web: **-0.11% lines** (26.00% → 25.89%) ⚠️ Slight decrease (1 test file now
 >   skipped)
+>
+> **Latest E2E Delta (2026-03-08):**
+>
+> - Admin E2E specs in scope: `admin-stats.cy.ts`, `admin-announcements.cy.ts`
+> - `admin-stats.cy.ts`: **+2 tests** (5 → 7), all passing ✅
+> - `admin-announcements.cy.ts`: CRUD test remains skipped due update-flow
+>   flakiness in list/editor timing ⚠️
+> - Total Cypress spec inventory: **23 spec files** (9 admin-focused)
 
 ## Coverage Baseline
 
@@ -230,7 +238,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 26.00% Line Coverage
+### Web (`apps/web`) — 25.89% Line Coverage
 
 #### Web Coverage Snapshot
 
@@ -511,7 +519,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 20 Spec Files
+### Cypress E2E Tests — 23 Spec Files
 
 #### Features Covered by E2E
 
@@ -528,7 +536,8 @@ All hooks now have tests.
 - `cookie-policy.cy.ts` — Cookie policy page
 - `chat-support-tickets.cy.ts` — Chat username, support tickets, chat access
 - `admin-navigation.cy.ts` — Admin navigation and access control
-- `admin-stats.cy.ts` — Admin stats dashboard
+- `admin-stats.cy.ts` — Admin stats dashboard (7 tests; expanded
+  KPI/section/table coverage)
 - `admin-courses.cy.ts` — Admin courses management
 - `admin-course-editor.cy.ts` — Admin course editor
 - `admin-course-creation-flow.cy.ts` — Admin course creation flow
@@ -541,15 +550,29 @@ All hooks now have tests.
 
 #### Features NOT Covered by E2E
 
-- Course enrollment and lesson viewing
-- Purchases and payments flow
-- Course reviews
-- Coupon management (admin)
-- Direct messages
+- Course enrollment and lesson viewing (learner journey)
+- Purchases and payments flow (checkout/refund lifecycle)
+- Direct messages (conversation lifecycle and moderation actions)
 - User search and mentions
 - Sync status page
+- Admin announcements full update flow (currently flaky and skipped)
 
 ---
+
+## Next E2E Tests To Add
+
+Prioritized by user impact, risk, and current coverage gaps:
+
+1. `cypress/e2e/purchases.cy.ts` — checkout, failed payment handling, refund UX,
+   and admin purchase visibility.
+2. `cypress/e2e/course-enrollment.cy.ts` — enrollment start, lesson progression,
+   completion state, and resume behavior.
+3. `cypress/e2e/direct-messages.cy.ts` — conversation creation, unread/read
+   states, and permission boundaries.
+4. `cypress/e2e/admin-announcements.cy.ts` (unskip target) — stabilize update
+   path with deterministic list selection and form submit assertions.
+5. `cypress/e2e/admin-coupons.cy.ts` (auth depth) — explicit owner/non-owner and
+   admin/non-admin permission-failure toast assertions.
 
 ## Test Plan — Phased Implementation
 
