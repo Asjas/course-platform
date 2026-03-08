@@ -18,8 +18,8 @@ describe("PasswordResetForm", () => {
     vi.clearAllMocks();
   });
 
-  it("renders fields and keeps submit disabled while pristine", () => {
-    renderWithProviders(<PasswordResetForm token="token-123" />);
+  it("renders fields and keeps submit disabled while pristine", async () => {
+    await renderWithProviders(<PasswordResetForm token="token-123" />);
     expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/confirm password/i)).toBeInTheDocument();
     expect(
@@ -31,7 +31,7 @@ describe("PasswordResetForm", () => {
     const user = userEvent.setup();
     mockAuthClient.resetPassword.mockResolvedValue({ error: null });
 
-    renderWithProviders(
+    const { router } = await renderWithProviders(
       <PasswordResetForm token="token-abc" />,
       { initialPath: "/reset-password" },
     );
@@ -62,7 +62,7 @@ describe("PasswordResetForm", () => {
       error: { message: "Invalid token" },
     });
 
-    renderWithProviders(
+    const { router } = await renderWithProviders(
       <PasswordResetForm token="bad-token" />,
       { initialPath: "/reset-password" },
     );
@@ -81,10 +81,9 @@ describe("PasswordResetForm", () => {
     const user = userEvent.setup();
     mockAuthClient.resetPassword.mockResolvedValue({ error: { message: "" } });
 
-    renderWithProviders(
-      <PasswordResetForm token="token-empty" />,
-      { initialPath: "/reset-password" },
-    );
+    await renderWithProviders(<PasswordResetForm token="token-empty" />, {
+      initialPath: "/reset-password",
+    });
 
     await user.type(screen.getByLabelText(/new password/i), "Password123!");
     await user.type(screen.getByLabelText(/confirm password/i), "Password123!");
@@ -97,7 +96,7 @@ describe("PasswordResetForm", () => {
 
   it("does not submit when passwords do not match", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<PasswordResetForm token="token-mismatch" />);
+    await renderWithProviders(<PasswordResetForm token="token-mismatch" />);
 
     await user.type(screen.getByLabelText(/new password/i), "Password123!");
     await user.type(

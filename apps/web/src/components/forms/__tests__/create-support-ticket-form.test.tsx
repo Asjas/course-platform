@@ -41,8 +41,8 @@ describe("NewSupportTicketForm", () => {
     vi.clearAllMocks();
   });
 
-  it("renders all required fields and submit button is disabled when pristine", () => {
-    renderWithProviders(<NewSupportTicketForm />);
+  it("renders all required fields and submit button is disabled when pristine", async () => {
+    await renderWithProviders(<NewSupportTicketForm />);
     expect(screen.getByLabelText(/title/i)).toBeInTheDocument();
     expect(
       screen.getByRole("textbox", { name: /repository url/i }),
@@ -58,7 +58,7 @@ describe("NewSupportTicketForm", () => {
     });
     mockCollection.utils.refetch.mockResolvedValue(undefined);
 
-    const { router } = renderWithProviders(<NewSupportTicketForm />, {
+    const { router } = await renderWithProviders(<NewSupportTicketForm />, {
       initialPath: "/support/new",
     });
 
@@ -90,7 +90,8 @@ describe("NewSupportTicketForm", () => {
       );
     });
     await waitFor(() => {
-      expect(router.state.location.pathname).toMatch(/^\/support\/suptick:/);
+      // TanStack Router URL-encodes ":" as "%3A" in the pathname
+      expect(router.state.location.pathname).toMatch(/^\/support\/suptick/);
     });
   });
 
@@ -100,7 +101,7 @@ describe("NewSupportTicketForm", () => {
       throw new Error("Database error");
     });
 
-    const { router } = renderWithProviders(<NewSupportTicketForm />, {
+    const { router } = await renderWithProviders(<NewSupportTicketForm />, {
       initialPath: "/support/new",
     });
 

@@ -36,8 +36,8 @@ describe("UsernameRequirementModal", () => {
     vi.clearAllMocks();
   });
 
-  it("renders nothing when isOpen is false", () => {
-    renderWithProviders(
+  it("renders nothing when isOpen is false", async () => {
+    await renderWithProviders(
       <UsernameRequirementModal
         {...defaultProps}
         isOpen={false}
@@ -46,8 +46,8 @@ describe("UsernameRequirementModal", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("renders title, username input, Set Username button, Leave Chat button when open", () => {
-    renderWithProviders(<UsernameRequirementModal {...defaultProps} />);
+  it("renders title, username input, Set Username button, Leave Chat button when open", async () => {
+    await renderWithProviders(<UsernameRequirementModal {...defaultProps} />);
 
     expect(
       screen.getByRole("heading", { name: /username required for chat/i }),
@@ -67,7 +67,7 @@ describe("UsernameRequirementModal", () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    const { router } = renderWithProviders(
+    const { router } = await renderWithProviders(
       <UsernameRequirementModal
         {...defaultProps}
         onClose={onClose}
@@ -88,7 +88,7 @@ describe("UsernameRequirementModal", () => {
     const onSuccess = vi.fn();
     mockUpdateUser.mockResolvedValue({ error: null });
 
-    renderWithProviders(
+    await renderWithProviders(
       <UsernameRequirementModal
         {...defaultProps}
         onSuccess={onSuccess}
@@ -126,7 +126,7 @@ describe("UsernameRequirementModal", () => {
       error: { message: "Username already taken" },
     });
 
-    renderWithProviders(
+    await renderWithProviders(
       <UsernameRequirementModal
         {...defaultProps}
         onSuccess={onSuccess}

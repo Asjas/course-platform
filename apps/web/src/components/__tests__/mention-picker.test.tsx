@@ -7,22 +7,26 @@ beforeAll(() => {
   Element.prototype.scrollIntoView = vi.fn();
 });
 
-const mockUsers = [
-  {
-    id: "user:1",
-    name: "Alice Johnson",
-    username: "alice",
-    displayUsername: "@alice",
-    image: null,
-  },
-  {
-    id: "user:2",
-    name: "Bob Smith",
-    username: "bob",
-    displayUsername: "@bob",
-    image: "https://example.com/bob.jpg",
-  },
-];
+// mockUsers must be defined via vi.hoisted because vi.mock is hoisted above all
+// variable declarations — referencing a plain const from the factory would fail.
+const { mockUsers } = vi.hoisted(() => ({
+  mockUsers: [
+    {
+      id: "user:1",
+      name: "Alice Johnson",
+      username: "alice",
+      displayUsername: "@alice",
+      image: null,
+    },
+    {
+      id: "user:2",
+      name: "Bob Smith",
+      username: "bob",
+      displayUsername: "@bob",
+      image: "https://example.com/bob.jpg",
+    },
+  ],
+}));
 
 vi.mock("~/lib/trpc.client", () => ({
   trpc: {

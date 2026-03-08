@@ -18,8 +18,8 @@ describe("ChangePasswordForm", () => {
     vi.clearAllMocks();
   });
 
-  it("renders all required fields and submit button is disabled when pristine", () => {
-    renderWithProviders(<ChangePasswordForm />);
+  it("renders all required fields and submit button is disabled when pristine", async () => {
+    await renderWithProviders(<ChangePasswordForm />);
     expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/new password/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
@@ -29,7 +29,7 @@ describe("ChangePasswordForm", () => {
     const user = userEvent.setup();
     mockAuthClient.changePassword.mockResolvedValue({ error: null });
 
-    const { router } = renderWithProviders(<ChangePasswordForm />, {
+    const { router } = await renderWithProviders(<ChangePasswordForm />, {
       initialPath: "/settings",
     });
 
@@ -66,7 +66,7 @@ describe("ChangePasswordForm", () => {
       error: { message: "Current password is incorrect" },
     });
 
-    const { router } = renderWithProviders(<ChangePasswordForm />, {
+    const { router } = await renderWithProviders(<ChangePasswordForm />, {
       initialPath: "/settings",
     });
 

@@ -8,15 +8,15 @@ describe("ErrorBoundaryComponent", () => {
     vi.clearAllMocks();
   });
 
-  it("displays the error message", () => {
-    renderWithProviders(
+  it("displays the error message", async () => {
+    await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Something went wrong")} />,
     );
     expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
 
-  it("displays support message", () => {
-    renderWithProviders(
+  it("displays support message", async () => {
+    await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Test error")} />,
     );
     expect(
@@ -24,8 +24,8 @@ describe("ErrorBoundaryComponent", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a reload button", () => {
-    renderWithProviders(
+  it("renders a reload button", async () => {
+    await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Test error")} />,
     );
     expect(
@@ -33,8 +33,8 @@ describe("ErrorBoundaryComponent", () => {
     ).toBeInTheDocument();
   });
 
-  it("calls router.invalidate when reload button is clicked", () => {
-    const { router } = renderWithProviders(
+  it("calls router.invalidate when reload button is clicked", async () => {
+    const { router } = await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Test error")} />,
     );
     const invalidateSpy = vi
@@ -46,8 +46,8 @@ describe("ErrorBoundaryComponent", () => {
     expect(invalidateSpy).toHaveBeenCalledOnce();
   });
 
-  it("mounts and renders without crashing with a real QueryClient", () => {
-    renderWithProviders(
+  it("mounts and renders without crashing with a real QueryClient", async () => {
+    await renderWithProviders(
       <ErrorBoundaryComponent error={new Error("Test error")} />,
     );
     expect(

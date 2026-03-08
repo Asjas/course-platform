@@ -4,8 +4,8 @@ import PricingSection from "~/components/pricing-section";
 import { renderWithProviders } from "~/test-utils";
 
 describe("PricingSection", () => {
-  it("renders the pricing heading", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders the pricing heading", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(
       screen.getByRole("heading", {
         name: /simple, transparent pricing/i,
@@ -13,14 +13,14 @@ describe("PricingSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders both free ($0) and paid ($19) price tiers", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders both free ($0) and paid ($19) price tiers", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(screen.getByText("$0")).toBeInTheDocument();
     expect(screen.getByText("$19")).toBeInTheDocument();
   });
 
-  it("renders 'Preview Course' and 'Full Course' tier names", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders 'Preview Course' and 'Full Course' tier names", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(
       screen.getByRole("heading", { name: /preview course/i }),
     ).toBeInTheDocument();
@@ -29,23 +29,23 @@ describe("PricingSection", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders a free call-to-action link to the signup page", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders a free call-to-action link to the signup page", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(screen.getByRole("link", { name: /free/i })).toHaveAttribute(
       "href",
       "/signup",
     );
   });
 
-  it("renders a paid call-to-action link to the checkout page", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders a paid call-to-action link to the checkout page", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(
       screen.getByRole("link", { name: /buy full course/i }),
     ).toHaveAttribute("href", "/checkout");
   });
 
-  it("lists feature items for each tier", () => {
-    renderWithProviders(<PricingSection />);
+  it("lists feature items for each tier", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(
       screen.getAllByText(/stream and download/i).length,
     ).toBeGreaterThanOrEqual(1);
@@ -54,8 +54,8 @@ describe("PricingSection", () => {
     ).toBeGreaterThanOrEqual(1);
   });
 
-  it("renders trust signals — cancel anytime, 30-day guarantee, and secure payment", () => {
-    renderWithProviders(<PricingSection />);
+  it("renders trust signals — cancel anytime, 30-day guarantee, and secure payment", async () => {
+    await renderWithProviders(<PricingSection />);
     expect(screen.getByText(/cancel anytime/i)).toBeInTheDocument();
     expect(screen.getByText(/30-day guarantee/i)).toBeInTheDocument();
     expect(screen.getByText(/secure payment/i)).toBeInTheDocument();

@@ -38,8 +38,8 @@ describe("SignUpForm", () => {
     mockUseAuth.mockReturnValue({ isAuthenticated: true });
   });
 
-  it("renders required fields and disabled submit when pristine", () => {
-    renderWithProviders(<SignUpForm />);
+  it("renders required fields and disabled submit when pristine", async () => {
+    await renderWithProviders(<SignUpForm />);
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe("SignUpForm", () => {
     const { toast } = await import("sonner");
     mockSignUpEmail.mockResolvedValue({ error: null });
 
-    const { router } = renderWithProviders(<SignUpForm />, {
+    const { router } = await renderWithProviders(<SignUpForm />, {
       initialPath: "/signup",
     });
 
@@ -83,7 +83,7 @@ describe("SignUpForm", () => {
     const { toast } = await import("sonner");
     mockSignUpEmail.mockResolvedValue({ error: { message: "Email in use" } });
 
-    const { router } = renderWithProviders(<SignUpForm />, {
+    const { router } = await renderWithProviders(<SignUpForm />, {
       initialPath: "/signup",
     });
 

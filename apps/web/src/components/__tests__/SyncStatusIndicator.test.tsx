@@ -61,7 +61,9 @@ describe("SyncStatusIndicator", () => {
     const user = userEvent.setup();
     render(
       <SyncStatusIndicator
-        collections={[makeStatus({ displayName: "My Collection" })]}
+        collections={[
+          makeStatus({ displayName: "My Collection", isConnected: true }),
+        ]}
       />,
     );
 

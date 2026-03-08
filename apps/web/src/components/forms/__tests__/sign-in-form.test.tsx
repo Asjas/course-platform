@@ -38,8 +38,8 @@ describe("SignInForm", () => {
     mockUseAuth.mockReturnValue({ isAuthenticated: true });
   });
 
-  it("renders fields and keeps submit disabled while pristine", () => {
-    renderWithProviders(<SignInForm />);
+  it("renders fields and keeps submit disabled while pristine", async () => {
+    await renderWithProviders(<SignInForm />);
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
     expect(screen.getByLabelText("Remember Me")).toBeChecked();
@@ -51,7 +51,7 @@ describe("SignInForm", () => {
     const { toast } = await import("sonner");
     mockSignInEmail.mockResolvedValue({ error: null });
 
-    const { router } = renderWithProviders(<SignInForm />, {
+    const { router } = await renderWithProviders(<SignInForm />, {
       initialPath: "/signin",
     });
 
@@ -82,7 +82,7 @@ describe("SignInForm", () => {
       error: { message: "Invalid credentials" },
     });
 
-    const { router } = renderWithProviders(<SignInForm />, {
+    const { router } = await renderWithProviders(<SignInForm />, {
       initialPath: "/signin",
     });
 

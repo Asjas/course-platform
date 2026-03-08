@@ -18,8 +18,8 @@ describe("DeleteAccountForm", () => {
     vi.clearAllMocks();
   });
 
-  it("renders password field and keeps delete disabled while pristine", () => {
-    renderWithProviders(<DeleteAccountForm />);
+  it("renders password field and keeps delete disabled while pristine", async () => {
+    await renderWithProviders(<DeleteAccountForm />);
     expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /delete account/i }),
@@ -30,7 +30,7 @@ describe("DeleteAccountForm", () => {
     const user = userEvent.setup();
     mockAuthClient.deleteUser.mockResolvedValue({ error: null });
 
-    const { router } = renderWithProviders(<DeleteAccountForm />, {
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
       initialPath: "/settings",
     });
 
@@ -58,7 +58,7 @@ describe("DeleteAccountForm", () => {
       error: { message: "Incorrect password" },
     });
 
-    const { router } = renderWithProviders(<DeleteAccountForm />, {
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
       initialPath: "/settings",
     });
 
@@ -75,7 +75,7 @@ describe("DeleteAccountForm", () => {
     const user = userEvent.setup();
     mockAuthClient.deleteUser.mockResolvedValue({ error: { message: "" } });
 
-    const { router } = renderWithProviders(<DeleteAccountForm />, {
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
       initialPath: "/settings",
     });
 
@@ -90,7 +90,7 @@ describe("DeleteAccountForm", () => {
 
   it("resets the form when cancel is clicked", async () => {
     const user = userEvent.setup();
-    renderWithProviders(<DeleteAccountForm />);
+    await renderWithProviders(<DeleteAccountForm />);
 
     const passwordInput = screen.getByLabelText(/current password/i);
     await user.type(passwordInput, "Password123!");
