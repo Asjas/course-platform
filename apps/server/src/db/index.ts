@@ -6,8 +6,18 @@ import * as schemas from "~/db/schema/index.js";
 
 const isCI = process.env.CI === "true";
 
+// Append PostgreSQL libpq keepalive parameters to the connection URL.
+// These are separate from Node.js TCP keepalive (keepAlive / setKeepAlive)
+// and tell the PostgreSQL server to send keepalive probes, which prevents
+// network equipment and managed database providers from dropping idle
+// connections silently.
+const keepaliveParams =
+  "keepalives=1&keepalives_idle=300&keepalives_interval=10&keepalives_count=10";
+const separator = config.DATABASE_URL.includes("?") ? "&" : "?";
+const connectionString = `${config.DATABASE_URL}${separator}${keepaliveParams}`;
+
 const pool = new Pool({
-  connectionString: config.DATABASE_URL,
+  connectionString,
   max: isCI ? 10 : 100,
   min: isCI ? 1 : 10,
   idleTimeoutMillis: isCI ? 10_000 : 30_000,

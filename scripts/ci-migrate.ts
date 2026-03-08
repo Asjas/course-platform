@@ -38,8 +38,13 @@ if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(schemaName)) {
 
 console.log(`🔄 Running CI migrations for schema: "${schemaName}"`);
 
+// Append PostgreSQL libpq keepalive parameters to prevent idle connection drops.
+const keepaliveParams =
+  "keepalives=1&keepalives_idle=300&keepalives_interval=10&keepalives_count=10";
+const keepaliveSep = databaseUrl.includes("?") ? "&" : "?";
+
 const pool = new Pool({
-  connectionString: databaseUrl,
+  connectionString: `${databaseUrl}${keepaliveSep}${keepaliveParams}`,
 });
 
 async function runMigrations() {
