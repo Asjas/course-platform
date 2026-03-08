@@ -156,7 +156,7 @@ describe("Support Ticket Management", () => {
       // SupportTicketsCollection.preload() which triggers this request.
       cy.intercept("GET", "**/trpc/supportTickets*").as("loadTickets");
       cy.visit(`/support/${ownerTicketId}`);
-      cy.wait("@loadTickets", { timeout: 30000 });
+      cy.wait("@loadTickets", { timeout: 15000 });
       cy.contains(ticketTitle, { timeout: 15000 }).should("be.visible");
       cy.contains(ticketDescription).should("be.visible");
 
