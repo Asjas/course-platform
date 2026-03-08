@@ -534,7 +534,7 @@ All hooks now have tests.
 - `data-export.cy.ts` — Data export page
 - `downloads.cy.ts` — Downloads page
 - `cookie-policy.cy.ts` — Cookie policy page
-- `chat-support-tickets.cy.ts` — Chat username, support tickets, chat access
+- `support-tickets.cy.ts` — Support ticket flows and permission boundaries
 - `admin-navigation.cy.ts` — Admin navigation and access control
 - `admin-stats.cy.ts` — Admin stats dashboard (7 tests; expanded
   KPI/section/table coverage)
@@ -854,7 +854,7 @@ Reports are generated in:
 - `admin-stats.cy.ts`
 - `auth-forms.cy.ts`
 - `blog.cy.ts` _(new)_
-- `chat-support-tickets.cy.ts`
+- `support-tickets.cy.ts`
 - `cookie-policy.cy.ts`
 - `dashboard.cy.ts`
 - `data-export.cy.ts`
