@@ -35,7 +35,7 @@ tsx scripts/seed-test-data.ts
 tsx scripts/seed-test-data.ts test_pr_123
 
 # Seed using DATABASE_SCHEMA env var
-DATABASE_SCHEMA=ci_server_20 tsx scripts/seed-test-data.ts
+DATABASE_SCHEMA=ci_server_22 tsx scripts/seed-test-data.ts
 ```
 
 ### `cleanup-test-data.ts`
@@ -67,7 +67,7 @@ tsx scripts/cleanup-test-data.ts
 tsx scripts/cleanup-test-data.ts test_pr_123
 
 # Clean using DATABASE_SCHEMA env var
-DATABASE_SCHEMA=ci_server_20 tsx scripts/cleanup-test-data.ts
+DATABASE_SCHEMA=ci_server_22 tsx scripts/cleanup-test-data.ts
 ```
 
 ### `ci-migrate.ts`
@@ -76,7 +76,7 @@ Runs Drizzle migrations with a configurable schema name for CI isolation. Each C
 
 **Usage:**
 ```bash
-DATABASE_SCHEMA=ci_server_20 DATABASE_URL=... tsx scripts/ci-migrate.ts
+DATABASE_SCHEMA=ci_server_22 DATABASE_URL=... tsx scripts/ci-migrate.ts
 ```
 
 **Environment Variables:**
@@ -139,7 +139,7 @@ tsx scripts/cleanup-test-data.ts
 
 The schema name is configurable via the `DATABASE_SCHEMA` environment variable:
 - **Default**: `my_schema` (used in local development)
-- **CI**: Set to a unique name per job (e.g., `ci_server_20_12345678`)
+- **CI**: Set to a unique name per job (e.g., `ci_server_22_12345678`)
 
 The schema name flows through:
 1. `apps/server/src/db/my-schema.ts` — reads `DATABASE_SCHEMA` env var for Drizzle ORM runtime
