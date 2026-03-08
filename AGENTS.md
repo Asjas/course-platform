@@ -140,26 +140,38 @@ Critical guardrails:
 - If a failing assertion may represent important or expected behavior, fix the underlying code rather than weakening the test.
 - If it is ambiguous whether the failure should be fixed in the spec or the product code, stop and ask the user before making that change. This is mandatory for security-sensitive behavior so tests do not accidentally remove protections.
 
-**CRITICAL: E2E Tests MUST Test Real Backend, NOT Mocked Responses**
+**CRITICAL: E2E Tests MUST Test Through the UI, NOT Bypass It**
 
-E2E tests exercise the entire system end-to-end. **NEVER use `cy.intercept()`, `cy.stub()`, or similar to mock backend responses in E2E tests.** This defeats the purpose of E2E testing.
+E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIENCE. **NEVER use `cy.request()`, `cy.intercept()`, `cy.stub()`, or similar to mock/bypass the UI.** This defeats the purpose of E2E testing.
 
-- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — This mocks the backend, hiding real permission bugs
-- ✅ **RIGHT**: Call real backend endpoints; let real permission middleware (e.g., `isAdmin`) enforce authorization
+- ❌ **WRONG**: `cy.request("POST", "http://localhost:5000/trpc/coupons.insertCoupon", {})` — Bypasses the UI entirely, doesn't test user experience
+- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — Mocks the backend, hides real bugs
+- ✅ **RIGHT**: Login as user → Navigate to page through UI → Try to click buttons/submit forms → Let backend reject in real time → Verify error appears to user
 
 **For authorization boundary testing**:
-1. **Route-level access control**: Test that non-admin users are redirected from `/admin/*` routes (with toast message)
-2. **Mutation-level permission enforcement**: Call real endpoints with real auth context:
-   - Option A: Use `cy.request()` to directly call tRPC endpoints as authenticated non-admin users
-   - Option B: Create test scenarios with real user role/ownership boundaries
-   - Backend middleware (`isAdmin`, `isOwner`, etc.) will throw `TRPCError` with proper code (UNAUTHORIZED/FORBIDDEN)
-   - Verify frontend error handling (toast messages, error display) propagates real backend errors
-3. **Never pretend the backend rejected a request if you mocked it** — the real backend might behave differently
+1. **Route-level access control**:
+   - Login as non-admin
+   - Try to navigate to `/admin/*` page through UI
+   - Expect page to FAIL TO LOAD or redirect back
+   - Verify error message appears to user
+2. **Form submission with unauthorized user**:
+   - Login as non-admin
+   - Navigate to admin page (may or may not load depending on route guards)
+   - Try to submit admin form through UI (click button, await form submission)
+   - Backend rejects request in real time
+   - Error toast appears to user
+   - Verify user sees the error message
+3. **Admin user can perform actions**:
+   - Login as admin
+   - Same actions succeed
+
+**Key Principle**: "As a user, you expect the page to not load or show an error message. NOT for the app to make direct HTTP requests to test permissions."
 
 E2E authorization tests should verify:
-- Real permission middleware works correctly
-- Backend rejects unauthorized requests with appropriate error codes
-- Frontend displays real error messages from the backend (not hardcoded expectations)
+- Route guards prevent non-admin access (or show error message)
+- Forms submitted by non-admin users are rejected by real backend
+- Error messages are displayed properly in the UI
+- Admin users can perform their actions
 
 E2E stabilization practices (applies to all features):
 
