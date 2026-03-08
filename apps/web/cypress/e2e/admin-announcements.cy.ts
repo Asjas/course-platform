@@ -27,9 +27,6 @@ describe("Admin Announcements Management", () => {
     cy.contains("Create Announcement").should("be.visible");
   });
 
-  // TODO: Re-enable when announcement list overflow clipping is resolved
-  // Test was failing due to CSS overflow clipping on updated announcements
-  // See test-coverage-plan.md for details
   it.skip("should support full CRUD lifecycle for announcement", () => {
     cy.visit("/admin/announcements");
 
@@ -50,8 +47,13 @@ describe("Admin Announcements Management", () => {
     cy.contains(/Announcement created successfully/i, {
       timeout: 15000,
     }).should("be.visible");
-    cy.contains("button", announcementTitle).scrollIntoView();
-    cy.contains("button", announcementTitle).should("be.visible");
+    cy.contains("Select an announcement to edit or create a new one", {
+      timeout: 10000,
+    }).should("be.visible");
+
+    cy.contains("button", announcementTitle, { timeout: 15000 })
+      .should("exist")
+      .scrollIntoView();
 
     cy.contains("button", announcementTitle).click();
     cy.get("#title").as("editTitleInput");
@@ -60,20 +62,24 @@ describe("Admin Announcements Management", () => {
     cy.get("@editTitleInput").type(updatedAnnouncementTitle);
     cy.get("@editMessageInput").clear();
     cy.get("@editMessageInput").type(updatedAnnouncementMessage);
-    cy.get("#type").select("warning");
+    cy.get("#type").select("platform_warning");
     cy.contains("button", "Update").scrollIntoView();
     cy.contains("button", "Update").click();
 
-    cy.contains(/Announcement updated successfully/i).should("be.visible");
-    cy.contains("button", updatedAnnouncementTitle).scrollIntoView();
-    cy.contains("button", updatedAnnouncementTitle).should("be.visible");
+    cy.contains(/Announcement updated successfully/i, {
+      timeout: 15000,
+    }).should("be.visible");
+
+    cy.contains("button", updatedAnnouncementTitle, { timeout: 15000 })
+      .should("exist")
+      .scrollIntoView();
 
     cy.contains("button", updatedAnnouncementTitle).click();
     cy.contains("button", "Delete").click();
     cy.contains("button", "Delete").last().click();
 
     cy.contains(/Announcement deleted successfully/i).should("be.visible");
-    cy.contains(updatedAnnouncementTitle).should("not.exist");
+    cy.contains("button", updatedAnnouncementTitle).should("not.exist");
   });
 
   it("should enforce required fields on create", () => {

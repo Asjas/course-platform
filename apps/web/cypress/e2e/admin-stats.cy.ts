@@ -1,34 +1,76 @@
 describe("Admin Stats Dashboard", () => {
   beforeEach(() => {
     cy.loginAsAdmin();
+    cy.visit("/admin/stats");
   });
 
   it("should display stats dashboard page", () => {
-    cy.visit("/admin/stats");
-
-    // Verify page loads
-    cy.contains("Stats").should("be.visible");
+    cy.contains("h1", "Platform Statistics").should("be.visible");
+    cy.contains("Overview of course enrollments and platform activity").should(
+      "be.visible",
+    );
   });
 
-  it("should display platform overview section", () => {
-    cy.visit("/admin/stats");
-
-    // Verify platform overview section exists
+  it("should display core statistics sections", () => {
     cy.contains("Platform Overview").should("be.visible");
+    cy.contains("Revenue & Purchases").should("be.visible");
+    cy.contains("User Activity").should("be.visible");
+    cy.contains("Support Tickets").should("be.visible");
+    cy.contains("Learning Progress").should("be.visible");
+    cy.contains("Additional Metrics").should("be.visible");
+    cy.contains("Course Statistics").should("be.visible");
   });
 
-  it("should display revenue statistics section", () => {
-    cy.visit("/admin/stats");
+  it("should render formatted values for key KPI cards", () => {
+    cy.contains("Net Revenue")
+      .parent()
+      .parent()
+      .within(() => {
+        cy.contains(/^\$\d+\.\d{2}$/).should("be.visible");
+      });
 
-    // Verify revenue stats section exists
-    cy.contains("Revenue").should("be.visible");
+    cy.contains("Verified Users")
+      .parent()
+      .parent()
+      .within(() => {
+        cy.contains(/% verified$/).should("be.visible");
+      });
+
+    cy.contains("Resolution Rate")
+      .parent()
+      .parent()
+      .within(() => {
+        cy.contains(/^\d+%$/).should("be.visible");
+      });
   });
 
-  it("should display user statistics section", () => {
-    cy.visit("/admin/stats");
+  it("should render course statistics table headers", () => {
+    cy.contains("th", "Course Name").should("be.visible");
+    cy.contains("th", "Status").should("be.visible");
+    cy.contains("th", "Price").should("be.visible");
+    cy.contains("th", "Total Enrollments").should("be.visible");
+    cy.contains("th", "Completion Rate").should("be.visible");
+  });
 
-    // Verify user stats section exists
-    cy.contains("Users").should("be.visible");
+  it("should show enrollment breakdown cards with percent text", () => {
+    cy.get('section[aria-labelledby="enrollment-breakdown-heading"]').within(
+      () => {
+        cy.contains("Individual").should("be.visible");
+        cy.contains("Gift").should("be.visible");
+        cy.contains("Team").should("be.visible");
+        cy.contains("Refunded").should("be.visible");
+        cy.contains("Cancelled").should("be.visible");
+        cy.contains("% of total").should("be.visible");
+      },
+    );
+  });
+
+  it("should show additional metrics cards", () => {
+    cy.contains("Additional Metrics").should("be.visible");
+    cy.contains("Coupons").should("be.visible");
+    cy.contains("Team Seats").should("be.visible");
+    cy.contains("Wishlisted").should("be.visible");
+    cy.contains("Announcements").should("be.visible");
   });
 });
 
