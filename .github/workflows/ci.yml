@@ -257,6 +257,7 @@ jobs:
         run: pnpm --filter @apps/server drizzle:migrate
 
       - name: Seed test data (creates ghost user and base fixtures)
+        if: matrix.node-version == '22.x'
         run: pnpm tsx scripts/seed-test-data.ts "my_schema"
 
       - name: Install Cypress
