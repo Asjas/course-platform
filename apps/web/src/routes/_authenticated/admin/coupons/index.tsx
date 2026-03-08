@@ -244,6 +244,8 @@ function AdminCouponsPage() {
                         <div className="flex justify-around gap-2">
                           <button
                             className="cursor-pointer text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                            type="button"
+                            aria-label={`Copy coupon code ${coupon.code}`}
                             onClick={() =>
                               handleCopyCouponCode(coupon.id, coupon.code)
                             }
@@ -267,6 +269,7 @@ function AdminCouponsPage() {
                           <button
                             className="cursor-pointer text-blue-400 hover:text-blue-300"
                             type="button"
+                            aria-label={`Edit coupon ${coupon.code}`}
                             onClick={() => handleEditCoupon(coupon)}
                           >
                             <PencilIcon
@@ -279,6 +282,8 @@ function AdminCouponsPage() {
                           </button>
                           <button
                             className="cursor-pointer text-red-400 hover:text-red-300"
+                            type="button"
+                            aria-label={`Delete coupon ${coupon.code}`}
                             onClick={() =>
                               handleDeleteClick(coupon.id, coupon.code)
                             }

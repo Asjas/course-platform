@@ -27,7 +27,7 @@ import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export type SupportTicket = AllSupportTickets[number];
-type Coupon = CouponsReturnType[number];
+export type Coupon = CouponsReturnType[number];
 type Review = AllReviews[number];
 export type ChatReport = AllChatReports[number];
 

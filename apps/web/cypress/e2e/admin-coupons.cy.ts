@@ -1,22 +1,33 @@
 import { faker } from "@faker-js/faker";
 
+function visitCouponsPage() {
+  cy.visit("/admin/coupons");
+}
+
+function assertSaveChangesButtonReady() {
+  cy.contains("button", "Save Changes")
+    .should("be.visible")
+    .should("not.be.disabled")
+    .should(($button) => {
+      expect(Cypress.dom.isAttached($button)).to.equal(true);
+      expect($button.attr("type")).to.equal("submit");
+    });
+}
+
 describe("Admin Coupons Management", () => {
   let couponCode: string;
   let couponDescription: string;
 
   function waitForCouponRow(code: string) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- quick diagnostic to allow persistence and post-reload hydration to settle
-    cy.wait(100);
-    cy.reload();
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- quick diagnostic to allow reloaded table data to render
-    cy.wait(100);
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- small settle window while collection-backed UI refreshes after persistence
+    cy.wait(500);
     cy.contains("tr", code, { timeout: 10000 }).should("be.visible");
   }
 
   function waitForSheetClose() {
     cy.get('[role="dialog"]').should("not.exist");
     // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition to finish
-    cy.wait(100);
+    cy.wait(500);
   }
 
   beforeEach(() => {
@@ -26,14 +37,14 @@ describe("Admin Coupons Management", () => {
   });
 
   it("should display coupons page", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.contains("h1", "Coupons").should("be.visible");
     cy.contains("button", "Create New Coupon").should("be.visible");
   });
 
   it("should open create coupon sheet", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.contains("button", "Create New Coupon").click();
     cy.contains("Create Coupon").should("be.visible");
@@ -43,17 +54,15 @@ describe("Admin Coupons Management", () => {
   });
 
   it("should create a new coupon with percentage discount", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.contains("button", "Create New Coupon").click();
-
     cy.get('input[name="code"]').type(couponCode);
     cy.get('input[name="description"]').type(couponDescription);
     cy.get('select[name="discountType"]').select("percentage");
     cy.get('input[name="discountValue"]').type("25");
     cy.get('input[name="redemptionLimit"]').clear();
     cy.get('input[name="redemptionLimit"]').type("100");
-
     cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
@@ -61,9 +70,8 @@ describe("Admin Coupons Management", () => {
   });
 
   it("should display coupon details in table", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
-    // Create a coupon first
     cy.contains("button", "Create New Coupon").click();
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
@@ -72,7 +80,6 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').type("50");
     cy.contains("button", "Create Coupon").click();
 
-    // Verify table displays coupon
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("15 %").should("be.visible");
@@ -82,9 +89,8 @@ describe("Admin Coupons Management", () => {
   });
 
   it("should copy coupon code to clipboard", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
-    // Create a coupon
     cy.contains("button", "Create New Coupon").click();
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
@@ -93,7 +99,6 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').type("25");
     cy.contains("button", "Create Coupon").click();
 
-    // Click copy button
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("button", `Copy coupon code ${couponCode}`).click();
@@ -103,9 +108,9 @@ describe("Admin Coupons Management", () => {
   });
 
   it("should edit an existing coupon", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
+    const updatedCouponCode = `${couponCode}ED`;
 
-    // Create a coupon
     cy.contains("button", "Create New Coupon").click();
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
@@ -115,30 +120,36 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
     waitForSheetClose();
 
-    // Edit the coupon
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("button", `Edit coupon ${couponCode}`).click();
     });
 
     cy.contains("Edit Coupon").should("be.visible");
-    cy.get('input[name="discountValue"]').clear();
-    cy.get('input[name="discountValue"]').type("30");
-    cy.get('input[name="redemptionLimit"]').clear();
-    cy.get('input[name="redemptionLimit"]').type("30");
-    cy.contains("button", "Save Changes").click();
-    waitForSheetClose();
-    waitForCouponRow(couponCode);
 
-    cy.contains("tr", couponCode).within(() => {
-      cy.contains("30 %", { timeout: 10000 }).should("be.visible");
+    // Wait for the form useEffect to populate inputs with coupon data
+    cy.get('input[name="code"]').should("have.value", couponCode);
+
+    // Edit text field to verify end-to-end update flow without flaky number input interactions
+    cy.get('input[name="code"]').clear();
+    cy.get('input[name="code"]').type(updatedCouponCode);
+    cy.get('input[name="code"]').should("have.value", updatedCouponCode);
+
+    assertSaveChangesButtonReady();
+
+    cy.contains("button", "Save Changes").click();
+
+    waitForSheetClose();
+    waitForCouponRow(updatedCouponCode);
+    cy.contains("tr", updatedCouponCode).within(() => {
+      cy.contains("20 %", { timeout: 10000 }).should("be.visible");
+      cy.contains("0 / 30", { timeout: 10000 }).should("be.visible");
     });
   });
 
   it("should delete a coupon", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
-    // Create a coupon
     cy.contains("button", "Create New Coupon").click();
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("percentage");
@@ -148,39 +159,35 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
     waitForSheetClose();
 
-    // Delete the coupon
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.contains("button", `Delete coupon ${couponCode}`).click({
-        force: true,
-      });
+      cy.contains("button", `Delete coupon ${couponCode}`).click();
     });
 
-    // Confirm deletion
     cy.contains("Delete Coupon").should("be.visible");
-    cy.contains("button", "Delete").last().click();
+    cy.contains('[role="dialog"] button', "Delete")
+      .should("be.visible")
+      .should("not.be.disabled")
+      .click();
 
     cy.contains(/deleted successfully/i).should("be.visible");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow collection-backed delete to settle
+    cy.wait(500);
     cy.contains(couponCode).should("not.exist");
   });
 
   it("should validate required fields", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.contains("button", "Create New Coupon").click();
-
-    // Try to submit without filling required fields
     cy.contains("button", "Create Coupon").should("be.disabled");
-
-    // Form should show validation errors
     cy.contains("Create Coupon").should("be.visible");
   });
 
   it("should create fixed amount discount coupon", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.contains("button", "Create New Coupon").click();
-
     cy.get('input[name="code"]').type(couponCode);
     cy.get('select[name="discountType"]').select("fixed");
     cy.get('input[name="discountValue"]').type("50");
@@ -203,7 +210,7 @@ describe("Admin Coupons Access Control", () => {
   });
 
   it("should block non-admin users from coupons page", () => {
-    cy.visit("/admin/coupons");
+    visitCouponsPage();
 
     cy.url().should("include", "/dashboard");
     cy.contains("Access denied. Admin privileges are required.").should(

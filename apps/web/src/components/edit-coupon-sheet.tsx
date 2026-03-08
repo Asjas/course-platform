@@ -10,29 +10,15 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CouponsCollection } from "~/lib/db.collections";
+import { type Coupon, CouponsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import {
   type EditCouponFormData,
   editCouponSchema,
 } from "~/schema/edit-coupon";
 
-interface CouponData {
-  id: string;
-  code: string;
-  description: string | null;
-  discountType: "percentage" | "fixed";
-  discountValue: number;
-  redemptionLimit: number | null;
-  validFrom: Date;
-  validUntil: Date | null;
-  active: boolean;
-  courseId: string | null;
-  redemptions: unknown[];
-}
-
 interface EditCouponSheetProps {
-  coupon: CouponData | null;
+  coupon: Coupon | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -90,7 +76,7 @@ export default function EditCouponSheet({
   });
 
   const resetFormWithCoupon = useCallback(
-    (couponData: CouponData | null) => {
+    (couponData: Coupon | null) => {
       form.reset({
         id: couponData?.id ?? "",
         active: couponData?.active ?? true,
