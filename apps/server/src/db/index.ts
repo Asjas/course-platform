@@ -9,8 +9,8 @@ const isCI = process.env.CI === "true";
 const pool = new Pool({
   connectionString: config.DATABASE_URL,
   max: isCI ? 10 : 100,
-  min: isCI ? 2 : 10,
-  idleTimeoutMillis: 30000,
+  min: isCI ? 1 : 10,
+  idleTimeoutMillis: isCI ? 10_000 : 30_000,
   connectionTimeoutMillis: 10000,
   keepAlive: true,
   keepAliveInitialDelayMillis: 10000,
@@ -21,9 +21,14 @@ await pool.connect();
 
 // Enable TCP keep-alive on every new client connection to prevent ECONNRESET
 // from network equipment or database server idle-connection timeouts in CI.
+// Also attach a per-client error listener so a connection termination on a
+// checked-out (but query-idle) client doesn't become an uncaughtException.
 pool.on("connect", (client) => {
   // @ts-expect-error -- pg client exposes the socket via .connection.stream
   client.connection?.stream?.setKeepAlive(true, 10000);
+  client.on("error", (err) => {
+    console.error("Database client error:", err.message);
+  });
 });
 
 // Handle connection errors gracefully – log and allow the pool to reconnect.
