@@ -78,7 +78,7 @@ describe("The Sign Up Page", () => {
 describe("User Authentication Flow", () => {
   const testUser = {
     name: faker.person.fullName(),
-    email: faker.internet.email({ provider: "e2e-auth.test" }),
+    email: faker.internet.email({ provider: "e2e-auth.test" }).toLowerCase(),
     password: "E2eTestPass123!",
   };
 
@@ -91,7 +91,7 @@ describe("User Authentication Flow", () => {
 
   it("should sign in with the newly created user", () => {
     // Ensure the user exists (may already exist from previous test)
-    cy.signUpViaApi(testUser);
+    cy.ensureUserExists(testUser);
 
     // Now sign in with the same credentials
     cy.signIn({ email: testUser.email, password: testUser.password });

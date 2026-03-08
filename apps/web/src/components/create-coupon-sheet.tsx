@@ -32,7 +32,7 @@ export default function CreateCouponSheet({
       description: null as string | null,
       discountType: "percentage" as "percentage" | "fixed",
       discountValue: 0,
-      redemptionLimit: 0,
+      redemptionLimit: 1,
       validFrom: new Date(),
       validUntil: null as Date | null,
     },
@@ -44,12 +44,8 @@ export default function CreateCouponSheet({
       const toastId = toast.loading(`Creating coupon ${value.code}...`);
 
       try {
-        // The DB enforces redemption_limit > 0.
-        const normalizedRedemptionLimit =
-          value.redemptionLimit > 0 ? value.redemptionLimit : 1;
-
         // @ts-expect-error collection insert accepts optimistic client shape and
-        // is reconciled by collection sync.
+        // is reconciled by collection sync (createdAt/updatedAt set by server)
         const tx = CouponsCollection.insert({
           id: `coup:${ulid()}`,
           active: value.active,
@@ -58,7 +54,7 @@ export default function CreateCouponSheet({
           description: value.description,
           discountType: value.discountType,
           discountValue: value.discountValue,
-          redemptionLimit: normalizedRedemptionLimit,
+          redemptionLimit: value.redemptionLimit,
           validFrom: value.validFrom,
           validUntil: value.validUntil,
           redemptions: [],
@@ -92,7 +88,7 @@ export default function CreateCouponSheet({
       description: null,
       discountType: "percentage",
       discountValue: 0,
-      redemptionLimit: 0,
+      redemptionLimit: 1,
       validFrom: new Date(),
       validUntil: null,
     });
@@ -321,7 +317,7 @@ export default function CreateCouponSheet({
                       htmlFor={field.name}
                     >
                       Redemption Limit{" "}
-                      <span className="text-gray-500">(0 for unlimited)</span>
+                      <span className="text-gray-500">(minimum 1)</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -329,8 +325,8 @@ export default function CreateCouponSheet({
                         id={field.name}
                         name={field.name}
                         type="number"
-                        min={0}
-                        placeholder="0"
+                        min={1}
+                        placeholder="1"
                         value={field.state.value}
                         onChange={(event) =>
                           field.handleChange(Number(event.target.value))

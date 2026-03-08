@@ -12,12 +12,23 @@ const pool = new Pool({
   min: isCI ? 2 : 10,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
+  keepAlive: true,
+  keepAliveInitialDelayMillis: 10000,
   Client,
 });
 
 await pool.connect();
 
-// Handle connection errors gracefully
+// Enable TCP keep-alive on every new client connection to prevent ECONNRESET
+// from network equipment or database server idle-connection timeouts in CI.
+pool.on("connect", (client) => {
+  // @ts-expect-error -- pg client exposes the socket via .connection.stream
+  client.connection?.stream?.setKeepAlive(true, 10000);
+});
+
+// Handle connection errors gracefully – log and allow the pool to reconnect.
+// Do NOT re-throw; throwing here would become an uncaughtException and crash
+// the server.
 pool.on("error", (err) => {
   console.error("Unexpected database pool error:", err);
 });

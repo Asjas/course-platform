@@ -19,7 +19,7 @@ import {
   testSupportTickets,
   testUsers,
 } from "./fixtures/index.js";
-import pg from "pg";
+import pg, { type PoolClient } from "pg";
 
 const { Pool } = pg;
 
@@ -42,6 +42,59 @@ const pool = new Pool({
   connectionString,
 });
 
+async function cleanupForSeed(client: PoolClient): Promise<void> {
+  const MAX_RETRIES = 3;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      // Each cleanup attempt runs in its own short transaction so a deadlock
+      // only rolls back this phase, not the entire seed.
+      await client.query("BEGIN");
+
+      // Ensure ghost user exists before any cleanup
+      // This is required because ON DELETE SET DEFAULT on support_ticket references ghost
+      await client.query(`
+        INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
+        VALUES ('ghost', 'ghost@system.local', 'System Ghost User', true, null, NOW(), NOW())
+        ON CONFLICT (id) DO NOTHING;
+      `);
+
+      // Clean up existing test data. Truncating all relevant tables in one
+      // statement lets PostgreSQL acquire locks in a consistent internal order,
+      // reducing (but not eliminating) the chance of deadlock with concurrent
+      // cleanup jobs. RESTART IDENTITY resets auto-increment sequences.
+      await client.query(`
+        TRUNCATE TABLE 
+          support_ticket,
+          course_review,
+          enrollment,
+          course_lesson,
+          course_module,
+          course,
+          account
+        RESTART IDENTITY CASCADE;
+      `);
+      // Delete all users except ghost (cascaded tables already gone above)
+      await client.query("DELETE FROM \"user\" WHERE id != 'ghost';");
+
+      await client.query("COMMIT");
+      return;
+    } catch (error: unknown) {
+      await client.query("ROLLBACK");
+      const pgError = error as { code?: string; message?: string };
+      // 40P01 = deadlock_detected; retry with back-off
+      if (pgError.code === "40P01" && attempt < MAX_RETRIES) {
+        console.warn(
+          `⚠️  Deadlock during cleanup (attempt ${attempt}/${MAX_RETRIES}), retrying in ${attempt}s...`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      } else {
+        throw error;
+      }
+    }
+  }
+}
+
 async function seedDatabase() {
   const client = await pool.connect();
 
@@ -50,34 +103,17 @@ async function seedDatabase() {
       `🔧 Using test schema "${schemaName}" (created by migrations)...`,
     );
 
-    // Start a transaction
-    await client.query("BEGIN");
-
-    // Ensure ghost user exists before any cleanup
-    // This is required because ON DELETE SET DEFAULT on support_ticket references ghost
-    console.log("👻 Ensuring ghost user exists...");
-    await client.query(`
-      INSERT INTO "user" (id, email, name, email_verified, image, created_at, updated_at)
-      VALUES ('ghost', 'ghost@system.local', 'System Ghost User', true, null, NOW(), NOW())
-      ON CONFLICT (id) DO NOTHING;
-    `);
-
-    // Clean up existing test data using TRUNCATE CASCADE for efficiency
-    // This ensures all data is removed and primary key sequences are reset
+    // Phase 1: Cleanup — runs in its own transaction with deadlock retry.
+    // Keeping this separate from the INSERT transaction means a deadlock during
+    // cleanup only rolls back the cleanup, not all the fixture inserts.
     console.log("🧹 Cleaning up existing test data...");
-    await client.query(`
-      TRUNCATE TABLE 
-        support_ticket,
-        course_review,
-        enrollment,
-        course_lesson,
-        course_module,
-        course,
-        account
-      RESTART IDENTITY CASCADE;
-    `);
-    // Delete all users except ghost
-    await client.query("DELETE FROM \"user\" WHERE id != 'ghost';");
+    console.log("👻 Ensuring ghost user exists...");
+    await cleanupForSeed(client);
+
+    // Phase 2: Insert fixtures — runs in a single transaction.
+    // If cleanup succeeded above the table is clean, but ON CONFLICT guards
+    // handle any residual rows from a partially-failed previous seed.
+    await client.query("BEGIN");
 
     // Insert users
     console.log("👥 Creating users...");
@@ -86,7 +122,8 @@ async function seedDatabase() {
       await client.query(
         `
         INSERT INTO "user" (id, email, name, email_verified, image, role, created_at, updated_at)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8);
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (id) DO NOTHING;
       `,
         [
           user.id,

@@ -44,28 +44,52 @@ async function cleanupDatabase() {
       );
 
       const tables = [
+        // Support
         "support_ticket_comment",
         "support_ticket",
+        // Progress
         "lesson_progress",
         "course_progress",
+        // Reviews and course content
         "course_review",
         "course_completion_certificate",
         "course_instructor_note",
         "course_faq",
         "course_wishlist",
+        // Coupons
         "coupon_redemption",
         "coupon",
+        // Enrollments
         "enrollment",
+        // Course hierarchy
         "course_lesson",
         "course_module",
         "course",
+        // Announcements
+        "platform_announcement_read",
         "platform_announcement",
-        "team_license_seat",
+        // Team licenses
+        "team_license_invite",
         "team_license",
-        "purchase",
+        // Purchases
+        "payment",
+        "invoice",
+        // Chat
+        "chat_message_report",
+        "direct_message_request",
+        "direct_message_conversation",
+        // Notifications and sync
+        "user_notification",
+        "sync_status",
+        "gdpr_audit_log",
+        // Auth tables
         "account",
         "session",
         "verification",
+        "invitation",
+        "member",
+        "organization",
+        "early_signup",
         "user",
       ];
 
