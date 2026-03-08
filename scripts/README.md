@@ -174,7 +174,7 @@ The scripts support schema-level isolation using PostgreSQL schemas, which allow
 
 ### How It Works
 
-1. **Schema Name**: Each CI job sets `DATABASE_SCHEMA` to a unique name (e.g., `ci_server_20_12345678`)
+1. **Schema Name**: Each CI job sets `DATABASE_SCHEMA` to a unique name (e.g., `ci_server_22_12345678`)
 2. **Migration**: `ci-migrate.ts` reads SQL files, replaces `"my_schema"`, and executes them — creating all tables in the isolated schema
 3. **Runtime**: Drizzle ORM reads `DATABASE_SCHEMA` from environment and qualifies all table references with the correct schema
 4. **Seeding**: `seed-test-data.ts` sets `search_path` to the target schema for data insertion
