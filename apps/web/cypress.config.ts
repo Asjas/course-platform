@@ -19,6 +19,10 @@ try {
   // Ignore if file doesn't exist (CI sets env vars directly)
 }
 
+// Use DATABASE_SCHEMA env var when running in CI with schema isolation,
+// otherwise fall back to the default "my_schema".
+const dbSchema = process.env.DATABASE_SCHEMA || "my_schema";
+
 export default defineConfig({
   allowCypressEnv: false,
   expose: {
@@ -46,7 +50,7 @@ export default defineConfig({
           await client.connect();
           try {
             await client.query(
-              `UPDATE my_schema."user" SET role = $1 WHERE email = $2`,
+              `UPDATE "${dbSchema}"."user" SET role = $1 WHERE email = $2`,
               [role, email],
             );
             return null;
@@ -72,7 +76,7 @@ export default defineConfig({
           try {
             await client.query(
               `
-                INSERT INTO my_schema."user" (id, name, email, role)
+                INSERT INTO "${dbSchema}"."user" (id, name, email, role)
                 VALUES ($1, $2, $3, $4)
                 ON CONFLICT (email) DO NOTHING
               `,
