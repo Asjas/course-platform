@@ -51,12 +51,7 @@ export const supportTicketsRouter = router({
     }
 
     // Support tickets are completely public. No authentication required.
-    // Admins see all tickets, authenticated users see their own, unauthenticated users see all
-    let tickets = allTickets;
-    if (ctx.user && ctx.user.role !== "admin") {
-      const userId = ctx.user.id;
-      tickets = allTickets.filter((ticket) => ticket.userId === userId);
-    }
+    const tickets = allTickets;
 
     ctx.request.log.debug(
       `Retrieved ${tickets.length} support tickets from cache/db`,

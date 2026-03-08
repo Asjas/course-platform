@@ -12,20 +12,17 @@ import SupportCommentForm from "~/components/forms/create-support-comment-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import { useAuth } from "~/lib/auth.context";
-import { useSupportTicketById } from "~/lib/db.collections";
+import {
+  SupportTicketsCollection,
+  useSupportTicketById,
+} from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/support/$supportTicket/")({
-  loader: async ({ context, params }) => {
-    const { queryClient } = context;
-
-    queryClient.ensureQueryData(
-      trpc.supportTickets.getSupportTicketById.queryOptions({
-        ticketId: params.supportTicket,
-      }),
-    );
+  loader: async () => {
+    await SupportTicketsCollection.preload();
   },
   component: SupportTicketIndexPage,
 });
