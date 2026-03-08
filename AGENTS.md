@@ -109,7 +109,7 @@ pnpm --filter @apps/web e2e         # Cypress interactive
 pnpm --filter @apps/web e2e:run     # Cypress headless
 
 # Database (Drizzle)
-cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
+(cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts)
 pnpm --filter @apps/server drizzle:migrate
 pnpm --filter @apps/server drizzle:studio
 ```
