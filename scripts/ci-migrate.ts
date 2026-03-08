@@ -59,9 +59,7 @@ async function runMigrations() {
       let sql = readFileSync(filePath, "utf-8");
 
       // Replace the hardcoded schema name with the target schema
-      if (schemaName !== "my_schema") {
-        sql = sql.replaceAll('"my_schema"', `"${schemaName}"`);
-      }
+      sql = sql.replaceAll('"my_schema"', `"${schemaName}"`);
 
       // Split by Drizzle's statement breakpoint marker and execute each statement
       const statements = sql
