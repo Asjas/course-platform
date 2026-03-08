@@ -1,27 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { CourseCard, formatDuration } from "~/components/course-card";
-
-vi.mock("@tanstack/react-router", () => ({
-  Link: ({
-    children,
-    to,
-    params,
-    className,
-  }: {
-    children: React.ReactNode;
-    to: string;
-    params?: Record<string, string>;
-    className?: string;
-  }) => (
-    <a
-      className={className}
-      href={to.replace("$courseId", params?.courseId ?? "")}
-    >
-      {children}
-    </a>
-  ),
-}));
+import { renderWithProviders } from "~/test-utils";
 
 describe("formatDuration", () => {
   it("returns minutes only when under an hour", () => {
@@ -58,21 +38,21 @@ describe("CourseCard", () => {
   };
 
   it("renders the course name", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(
       screen.getByRole("heading", { name: "Learn TypeScript" }),
     ).toBeInTheDocument();
   });
 
   it("renders the description", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(
       screen.getByText("A comprehensive TypeScript course"),
     ).toBeInTheDocument();
   });
 
   it("does not render description when null", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         description={null}
@@ -84,12 +64,12 @@ describe("CourseCard", () => {
   });
 
   it("renders module count with correct pluralization", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.getByText("5 modules")).toBeInTheDocument();
   });
 
   it("renders singular module when count is 1", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         totalModules={1}
@@ -99,12 +79,12 @@ describe("CourseCard", () => {
   });
 
   it("renders lesson count with correct pluralization", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.getByText("30 lessons")).toBeInTheDocument();
   });
 
   it("renders singular lesson when count is 1", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         totalLessons={1}
@@ -114,12 +94,12 @@ describe("CourseCard", () => {
   });
 
   it("renders enrollment count with correct pluralization", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.getByText("100 students")).toBeInTheDocument();
   });
 
   it("renders singular student when count is 1", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         totalEnrollments={1}
@@ -129,12 +109,12 @@ describe("CourseCard", () => {
   });
 
   it("renders formatted duration", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.getByText("2h 0m")).toBeInTheDocument();
   });
 
   it("renders thumbnail image when URL is provided", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         thumbnailUrl="https://example.com/thumb.jpg"
@@ -145,20 +125,19 @@ describe("CourseCard", () => {
   });
 
   it("renders placeholder icon when no thumbnail", () => {
-    const { container } = render(<CourseCard {...defaultProps} />);
+    const { container } = renderWithProviders(<CourseCard {...defaultProps} />);
     expect(container.querySelector("img")).not.toBeInTheDocument();
-    // The BookOpen icon should be rendered as decorative
     const svgs = container.querySelectorAll("svg");
     expect(svgs.length).toBeGreaterThan(0);
   });
 
   it("does not render support ticket count when not provided", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.queryByText(/ticket/)).not.toBeInTheDocument();
   });
 
   it("renders support ticket count when provided", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         supportTicketCount={3}
@@ -168,7 +147,7 @@ describe("CourseCard", () => {
   });
 
   it("renders singular ticket when count is 1", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         supportTicketCount={1}
@@ -178,12 +157,12 @@ describe("CourseCard", () => {
   });
 
   it("does not render progress bar when progress is 0", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     expect(screen.queryByText(/complete/)).not.toBeInTheDocument();
   });
 
   it("renders progress bar when progress > 0", () => {
-    render(
+    renderWithProviders(
       <CourseCard
         {...defaultProps}
         progress={75}
@@ -193,7 +172,7 @@ describe("CourseCard", () => {
   });
 
   it("links to the course page", () => {
-    render(<CourseCard {...defaultProps} />);
+    renderWithProviders(<CourseCard {...defaultProps} />);
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/courses/course-1");
   });

@@ -1,29 +1,11 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import AuthLinks from "~/components/auth-links";
-
-vi.mock("~/components/ui/nav-link", () => ({
-  Link: ({
-    children,
-    to,
-    className,
-  }: {
-    children: React.ReactNode;
-    to: string;
-    className?: string;
-  }) => (
-    <a
-      className={className}
-      href={to}
-    >
-      {children}
-    </a>
-  ),
-}));
+import { renderWithProviders } from "~/test-utils";
 
 describe("AuthLinks", () => {
   it("renders all links by default", () => {
-    render(<AuthLinks />);
+    renderWithProviders(<AuthLinks />);
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Sign Up" })).toBeInTheDocument();
     expect(
@@ -32,7 +14,7 @@ describe("AuthLinks", () => {
   });
 
   it("hides sign in link when showSignIn is false", () => {
-    render(<AuthLinks showSignIn={false} />);
+    renderWithProviders(<AuthLinks showSignIn={false} />);
     expect(
       screen.queryByRole("link", { name: "Sign in" }),
     ).not.toBeInTheDocument();
@@ -43,7 +25,7 @@ describe("AuthLinks", () => {
   });
 
   it("hides sign up link when showSignUp is false", () => {
-    render(<AuthLinks showSignUp={false} />);
+    renderWithProviders(<AuthLinks showSignUp={false} />);
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Sign Up" }),
@@ -51,7 +33,7 @@ describe("AuthLinks", () => {
   });
 
   it("hides forgot password when showForgotPassword is false", () => {
-    render(<AuthLinks showForgotPassword={false} />);
+    renderWithProviders(<AuthLinks showForgotPassword={false} />);
     expect(screen.getByRole("link", { name: "Sign in" })).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Reset Password" }),
@@ -59,7 +41,7 @@ describe("AuthLinks", () => {
   });
 
   it("renders no links when all are false", () => {
-    render(
+    renderWithProviders(
       <AuthLinks
         showSignIn={false}
         showSignUp={false}
@@ -70,7 +52,7 @@ describe("AuthLinks", () => {
   });
 
   it("renders sign in link pointing to /signin", () => {
-    render(<AuthLinks />);
+    renderWithProviders(<AuthLinks />);
     expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute(
       "href",
       "/signin",
@@ -78,7 +60,7 @@ describe("AuthLinks", () => {
   });
 
   it("renders sign up link pointing to /signup", () => {
-    render(<AuthLinks />);
+    renderWithProviders(<AuthLinks />);
     expect(screen.getByRole("link", { name: "Sign Up" })).toHaveAttribute(
       "href",
       "/signup",
@@ -86,14 +68,16 @@ describe("AuthLinks", () => {
   });
 
   it("renders reset password link pointing to /reset-password", () => {
-    render(<AuthLinks />);
+    renderWithProviders(<AuthLinks />);
     expect(
       screen.getByRole("link", { name: "Reset Password" }),
     ).toHaveAttribute("href", "/reset-password");
   });
 
   it("applies custom className", () => {
-    const { container } = render(<AuthLinks className="custom-class" />);
+    const { container } = renderWithProviders(
+      <AuthLinks className="custom-class" />,
+    );
     const wrapper = container.firstChild as HTMLElement;
     expect(wrapper).toHaveClass("custom-class");
   });

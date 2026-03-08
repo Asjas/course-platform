@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CodeBlockWithCopy } from "~/components/code-block-copy";
 
@@ -37,33 +38,34 @@ describe("CodeBlockWithCopy", () => {
   });
 
   it("copies code to clipboard on click", async () => {
-    const writeTextMock = vi.fn().mockResolvedValue(undefined);
-    Object.assign(navigator, {
-      clipboard: { writeText: writeTextMock },
-    });
+    // Set up userEvent first, then spy on the clipboard it configures.
+    // Object.defineProperty / Object.assign fail here because userEvent.setup()
+    // installs its own clipboard as a getter-only property.
+    const user = userEvent.setup();
+    const writeTextSpy = vi
+      .spyOn(navigator.clipboard, "writeText")
+      .mockResolvedValue(undefined);
 
     render(<CodeBlockWithCopy code="hello world" />);
 
-    const button = screen.getByRole("button", { name: "Copy code" });
-    fireEvent.click(button);
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
 
-    expect(writeTextMock).toHaveBeenCalledWith("hello world");
+    expect(writeTextSpy).toHaveBeenCalledWith("hello world");
   });
 
   it("shows error toast when clipboard fails", async () => {
+    const user = userEvent.setup();
+    vi.spyOn(navigator.clipboard, "writeText").mockRejectedValue(
+      new Error("denied"),
+    );
+
     const { toast } = await import("sonner");
-    const writeTextMock = vi.fn().mockRejectedValue(new Error("denied"));
-    Object.assign(navigator, {
-      clipboard: { writeText: writeTextMock },
-    });
 
     render(<CodeBlockWithCopy code="hello" />);
 
-    const button = screen.getByRole("button", { name: "Copy code" });
-    await fireEvent.click(button);
+    await user.click(screen.getByRole("button", { name: "Copy code" }));
 
-    // Wait for the async handler
-    await vi.waitFor(() => {
+    await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Failed to copy code");
     });
   });

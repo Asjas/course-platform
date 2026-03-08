@@ -5,57 +5,6 @@ import {
   FileAttachmentLink,
 } from "~/components/file-attachment";
 
-vi.mock("lucide-react", () => ({
-  DownloadIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="download-icon"
-      {...props}
-    />
-  ),
-  FileIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="file-icon"
-      {...props}
-    />
-  ),
-  FileTextIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="file-text-icon"
-      {...props}
-    />
-  ),
-  ImageIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="image-icon"
-      {...props}
-    />
-  ),
-  VideoIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="video-icon"
-      {...props}
-    />
-  ),
-  FileArchiveIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="file-archive-icon"
-      {...props}
-    />
-  ),
-  FileCodeIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="file-code-icon"
-      {...props}
-    />
-  ),
-  FileSpreadsheetIcon: (props: Record<string, unknown>) => (
-    <svg
-      data-testid="file-spreadsheet-icon"
-      {...props}
-    />
-  ),
-}));
-
 vi.mock("~/lib/attachments", () => ({
   formatFileSize: (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
@@ -133,15 +82,16 @@ describe("FileAttachment", () => {
     expect(button).toBeInTheDocument();
   });
 
-  it("renders download icon with aria-hidden", () => {
+  it("the download button has a proper accessible name that includes the filename", () => {
     render(
       <FileAttachment
         url="/files/doc.pdf"
         filename="doc.pdf"
       />,
     );
-    const icon = screen.getByTestId("download-icon");
-    expect(icon).toHaveAttribute("aria-hidden", "true");
+    expect(
+      screen.getByRole("button", { name: /download doc\.pdf/i }),
+    ).toBeInTheDocument();
   });
 
   it("applies custom className", () => {
