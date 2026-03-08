@@ -134,6 +134,7 @@ Critical guardrails:
 - Prefer direct scoped execution from `apps/web`: `pnpm cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"` to avoid accidental broader suite runs.
 - E2E CRUD tests must clean up data through normal UI delete flows. Cleanup should double as delete-path coverage.
 - E2E authorization tests must cover ownership boundaries: user A can access user A data, user B cannot access user A data.
+- Exception: support tickets are completely public (no authentication required). In E2E, verify anyone can view ticket details but only owners and admins can edit/delete (owner/admin edit/delete buttons must only appear for ticket owners and admins).
 - E2E authorization tests must cover role boundaries: admin can access admin routes/data, non-admin users cannot.
 - For permission failures, assert both blocked behavior and a visible user-facing popup/toast with the backend access/permission error.
 - Always inspect the failing test output and identify the exact failing condition before editing code.

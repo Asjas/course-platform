@@ -111,6 +111,7 @@ For authorization scenarios, assert both behaviors by testing through the UI:
    - User A navigates to their own content → Loads successfully
    - User B tries to access User A's content → Access denied (real backend enforces)
    - Verify error message appears to user B
+   - Exception: Support tickets are completely public (no authentication required); E2E should verify anyone can view ticket details but only owners and admins see edit/delete controls
 
 4. **Role boundaries**:
    - Admin navigates to `/admin/*` → Page loads, admin actions work
