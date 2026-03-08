@@ -78,7 +78,7 @@ describe("The Sign Up Page", () => {
 describe("User Authentication Flow", () => {
   const testUser = {
     name: faker.person.fullName(),
-    email: faker.internet.email({ provider: "e2e-auth.test" }),
+    email: faker.internet.email({ provider: "e2e-auth.test" }).toLowerCase(),
     password: "E2eTestPass123!",
   };
 

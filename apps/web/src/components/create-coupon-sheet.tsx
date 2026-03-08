@@ -32,12 +32,7 @@ export default function CreateCouponSheet({
       description: null as string | null,
       discountType: "percentage" as "percentage" | "fixed",
       discountValue: 0,
-      redemptionLimit: 0,
-      validFrom: new Date(),
-      validUntil: null as Date | null,
-    },
-    validators: {
-      onSubmit: createCouponSchema,
+      redemptionLimit: 1,
       onBlur: createCouponSchema,
     },
     onSubmit: async ({ value }) => {

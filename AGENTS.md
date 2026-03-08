@@ -109,6 +109,10 @@ pnpm --filter @apps/web e2e         # Cypress interactive
 pnpm --filter @apps/web e2e:run     # Cypress headless
 
 # Database (Drizzle)
+cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
+pnpm --filter @apps/server drizzle:migrate
+pnpm --filter @apps/server drizzle:studio
+```
 
 ### E2E Workflow (Mandatory)
 
@@ -143,26 +147,25 @@ Critical guardrails:
 
 **CRITICAL: E2E Tests MUST Test Through the UI, NOT Bypass It**
 
-E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIENCE. **NEVER use `cy.request()`, `cy.intercept()`, `cy.stub()`, or similar to mock/bypass the UI.** This defeats the purpose of E2E testing.
+E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIENCE. **NEVER use `cy.request()` for authentication or data setup** — always drive flows through the real UI. This includes signup, signin, and any account setup steps.
 
-This includes authentication/account setup. Do not create/login users with `cy.request()` in E2E.
-Use signup/signin pages and real UI interactions so auth flows are validated end-to-end.
-
-- ❌ **WRONG**: `cy.request("POST", "http://localhost:5000/trpc/coupons.insertCoupon", {})` — Bypasses the UI entirely, doesn't test user experience
-- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — Mocks the backend, hides real bugs
-- ✅ **RIGHT**: Login as user → Navigate to page through UI → Try to click buttons/submit forms → Let backend reject in real time → Verify error appears to user
+- ❌ **WRONG**: `cy.request("POST", "/api/auth/sign-up/email", {...})` — bypasses the UI, hides auth bugs
+- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — mocks the backend, hides real bugs
+- ✅ **RIGHT**: Visit `/signup` → fill form → submit → verify redirect to `/dashboard`
+- ✅ **RIGHT**: `cy.intercept()` is allowed to **observe/wait** on network calls (e.g., `cy.wait("@createTicket")`), but NOT to mock or stub responses
 
 **For authorization boundary testing**:
+
 1. **Route-level access control**:
    - Login as non-admin
    - Try to navigate to `/admin/*` page through UI
    - Expect page to FAIL TO LOAD or redirect back
    - Verify error message appears to user
 2. **If route guard blocks page load, stop there in E2E**:
-  - Do NOT try to force mutation-level tests through UI when page cannot load
-  - E2E expectation is route-level denial (redirect/forbidden UI + user-facing message)
-  - Add server-side Vitest coverage for protected tRPC endpoints to verify non-admin requests are rejected
-  - Endpoint authorization checks belong in `apps/server` tests, not Cypress UI tests
+   - Do NOT try to force mutation-level tests through UI when page cannot load
+   - E2E expectation is route-level denial (redirect/forbidden UI + user-facing message)
+   - Add server-side Vitest coverage for protected tRPC endpoints to verify non-admin requests are rejected
+   - Endpoint authorization checks belong in `apps/server` tests, not Cypress UI tests
 3. **Admin user can perform actions**:
    - Login as admin
    - Same actions succeed
@@ -170,6 +173,7 @@ Use signup/signin pages and real UI interactions so auth flows are validated end
 **Key Principle**: "As a user, you expect the page to not load or show an error message. NOT for the app to make direct HTTP requests to test permissions."
 
 E2E authorization tests should verify:
+
 - Route guards prevent non-admin access (or show error message)
 - UI reflects denied access when non-admin users hit protected routes
 - Error messages are displayed properly in the UI
@@ -185,13 +189,9 @@ E2E stabilization practices (applies to all features):
 
 Readiness checks before running E2E:
 
-- Confirm API is reachable on port 5000.
+- Confirm API is reachable on port 5000 (local dev) or configured port.
 - Confirm web preview is reachable on port 4173.
 - If either is unavailable, fix startup first instead of running tests.
-cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy pnpm dlx tsx node_modules/drizzle-kit/bin.cjs generate --config src/drizzle.config.ts
-pnpm --filter @apps/server drizzle:migrate
-pnpm --filter @apps/server drizzle:studio
-```
 
 ### Frequent Validation (During Development)
 
