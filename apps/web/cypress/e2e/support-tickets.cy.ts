@@ -151,7 +151,12 @@ describe("Support Ticket Management", () => {
     cy.signUp(otherUser);
 
     cy.then(() => {
+      // Intercept the tRPC query that loads all support tickets so we can wait
+      // for it to complete before asserting on content. The route loader calls
+      // SupportTicketsCollection.preload() which triggers this request.
+      cy.intercept("GET", "**/trpc/supportTickets*").as("loadTickets");
       cy.visit(`/support/${ownerTicketId}`);
+      cy.wait("@loadTickets", { timeout: 30000 });
       cy.contains(ticketTitle, { timeout: 15000 }).should("be.visible");
       cy.contains(ticketDescription).should("be.visible");
 
