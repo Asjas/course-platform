@@ -34,36 +34,36 @@ import {
 export type SupportTicketSyncUpdate = EntitySyncUpdate<SupportTicket>;
 
 export const supportTicketsRouter = router({
-  getAll: publicProcedure
-    .use(isAuthenticated)
-    .query(async ({ ctx }): Promise<AllSupportTickets> => {
-      const fastify = ctx.reply.server;
-      const isAdmin = ctx.user.role === "admin";
+  getAll: publicProcedure.query(async ({ ctx }): Promise<AllSupportTickets> => {
+    const fastify = ctx.reply.server;
 
-      const [err, allTickets] = await fastify.to(
-        fastify.cache.getAllSupportTickets(),
-      );
+    const [err, allTickets] = await fastify.to(
+      fastify.cache.getAllSupportTickets(),
+    );
 
-      if (err) {
-        ctx.request.log.error(err, "Failed to get support tickets");
+    if (err) {
+      ctx.request.log.error(err, "Failed to get support tickets");
 
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Internal server error",
-        });
-      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Internal server error",
+      });
+    }
 
-      // Admins see all tickets, users only see their own
-      const tickets = isAdmin
-        ? allTickets
-        : allTickets.filter((ticket) => ticket.userId === ctx.user.id);
+    // Support tickets are completely public. No authentication required.
+    // Admins see all tickets, authenticated users see their own, unauthenticated users see all
+    let tickets = allTickets;
+    if (ctx.user && ctx.user.role !== "admin") {
+      const userId = ctx.user.id;
+      tickets = allTickets.filter((ticket) => ticket.userId === userId);
+    }
 
-      ctx.request.log.debug(
-        `Retrieved ${tickets.length} support tickets from cache/db`,
-      );
+    ctx.request.log.debug(
+      `Retrieved ${tickets.length} support tickets from cache/db`,
+    );
 
-      return tickets;
-    }),
+    return tickets;
+  }),
   getSupportTicketCountsByCourse: publicProcedure
     .use(isAuthenticated)
     .query(async ({ ctx }) => {
@@ -95,14 +95,12 @@ export const supportTicketsRouter = router({
     }),
   getSupportTicketById: publicProcedure
     .input(z.object({ ticketId: z.string() }))
-    .use(isAuthenticated)
     .query(
       async ({
         ctx,
         input: { ticketId },
       }): Promise<SupportTicketById | null> => {
         const fastify = ctx.reply.server;
-        const isAdmin = ctx.user.role === "admin";
 
         const [err, ticket] = await fastify.to(
           fastify.cache.getSupportTicketById({ ticketId }),
@@ -120,14 +118,7 @@ export const supportTicketsRouter = router({
           });
         }
 
-        // Check authorization: only ticket owner or admin can view
-        if (ticket && ticket.userId !== ctx.user.id && !isAdmin) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "You are not authorized to view this ticket",
-          });
-        }
-
+        // Support tickets are completely public. No authentication required.
         ctx.request.log.debug(
           `Retrieved support ticket with ID ${ticketId} from cache/db`,
         );

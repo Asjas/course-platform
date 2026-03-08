@@ -94,6 +94,10 @@ Cypress.Commands.add(
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(2000);
           makeRequest(attempt + 1);
+        } else if (isRetriable) {
+          // In CI, sign-up can be temporarily blocked/rate-limited.
+          // Accept and continue; if account already exists, subsequent sign-in succeeds.
+          expect(response.status).to.be.oneOf([200, 422, 403, 429]);
         } else {
           expect(response.status).to.be.oneOf([200, 422]);
         }
@@ -106,12 +110,20 @@ Cypress.Commands.add(
 
 Cypress.Commands.add("signIn", (user: { email: string; password: string }) => {
   cy.visit("/signin");
-  cy.get("#email", { timeout: 10000 }).clear();
-  cy.get("#email").type(user.email);
-  cy.get("#password").clear();
-  cy.get("#password").type(user.password);
-  cy.get('button[type="submit"]').click();
-  cy.url({ timeout: 10000 }).should("include", "/dashboard");
+  cy.location("pathname", { timeout: 10000 }).then((pathname) => {
+    if (pathname.includes("/dashboard")) {
+      return null;
+    }
+
+    cy.get("#email", { timeout: 10000 }).clear();
+    cy.get("#email").type(user.email);
+    cy.get("#password").clear();
+    cy.get("#password").type(user.password);
+    cy.get('button[type="submit"]').click();
+    cy.url({ timeout: 10000 }).should("include", "/dashboard");
+
+    return null;
+  });
 });
 
 Cypress.Commands.add("loginAsAdmin", () => {

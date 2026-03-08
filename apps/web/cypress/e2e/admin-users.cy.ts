@@ -62,10 +62,27 @@ describe("Admin Users Management - Full CRUD", () => {
   });
 
   it("should delete user account", () => {
-    cy.contains("tr", testUserEmail).within(() => {
-      cy.contains("button", "Delete").click();
+    cy.get("body").then(($body) => {
+      if ($body.find('[role="dialog"]').length > 0) {
+        cy.get("body").type("{esc}");
+        cy.get('[role="dialog"]').should("not.exist");
+      }
+
+      return null;
     });
-    cy.contains("button", "Delete").last().click();
+
+    cy.contains("tr", testUserEmail)
+      .find("button")
+      .contains("Delete")
+      .should("be.visible")
+      .click();
+
+    cy.get('[role="dialog"]').within(() => {
+      cy.contains("button", "Delete")
+        .should("be.visible")
+        .should("not.be.disabled")
+        .click();
+    });
 
     cy.contains(/Deleted user|deleted/i).should("be.visible");
     cy.contains("tr", testUserEmail).should("not.exist");

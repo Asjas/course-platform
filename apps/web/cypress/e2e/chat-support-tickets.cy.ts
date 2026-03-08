@@ -122,7 +122,7 @@ describe("Chat Support Ticket Management", () => {
     cy.url().should("include", "/chat/general");
   });
 
-  it("should block a different user from accessing someone else's support ticket", () => {
+  it("should allow a different user to view someone else's support ticket", () => {
     const ownerUser = {
       name: faker.person.fullName(),
       email: faker.internet
@@ -139,19 +139,21 @@ describe("Chat Support Ticket Management", () => {
     };
 
     const ticketTitle = `Owner Ticket ${faker.string.alphanumeric(8)}`;
+    const ticketDescription = "Owner-only support ticket content";
     let ownerTicketId = "";
 
     cy.signUpViaApi(ownerUser);
+    cy.clearAllCookies();
     cy.signIn({ email: ownerUser.email, password: ownerUser.password });
     ensureUsernameSetViaProfile();
 
     cy.visit("/chat/support/new");
     cy.get('input[name="title"]').type(ticketTitle);
     cy.get('input[name="repo"]').type("https://github.com/test/repo");
-    cy.get("textarea").type("Owner-only support ticket content");
+    cy.get("textarea").type(ticketDescription);
     cy.contains("button", "Save").click({ force: true });
 
-    cy.url().should("include", "/support/");
+    cy.url().should("match", /\/support\/(?!new$)[^/?#]+/);
     cy.url().then((url) => {
       ownerTicketId = url.split("/support/")[1]?.split("?")[0] ?? "";
       expect(ownerTicketId).to.not.equal("");
@@ -166,21 +168,44 @@ describe("Chat Support Ticket Management", () => {
     });
 
     cy.signUpViaApi(otherUser);
+    cy.clearAllCookies();
     cy.signIn({ email: otherUser.email, password: otherUser.password });
     ensureUsernameSetViaProfile();
 
     cy.then(() => {
-      cy.visit(`/support/${ownerTicketId}`, {
-        failOnStatusCode: false,
-      });
+      cy.visit(`/support/${ownerTicketId}`);
+      cy.contains(ticketTitle, { timeout: 15000 }).should("be.visible");
+      cy.contains(ticketDescription).should("be.visible");
 
-      cy.contains(/authorized|access denied|forbidden|permission/i, {
-        timeout: 15000,
-      }).should("be.visible");
-      cy.contains("Ticket Not Found").should("be.visible");
+      // Non-owners can view public tickets, but owner controls are not shown here.
+      cy.contains("button", "Delete").should("not.exist");
+      cy.contains("a", "Edit").should("not.exist");
 
       return null;
     });
+  });
+
+  it("should show owner controls and allow creator to delete their own ticket", () => {
+    const ownTicketTitle = `Own Ticket ${faker.string.alphanumeric(8)}`;
+
+    cy.visit("/chat/support/new");
+    cy.get('input[name="title"]').type(ownTicketTitle);
+    cy.get('input[name="repo"]').type("https://github.com/test/repo");
+    cy.get("textarea").type("Ticket created by current user");
+    cy.contains("button", "Save").click({ force: true });
+
+    cy.visit("/support");
+    cy.contains("tr", ownTicketTitle).within(() => {
+      cy.contains("a", "Edit").should("be.visible");
+      cy.contains("button", "Delete").should("be.visible").click();
+    });
+
+    cy.get('[role="dialog"]').within(() => {
+      cy.contains("button", "Delete").click();
+    });
+
+    cy.contains(/ticket deleted successfully/i).should("be.visible");
+    cy.contains("tr", ownTicketTitle).should("not.exist");
   });
 });
 
