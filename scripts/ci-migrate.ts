@@ -116,14 +116,18 @@ async function runMigrations() {
   }
 }
 
-void runMigrations()
-  .then(() => {
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error("Fatal migration error:", error);
-    process.exit(1);
-  })
-  .finally(() => {
-    pool.end();
-  });
+// Wrapper ensures pool.end() runs regardless of success or failure.
+async function main() {
+  try {
+    await runMigrations();
+  } finally {
+    await pool.end();
+  }
+}
+
+// On success the process exits naturally (no open handles after pool.end()).
+// On failure the catch logs the error and exits with code 1.
+main().catch((error) => {
+  console.error("Fatal migration error:", error);
+  process.exit(1);
+});
