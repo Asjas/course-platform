@@ -30,7 +30,8 @@ description: "Cypress E2E test generation instructions for the web application"
 - **Text Content**: Use `.should("contain", "text")` or `.should("have.text", "exact text")`.
 - **Element State**: Use `.should("be.disabled")`, `.should("be.checked")`, etc.
 - **URL**: Use `cy.url().should("include", "/path")` for navigation verification.
-- **Network**: Use `cy.intercept()` to stub or wait for API calls.
+- **Network (Non-Auth)**: Use `cy.intercept()` for CRUD operations to wait for API calls and verify network timing.
+- **Network (Authorization)**: Do NOT use `cy.intercept()` to mock permission responses. Test through the UI and let the real backend enforce permissions.
 
 ## Example Test Structure
 
@@ -56,18 +57,14 @@ describe("User Authentication", () => {
   });
 
   it("should redirect to dashboard after successful login", () => {
-    // Intercept the auth API
-    cy.intercept("POST", "/api/auth/sign-in", {
-      statusCode: 200,
-      body: { success: true },
-    }).as("signIn");
-
+    // Test through the UI, calling the real backend
     cy.get('input[name="email"]').type("user@example.com");
     cy.get('input[name="password"]').type("validpassword");
     cy.contains("button", "Sign In").click();
 
-    cy.wait("@signIn");
+    // Wait for real backend to respond and redirect
     cy.url().should("include", "/dashboard");
+    cy.contains("Welcome").should("be.visible");
   });
 });
 ```
@@ -93,11 +90,33 @@ Do not run the full E2E suite for targeted validation unless explicitly requeste
 
 For CRUD scenarios, cleanup must be done using normal UI delete actions so cleanup also validates delete behavior.
 
-For authorization scenarios, assert both behaviors:
-1. Route/data access is blocked (redirect, forbidden state, or missing data)
-2. A user-facing popup/toast shows the backend permission/access error message
-3. Ownership boundaries are enforced: user A can access user A content, and user B is blocked from user A content
-4. Role boundaries are enforced: admins can access admin content, non-admin users cannot access admin content
+### Authorization Testing (CRITICAL: Test Through UI, Not by Mocking)
+
+**NEVER use `cy.intercept()` or `cy.request()` to mock/bypass permission enforcement. Test through the real UI.**
+
+For authorization scenarios, assert both behaviors by testing through the UI:
+
+1. **Route-level access control**:
+   - Navigate to protected page as non-admin → Page doesn't load or redirects
+   - Verify error message appears (not hardcoded, but from real backend)
+   - Navigate to protected page as admin → Page loads normally
+
+2. **Form submission with unauthorized user**:
+   - Try to submit admin form as non-admin → Backend rejects in real time
+   - Error toast appears to user (from real backend error)
+   - Verify user sees the actual error message
+
+3. **Ownership boundaries**:
+   - User A navigates to their own content → Loads successfully
+   - User B tries to access User A's content → Access denied (real backend enforces)
+   - Verify error message appears to user B
+
+4. **Role boundaries**:
+   - Admin navigates to `/admin/*` → Page loads, admin actions work
+   - Non-admin navigates to `/admin/*` → Page fails to load or shows error
+   - Verify appropriate user-facing messages
+
+**Key Principle**: "As a user, you expect the page to not load or show an error message. NOT for the app to make direct HTTP requests to test permissions."
 
 ### Known Failure Modes (Do Not Repeat)
 
