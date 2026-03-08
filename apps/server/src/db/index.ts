@@ -17,7 +17,13 @@ const pool = new Pool({
   Client,
 });
 
-await pool.connect();
+// Register error handlers BEFORE the first client is created.  pool.connect()
+// and pool.query() both create clients that fire the "connect" event.  If these
+// handlers are registered after the first client is created the initial client
+// won't have the error listener, and a server-side connection kill (e.g. managed
+// PostgreSQL 10-min lifetime) will become an uncaughtException → close-with-grace
+// calls pool.end() → every subsequent query fails with "Cannot use a pool after
+// calling end on the pool".
 
 // Enable TCP keep-alive on every new client connection to prevent ECONNRESET
 // from network equipment or database server idle-connection timeouts in CI.
@@ -37,6 +43,11 @@ pool.on("connect", (client) => {
 pool.on("error", (err) => {
   console.error("Unexpected database pool error:", err);
 });
+
+// Verify the database connection works.  Using pool.query() instead of
+// pool.connect() so the client is properly returned to the idle pool
+// afterwards (pool.connect() without release() leaks the client).
+await pool.query("SELECT 1");
 
 export { pool };
 
