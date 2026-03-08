@@ -154,7 +154,8 @@ async function seedDatabase() {
         await client.query(
           `
           INSERT INTO account (id, account_id, provider_id, user_id, password, created_at, updated_at)
-          VALUES ($1, $2, $3, $4, $5, $6, $7);
+          VALUES ($1, $2, $3, $4, $5, $6, $7)
+          ON CONFLICT (id) DO NOTHING;
         `,
           [
             `account:${user.id}`,

@@ -290,7 +290,180 @@ commands. Agents should be aware of these when running terminal commands:
 5. When creating new routes in `apps/web/src/routes/`, run the dev server once
    to generate route types.
 
-## Detailed guidance
+## Unit Testing (React Testing Library)
+
+All React component tests in `apps/web/src/` use **Vitest** + **React Testing
+Library (RTL)**. Follow Kent C. Dodds' principles:
+https://kentcdodds.com/blog/common-mistakes-with-react-testing-library
+
+### The golden rule: never mock npm packages
+
+> "The more your tests resemble the way users use your code, the more confidence
+> they give you." — Kent C. Dodds
+
+Mocking third-party packages (e.g. `@tanstack/react-router`,
+`@tanstack/react-query`, `@headlessui/react`, `lucide-react`, Radix UI) gives
+**false confidence**. The mock can fall out of sync with the real package API
+while all tests continue to pass. Always use the real package.
+
+**Only mock at true external boundaries:**
+
+| What to mock | Why |
+|---|---|
+| `~/lib/auth.client` | Real network calls to the auth server |
+| `~/lib/trpc.client` | Real network calls to the tRPC API |
+| `~/lib/db.collections` | Real database/sync operations |
+| `sonner` | Side-effect notification sink |
+| `~/components/blocker` | Router-blocking behaviour tested separately |
+| `~/components/markdown-editor` | Heavy third-party editor with its own tests |
+
+**Never mock:** `@tanstack/react-router`, `@tanstack/react-query`,
+`@headlessui/react`, `lucide-react`, `@packages/shared-ui/*`, `class-variance-authority`, or any other UI / utility npm package.
+
+**Exception:** `react-youtube` is legitimately mocked because the YouTube
+IFrame API is a browser-only runtime API that cannot work in JSDOM. Mock it
+with a realistic `<iframe src="https://www.youtube.com/embed/{videoId}">`.
+
+### Shared test utilities — `apps/web/src/test-utils.tsx`
+
+```tsx
+// Wraps with a REAL TanStack Router (memory history) + real QueryClient.
+// Must be awaited: RouterProvider resolves its route tree asynchronously.
+const { router, queryClient } = await renderWithProviders(<MyForm />);
+
+// Router-less variant for components that don't need navigation.
+const { queryClient } = renderWithQueryClient(<MentionPicker {...props} />);
+```
+
+All `it()` callbacks that call `renderWithProviders` **must** be `async` and
+**must** `await` the call:
+
+```tsx
+it("renders the form", async () => {
+  await renderWithProviders(<SignInForm />);
+  expect(screen.getByLabelText("Email")).toBeInTheDocument();
+});
+```
+
+### Navigation assertions
+
+Instead of asserting on a mock `useNavigate` function, inspect the real router:
+
+```tsx
+// ✅ Proves the router actually navigated
+const { router } = await renderWithProviders(<SignInForm />, {
+  initialPath: "/signin",
+});
+await user.click(submitButton);
+await waitFor(() =>
+  expect(router.state.location.pathname).toBe("/dashboard"),
+);
+
+// ❌ Only proves navigate() was called — doesn't prove the route changed
+expect(mockNavigate).toHaveBeenCalledWith({ to: "/dashboard" });
+```
+
+Note: TanStack Router URL-encodes special characters (e.g. `:` → `%3A`) in
+`router.state.location.pathname`. Use a loose regex when the ID contains `:`:
+
+```tsx
+expect(router.state.location.pathname).toMatch(/^\/support\/suptick/);
+```
+
+### `vi.hoisted` for data shared with `vi.mock` factories
+
+`vi.mock(...)` is **hoisted** above all variable declarations at compile time.
+Any variable referenced inside a `vi.mock` factory must itself be hoisted using
+`vi.hoisted`, or defined inline in the factory. Plain `const` declarations at
+the top of the file are **not** yet available when the factory runs.
+
+```tsx
+// ✅ Correct: data defined via vi.hoisted so it's available when the factory runs
+const { mockUsers } = vi.hoisted(() => ({
+  mockUsers: [{ id: "1", name: "Alice" }],
+}));
+vi.mock("~/lib/trpc.client", () => ({
+  trpc: {
+    mentions: {
+      getChannelMentions: {
+        queryOptions: vi.fn().mockReturnValue({
+          queryKey: ["mentions"],
+          queryFn: vi.fn().mockResolvedValue(mockUsers), // safe: hoisted
+        }),
+      },
+    },
+  },
+}));
+
+// ❌ Incorrect: plain const is not yet declared when the factory runs
+const mockUsers = [{ id: "1", name: "Alice" }];
+vi.mock("~/lib/trpc.client", () => ({
+  trpc: { mentions: { getChannelMentions: { queryOptions: vi.fn().mockReturnValue({
+    queryFn: vi.fn().mockResolvedValue(mockUsers), // undefined at hoist time!
+  }) } } },
+}));
+```
+
+### Query selectors — prefer accessible queries
+
+| Priority | Query | Use when |
+|---|---|---|
+| 1 | `getByRole` | Buttons, links, headings, inputs with a label |
+| 2 | `getByLabelText` | Form inputs associated with a `<label>` |
+| 3 | `getByPlaceholderText` | Input placeholder (last resort) |
+| 4 | `getByText` | Static text content |
+| 5 | `getByDisplayValue` | Current value of form element |
+| 6 | `getByTestId` | **Avoid**; only when no semantic alternative exists |
+
+Never use `getByTestId` to query for icons or SVGs — that asserts an
+implementation detail, not user-visible behaviour.
+
+### `userEvent` over `fireEvent`
+
+Always use `userEvent.setup()` instead of `fireEvent`. It simulates real browser
+event sequences (focus, keydown, keyup, input, etc.) and catches more bugs:
+
+```tsx
+// ✅
+const user = userEvent.setup();
+await user.type(screen.getByLabelText("Email"), "test@example.com");
+await user.click(screen.getByRole("button", { name: "Submit" }));
+
+// ❌ Only fires a synthetic event — misses intermediate events
+fireEvent.change(input, { target: { value: "test@example.com" } });
+```
+
+### Clipboard mocking
+
+`userEvent.setup()` installs `navigator.clipboard` as a **getter-only**
+property. Use `vi.spyOn` instead of `Object.assign`:
+
+```tsx
+// ✅
+const writeSpy = vi.spyOn(navigator.clipboard, "writeText").mockResolvedValue();
+
+// ❌ Throws "Cannot assign to read only property 'clipboard'"
+Object.assign(navigator, { clipboard: { writeText: vi.fn() } });
+```
+
+### Radix UI / HeadlessUI portals in JSDOM
+
+Radix UI Popover, Dialog, and similar components render into a portal at
+`document.body`. RTL's `screen.*` queries search the whole document, so they
+**will** find portal content. No workaround needed.
+
+However, Radix Tabs only renders the **active** tab's content into the DOM by
+default. If you open a popover with tabs and assert on content in a non-default
+tab, click that tab first:
+
+```tsx
+await user.click(screen.getByRole("button", { name: /sync status/i }));
+const offlineTab = await screen.findByRole("tab", { name: /offline/i });
+await user.click(offlineTab);
+expect(screen.getByText("OfflineCollection")).toBeInTheDocument();
+```
+
+
 
 For deeper, context-specific guidance, see the instruction files in
 `.github/instructions/`:
@@ -308,6 +481,7 @@ For deeper, context-specific guidance, see the instruction files in
 | `trpc-type-patterns.instructions.md`                  | Routers/queries/collections   | tRPC patterns and offline-first   |
 | `typescript-node.instructions.md`                     | `apps/server/**`              | Fastify + Drizzle + tRPC patterns |
 | `typescript-react.instructions.md`                    | `**/*.ts, **/*.tsx, **/*.css` | React + TanStack patterns         |
+| `unit-testing-rtl.instructions.md`                    | `apps/web/src/**/*.test.*`    | RTL unit test standards           |
 
 Reference documentation for detailed best practices is in `.github/docs/`:
 

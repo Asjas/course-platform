@@ -1,17 +1,12 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SignUpForm from "~/components/forms/sign-up-form";
+import { renderWithProviders } from "~/test-utils";
 
-const { mockNavigate, mockSignUpEmail, mockUseAuth } = vi.hoisted(() => ({
-  mockNavigate: vi.fn(),
+const { mockSignUpEmail, mockUseAuth } = vi.hoisted(() => ({
   mockSignUpEmail: vi.fn(),
   mockUseAuth: vi.fn(),
-}));
-
-vi.mock("@tanstack/react-router", () => ({
-  useNavigate: () => mockNavigate,
-  Block: ({ children }: { children: (args: { status: string }) => unknown }) =>
-    children({ status: "unblocked" }),
 }));
 
 vi.mock("~/components/blocker", () => ({
@@ -40,14 +35,11 @@ vi.mock("sonner", () => ({
 describe("SignUpForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUseAuth.mockReturnValue({
-      isAuthenticated: true,
-    });
+    mockUseAuth.mockReturnValue({ isAuthenticated: true });
   });
 
-  it("renders required fields and disabled submit when pristine", () => {
-    render(<SignUpForm />);
-
+  it("renders required fields and disabled submit when pristine", async () => {
+    await renderWithProviders(<SignUpForm />);
     expect(screen.getByLabelText("Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
     expect(screen.getByLabelText("Password")).toBeInTheDocument();
@@ -56,25 +48,19 @@ describe("SignUpForm", () => {
   });
 
   it("submits sign-up data and navigates on success", async () => {
+    const user = userEvent.setup();
     const { toast } = await import("sonner");
     mockSignUpEmail.mockResolvedValue({ error: null });
 
-    render(<SignUpForm />);
-
-    fireEvent.change(screen.getByLabelText("Name"), {
-      target: { value: "Jane Doe" },
-    });
-    fireEvent.change(screen.getByLabelText("Email"), {
-      target: { value: "jane@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText("Password"), {
-      target: { value: "secret123" },
-    });
-    fireEvent.change(screen.getByLabelText("Confirm Password"), {
-      target: { value: "secret123" },
+    const { router } = await renderWithProviders(<SignUpForm />, {
+      initialPath: "/signup",
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+    await user.type(screen.getByLabelText("Name"), "Jane Doe");
+    await user.type(screen.getByLabelText("Email"), "jane@example.com");
+    await user.type(screen.getByLabelText("Password"), "secret123");
+    await user.type(screen.getByLabelText("Confirm Password"), "secret123");
+    await user.click(screen.getByRole("button", { name: "Sign Up" }));
 
     await waitFor(() => {
       expect(mockSignUpEmail).toHaveBeenCalledWith({
@@ -88,35 +74,29 @@ describe("SignUpForm", () => {
       expect(toast.success).toHaveBeenCalledWith("Signed up successfully!");
     });
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith({ to: "/dashboard" });
+      expect(router.state.location.pathname).toBe("/dashboard");
     });
   });
 
   it("shows error toast on sign-up failure", async () => {
+    const user = userEvent.setup();
     const { toast } = await import("sonner");
     mockSignUpEmail.mockResolvedValue({ error: { message: "Email in use" } });
 
-    render(<SignUpForm />);
-
-    fireEvent.change(screen.getByLabelText("Name"), {
-      target: { value: "Jane Doe" },
-    });
-    fireEvent.change(screen.getByLabelText("Email"), {
-      target: { value: "jane@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText("Password"), {
-      target: { value: "secret123" },
-    });
-    fireEvent.change(screen.getByLabelText("Confirm Password"), {
-      target: { value: "secret123" },
+    const { router } = await renderWithProviders(<SignUpForm />, {
+      initialPath: "/signup",
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Sign Up" }));
+    await user.type(screen.getByLabelText("Name"), "Jane Doe");
+    await user.type(screen.getByLabelText("Email"), "jane@example.com");
+    await user.type(screen.getByLabelText("Password"), "secret123");
+    await user.type(screen.getByLabelText("Confirm Password"), "secret123");
+    await user.click(screen.getByRole("button", { name: "Sign Up" }));
 
     await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith("Email in use");
     });
 
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(router.state.location.pathname).toBe("/signup");
   });
 });

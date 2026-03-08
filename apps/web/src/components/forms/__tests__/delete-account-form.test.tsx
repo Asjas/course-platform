@@ -1,48 +1,25 @@
 import DeleteAccountForm from "../delete-account-form";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderWithProviders } from "~/test-utils";
 
-const { mockNavigate, mockAuthClient, mockToast } = vi.hoisted(() => ({
-  mockNavigate: vi.fn(),
-  mockAuthClient: {
-    deleteUser: vi.fn(),
-  },
-  mockToast: {
-    success: vi.fn(),
-    error: vi.fn(),
-    loading: vi.fn(),
-  },
+const { mockAuthClient, mockToast } = vi.hoisted(() => ({
+  mockAuthClient: { deleteUser: vi.fn() },
+  mockToast: { success: vi.fn(), error: vi.fn(), loading: vi.fn() },
 }));
 
-vi.mock("@tanstack/react-router", () => ({
-  useNavigate: () => mockNavigate,
-  Link: ({ children, to }: { children: ReactNode; to: string }) => (
-    <a href={to}>{children}</a>
-  ),
-}));
-
-vi.mock("~/lib/auth.client", () => ({
-  authClient: mockAuthClient,
-}));
-
-vi.mock("sonner", () => ({
-  toast: mockToast,
-}));
-
-vi.mock("~/components/blocker", () => ({
-  default: () => null,
-}));
+vi.mock("~/lib/auth.client", () => ({ authClient: mockAuthClient }));
+vi.mock("sonner", () => ({ toast: mockToast }));
+vi.mock("~/components/blocker", () => ({ default: () => null }));
 
 describe("DeleteAccountForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders password field and keeps delete disabled while pristine", () => {
-    render(<DeleteAccountForm />);
-
+  it("renders password field and keeps delete disabled while pristine", async () => {
+    await renderWithProviders(<DeleteAccountForm />);
     expect(screen.getByLabelText(/current password/i)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /delete account/i }),
@@ -53,7 +30,9 @@ describe("DeleteAccountForm", () => {
     const user = userEvent.setup();
     mockAuthClient.deleteUser.mockResolvedValue({ error: null });
 
-    render(<DeleteAccountForm />);
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
+      initialPath: "/settings",
+    });
 
     await user.type(screen.getByLabelText(/current password/i), "Password123!");
     await user.click(screen.getByRole("button", { name: /delete account/i }));
@@ -63,15 +42,13 @@ describe("DeleteAccountForm", () => {
         password: "Password123!",
       });
     });
-
     await waitFor(() => {
       expect(mockToast.success).toHaveBeenCalledWith(
         "Account deleted successfully!",
       );
     });
-
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith({ to: "/", replace: true });
+      expect(router.state.location.pathname).toBe("/");
     });
   });
 
@@ -81,7 +58,9 @@ describe("DeleteAccountForm", () => {
       error: { message: "Incorrect password" },
     });
 
-    render(<DeleteAccountForm />);
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
+      initialPath: "/settings",
+    });
 
     await user.type(screen.getByLabelText(/current password/i), "bad-pass");
     await user.click(screen.getByRole("button", { name: /delete account/i }));
@@ -89,16 +68,16 @@ describe("DeleteAccountForm", () => {
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith("Incorrect password");
     });
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(router.state.location.pathname).toBe("/settings");
   });
 
   it("uses fallback error message when delete response has no message", async () => {
     const user = userEvent.setup();
-    mockAuthClient.deleteUser.mockResolvedValue({
-      error: { message: "" },
-    });
+    mockAuthClient.deleteUser.mockResolvedValue({ error: { message: "" } });
 
-    render(<DeleteAccountForm />);
+    const { router } = await renderWithProviders(<DeleteAccountForm />, {
+      initialPath: "/settings",
+    });
 
     await user.type(screen.getByLabelText(/current password/i), "Password123!");
     await user.click(screen.getByRole("button", { name: /delete account/i }));
@@ -106,18 +85,15 @@ describe("DeleteAccountForm", () => {
     await waitFor(() => {
       expect(mockToast.error).toHaveBeenCalledWith("Failed to delete account");
     });
-
-    expect(mockNavigate).not.toHaveBeenCalled();
+    expect(router.state.location.pathname).toBe("/settings");
   });
 
   it("resets the form when cancel is clicked", async () => {
     const user = userEvent.setup();
-
-    render(<DeleteAccountForm />);
+    await renderWithProviders(<DeleteAccountForm />);
 
     const passwordInput = screen.getByLabelText(/current password/i);
     await user.type(passwordInput, "Password123!");
-
     expect(
       screen.getByRole("button", { name: /delete account/i }),
     ).toBeEnabled();
