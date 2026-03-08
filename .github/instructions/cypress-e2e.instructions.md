@@ -144,7 +144,7 @@ pnpm run --filter @apps/web e2e:run -- --spec "cypress/e2e/login.cy.ts"
 ```
 
 ### CI/CD
-- Tests run on Node.js 22-24 in GitHub Actions.
+- Tests run on Node.js 22-25 in GitHub Actions.
 - Build the app first: `pnpm build --filter @apps/web`.
 - Start preview server: `pnpm --filter @apps/web preview`.
 - Cypress runs against `http://localhost:4173`.

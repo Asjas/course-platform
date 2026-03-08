@@ -108,7 +108,7 @@ The CI uses:
 Example schema names:
 - `ci_server_22_12345678` for server tests on Node 22
 - `ci_web_24_12345678` for web tests on Node 24
-- `ci_e2e_22_12345678` for E2E tests on Node 22
+- `ci_e2e_25_12345678` for E2E tests on Node 25
 
 This approach allows all CI jobs to run concurrently without conflicts, as each job uses its own fully isolated database schema (including tables, constraints, indexes, and sequences) within the shared hosted database.
 
