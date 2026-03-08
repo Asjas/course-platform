@@ -96,7 +96,14 @@ Cypress.Commands.add(
 
       // Account may already exist from earlier specs; fall back to sign-in.
       cy.location("pathname", { timeout: 10000 }).then((pathname) => {
-        const restoreUrl = () => {
+        const cleanupAndRestore = () => {
+          // Clear cookies so the caller is not left with an active session.
+          // ensureUserExists is a setup helper — it should only guarantee the
+          // account exists, not leave the browser authenticated. Without this,
+          // subsequent visits to auth pages (e.g. /signup, /signin) would be
+          // redirected to /dashboard by the auth route guard.
+          cy.clearAllCookies();
+
           // Only restore if the caller was on a real page (not about:blank).
           if (originalUrl && !originalUrl.startsWith("about:")) {
             cy.visit(originalUrl);
@@ -104,7 +111,7 @@ Cypress.Commands.add(
         };
 
         if (pathname.includes("/dashboard")) {
-          restoreUrl();
+          cleanupAndRestore();
           return null;
         }
 
@@ -115,7 +122,7 @@ Cypress.Commands.add(
         cy.get("#password").type(user.password);
         cy.get('button[type="submit"]').click();
         cy.url({ timeout: 10000 }).should("include", "/dashboard");
-        restoreUrl();
+        cleanupAndRestore();
         return null;
       });
       return null;
@@ -125,20 +132,12 @@ Cypress.Commands.add(
 
 Cypress.Commands.add("signIn", (user: { email: string; password: string }) => {
   cy.visit("/signin");
-  cy.location("pathname", { timeout: 10000 }).then((pathname) => {
-    if (pathname.includes("/dashboard")) {
-      return null;
-    }
-
-    cy.get("#email", { timeout: 10000 }).clear();
-    cy.get("#email").type(user.email);
-    cy.get("#password").clear();
-    cy.get("#password").type(user.password);
-    cy.get('button[type="submit"]').click();
-    cy.url({ timeout: 10000 }).should("include", "/dashboard");
-
-    return null;
-  });
+  cy.get("#email", { timeout: 10000 }).clear();
+  cy.get("#email").type(user.email);
+  cy.get("#password").clear();
+  cy.get("#password").type(user.password);
+  cy.get('button[type="submit"]').click();
+  cy.url({ timeout: 10000 }).should("include", "/dashboard");
 });
 
 Cypress.Commands.add("loginAsAdmin", () => {
