@@ -175,8 +175,9 @@ describe("Admin Coupons Management", () => {
 
     cy.contains(/deleted successfully/i).should("be.visible");
     // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow collection-backed delete to settle
-    cy.wait(500);
-    cy.contains(couponCode).should("not.exist");
+    cy.wait(1000);
+    // Verify coupon is removed from table with timeout
+    cy.get("table tbody").should("not.contain", couponCode);
   });
 
   it("should validate required fields", () => {

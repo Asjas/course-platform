@@ -262,10 +262,7 @@ jobs:
 
       - name: Start backend server in background
         env:
-          PORT: 3000
-          HOST: 0.0.0.0
-          ORIGIN: http://localhost:4173,http://localhost:3000
-          COOKIE_DOMAIN: localhost
+          CI: true
         run: |
           pnpm --filter @apps/server dev > server.log 2>&1 &
           echo $! > server.pid

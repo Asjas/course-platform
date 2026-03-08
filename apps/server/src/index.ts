@@ -1,5 +1,6 @@
 import closeWithGrace from "close-with-grace";
 import config from "~/config.js";
+import { pool } from "~/db/index.js";
 import { polarPool } from "~/lib/auth.server.js";
 import createServer from "~/server.js";
 
@@ -16,8 +17,13 @@ process.on("uncaughtException", (err) => {
     }
 
     await polarPool.close();
+    await pool.end();
     await app.close();
   });
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  app.log.error({ reason, promise }, "Unhandled Rejection occurred");
 });
 
 closeWithGrace(async function ({ signal, err }) {
@@ -28,6 +34,7 @@ closeWithGrace(async function ({ signal, err }) {
   }
 
   await polarPool.close();
+  await pool.end();
   await app.close();
 });
 
