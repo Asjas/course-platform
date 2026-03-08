@@ -330,7 +330,7 @@ export default function CreateCouponSheet({
                         name={field.name}
                         type="number"
                         min={1}
-                        placeholder="0"
+                        placeholder="1"
                         value={field.state.value}
                         onChange={(event) =>
                           field.handleChange(Number(event.target.value))
