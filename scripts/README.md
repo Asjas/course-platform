@@ -94,7 +94,7 @@ DATABASE_SCHEMA=ci_server_20 DATABASE_URL=... tsx scripts/ci-migrate.ts
 
 These scripts are automatically used in the GitHub Actions CI pipeline with a **hosted PostgreSQL database** dedicated to CI:
 
-1. **Set Schema Name**: Each CI job sets a unique `DATABASE_SCHEMA` env var (e.g., `ci_server_20_<run_id>`)
+1. **Set Schema Name**: Each CI job sets a unique `DATABASE_SCHEMA` env var (e.g., `ci_server_22_<run_id>`)
 2. **Run Migrations**: `ci-migrate.ts` creates the schema and runs migrations with the correct schema name
 3. **Seed Data**: `seed-test-data.ts` populates the schema with test data
 4. **Run Tests**: Tests execute against the isolated schema (Drizzle ORM reads `DATABASE_SCHEMA` at runtime)
