@@ -140,6 +140,14 @@ Critical guardrails:
 - If a failing assertion may represent important or expected behavior, fix the underlying code rather than weakening the test.
 - If it is ambiguous whether the failure should be fixed in the spec or the product code, stop and ask the user before making that change. This is mandatory for security-sensitive behavior so tests do not accidentally remove protections.
 
+E2E stabilization practices (applies to all features):
+
+- Prefer stable positive assertions (state is present and correct) over brittle global negative assertions that may fail due to unrelated seeded data.
+- Keep diagnostics temporary: add focused logs/assertions only while triaging, then remove instrumentation from app code, server code, and tests once root cause is confirmed.
+- Be careful with controlled numeric inputs in Cypress. Avoid clear-and-retype patterns that can cause value append races; use a stable editable field when validating submit/update flow if numeric input behavior is flaky.
+- Validate the end-to-end outcome, not only interaction steps: confirm the persisted row/card/content reflects the intended change after save/delete.
+- Prefer inferred/shared types over one-off local interfaces in tests/routes/components. If types are needed, use existing exported/shared types before creating new local duplicates.
+
 Readiness checks before running E2E:
 
 - Confirm API is reachable on port 5000.
