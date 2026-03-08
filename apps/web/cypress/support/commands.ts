@@ -15,7 +15,7 @@ declare global {
         password: string;
       }): Chainable<void>;
       /**
-       * Custom command to sign up via API (faster, no UI interaction)
+       * Custom command to ensure user account exists via UI-only auth flows
        * @example cy.signUpViaApi({ name: 'Test', email: 'test@example.com', password: 'Pass123!' })
        */
       signUpViaApi(user: {
@@ -76,35 +76,33 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   "signUpViaApi",
   (user: { name: string; email: string; password: string }) => {
-    const makeRequest = (attempt: number): void => {
-      const apiUrl = Cypress.expose("apiUrl") || "http://localhost:5000";
-      cy.request({
-        method: "POST",
-        url: `${apiUrl}/api/auth/sign-up/email`,
-        body: {
-          name: user.name,
-          email: user.email,
-          password: user.password,
-        },
-        failOnStatusCode: false,
-      }).then((response) => {
-        const isRetriable = response.status === 429 || response.status === 403;
+    cy.visit("/signup");
+    cy.get("#name").clear();
+    cy.get("#name").type(user.name);
+    cy.get("#email").clear();
+    cy.get("#email").type(user.email);
+    cy.get("#password").clear();
+    cy.get("#password").type(user.password);
+    cy.get("#confirmPassword").clear();
+    cy.get("#confirmPassword").type(user.password);
+    cy.get('button[type="submit"]').click();
 
-        if (isRetriable && attempt < 5) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000);
-          makeRequest(attempt + 1);
-        } else if (isRetriable) {
-          // In CI, sign-up can be temporarily blocked/rate-limited.
-          // Accept and continue; if account already exists, subsequent sign-in succeeds.
-          expect(response.status).to.be.oneOf([200, 422, 403, 429]);
-        } else {
-          expect(response.status).to.be.oneOf([200, 422]);
-        }
+    // UI-only fallback: account may already exist from earlier specs.
+    cy.location("pathname", { timeout: 10000 }).then((pathname) => {
+      if (pathname.includes("/dashboard")) {
         return null;
-      });
-    };
-    makeRequest(1);
+      }
+
+      cy.visit("/signin");
+      cy.get("#email", { timeout: 10000 }).clear();
+      cy.get("#email").type(user.email);
+      cy.get("#password").clear();
+      cy.get("#password").type(user.password);
+      cy.get('button[type="submit"]').click();
+      cy.url({ timeout: 10000 }).should("include", "/dashboard");
+
+      return null;
+    });
   },
 );
 

@@ -145,6 +145,9 @@ Critical guardrails:
 
 E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIENCE. **NEVER use `cy.request()`, `cy.intercept()`, `cy.stub()`, or similar to mock/bypass the UI.** This defeats the purpose of E2E testing.
 
+This includes authentication/account setup. Do not create/login users with `cy.request()` in E2E.
+Use signup/signin pages and real UI interactions so auth flows are validated end-to-end.
+
 - ❌ **WRONG**: `cy.request("POST", "http://localhost:5000/trpc/coupons.insertCoupon", {})` — Bypasses the UI entirely, doesn't test user experience
 - ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — Mocks the backend, hides real bugs
 - ✅ **RIGHT**: Login as user → Navigate to page through UI → Try to click buttons/submit forms → Let backend reject in real time → Verify error appears to user
