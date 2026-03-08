@@ -23,8 +23,8 @@ import pg from "pg";
 
 const { Pool } = pg;
 
-// Get schema name from command line or use public
-const schemaName = process.argv[2] || "public";
+// Get schema name from command line, DATABASE_SCHEMA env var, or default to "public"
+const schemaName = process.argv[2] || process.env.DATABASE_SCHEMA || "public";
 const databaseUrl =
   process.env.DATABASE_URL || "postgresql://localhost:5432/course_platform";
 

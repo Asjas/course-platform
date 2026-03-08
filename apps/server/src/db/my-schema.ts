@@ -1,3 +1,5 @@
 import { pgSchema } from "drizzle-orm/pg-core";
 
-export const mySchema = pgSchema("my_schema");
+const schemaName = process.env.DATABASE_SCHEMA || "my_schema";
+
+export const mySchema = pgSchema(schemaName);
