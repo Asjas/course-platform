@@ -33,6 +33,11 @@ export default function CreateCouponSheet({
       discountType: "percentage" as "percentage" | "fixed",
       discountValue: 0,
       redemptionLimit: 1,
+      validFrom: new Date(),
+      validUntil: null as Date | null,
+    },
+    validators: {
+      onSubmit: createCouponSchema,
       onBlur: createCouponSchema,
     },
     onSubmit: async ({ value }) => {
@@ -44,7 +49,7 @@ export default function CreateCouponSheet({
           value.redemptionLimit > 0 ? value.redemptionLimit : 1;
 
         // @ts-expect-error collection insert accepts optimistic client shape and
-        // is reconciled by collection sync.
+        // is reconciled by collection sync (createdAt/updatedAt set by server)
         const tx = CouponsCollection.insert({
           id: `coup:${ulid()}`,
           active: value.active,
@@ -87,7 +92,7 @@ export default function CreateCouponSheet({
       description: null,
       discountType: "percentage",
       discountValue: 0,
-      redemptionLimit: 0,
+      redemptionLimit: 1,
       validFrom: new Date(),
       validUntil: null,
     });
@@ -316,7 +321,7 @@ export default function CreateCouponSheet({
                       htmlFor={field.name}
                     >
                       Redemption Limit{" "}
-                      <span className="text-gray-500">(0 for unlimited)</span>
+                      <span className="text-gray-500">(minimum 1)</span>
                     </label>
                     <div className="mt-2">
                       <input
@@ -324,7 +329,7 @@ export default function CreateCouponSheet({
                         id={field.name}
                         name={field.name}
                         type="number"
-                        min={0}
+                        min={1}
                         placeholder="0"
                         value={field.state.value}
                         onChange={(event) =>
