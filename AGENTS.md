@@ -140,6 +140,27 @@ Critical guardrails:
 - If a failing assertion may represent important or expected behavior, fix the underlying code rather than weakening the test.
 - If it is ambiguous whether the failure should be fixed in the spec or the product code, stop and ask the user before making that change. This is mandatory for security-sensitive behavior so tests do not accidentally remove protections.
 
+**CRITICAL: E2E Tests MUST Test Real Backend, NOT Mocked Responses**
+
+E2E tests exercise the entire system end-to-end. **NEVER use `cy.intercept()`, `cy.stub()`, or similar to mock backend responses in E2E tests.** This defeats the purpose of E2E testing.
+
+- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — This mocks the backend, hiding real permission bugs
+- ✅ **RIGHT**: Call real backend endpoints; let real permission middleware (e.g., `isAdmin`) enforce authorization
+
+**For authorization boundary testing**:
+1. **Route-level access control**: Test that non-admin users are redirected from `/admin/*` routes (with toast message)
+2. **Mutation-level permission enforcement**: Call real endpoints with real auth context:
+   - Option A: Use `cy.request()` to directly call tRPC endpoints as authenticated non-admin users
+   - Option B: Create test scenarios with real user role/ownership boundaries
+   - Backend middleware (`isAdmin`, `isOwner`, etc.) will throw `TRPCError` with proper code (UNAUTHORIZED/FORBIDDEN)
+   - Verify frontend error handling (toast messages, error display) propagates real backend errors
+3. **Never pretend the backend rejected a request if you mocked it** — the real backend might behave differently
+
+E2E authorization tests should verify:
+- Real permission middleware works correctly
+- Backend rejects unauthorized requests with appropriate error codes
+- Frontend displays real error messages from the backend (not hardcoded expectations)
+
 E2E stabilization practices (applies to all features):
 
 - Prefer stable positive assertions (state is present and correct) over brittle global negative assertions that may fail due to unrelated seeded data.
