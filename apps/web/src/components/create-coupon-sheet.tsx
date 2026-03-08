@@ -44,10 +44,6 @@ export default function CreateCouponSheet({
       const toastId = toast.loading(`Creating coupon ${value.code}...`);
 
       try {
-        // The DB enforces redemption_limit > 0.
-        const normalizedRedemptionLimit =
-          value.redemptionLimit > 0 ? value.redemptionLimit : 1;
-
         // @ts-expect-error collection insert accepts optimistic client shape and
         // is reconciled by collection sync (createdAt/updatedAt set by server)
         const tx = CouponsCollection.insert({
@@ -58,7 +54,7 @@ export default function CreateCouponSheet({
           description: value.description,
           discountType: value.discountType,
           discountValue: value.discountValue,
-          redemptionLimit: normalizedRedemptionLimit,
+          redemptionLimit: value.redemptionLimit,
           validFrom: value.validFrom,
           validUntil: value.validUntil,
           redemptions: [],

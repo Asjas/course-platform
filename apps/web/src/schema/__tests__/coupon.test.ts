@@ -61,6 +61,38 @@ describe("createCouponSchema", () => {
     });
     expect(result.success).toBe(true);
   });
+
+  test("accepts redemptionLimit of 1 (minimum)", () => {
+    const result = createCouponSchema.safeParse({
+      ...validData(),
+      redemptionLimit: 1,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  test("rejects redemptionLimit of 0", () => {
+    const result = createCouponSchema.safeParse({
+      ...validData(),
+      redemptionLimit: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test("rejects negative redemptionLimit", () => {
+    const result = createCouponSchema.safeParse({
+      ...validData(),
+      redemptionLimit: -1,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  test("rejects non-integer redemptionLimit", () => {
+    const result = createCouponSchema.safeParse({
+      ...validData(),
+      redemptionLimit: 1.5,
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe("editCouponSchema", () => {
