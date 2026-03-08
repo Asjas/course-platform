@@ -88,8 +88,8 @@ describe("Sign Up Form Validation", () => {
       password: "DupTest123!",
     };
 
-    // Sign up the user first via API
-    cy.signUpViaApi(testUser);
+    // Ensure the user exists before attempting duplicate sign-up
+    cy.ensureUserExists(testUser);
 
     // Try signing up again with the same email via the form
     cy.get("#name").type(testUser.name);

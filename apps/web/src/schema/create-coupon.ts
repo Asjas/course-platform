@@ -7,7 +7,7 @@ export const createCouponSchema = z.object({
   description: z.string().nullable(),
   discountType: z.enum(["percentage", "fixed"]),
   discountValue: z.number(),
-  redemptionLimit: z.number(),
+  redemptionLimit: z.number().int().min(1),
   validFrom: z.date(),
   validUntil: z.date().nullable(),
 });

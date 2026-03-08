@@ -15,10 +15,13 @@ declare global {
         password: string;
       }): Chainable<void>;
       /**
-       * Custom command to sign up via API (faster, no UI interaction)
-       * @example cy.signUpViaApi({ name: 'Test', email: 'test@example.com', password: 'Pass123!' })
+       * Custom command to ensure a user account exists. Attempts sign-up first
+       * and falls back to sign-in if the account already exists. Returns to the
+       * calling page when done so it can be used as a pure setup helper without
+       * displacing the caller from their current URL.
+       * @example cy.ensureUserExists({ name: 'Test', email: 'test@example.com', password: 'Pass123!' })
        */
-      signUpViaApi(user: {
+      ensureUserExists(user: {
         name: string;
         email: string;
         password: string;
@@ -74,37 +77,49 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  "signUpViaApi",
+  "ensureUserExists",
   (user: { name: string; email: string; password: string }) => {
-    const makeRequest = (attempt: number): void => {
-      const apiUrl = Cypress.expose("apiUrl") || "http://localhost:5000";
-      cy.request({
-        method: "POST",
-        url: `${apiUrl}/api/auth/sign-up/email`,
-        body: {
-          name: user.name,
-          email: user.email,
-          password: user.password,
-        },
-        failOnStatusCode: false,
-      }).then((response) => {
-        const isRetriable = response.status === 429 || response.status === 403;
+    // Save the current URL so we can return to it after setup, allowing this
+    // command to be used as a pure "ensure user exists" helper without
+    // displacing the caller from their current page.
+    cy.url().then((originalUrl) => {
+      cy.visit("/signup");
+      cy.get("#name").clear();
+      cy.get("#name").type(user.name);
+      cy.get("#email").clear();
+      cy.get("#email").type(user.email);
+      cy.get("#password").clear();
+      cy.get("#password").type(user.password);
+      cy.get("#confirmPassword").clear();
+      cy.get("#confirmPassword").type(user.password);
+      cy.get('button[type="submit"]').click();
 
-        if (isRetriable && attempt < 5) {
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000);
-          makeRequest(attempt + 1);
-        } else if (isRetriable) {
-          // In CI, sign-up can be temporarily blocked/rate-limited.
-          // Accept and continue; if account already exists, subsequent sign-in succeeds.
-          expect(response.status).to.be.oneOf([200, 422, 403, 429]);
-        } else {
-          expect(response.status).to.be.oneOf([200, 422]);
+      // Account may already exist from earlier specs; fall back to sign-in.
+      cy.location("pathname", { timeout: 10000 }).then((pathname) => {
+        const restoreUrl = () => {
+          // Only restore if the caller was on a real page (not about:blank).
+          if (originalUrl && !originalUrl.startsWith("about:")) {
+            cy.visit(originalUrl);
+          }
+        };
+
+        if (pathname.includes("/dashboard")) {
+          restoreUrl();
+          return null;
         }
+
+        cy.visit("/signin");
+        cy.get("#email", { timeout: 10000 }).clear();
+        cy.get("#email").type(user.email);
+        cy.get("#password").clear();
+        cy.get("#password").type(user.password);
+        cy.get('button[type="submit"]').click();
+        cy.url({ timeout: 10000 }).should("include", "/dashboard");
+        restoreUrl();
         return null;
       });
-    };
-    makeRequest(1);
+      return null;
+    });
   },
 );
 
@@ -130,7 +145,7 @@ Cypress.Commands.add("loginAsAdmin", () => {
   cy.session(
     "admin",
     () => {
-      cy.signUpViaApi(adminUser);
+      cy.ensureUserExists(adminUser);
       cy.task("setUserRole", { email: adminUser.email, role: "admin" });
       cy.clearAllCookies();
       cy.signIn({ email: adminUser.email, password: adminUser.password });
@@ -147,7 +162,7 @@ Cypress.Commands.add("loginAsRegularUser", () => {
   cy.session(
     "regularUser",
     () => {
-      cy.signUpViaApi(regularUser);
+      cy.ensureUserExists(regularUser);
       cy.clearAllCookies();
       cy.signIn({ email: regularUser.email, password: regularUser.password });
     },

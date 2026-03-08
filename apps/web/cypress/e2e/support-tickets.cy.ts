@@ -72,7 +72,7 @@ describe("Support Ticket Management", () => {
       role: "admin",
     });
 
-    cy.signUpViaApi(supportAdminUser);
+    cy.ensureUserExists(supportAdminUser);
     cy.task("setUserRole", { email: supportAdminUser.email, role: "admin" });
     cy.clearAllCookies();
   });
