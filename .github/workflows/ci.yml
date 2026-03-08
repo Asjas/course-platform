@@ -68,7 +68,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x]
 
     steps:
       - name: Check out repository
@@ -115,7 +115,7 @@ jobs:
     strategy:
       matrix:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [20, 22]
+        node-version: [22, 24]
 
     env:
       DATABASE_SCHEMA: ci_server_${{ matrix.node-version }}_${{ github.run_id }}
@@ -169,7 +169,7 @@ jobs:
     strategy:
       matrix:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [20, 22]
+        node-version: [22, 24]
 
     env:
       DATABASE_SCHEMA: ci_web_${{ matrix.node-version }}_${{ github.run_id }}
@@ -223,7 +223,7 @@ jobs:
     strategy:
       matrix:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [20, 22]
+        node-version: [22, 24]
 
     env:
       DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}

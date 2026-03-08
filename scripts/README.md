@@ -106,9 +106,9 @@ The CI uses:
 - **Full concurrency**: All jobs run in parallel since each uses its own isolated schema
 
 Example schema names:
-- `ci_server_20_12345678` for server tests on Node 20
-- `ci_web_22_12345678` for web tests on Node 22
-- `ci_e2e_20_12345678` for E2E tests on Node 20
+- `ci_server_22_12345678` for server tests on Node 22
+- `ci_web_24_12345678` for web tests on Node 24
+- `ci_e2e_22_12345678` for E2E tests on Node 22
 
 This approach allows all CI jobs to run concurrently without conflicts, as each job uses its own fully isolated database schema (including tables, constraints, indexes, and sequences) within the shared hosted database.
 

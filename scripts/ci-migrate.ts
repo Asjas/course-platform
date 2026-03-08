@@ -14,8 +14,7 @@
  * since CI schemas are ephemeral (created fresh and dropped after tests).
  */
 import { readFileSync, readdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { resolve } from "node:path";
 import pg from "pg";
 
 const { Pool } = pg;
@@ -23,8 +22,7 @@ const { Pool } = pg;
 const schemaName = process.env.DATABASE_SCHEMA || "my_schema";
 const databaseUrl =
   process.env.DATABASE_URL || "postgresql://localhost:5432/course_platform";
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const migrationsDir = resolve(__dirname, "../apps/server/drizzle");
+const migrationsDir = resolve(import.meta.dirname, "../apps/server/drizzle");
 
 // Validate schema name to prevent SQL injection (only allow alphanumeric and underscores)
 if (!/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(schemaName)) {
