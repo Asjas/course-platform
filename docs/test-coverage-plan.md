@@ -3,17 +3,39 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-09.
 >
-> **Latest run (2026-03-09):** Server 32.55% stmts / 32.59% lines (44 files, 484
+> **Latest run (2026-03-09):** Server 38.44% stmts / 38.08% lines (49 files, 512
 > tests) | Web 40.77% stmts / 38.61% lines (82 files, 596 tests)
 >
 > **Coverage Delta (vs previous 2026-03-09 batch):**
 >
-> - Server: **+0.00% lines** (32.59% -> 32.59%)
-> - Server: **+0.00% statements** (32.55% -> 32.55%)
-> - Web: **+0.04% lines** (38.57% -> 38.61%)
-> - Web: **+0.04% statements** (40.73% -> 40.77%)
-> - Web test inventory: **no file-count change** (82 -> 82), **+10 executed
->   passing tests in suite total** (586 -> 596)
+> - Server: **+1.21% lines** (36.87% -> 38.08%)
+> - Server: **+1.22% statements** (37.22% -> 38.44%)
+> - Web: **+0.00% lines** (38.61% -> 38.61%)
+> - Web: **+0.00% statements** (40.77% -> 40.77%)
+> - Server test inventory: **+2 files** (47 -> 49), **+12 passing tests** (500
+>   -> 512)
+> - Web test inventory: **no change** (82 files, 596 passing tests)
+
+> **Batch Delta (2026-03-09, server notifications/sync-status integration):**
+>
+> - Added **2 backend router integration test files** (12 tests total):
+>   - `apps/server/src/routers/notifications/__tests__/index.test.ts` (6 tests)
+>   - `apps/server/src/routers/syncStatus/__tests__/index.test.ts` (6 tests)
+> - New coverage focus: tRPC auth gates, ownership/permission boundaries, and
+>   internal-error wrapping for sync/update procedures.
+> - Validated `createCaller` integration flows for protected procedures in both
+>   routers.
+>
+> **Batch Delta (2026-03-09, server tRPC auth/permissions/cache integration):**
+>
+> - Added **3 backend router integration test files** (16 tests total):
+>   - `apps/server/src/routers/coupons/__tests__/index.test.ts` (6 tests)
+>   - `apps/server/src/routers/courses/__tests__/index.test.ts` (7 tests)
+>   - `apps/server/src/routers/users/__tests__/index.test.ts` (3 tests)
+> - New coverage focus: tRPC auth gates (`isAuthenticated`, `isAdmin`),
+>   ownership/permission checks, and cache invalidation behavior.
+> - Validated integration-style `createCaller` flows for protected procedures
+>   and cache-backed handlers.
 >
 > **Batch Delta (2026-03-09, rehype-media-embed edge-case expansion):**
 >
@@ -61,20 +83,20 @@
 
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
-| **Server** | 32.55% (1017/3124) | 37.78% (441/1167)  | 32.19% (236/733)  | 32.59% (992/3043)  | 44          |
+| **Server** | 38.44% (1201/3124) | 41.21% (481/1167)  | 43.11% (316/733)  | 38.08% (1159/3043) | 49          |
 | **Web**    | 40.77% (2377/5830) | 34.29% (1489/4342) | 24.14% (284/1176) | 38.61% (1764/4568) | 82 (1 skip) |
 
-### Server (`apps/server`) — 32.59% Line Coverage (+1.02%)
+### Server (`apps/server`) — 38.08% Line Coverage (+1.21%)
 
 #### Server Coverage Snapshot
 
-137 total files: 122 untested, 10 partial, 5 fully covered
+137 total files: 120 untested, 12 partial, 5 fully covered
 
 #### Server Coverage by Area
 
 | Area                      | Files Tested | Line Coverage | Lines   |
 | ------------------------- | ------------ | ------------- | ------- |
-| tRPC Routers (17 modules) | 7/42         | partial       | —       |
+| tRPC Routers (17 modules) | 9/42         | partial       | —       |
 | REST Routes (3 modules)   | 1/16         | partial       | —       |
 | DB Queries                | 2/9          | partial       | —       |
 | DB Mutations              | 1/9          | partial       | —       |
@@ -108,7 +130,7 @@
 
 #### Server — Untested Files (0% Coverage)
 
-#### 107 Files With Zero Coverage
+#### 105 Files With Zero Coverage
 
 **Bootstrap & Core:**
 
@@ -212,14 +234,12 @@
 - `src/routers/directMessages/index.ts`
 - `src/routers/images/index.ts`
 - `src/routers/mentions/index.ts`
-- `src/routers/notifications/index.ts`
 - `src/routers/purchases/index.ts`
 - `src/routers/reviews/index.ts`
 - `src/routers/stats/index.ts`
 - `src/routers/support-tickets/index.ts`
 - `src/routers/supportStatus/index.ts`
 - `src/routers/supportStatus/queries.ts`
-- `src/routers/syncStatus/index.ts`
 - `src/routers/users/index.ts`
 
 **REST Routes (16 files):**
