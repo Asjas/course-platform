@@ -19,9 +19,8 @@ describe("Admin Coupons Management", () => {
   let couponDescription: string;
 
   function waitForCouponRow(code: string) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- small settle window while collection-backed UI refreshes after persistence
-    cy.wait(500);
-    cy.contains("tr", code, { timeout: 10000 }).should("be.visible");
+    cy.get("tbody tr", { timeout: 20000 }).should("exist");
+    cy.contains("tbody tr code", code, { timeout: 20000 }).should("be.visible");
   }
 
   function waitForSheetClose() {
@@ -66,6 +65,7 @@ describe("Admin Coupons Management", () => {
     cy.contains("button", "Create Coupon").click();
 
     cy.contains(/created successfully/i).should("be.visible");
+    waitForSheetClose();
     waitForCouponRow(couponCode);
   });
 
