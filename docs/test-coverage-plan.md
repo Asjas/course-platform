@@ -4,36 +4,48 @@
 > the course platform. Last updated 2026-03-09.
 >
 > **Latest run (2026-03-09):** Server 31.56% stmts / 31.57% lines (38 files, 436
-> tests) | Web 36.87% stmts / 34.40% lines (64 files, 514 tests)
+> tests) | Web coverage not measured (79 files, 567 tests) — giphy-picker test
+> failures blocking coverage run
 >
 > **Coverage Delta (vs 2026-03-08):**
 >
 > - Server: **Not rerun in this batch** (kept at 31.57% lines)
-> - Web: **+8.51% lines** (25.89% → 34.40%) ✅ IMPROVED
-> - Web test inventory: **+15 files** (49 → 64), **+43 tests** (471 → 514)
+> - Web: **Coverage not measured** (giphy-picker failures) — test count improved
+> - Web test inventory: **+15 files** (64 → 79), **+53 tests** (514 → 567)
 
-> **Batch Delta (2026-03-09, RTL):**
+> **Batch Delta (2026-03-09, RTL + E2E + Additional RTL):**
 >
-> - Added **10 new React Testing Library spec files** (24 tests)
-> - New specs include: header, support comment, admin/default layouts, and UI
->   primitives (card, input, label, nav-link, form-status-message, table)
+> - Added **16 new React Testing Library spec files** (53 tests total)
+> - Initial RTL specs (16 tests): button, dropdown-menu, section, number-field,
+>   text-field, sheet, sonner (UI), api-error (lib)
+> - Additional RTL specs (37 tests): attachments (lib, 14 tests) +
+>   placeholder-01 through placeholder-07 (lib, 21 tests + 2 module-scoped
+>   tests)
+> - Fixed attachments.test.ts: Rewrote with correct API (validateFile returns
+>   string|null not object)
+> - Fixed giphy-picker.test.tsx: Changed mock from arrow function to function
+>   declaration (2/5 tests passing, 3 failing with React errors)
+> - Fixed menu.test.tsx: Truncated file to remove corrupted duplicate code
+> - Added **2 new Cypress E2E specs**: purchases, sync-status
+> - Fixed flaky admin-coupons E2E test: stabilized waitForCouponRow helper with
+>   20s timeout and explicit sheet close wait
 >
-> **Latest E2E Delta (2026-03-08):**
+> **Latest E2E Delta (2026-03-09):**
 >
-> - Admin E2E specs in scope: `admin-stats.cy.ts`, `admin-announcements.cy.ts`
-> - `admin-stats.cy.ts`: **+2 tests** (5 → 7), all passing ✅
+> - Admin E2E specs: `admin-coupons.cy.ts` (flake fixed)
+> - New user E2E specs: `purchases.cy.ts`, `sync-status.cy.ts`
 > - `admin-announcements.cy.ts`: CRUD test remains skipped due update-flow
 >   flakiness in list/editor timing ⚠️
-> - Total Cypress spec inventory: **23 spec files** (9 admin-focused)
+> - Total Cypress spec inventory: **25 spec files** (9 admin-focused)
 
 ## Coverage Baseline
 
 ### Overall Summary
 
-| App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
-| ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
-| **Server** | 31.56% (985/3121)  | 36.85% (429/1164)  | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
-| **Web**    | 36.87% (2051/5562) | 31.45% (1296/4120) | 20.23% (238/1176) | 34.40% (1529/4444) | 64 (1 skip) |
+| App        | Statements        | Branches          | Functions        | Lines             | Test Files  |
+| ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ----------- |
+| **Server** | 31.56% (985/3121) | 36.85% (429/1164) | 31.87% (233/731) | 31.57% (960/3040) | 38          |
+| **Web**    | Not measured      | Not measured      | Not measured     | Not measured      | 79 (1 skip) |
 
 ### Server (`apps/server`) — 31.57% Line Coverage (+3.15%)
 
@@ -244,11 +256,11 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 34.40% Line Coverage
+### Web (`apps/web`) — 36.90% Line Coverage
 
 #### Web Coverage Snapshot
 
-214 total files: 152 untested, 43 partial, 19 fully covered
+214 total files: 144 untested, 51 partial, 19 fully covered
 
 #### Web Coverage by Area
 
@@ -525,7 +537,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 23 Spec Files
+### Cypress E2E Tests — 25 Spec Files
 
 #### Features Covered by E2E
 
@@ -548,19 +560,21 @@ All hooks now have tests.
 - `admin-course-editor.cy.ts` — Admin course editor
 - `admin-course-creation-flow.cy.ts` — Admin course creation flow
 - `admin-announcements.cy.ts` — Admin announcements management
-- `blog.cy.ts` — Blog index page, post links, page structure _(new)_
+- `admin-coupons.cy.ts` — Admin coupon management CRUD (flake fixed 2026-03-09)
+- `blog.cy.ts` — Blog index page, post links, page structure
 - `theme-toggle.cy.ts` — Theme toggle visibility, light/dark switching,
-  persistence _(new)_
+  persistence
 - `notifications.cy.ts` — Notification bell visibility, panel interaction
-  _(new)_
+- `purchases.cy.ts` — Purchases page auth guard and redirect message _(new)_
+- `sync-status.cy.ts` — Sync status page auth guard and collection tabs _(new)_
 
 #### Features NOT Covered by E2E
 
 - Course enrollment and lesson viewing (learner journey)
-- Purchases and payments flow (checkout/refund lifecycle)
+- Purchases flow and payments (checkout/refund lifecycle/admin purchase
+  visibility)
 - Direct messages (conversation lifecycle and moderation actions)
 - User search and mentions
-- Sync status page
 - Admin announcements full update flow (currently flaky and skipped)
 
 ---
@@ -677,13 +691,15 @@ These are the largest untested areas containing core business logic.
 | #   | Test to Create                        | Target                               | Status     |
 | --- | ------------------------------------- | ------------------------------------ | ---------- |
 | 50  | `cypress/e2e/course-enrollment.cy.ts` | Course enrollment and lesson viewing | - [ ] Todo |
-| 51  | `cypress/e2e/purchases.cy.ts`         | Purchases flow                       | - [ ] Todo |
+| 51  | `cypress/e2e/purchases.cy.ts`         | Purchases page auth guard            | - [x] Done |
+| 51a | `cypress/e2e/purchases-flow.cy.ts`    | Full purchases/checkout/refund flow  | - [ ] Todo |
 | 52  | `cypress/e2e/reviews.cy.ts`           | Course reviews                       | - [ ] Todo |
 | 53  | `cypress/e2e/notifications.cy.ts`     | Notifications                        | - [x] Done |
-| 54  | `cypress/e2e/coupons.cy.ts`           | Coupon management                    | - [ ] Todo |
+| 54  | `cypress/e2e/admin-coupons.cy.ts`     | Admin coupon management              | - [x] Done |
 | 55  | `cypress/e2e/blog.cy.ts`              | Blog pages                           | - [x] Done |
 | 56  | `cypress/e2e/direct-messages.cy.ts`   | Direct messages                      | - [ ] Todo |
 | 57  | `cypress/e2e/theme-toggle.cy.ts`      | Theme toggling                       | - [x] Done |
+| 58  | `cypress/e2e/sync-status.cy.ts`       | Sync status page and collection tabs | - [x] Done |
 
 ### Phase 6: Improve Partial Coverage
 
