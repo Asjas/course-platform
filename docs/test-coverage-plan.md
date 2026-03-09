@@ -4,14 +4,14 @@
 > the course platform. Last updated 2026-03-09.
 >
 > **Latest run (2026-03-09):** Server 31.56% stmts / 31.57% lines (38 files, 436
-> tests) | Web coverage not measured (79 files, 567 tests) — giphy-picker test
-> failures blocking coverage run
+> tests) | Web 40.63% stmts / 38.44% lines (82 files, 587 tests)
 >
 > **Coverage Delta (vs 2026-03-08):**
 >
 > - Server: **Not rerun in this batch** (kept at 31.57% lines)
-> - Web: **Coverage not measured** (giphy-picker failures) — test count improved
-> - Web test inventory: **+15 files** (64 → 79), **+53 tests** (514 → 567)
+> - Web: **+1.54% lines** (36.90% -> 38.44%)
+> - Web: **+3.73% statements** (36.90% -> 40.63%)
+> - Web test inventory: **+18 files** (64 -> 82), **+73 tests** (514 -> 587)
 
 > **Batch Delta (2026-03-09, RTL + E2E + Additional RTL):**
 >
@@ -23,8 +23,8 @@
 >   tests)
 > - Fixed attachments.test.ts: Rewrote with correct API (validateFile returns
 >   string|null not object)
-> - Fixed giphy-picker.test.tsx: Changed mock from arrow function to function
->   declaration (2/5 tests passing, 3 failing with React errors)
+> - Fixed giphy-picker.test.tsx: Updated mocking approach (5/5 tests passing;
+>   React act warnings remain and should be cleaned up in a follow-up)
 > - Fixed menu.test.tsx: Truncated file to remove corrupted duplicate code
 > - Added **2 new Cypress E2E specs**: purchases, sync-status
 > - Fixed flaky admin-coupons E2E test: stabilized waitForCouponRow helper with
@@ -42,10 +42,10 @@
 
 ### Overall Summary
 
-| App        | Statements        | Branches          | Functions        | Lines             | Test Files  |
-| ---------- | ----------------- | ----------------- | ---------------- | ----------------- | ----------- |
-| **Server** | 31.56% (985/3121) | 36.85% (429/1164) | 31.87% (233/731) | 31.57% (960/3040) | 38          |
-| **Web**    | Not measured      | Not measured      | Not measured     | Not measured      | 79 (1 skip) |
+| App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
+| ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
+| **Server** | 31.56% (985/3121)  | 36.85% (429/1164)  | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
+| **Web**    | 40.63% (2369/5830) | 34.22% (1486/4342) | 24.14% (284/1176) | 38.44% (1756/4568) | 82 (1 skip) |
 
 ### Server (`apps/server`) — 31.57% Line Coverage (+3.15%)
 
@@ -256,7 +256,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 36.90% Line Coverage
+### Web (`apps/web`) — 38.44% Line Coverage (+1.54%)
 
 #### Web Coverage Snapshot
 
@@ -815,7 +815,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (64 test files, 514 tests + 12 todo)
+### Web (82 test files, 575 passing tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
