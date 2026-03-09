@@ -3,7 +3,9 @@ import {
   getFileLabel,
   getFilename,
   isVideoUrl,
+  rehypeMediaEmbed,
 } from "../rehype-media-embed";
+import type { Element, Root, Text } from "hast";
 import { describe, expect, test } from "vitest";
 
 describe("getExtension", () => {
@@ -163,5 +165,107 @@ describe("getFileLabel", () => {
 
   test("returns expected label for yml extension", () => {
     expect(getFileLabel("yml")).toBe("YAML File");
+  });
+});
+
+describe("rehypeMediaEmbed", () => {
+  test("wraps gif image with gif-specific classes", () => {
+    const tree: Root = {
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "img",
+          properties: {
+            src: "https://cdn.example.com/fun.gif",
+            alt: "A gif",
+          },
+          children: [],
+        },
+      ],
+    };
+
+    rehypeMediaEmbed()(tree);
+
+    const wrapper = tree.children[0] as Element;
+    expect(wrapper.tagName).toBe("div");
+    expect(wrapper.properties?.className).toContain("media-embed-gif");
+    const imageNode = wrapper.children[0] as Element;
+    expect(imageNode.tagName).toBe("img");
+    expect(imageNode.properties?.className).toContain("max-h-64");
+  });
+
+  test("converts mp4 image node into video element", () => {
+    const tree: Root = {
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "img",
+          properties: {
+            src: "https://cdn.example.com/demo.mp4",
+            alt: "Demo video",
+          },
+          children: [],
+        },
+      ],
+    };
+
+    rehypeMediaEmbed()(tree);
+
+    const wrapper = tree.children[0] as Element;
+    expect(wrapper.tagName).toBe("div");
+    expect(wrapper.properties?.className).toContain("media-embed-video");
+    const videoNode = wrapper.children[0] as Element;
+    expect(videoNode.tagName).toBe("video");
+    expect(videoNode.properties?.src).toBe("https://cdn.example.com/demo.mp4");
+  });
+
+  test("converts youtube links into iframe embeds", () => {
+    const tree: Root = {
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "a",
+          properties: {
+            href: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+          },
+          children: [{ type: "text", value: "watch" } as Text],
+        },
+      ],
+    };
+
+    rehypeMediaEmbed()(tree);
+
+    const wrapper = tree.children[0] as Element;
+    expect(wrapper.tagName).toBe("div");
+    const videoUrl = wrapper.properties?.["data-video-url"] as string;
+    const embedUrl = wrapper.properties?.["data-embed-url"] as string;
+    expect(videoUrl).toContain("youtube.com/watch");
+    expect(embedUrl).toContain("https://www.youtube.com/embed/dQw4w9WgXcQ");
+  });
+
+  test("converts downloadable links into attachment blocks", () => {
+    const tree: Root = {
+      type: "root",
+      children: [
+        {
+          type: "element",
+          tagName: "a",
+          properties: {
+            href: "https://cdn.example.com/docs/guide.pdf",
+          },
+          children: [{ type: "text", value: "guide" } as Text],
+        },
+      ],
+    };
+
+    rehypeMediaEmbed()(tree);
+
+    const attachment = tree.children[0] as Element;
+    expect(attachment.tagName).toBe("div");
+    expect(attachment.properties?.["data-file-ext"]).toBe("pdf");
+    expect(attachment.properties?.["data-file-name"]).toBe("guide.pdf");
   });
 });

@@ -769,8 +769,8 @@ These are the largest untested areas containing core business logic.
 
 | #   | File                                                      | Current Lines | Current Branches | Status     |
 | --- | --------------------------------------------------------- | ------------- | ---------------- | ---------- |
-| 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [ ] Todo |
-| 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [ ] Todo |
+| 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [x] Done |
+| 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done |
 | 60  | `src/lib/collections/utils.ts`                            | 28%           | 33%              | - [ ] Todo |
 | 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [ ] Todo |
 | 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [ ] Todo |
@@ -781,7 +781,7 @@ These are the largest untested areas containing core business logic.
 | 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [ ] Todo |
 | 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done |
 | 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [ ] Todo |
-| 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [ ] Todo |
+| 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [x] Done |
 | 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [ ] Todo |
 
 ---

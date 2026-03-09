@@ -2,12 +2,22 @@ import { describe, expect, it } from "vitest";
 import {
   FILE_SIZE_LIMITS,
   formatFileSize,
+  generateAttachmentMarkdown,
+  getAcceptString,
   getAllowedExtensions,
   getFileCategory,
+  getFileDisplayInfo,
+  getFileExtension,
   getFileSizeLimit,
+  getFileSizeLimitByMime,
   getFileTypeByExtension,
+  getFileTypeByMime,
+  getImageAcceptString,
+  getSupportedExtensionsList,
+  getSupportedFileTypesDescription,
   isImageFile,
   isVideoFile,
+  isViewableFile,
   validateFile,
 } from "~/lib/attachments";
 
@@ -102,6 +112,30 @@ describe("attachments utilities", () => {
     });
   });
 
+  describe("getFileTypeByMime", () => {
+    it("returns config for known mime types", () => {
+      const config = getFileTypeByMime("image/jpeg");
+      expect(config?.extension).toBe("jpg");
+      expect(config?.category).toBe("image");
+    });
+
+    it("returns undefined for unknown mime types", () => {
+      expect(getFileTypeByMime("application/unknown")).toBeUndefined();
+    });
+  });
+
+  describe("getFileExtension", () => {
+    it("extracts extension from URL pathname", () => {
+      expect(getFileExtension("https://cdn.example.com/files/report.PDF")).toBe(
+        "pdf",
+      );
+    });
+
+    it("returns empty string when no extension exists", () => {
+      expect(getFileExtension("https://example.com/files/readme")).toBe("");
+    });
+  });
+
   describe("isImageFile", () => {
     it("identifies image files correctly", () => {
       expect(isImageFile("test.jpg")).toBe(true);
@@ -118,6 +152,27 @@ describe("attachments utilities", () => {
       expect(isVideoFile("test.webm")).toBe(true);
       expect(isVideoFile("test.jpg")).toBe(false);
       expect(isVideoFile("test.pdf")).toBe(false);
+    });
+  });
+
+  describe("isViewableFile", () => {
+    it("returns true for viewable files and false otherwise", () => {
+      expect(isViewableFile("photo.png")).toBe(true);
+      expect(isViewableFile("clip.mp4")).toBe(true);
+      expect(isViewableFile("sheet.xlsx")).toBe(false);
+    });
+  });
+
+  describe("getFileSizeLimitByMime", () => {
+    it("returns category size limit when mime type is known", () => {
+      expect(getFileSizeLimitByMime("video/mp4")).toBe(FILE_SIZE_LIMITS.video);
+      expect(getFileSizeLimitByMime("text/plain")).toBe(FILE_SIZE_LIMITS.text);
+    });
+
+    it("returns unknown size limit when mime type is unknown", () => {
+      expect(getFileSizeLimitByMime("application/x-random")).toBe(
+        FILE_SIZE_LIMITS.unknown,
+      );
     });
   });
 
@@ -139,6 +194,72 @@ describe("attachments utilities", () => {
       expect(extensions).toContain(".jpg");
       expect(extensions).toContain(".pdf");
       expect(extensions).toContain(".mp4");
+    });
+  });
+
+  describe("supported types helpers", () => {
+    it("returns grouped description by category", () => {
+      const description = getSupportedFileTypesDescription();
+      expect(description).toContain("Images:");
+      expect(description).toContain("Videos:");
+      expect(description).toContain("Documents:");
+      expect(description).toContain("Archives:");
+      expect(description).toContain("Text:");
+    });
+
+    it("returns extensions list and accept strings", () => {
+      const extensionsList = getSupportedExtensionsList();
+      expect(extensionsList).toContain("jpg");
+      expect(extensionsList).toContain("pdf");
+
+      const acceptAll = getAcceptString();
+      expect(acceptAll).toContain(".jpg");
+      expect(acceptAll).toContain(".pdf");
+
+      const imageAccept = getImageAcceptString();
+      expect(imageAccept).toContain(".jpg");
+      expect(imageAccept).not.toContain(".pdf");
+    });
+  });
+
+  describe("display info and markdown generation", () => {
+    it("returns known display info for supported file", () => {
+      const info = getFileDisplayInfo("invoice.pdf");
+      expect(info).toMatchObject({
+        extension: "pdf",
+        category: "document",
+        isViewable: false,
+      });
+    });
+
+    it("returns unknown display info for unsupported file", () => {
+      const info = getFileDisplayInfo("mystery.bin");
+      expect(info).toMatchObject({
+        extension: "bin",
+        category: "unknown",
+        isViewable: false,
+        icon: "File",
+      });
+    });
+
+    it("generates markdown image syntax for viewable files", () => {
+      const markdown = generateAttachmentMarkdown(
+        "holiday.photo.png",
+        "https://cdn.example.com/holiday.photo.png",
+      );
+      expect(markdown).toBe(
+        "![holiday.photo](https://cdn.example.com/holiday.photo.png)",
+      );
+    });
+
+    it("generates markdown link syntax for non-viewable files", () => {
+      const markdown = generateAttachmentMarkdown(
+        "report.pdf",
+        "https://cdn.example.com/report.pdf",
+      );
+      expect(markdown).toBe(
+        "[📎 report.pdf](https://cdn.example.com/report.pdf)",
+      );
     });
   });
 });
