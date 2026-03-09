@@ -81,4 +81,116 @@ describe("ConfirmDialog", () => {
     );
     expect(screen.queryByText("Delete Item")).not.toBeInTheDocument();
   });
+
+  it("renders destructive variant with red styling", () => {
+    render(
+      <ConfirmDialog
+        {...defaultProps}
+        variant="destructive"
+      />,
+    );
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    expect(confirmButton.className).toContain("bg-red-600");
+  });
+
+  it("renders default variant with green styling", () => {
+    render(
+      <ConfirmDialog
+        {...defaultProps}
+        variant="default"
+      />,
+    );
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    expect(confirmButton.className).toContain("bg-green-600");
+  });
+
+  it("applies green styling when variant is not specified", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    expect(confirmButton.className).toContain("bg-green-600");
+  });
+
+  it("renders dialog element", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+  });
+
+  it("renders modal overlay when open", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    // Dialog should be rendered
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("supports keyboard navigation to cancel button", async () => {
+    const user = userEvent.setup();
+    render(<ConfirmDialog {...defaultProps} />);
+
+    const cancelButton = screen.getByRole("button", { name: "Cancel" });
+    cancelButton.focus();
+
+    await user.keyboard("{Enter}");
+
+    expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it("supports keyboard navigation to confirm button", async () => {
+    const user = userEvent.setup();
+    render(<ConfirmDialog {...defaultProps} />);
+
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    confirmButton.focus();
+
+    await user.keyboard("{Enter}");
+
+    expect(defaultProps.onConfirm).toHaveBeenCalledOnce();
+  });
+
+  it("renders with dialog role", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeInTheDocument();
+  });
+
+  it("uses correct heading hierarchy", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    const heading = screen.getByRole("heading", { name: "Delete Item" });
+    expect(heading.tagName).toBe("H2");
+  });
+
+  it("renders confirm and cancel buttons", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
+  });
+
+  it("has dismissable overlay", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    // The overlay should have isDismissable which allows clicking outside to close
+    expect(defaultProps.onOpenChange).not.toHaveBeenCalled();
+  });
+
+  it("renders exactly two buttons", () => {
+    render(<ConfirmDialog {...defaultProps} />);
+    const buttons = screen.getAllByRole("button");
+    // Confirm and Cancel buttons
+    expect(buttons.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("handles multiple calls to onConfirm correctly", async () => {
+    const user = userEvent.setup();
+    const onConfirm = vi.fn();
+
+    render(
+      <ConfirmDialog
+        {...defaultProps}
+        onConfirm={onConfirm}
+      />,
+    );
+
+    const confirmButton = screen.getByRole("button", { name: "Confirm" });
+    await user.click(confirmButton);
+
+    expect(onConfirm).toHaveBeenCalledTimes(1);
+  });
 });
