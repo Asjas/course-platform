@@ -65,4 +65,60 @@ describe("ChatDateDivider", () => {
     const svg = container.querySelector("svg");
     expect(svg).toHaveAttribute("aria-hidden", "true");
   });
+
+  it("renders horizontal divider lines", () => {
+    const { container } = render(<ChatDateDivider date={new Date()} />);
+    const dividers = container.querySelectorAll(".border-t");
+    expect(dividers).toHaveLength(2);
+  });
+
+  it("renders date pill with proper styling", () => {
+    const { container } = render(<ChatDateDivider date={new Date()} />);
+    const pill = container.querySelector(".rounded-full");
+    expect(pill).toBeInTheDocument();
+    expect(pill).toHaveClass("border");
+  });
+
+  it("centers the date between divider lines", () => {
+    const { container } = render(<ChatDateDivider date={new Date()} />);
+    const wrapper = container.querySelector(".relative");
+    expect(wrapper).toHaveClass("flex", "items-center", "justify-center");
+  });
+
+  it("uses correct text styling for date label", () => {
+    render(<ChatDateDivider date={new Date()} />);
+    const dateLabel = screen.getByText("Today").parentElement;
+    expect(dateLabel).toHaveClass("text-xs", "font-semibold");
+  });
+
+  it("has correct vertical spacing", () => {
+    const { container } = render(<ChatDateDivider date={new Date()} />);
+    const wrapper = container.querySelector(".relative");
+    expect(wrapper).toHaveClass("my-4");
+  });
+
+  it("formats date with correct month and year", () => {
+    const testDate = new Date(2025, 5, 15); // June 15, 2025
+    render(<ChatDateDivider date={testDate} />);
+    const separator = screen.getByRole("separator");
+    expect(separator).toHaveAttribute("aria-label", "June 15, 2025");
+  });
+
+  it("handles dates at year boundaries correctly", () => {
+    const newYear = new Date(2026, 0, 1); // Jan 1, 2026
+    render(<ChatDateDivider date={newYear} />);
+    expect(screen.getByRole("separator")).toBeInTheDocument();
+  });
+
+  it("renders with shadow on date pill", () => {
+    const { container } = render(<ChatDateDivider date={new Date()} />);
+    const pill = container.querySelector(".rounded-full");
+    expect(pill).toHaveClass("shadow-sm");
+  });
+
+  it("uses semantic separator role for accessibility", () => {
+    render(<ChatDateDivider date={new Date()} />);
+    const separator = screen.getByRole("separator");
+    expect(separator.tagName).toBe("DIV");
+  });
 });
