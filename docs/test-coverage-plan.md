@@ -692,7 +692,7 @@ These are the largest untested areas containing core business logic.
 | 19  | `src/db/mutations/__tests__/*.test.ts`              | All DB mutation files   | 117   | - [x] Done |
 | 20  | `src/routers/chat/__tests__/dmValidation.test.ts`   | DM validation logic     | —     | - [x] Done |
 | 21  | `src/lib/tests/logging.test.ts`                     | Logging (currently 20%) | 306   | - [x] Done |
-| 22  | `src/lib/tests/cache.test.ts`                       | Cache module            | —     | - [ ] Todo |
+| 22  | `src/lib/tests/cache.test.ts`                       | Cache module            | 604   | - [x] Done |
 | 23  | `src/lib/tests/mailer.test.ts`                      | Email sending           | —     | - [ ] Todo |
 | 24  | `src/routes/courses/__tests__/handlers.test.ts`     | REST course handlers    | 150   | - [x] Done |
 | 25  | `src/routers/chatReports/__tests__/*.test.ts`       | Chat reports            | 68    | - [x] Done |
