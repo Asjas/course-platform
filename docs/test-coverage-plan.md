@@ -3,16 +3,25 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-09.
 >
-> **Latest run (2026-03-09):** Server 31.56% stmts / 31.57% lines (38 files, 436
-> tests) | Web 40.63% stmts / 38.44% lines (82 files, 587 tests)
+> **Latest run (2026-03-09):** Server 32.55% stmts / 32.59% lines (44 files, 484
+> tests) | Web 40.73% stmts / 38.57% lines (82 files, 586 tests)
 >
-> **Coverage Delta (vs 2026-03-08):**
+> **Coverage Delta (vs previous 2026-03-09 batch):**
 >
-> - Server: **Not rerun in this batch** (kept at 31.57% lines)
-> - Web: **+1.54% lines** (36.90% -> 38.44%)
-> - Web: **+3.73% statements** (36.90% -> 40.63%)
-> - Web test inventory: **+18 files** (64 -> 82), **+73 tests** (514 -> 587)
-
+> - Server: **+1.02% lines** (31.57% -> 32.59%)
+> - Server: **+0.99% statements** (31.56% -> 32.55%)
+> - Web: **+0.13% lines** (38.44% -> 38.57%)
+> - Web: **+0.10% statements** (40.63% -> 40.73%)
+> - Web test inventory: **no file-count change** (82 -> 82), **-1 executed
+>   passing test in suite total** (587 -> 586)
+>
+> **Batch Delta (2026-03-09, collapsed-media RTL expansion):**
+>
+> - Added **10 new web unit tests** in `src/lib/collapsed-media.spec.ts`
+> - New coverage focus: storage error recovery, SSR safety, and LRU boundary
+>   behavior
+> - `src/lib/collapsed-media.ts` moved to **100% lines / 100% branches**
+>
 > **Batch Delta (2026-03-09, RTL + E2E + Additional RTL):**
 >
 > - Added **16 new React Testing Library spec files** (53 tests total)
@@ -44,10 +53,10 @@
 
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
-| **Server** | 31.56% (985/3121)  | 36.85% (429/1164)  | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
-| **Web**    | 40.63% (2369/5830) | 34.22% (1486/4342) | 24.14% (284/1176) | 38.44% (1756/4568) | 82 (1 skip) |
+| **Server** | 32.55% (1017/3124) | 37.78% (441/1167)  | 32.19% (236/733)  | 32.59% (992/3043)  | 44          |
+| **Web**    | 40.73% (2375/5830) | 34.29% (1489/4342) | 24.06% (283/1176) | 38.57% (1762/4568) | 82 (1 skip) |
 
-### Server (`apps/server`) — 31.57% Line Coverage (+3.15%)
+### Server (`apps/server`) — 32.59% Line Coverage (+1.02%)
 
 #### Server Coverage Snapshot
 
@@ -256,7 +265,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 38.44% Line Coverage (+1.54%)
+### Web (`apps/web`) — 38.57% Line Coverage (+0.13%)
 
 #### Web Coverage Snapshot
 
@@ -306,7 +315,7 @@ clipping on announcements list causes element visibility failures after update
 | `src/components/markdown-editor/components/editor-toolbar.tsx`     | 94%   | 50%      |
 | `src/components/markdown-editor/components/editor-tabs.tsx`        | 94%   | 66%      |
 | `src/components/markdown-editor/github-message-editor.tsx`         | 85%   | 66%      |
-| `src/lib/collapsed-media.ts`                                       | 75%   | 81%      |
+| `src/lib/collapsed-media.ts`                                       | 100%  | 100%     |
 | `src/components/markdown-editor/formatting/text-utils.ts`          | 62%   | 33%      |
 | `src/lib/trpc.client.ts`                                           | 57%   | 100%     |
 | `src/components/markdown-editor/hooks/use-markdown-preview.ts`     | 56%   | 100%     |
