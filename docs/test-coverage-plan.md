@@ -4,17 +4,15 @@
 > the course platform. Last updated 2026-03-09.
 >
 > **Latest run (2026-03-09):** Server 41.74% stmts / 41.37% lines (55 files, 539
-> tests) | Web 40.73% stmts / 38.57% lines (82 files, 596 tests)
+> tests) | Web 41.2% stmts / 39.14% lines (82 files, 599 tests)
 >
-> **Coverage Delta (vs previous 2026-03-09 batch):**
+> **Coverage Delta (vs 2026-03-09 six-router batch):**
 >
-> - Server: **+3.29% lines** (38.08% -> 41.37%)
-> - Server: **+3.30% statements** (38.44% -> 41.74%)
-> - Web: **-0.04% lines** (38.61% -> 38.57%)
-> - Web: **-0.04% statements** (40.77% -> 40.73%)
-> - Server test inventory: **+6 files** (49 -> 55), **+27 passing tests** (512
->   -> 539)
-> - Web test inventory: **no change** (82 files, 596 passing tests)
+> - Server: **no change** (41.74% stmts, 41.37% lines, 55 files, 539 tests)
+> - Web: **+0.47% statements** (40.73% -> 41.2%)
+> - Web: **+0.57% lines** (38.57% -> 39.14%)
+> - Web test inventory: **+3 passing tests** (596 -> 599), same file count (82
+>   active)
 
 > **Batch Delta (2026-03-09, server six-router integration expansion):**
 >
@@ -29,6 +27,20 @@
 >   internal-error mapping for router procedures.
 > - Expanded `createCaller` integration coverage across admin-only, public, and
 >   authenticated server router paths.
+
+> **Batch Delta (2026-03-09, frontend admin audit and refund coverage):**
+>
+> - Added **1 frontend RTL test file** (3 tests):
+>   - `apps/web/src/components/__tests__/refund-purchase-modal.test.tsx` (3
+>     tests)
+> - Added **1 frontend E2E spec** (3 tests):
+>   - `apps/web/cypress/e2e/admin-audit.cy.ts` (3 tests)
+> - New coverage focus: admin purchase refund flow (RTL), admin audit page
+>   access control and table rendering (E2E)
+> - RTL test validates null purchase handling, successful refund with query
+>   invalidation, and error toast on failure
+> - E2E test validates admin-only access to audit logs, table or empty state
+>   display, and permission denial for non-admin users
 
 > **Batch Delta (2026-03-09, server notifications/sync-status integration):**
 >
@@ -85,11 +97,12 @@
 >
 > **Latest E2E Delta (2026-03-09):**
 >
-> - Admin E2E specs: `admin-coupons.cy.ts` (flake fixed)
+> - Admin E2E specs: `admin-coupons.cy.ts` (flake fixed), `admin-audit.cy.ts`
+>   (new)
 > - New user E2E specs: `purchases.cy.ts`, `sync-status.cy.ts`
 > - `admin-announcements.cy.ts`: CRUD test remains skipped due update-flow
 >   flakiness in list/editor timing ⚠️
-> - Total Cypress spec inventory: **25 spec files** (9 admin-focused)
+> - Total Cypress spec inventory: **26 spec files** (10 admin-focused)
 
 ## Coverage Baseline
 
@@ -98,7 +111,7 @@
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
 | **Server** | 41.74% (1304/3124) | 43.35% (506/1167)  | 45.15% (331/733)  | 41.37% (1259/3043) | 55          |
-| **Web**    | 40.73% (2375/5830) | 34.29% (1489/4342) | 24.06% (283/1176) | 38.57% (1762/4568) | 82 (1 skip) |
+| **Web**    | 41.2% (2402/5830)  | 34.52% (1499/4342) | 24.82% (292/1176) | 39.14% (1788/4568) | 82 (1 skip) |
 
 ### Server (`apps/server`) — 41.37% Line Coverage (+3.29%)
 
