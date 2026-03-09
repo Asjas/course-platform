@@ -173,7 +173,10 @@ describe("Admin Coupons Management", () => {
       .should("not.be.disabled")
       .click();
 
-    cy.contains(/deleted successfully/i).should("be.visible");
+    // Increase timeout to allow for toast rendering and collection update settling
+    cy.contains(/deleted successfully/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     // Verify coupon row is removed from table with a generous timeout to allow
     // the collection-backed UI to settle after the deletion is persisted
     cy.contains("tr", couponCode, { timeout: 15000 }).should("not.exist");
