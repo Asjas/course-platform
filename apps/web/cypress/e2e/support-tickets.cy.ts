@@ -159,15 +159,9 @@ describe("Support Ticket Management", () => {
       cy.wait("@loadTickets", { timeout: 15000 });
 
       // Wait for any loading state to clear before asserting on ticket content.
-      // The collection query might still be resolving even after the API call completes.
-      cy.get("body").then(($body) => {
-        if ($body.find('[data-testid="loading"]').length > 0) {
-          cy.get('[data-testid="loading"]', { timeout: 15000 }).should(
-            "not.exist",
-          );
-        }
-        return null;
-      });
+      // This assertion passes immediately when the loader is absent and retries
+      // until it disappears when it is present.
+      cy.get('[data-testid="loading"]', { timeout: 15000 }).should("not.exist");
 
       cy.contains(ticketTitle, { timeout: 15000 }).should("be.visible");
       cy.contains(ticketDescription).should("be.visible");
