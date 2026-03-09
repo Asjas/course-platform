@@ -4,16 +4,24 @@
 > the course platform. Last updated 2026-03-09.
 >
 > **Latest run (2026-03-09):** Server 32.55% stmts / 32.59% lines (44 files, 484
-> tests) | Web 40.73% stmts / 38.57% lines (82 files, 586 tests)
+> tests) | Web 40.77% stmts / 38.61% lines (82 files, 596 tests)
 >
 > **Coverage Delta (vs previous 2026-03-09 batch):**
 >
-> - Server: **+1.02% lines** (31.57% -> 32.59%)
-> - Server: **+0.99% statements** (31.56% -> 32.55%)
-> - Web: **+0.13% lines** (38.44% -> 38.57%)
-> - Web: **+0.10% statements** (40.63% -> 40.73%)
-> - Web test inventory: **no file-count change** (82 -> 82), **-1 executed
->   passing test in suite total** (587 -> 586)
+> - Server: **+0.00% lines** (32.59% -> 32.59%)
+> - Server: **+0.00% statements** (32.55% -> 32.55%)
+> - Web: **+0.04% lines** (38.57% -> 38.61%)
+> - Web: **+0.04% statements** (40.73% -> 40.77%)
+> - Web test inventory: **no file-count change** (82 -> 82), **+10 executed
+>   passing tests in suite total** (586 -> 596)
+>
+> **Batch Delta (2026-03-09, rehype-media-embed edge-case expansion):**
+>
+> - Added **10 new web unit tests** in
+>   `src/lib/__tests__/rehype-media-embed.test.ts`
+> - New coverage focus: URL parsing edge cases, filename decoding, and media
+>   classification fallbacks
+> - `src/lib/rehype-media-embed.ts` coverage increased in this batch
 >
 > **Batch Delta (2026-03-09, collapsed-media RTL expansion):**
 >
@@ -54,7 +62,7 @@
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
 | **Server** | 32.55% (1017/3124) | 37.78% (441/1167)  | 32.19% (236/733)  | 32.59% (992/3043)  | 44          |
-| **Web**    | 40.73% (2375/5830) | 34.29% (1489/4342) | 24.06% (283/1176) | 38.57% (1762/4568) | 82 (1 skip) |
+| **Web**    | 40.77% (2377/5830) | 34.29% (1489/4342) | 24.14% (284/1176) | 38.61% (1764/4568) | 82 (1 skip) |
 
 ### Server (`apps/server`) — 32.59% Line Coverage (+1.02%)
 
@@ -265,7 +273,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 38.57% Line Coverage (+0.13%)
+### Web (`apps/web`) — 38.61% Line Coverage (+0.04%)
 
 #### Web Coverage Snapshot
 
@@ -926,12 +934,12 @@ Reports are generated in:
 
 ## Coverage Delta (2026-03-09)
 
-Compared to the previous baseline in this document (2026-03-08):
+Compared to the previous baseline in this document (2026-03-09, prior batch):
 
-| App        | Statements      | Branches        | Functions       | Lines           | Test Files | Tests |
-| ---------- | --------------- | --------------- | --------------- | --------------- | ---------- | ----- |
-| **Server** | N/A (not rerun) | N/A (not rerun) | N/A (not rerun) | N/A (not rerun) | +0         | +0    |
-| **Web**    | +9.38 pp        | +9.54 pp        | +5.35 pp        | +8.51 pp        | +15        | +43   |
+| App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
+| ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
+| **Server** | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
+| **Web**    | +0.04 pp   | +0.00 pp | +0.08 pp  | +0.04 pp | +0         | +10   |
 
 ## Coverage Update Rule
 
