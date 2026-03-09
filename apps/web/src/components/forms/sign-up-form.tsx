@@ -7,12 +7,10 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-import { useAuth } from "~/lib/auth.context";
 import { signUpFormSchema } from "~/schema/sign-up";
 
 export default function SignUpForm() {
   const navigate = useNavigate();
-  const auth = useAuth();
 
   const form = useForm({
     defaultValues: {
@@ -49,9 +47,7 @@ export default function SignUpForm() {
       toast.success("Signed up successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      if (auth.isAuthenticated) {
-        navigate({ to: "/dashboard" });
-      }
+      navigate({ to: "/dashboard" });
     },
   });
 

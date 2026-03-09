@@ -7,12 +7,10 @@ import { Button } from "~/components/ui/button";
 import { CheckboxInput, Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { authClient } from "~/lib/auth.client";
-import { useAuth } from "~/lib/auth.context";
 import { signInFormSchema } from "~/schema/sign-in";
 
 export default function SignInForm() {
   const navigate = useNavigate();
-  const auth = useAuth();
 
   const form = useForm({
     defaultValues: {
@@ -46,9 +44,7 @@ export default function SignInForm() {
       toast.success("Signed in successfully!");
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      if (auth.isAuthenticated) {
-        navigate({ to: "/dashboard" });
-      }
+      navigate({ to: "/dashboard" });
     },
   });
 
