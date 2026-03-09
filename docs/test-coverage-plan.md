@@ -73,7 +73,8 @@
 >
 > **Batch Delta (2026-03-09, collapsed-media RTL expansion):**
 >
-> - Added **10 new web unit tests** in `src/lib/collapsed-media.spec.ts`
+> - Added **10 new web unit tests** in
+>   `src/lib/__tests__/collapsed-media.spec.ts`
 > - New coverage focus: storage error recovery, SSR safety, and LRU boundary
 >   behavior
 > - `src/lib/collapsed-media.ts` moved to **100% lines / 100% branches**
@@ -771,7 +772,7 @@ These are the largest untested areas containing core business logic.
 | --- | --------------------------------------------------------- | ------------- | ---------------- | ---------- |
 | 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [x] Done |
 | 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done |
-| 60  | `src/lib/collections/utils.ts`                            | 28%           | 33%              | - [ ] Todo |
+| 60  | `src/lib/db.collections.ts`                               | n/a           | n/a              | - [ ] Todo |
 | 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [ ] Todo |
 | 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [ ] Todo |
 | 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [ ] Todo |
@@ -910,7 +911,7 @@ Reports are generated in:
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
-- `src/components/notifications-bell.test.tsx` — 11 tests
+- `src/components/__tests__/notifications-bell.test.tsx` — 11 tests
 - `src/components/forms/__tests__/sign-in-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/sign-up-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/profile-form.test.tsx` — 3 tests _(new)_
@@ -936,10 +937,9 @@ Reports are generated in:
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
-- `src/lib/collections/__tests__/utils.test.ts` — 7 tests
-- `src/lib/collapsed-media.spec.ts` — 15 tests
-- `src/lib/course-access.test.ts` — 12 tests (all skipped/todo)
-- `src/lib/utils.spec.ts` — 24 tests
+- `src/lib/__tests__/collapsed-media.spec.ts` — 15 tests
+- `src/lib/__tests__/course-access.test.ts` — 12 tests (all skipped/todo)
+- `src/lib/__tests__/utils.spec.ts` — 24 tests
 - `src/schema/__tests__/auth-schemas.test.ts` — 18 tests
 - `src/schema/__tests__/coupon.test.ts` — 12 tests
 - `src/schema/__tests__/course.test.ts` — 17 tests
@@ -1000,8 +1000,8 @@ After every test batch:
 
 ## Notes
 
-- `src/lib/course-access.test.ts` has 12 tests but all are **skipped** — needs
-  investigation.
+- `src/lib/__tests__/course-access.test.ts` has 12 tests but all are **skipped**
+  — needs investigation.
 - Route files have very few lines themselves (mostly re-exports) — coverage
   gains there are minimal. E2E tests are more effective for route coverage.
 - DB schema files are primarily type/structure definitions — coverage benefit of
