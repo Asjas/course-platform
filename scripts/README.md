@@ -20,10 +20,11 @@ tsx scripts/seed-test-data.ts [schema_name]
 ```
 
 **Parameters:**
-- `schema_name` (optional): Database schema to use. Defaults to `"public"`.
+- `schema_name` (optional): Database schema to use. Falls back to `DATABASE_SCHEMA` env var, then defaults to `"public"`.
 
 **Environment Variables:**
 - `DATABASE_URL`: PostgreSQL connection string. Required for CI, defaults to `postgresql://localhost:5432/course_platform` for local development.
+- `DATABASE_SCHEMA`: Schema name to use (overridden by CLI argument if provided). Defaults to `"public"`.
 
 **Example:**
 ```bash
@@ -32,6 +33,9 @@ tsx scripts/seed-test-data.ts
 
 # Seed test schema for PR #123
 tsx scripts/seed-test-data.ts test_pr_123
+
+# Seed using DATABASE_SCHEMA env var
+DATABASE_SCHEMA=ci_server_22 tsx scripts/seed-test-data.ts
 ```
 
 ### `cleanup-test-data.ts`
@@ -44,14 +48,15 @@ tsx scripts/cleanup-test-data.ts [schema_name]
 ```
 
 **Parameters:**
-- `schema_name` (optional): Database schema to clean. Defaults to `"public"`.
+- `schema_name` (optional): Database schema to clean. Falls back to `DATABASE_SCHEMA` env var, then defaults to `"public"`.
 
 **Environment Variables:**
 - `DATABASE_URL`: PostgreSQL connection string. Required for CI, defaults to `postgresql://localhost:5432/course_platform` for local development.
+- `DATABASE_SCHEMA`: Schema name to clean (overridden by CLI argument if provided). Defaults to `"public"`.
 
 **Behavior:**
 - For non-public schemas: Drops the entire schema (CASCADE)
-- For public schema: Truncates all tables (CASCADE)
+- For public/my_schema: Truncates all tables (CASCADE)
 
 **Example:**
 ```bash
@@ -60,28 +65,52 @@ tsx scripts/cleanup-test-data.ts
 
 # Drop test schema completely
 tsx scripts/cleanup-test-data.ts test_pr_123
+
+# Clean using DATABASE_SCHEMA env var
+DATABASE_SCHEMA=ci_server_22 tsx scripts/cleanup-test-data.ts
 ```
+
+### `ci-migrate.ts`
+
+Runs Drizzle migrations with a configurable schema name for CI isolation. Each CI job gets its own PostgreSQL schema, preventing deadlocks and data conflicts when running concurrently.
+
+**Usage:**
+```bash
+DATABASE_SCHEMA=ci_server_22 DATABASE_URL=... tsx scripts/ci-migrate.ts
+```
+
+**Environment Variables:**
+- `DATABASE_URL`: PostgreSQL connection string. Required.
+- `DATABASE_SCHEMA`: Target schema name. Defaults to `"my_schema"`.
+
+**How It Works:**
+1. Reads migration SQL files from `apps/server/drizzle/` in order
+2. Replaces `"my_schema"` references with the target schema name
+3. Executes each migration statement directly against the database
+4. Ignores "already exists" errors for safe re-runs
+5. Bypasses Drizzle's migration journal (CI schemas are ephemeral)
 
 ## CI/CD Integration
 
 These scripts are automatically used in the GitHub Actions CI pipeline with a **hosted PostgreSQL database** dedicated to CI:
 
-1. **Create Schema**: A unique test schema is created for each CI job
-2. **Run Migrations**: Drizzle migrations are run with `search_path` set to the test schema
-3. **Seed Data**: `seed-test-data.ts` populates the test schema with test data
-4. **Run Tests**: Tests execute against the isolated test schema
-5. **Cleanup**: `cleanup-test-data.ts` drops the test schema (even on failure)
+1. **Set Schema Name**: Each CI job sets a unique `DATABASE_SCHEMA` env var (e.g., `ci_server_22_<run_id>`)
+2. **Run Migrations**: `ci-migrate.ts` creates the schema and runs migrations with the correct schema name
+3. **Seed Data**: `seed-test-data.ts` populates the schema with test data
+4. **Run Tests**: Tests execute against the isolated schema (Drizzle ORM reads `DATABASE_SCHEMA` at runtime)
+5. **Cleanup**: `cleanup-test-data.ts` drops the schema (even on failure)
 
 The CI uses:
 - **Hosted Database**: `DATABASE_URL` secret points to a dedicated CI database
-- **PostgreSQL search_path**: Migrations are run with `search_path` parameter to target specific schemas
-- **Unique schema names** based on PR number and Node.js version to allow concurrent test runs:
-  ```
-  test_pr_<PR_NUMBER>_<NODE_VERSION>
-  ```
-  Example: `test_pr_456_20.x` for server tests, `test_pr_456_web_20.x` for web tests
+- **Dynamic schema names**: `DATABASE_SCHEMA` env var set per job using the pattern `ci_<job>_<node_version>_<run_id>`
+- **Full concurrency**: All jobs run in parallel since each uses its own isolated schema
 
-This approach allows multiple CI jobs to run concurrently without conflicts, as each job uses its own fully isolated database schema (including tables, constraints, indexes, and sequences) within the shared hosted database.
+Example schema names:
+- `ci_server_22_12345678` for server tests on Node 22
+- `ci_web_24_12345678` for web tests on Node 24
+- `ci_e2e_25_12345678` for E2E tests on Node 25
+
+This approach allows all CI jobs to run concurrently without conflicts, as each job uses its own fully isolated database schema (including tables, constraints, indexes, and sequences) within the shared hosted database.
 
 ## Development
 
@@ -106,6 +135,18 @@ pnpm test
 tsx scripts/cleanup-test-data.ts
 ```
 
+### Schema Configuration
+
+The schema name is configurable via the `DATABASE_SCHEMA` environment variable:
+- **Default**: `my_schema` (used in local development)
+- **CI**: Set to a unique name per job (e.g., `ci_server_22_12345678`)
+
+The schema name flows through:
+1. `apps/server/src/db/my-schema.ts` — reads `DATABASE_SCHEMA` env var for Drizzle ORM runtime
+2. `scripts/ci-migrate.ts` — replaces `"my_schema"` in migration SQL for CI
+3. `scripts/seed-test-data.ts` — uses `DATABASE_SCHEMA` env var for seeding
+4. `scripts/cleanup-test-data.ts` — uses `DATABASE_SCHEMA` env var for cleanup
+
 ### Adding New Test Data
 
 To add new types of test data:
@@ -124,22 +165,19 @@ To add new types of test data:
 
 ## Schema Isolation
 
-The scripts support schema-level isolation using PostgreSQL's native `search_path` feature, which allows:
+The scripts support schema-level isolation using PostgreSQL schemas, which allows:
 
 - **Concurrent test runs** in CI without conflicts
-- **Parallel testing** across different Node.js versions
+- **Parallel testing** across different Node.js versions and job types
 - **Clean separation** between test environments
 - **Fast cleanup** by dropping schemas instead of truncating tables
-- **Native Drizzle migrations** that work seamlessly with schema isolation
 
 ### How It Works
 
-1. **Schema Creation**: Each test run creates a unique schema (e.g., `test_pr_123_20.x`)
-2. **Migration with search_path**: Drizzle migrations run with `DATABASE_URL` parameter `?options=-c%20search_path=test_pr_123_20.x`
-3. **Schema Structure**: Migrations create all tables, indexes, constraints, and sequences in the test schema
-4. **Data Seeding**: Seed script sets `search_path` and populates data in the isolated schema
-5. **Test Execution**: Tests run against the isolated schema
+1. **Schema Name**: Each CI job sets `DATABASE_SCHEMA` to a unique name (e.g., `ci_server_22_12345678`)
+2. **Migration**: `ci-migrate.ts` reads SQL files, replaces `"my_schema"`, and executes them — creating all tables in the isolated schema
+3. **Runtime**: Drizzle ORM reads `DATABASE_SCHEMA` from environment and qualifies all table references with the correct schema
+4. **Seeding**: `seed-test-data.ts` sets `search_path` to the target schema for data insertion
+5. **Tests**: Application code uses the correct schema via `DATABASE_SCHEMA` env var
 6. **Cleanup**: The entire schema is dropped, removing all data and structures instantly
-
-This approach leverages PostgreSQL's native schema isolation and Drizzle ORM's connection-level configuration, resulting in a robust and efficient CI testing strategy.
 

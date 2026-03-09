@@ -110,7 +110,7 @@ shared packages:
 - Vitest for testing
 - Cypress for E2E testing
 - Docker + Docker Compose
-- GitHub Actions CI/CD (Node 20-24)
+- GitHub Actions CI/CD (Node 22-25)
 - ESLint 9 + Prettier for code quality
 - Husky + lint-staged for pre-commit hooks
 
@@ -118,7 +118,7 @@ shared packages:
 
 ### Prerequisites
 
-- Node.js 22.16+ (tested with 20.x-24.x in CI)
+- Node.js 22.16+ (tested with 22.x-25.x in CI)
 - pnpm 10.25+
 - Docker and Docker Compose (for PostgreSQL and Dragonfly)
 - Rust 1.77+ (for native desktop app development, optional)

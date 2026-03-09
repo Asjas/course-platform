@@ -34,6 +34,10 @@ if (schemaName !== "public") {
   connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${encodedSchemaName}`;
 }
 
+// Append PostgreSQL libpq keepalive parameters to prevent idle connection drops.
+const keepaliveSep = connectionString.includes("?") ? "&" : "?";
+connectionString = `${connectionString}${keepaliveSep}keepalives=1&keepalives_idle=300&keepalives_interval=10&keepalives_count=10`;
+
 const pool = new Pool({
   connectionString,
 });

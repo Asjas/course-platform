@@ -23,8 +23,8 @@ import pg, { type PoolClient } from "pg";
 
 const { Pool } = pg;
 
-// Get schema name from command line or use public
-const schemaName = process.argv[2] || "public";
+// Get schema name from: 1) command line argument, 2) DATABASE_SCHEMA env var, or 3) default to "public"
+const schemaName = process.argv[2] || process.env.DATABASE_SCHEMA || "public";
 const databaseUrl =
   process.env.DATABASE_URL || "postgresql://localhost:5432/course_platform";
 
@@ -37,6 +37,10 @@ if (schemaName !== "public") {
   const encodedSchemaName = encodeURIComponent(schemaName);
   connectionString = `${databaseUrl}${separator}options=-c%20search_path%3D${encodedSchemaName}`;
 }
+
+// Append PostgreSQL libpq keepalive parameters to prevent idle connection drops.
+const keepaliveSep = connectionString.includes("?") ? "&" : "?";
+connectionString = `${connectionString}${keepaliveSep}keepalives=1&keepalives_idle=300&keepalives_interval=10&keepalives_count=10`;
 
 const pool = new Pool({
   connectionString,
@@ -377,16 +381,18 @@ async function seedDatabase() {
   }
 }
 
-// Run the seed function
-void seedDatabase()
-  .then(() => {
-    console.log("🎉 Seeding complete!");
-    process.exit(0);
-  })
-  .catch((error) => {
-    console.error("Fatal error:", error);
-    process.exit(1);
-  })
-  .finally(() => {
-    pool.end();
-  });
+// Wrapper ensures pool.end() runs regardless of success or failure.
+async function main() {
+  try {
+    await seedDatabase();
+  } finally {
+    await pool.end();
+  }
+}
+
+// On success the process exits naturally (no open handles after pool.end()).
+// On failure the catch logs the error and exits with code 1.
+main().catch((error) => {
+  console.error("Fatal error:", error);
+  process.exit(1);
+});

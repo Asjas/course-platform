@@ -68,7 +68,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x, 22.x]
+        node-version: [22.x, 24.x, 25.x]
 
     steps:
       - name: Check out repository
@@ -113,10 +113,12 @@ jobs:
     runs-on: ubuntu-latest
 
     strategy:
-      max-parallel: 1
       matrix:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [20, 22]
+        node-version: [22, 24, 25]
+
+    env:
+      DATABASE_SCHEMA: ci_server_${{ matrix.node-version }}_${{ github.run_id }}
 
     steps:
       - name: Check out repository
@@ -140,10 +142,10 @@ jobs:
         run: pnpm build --cache=remote:rw
 
       - name: Run database migrations
-        run: pnpm --filter @apps/server drizzle:migrate
+        run: pnpm tsx scripts/ci-migrate.ts
 
       - name: Seed test database
-        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+        run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run server tests with coverage
         run: pnpm --filter @apps/server test:coverage
@@ -159,16 +161,18 @@ jobs:
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
+        run: pnpm tsx scripts/cleanup-test-data.ts
 
   web-tests:
     runs-on: ubuntu-latest
 
     strategy:
-      max-parallel: 1
       matrix:
         # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [20, 22]
+        node-version: [22, 24, 25]
+
+    env:
+      DATABASE_SCHEMA: ci_web_${{ matrix.node-version }}_${{ github.run_id }}
 
     steps:
       - name: Check out repository
@@ -192,10 +196,10 @@ jobs:
         run: pnpm build --cache=remote:rw
 
       - name: Run database migrations
-        run: pnpm --filter @apps/server drizzle:migrate
+        run: pnpm tsx scripts/ci-migrate.ts
 
       - name: Seed test database
-        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+        run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run web tests with coverage
         run: pnpm --filter @apps/web test:coverage
@@ -211,15 +215,18 @@ jobs:
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema"
+        run: pnpm tsx scripts/cleanup-test-data.ts
 
   e2e-tests:
     runs-on: ubuntu-latest
 
     strategy:
-      max-parallel: 2
       matrix:
-        node-version: [20.x, 22.x]
+        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
+        node-version: [22, 24, 25]
+
+    env:
+      DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}
 
     steps:
       - name: Check out repository
@@ -254,11 +261,10 @@ jobs:
         run: pnpm build --cache=remote:rw
 
       - name: Run database migrations
-        run: pnpm --filter @apps/server drizzle:migrate
+        run: pnpm tsx scripts/ci-migrate.ts
 
       - name: Seed test data (creates ghost user and base fixtures)
-        if: matrix.node-version == '22.x'
-        run: pnpm tsx scripts/seed-test-data.ts "my_schema"
+        run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Install Cypress
         run: pnpx cypress install
@@ -328,4 +334,4 @@ jobs:
 
       - name: Cleanup test database
         if: always()
-        run: pnpm tsx scripts/cleanup-test-data.ts "my_schema" || true
+        run: pnpm tsx scripts/cleanup-test-data.ts || true
