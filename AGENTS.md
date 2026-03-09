@@ -120,8 +120,10 @@ For Cypress E2E runs, follow this exact order:
 
 1. Start backend API first: `pnpm --filter @apps/server dev`
 2. Start frontend preview next: `pnpm --filter @apps/web preview`
-3. Wait until both are ready (`http://localhost:5000` and `http://localhost:4173`)
-4. Run only changed spec files: `pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<changed-spec>.cy.ts"`
+3. Wait until both are ready (`http://localhost:5000` and
+   `http://localhost:4173`)
+4. Run only changed spec files:
+   `pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<changed-spec>.cy.ts"`
 
 Known failure mode (2026-03-07): Running `pnpm preview` from repository root
 fails (`ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "preview" not found`) and
@@ -129,30 +131,59 @@ causes wasted E2E cycles. Always use the filtered preview command above.
 
 Critical guardrails:
 
-- **ALWAYS scan implementation BEFORE writing tests**. Read the actual page component, sheet components, and form fields to understand exact button text, field names, form structure, and UI behavior. NEVER write tests based on assumptions or invented field names. This is mandatory - no exceptions.
-- Do NOT run bare `pnpm preview` from repository root. Use `pnpm --filter @apps/web preview`.
+- **ALWAYS scan implementation BEFORE writing tests**. Read the actual page
+  component, sheet components, and form fields to understand exact button text,
+  field names, form structure, and UI behavior. NEVER write tests based on
+  assumptions or invented field names. This is mandatory - no exceptions.
+- Do NOT run bare `pnpm preview` from repository root. Use
+  `pnpm --filter @apps/web preview`.
 - Do NOT run Cypress until both backend and frontend are confirmed reachable.
-- When you start backend or frontend services for testing, stop them when finished. Prefer sending `Ctrl+C` and confirm the terminal exits; if that is not available or the process remains alive, kill the listeners on the ports in use so `5000` and `4173` can be reused.
+- When you start backend or frontend services for testing, stop them when
+  finished. Prefer sending `Ctrl+C` and confirm the terminal exits; if that is
+  not available or the process remains alive, kill the listeners on the ports in
+  use so `5000` and `4173` can be reused.
 - After creating or editing any E2E spec, run that spec immediately.
-- Never run the full E2E suite when validating a targeted change unless explicitly requested.
-- Prefer direct scoped execution from `apps/web`: `pnpm cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"` to avoid accidental broader suite runs.
-- E2E CRUD tests must clean up data through normal UI delete flows. Cleanup should double as delete-path coverage.
-- E2E authorization tests must cover ownership boundaries: user A can access user A data, user B cannot access user A data.
-- Exception: support tickets are completely public (no authentication required). In E2E, verify anyone can view ticket details but only owners and admins can edit/delete (owner/admin edit/delete buttons must only appear for ticket owners and admins).
-- E2E authorization tests must cover role boundaries: admin can access admin routes/data, non-admin users cannot.
-- For permission failures, assert both blocked behavior and a visible user-facing popup/toast with the backend access/permission error.
-- Always inspect the failing test output and identify the exact failing condition before editing code.
-- If a failing assertion may represent important or expected behavior, fix the underlying code rather than weakening the test.
-- If it is ambiguous whether the failure should be fixed in the spec or the product code, stop and ask the user before making that change. This is mandatory for security-sensitive behavior so tests do not accidentally remove protections.
+- Never run the full E2E suite when validating a targeted change unless
+  explicitly requested.
+- Prefer direct scoped execution from `apps/web`:
+  `pnpm cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"` to avoid
+  accidental broader suite runs.
+- E2E CRUD tests must clean up data through normal UI delete flows. Cleanup
+  should double as delete-path coverage.
+- E2E authorization tests must cover ownership boundaries: user A can access
+  user A data, user B cannot access user A data.
+- Exception: support tickets are completely public (no authentication required).
+  In E2E, verify anyone can view ticket details but only owners and admins can
+  edit/delete (owner/admin edit/delete buttons must only appear for ticket
+  owners and admins).
+- E2E authorization tests must cover role boundaries: admin can access admin
+  routes/data, non-admin users cannot.
+- For permission failures, assert both blocked behavior and a visible
+  user-facing popup/toast with the backend access/permission error.
+- Always inspect the failing test output and identify the exact failing
+  condition before editing code.
+- If a failing assertion may represent important or expected behavior, fix the
+  underlying code rather than weakening the test.
+- If it is ambiguous whether the failure should be fixed in the spec or the
+  product code, stop and ask the user before making that change. This is
+  mandatory for security-sensitive behavior so tests do not accidentally remove
+  protections.
 
 **CRITICAL: E2E Tests MUST Test Through the UI, NOT Bypass It**
 
-E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIENCE. **NEVER use `cy.request()` for authentication or data setup** — always drive flows through the real UI. This includes signup, signin, and any account setup steps.
+E2E tests exercise the entire system end-to-end, including the REAL USER
+EXPERIENCE. **NEVER use `cy.request()` for authentication or data setup** —
+always drive flows through the real UI. This includes signup, signin, and any
+account setup steps.
 
-- ❌ **WRONG**: `cy.request("POST", "/api/auth/sign-up/email", {...})` — bypasses the UI, hides auth bugs
-- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` — mocks the backend, hides real bugs
-- ✅ **RIGHT**: Visit `/signup` → fill form → submit → verify redirect to `/dashboard`
-- ✅ **RIGHT**: `cy.intercept()` is allowed to **observe/wait** on network calls (e.g., `cy.wait("@createTicket")`), but NOT to mock or stub responses
+- ❌ **WRONG**: `cy.request("POST", "/api/auth/sign-up/email", {...})` —
+  bypasses the UI, hides auth bugs
+- ❌ **WRONG**: `cy.intercept("**/trpc/*", req => req.reply({ response }))` —
+  mocks the backend, hides real bugs
+- ✅ **RIGHT**: Visit `/signup` → fill form → submit → verify redirect to
+  `/dashboard`
+- ✅ **RIGHT**: `cy.intercept()` is allowed to **observe/wait** on network calls
+  (e.g., `cy.wait("@createTicket")`), but NOT to mock or stub responses
 
 **For authorization boundary testing**:
 
@@ -163,14 +194,18 @@ E2E tests exercise the entire system end-to-end, including the REAL USER EXPERIE
    - Verify error message appears to user
 2. **If route guard blocks page load, stop there in E2E**:
    - Do NOT try to force mutation-level tests through UI when page cannot load
-   - E2E expectation is route-level denial (redirect/forbidden UI + user-facing message)
-   - Add server-side Vitest coverage for protected tRPC endpoints to verify non-admin requests are rejected
-   - Endpoint authorization checks belong in `apps/server` tests, not Cypress UI tests
+   - E2E expectation is route-level denial (redirect/forbidden UI + user-facing
+     message)
+   - Add server-side Vitest coverage for protected tRPC endpoints to verify
+     non-admin requests are rejected
+   - Endpoint authorization checks belong in `apps/server` tests, not Cypress UI
+     tests
 3. **Admin user can perform actions**:
    - Login as admin
    - Same actions succeed
 
-**Key Principle**: "As a user, you expect the page to not load or show an error message. NOT for the app to make direct HTTP requests to test permissions."
+**Key Principle**: "As a user, you expect the page to not load or show an error
+message. NOT for the app to make direct HTTP requests to test permissions."
 
 E2E authorization tests should verify:
 
@@ -181,11 +216,19 @@ E2E authorization tests should verify:
 
 E2E stabilization practices (applies to all features):
 
-- Prefer stable positive assertions (state is present and correct) over brittle global negative assertions that may fail due to unrelated seeded data.
-- Keep diagnostics temporary: add focused logs/assertions only while triaging, then remove instrumentation from app code, server code, and tests once root cause is confirmed.
-- Be careful with controlled numeric inputs in Cypress. Avoid clear-and-retype patterns that can cause value append races; use a stable editable field when validating submit/update flow if numeric input behavior is flaky.
-- Validate the end-to-end outcome, not only interaction steps: confirm the persisted row/card/content reflects the intended change after save/delete.
-- Prefer inferred/shared types over one-off local interfaces in tests/routes/components. If types are needed, use existing exported/shared types before creating new local duplicates.
+- Prefer stable positive assertions (state is present and correct) over brittle
+  global negative assertions that may fail due to unrelated seeded data.
+- Keep diagnostics temporary: add focused logs/assertions only while triaging,
+  then remove instrumentation from app code, server code, and tests once root
+  cause is confirmed.
+- Be careful with controlled numeric inputs in Cypress. Avoid clear-and-retype
+  patterns that can cause value append races; use a stable editable field when
+  validating submit/update flow if numeric input behavior is flaky.
+- Validate the end-to-end outcome, not only interaction steps: confirm the
+  persisted row/card/content reflects the intended change after save/delete.
+- Prefer inferred/shared types over one-off local interfaces in
+  tests/routes/components. If types are needed, use existing exported/shared
+  types before creating new local duplicates.
 
 Readiness checks before running E2E:
 
@@ -277,6 +320,18 @@ commands. Agents should be aware of these when running terminal commands:
 - `find` is `fdfind` — syntax differs from GNU find. Use `command find` for
   POSIX find.
 
+## Workspace Temp Directory Policy
+
+Use a repository-local temp directory for run artifacts:
+
+- Prefer `./tmp/` instead of global `/tmp/` for intermediate logs and generated
+  files.
+- Create per-run subdirectories in `./tmp/` (for example
+  `./tmp/<task-or-date>/`) so concurrent runs do not collide.
+- Clean up `./tmp/` artifacts after each run, or keep them isolated in
+  run-specific folders that can be removed safely.
+- Only use global `/tmp/` when a tool strictly requires it.
+
 ## Editing rules
 
 1. **NEVER edit migration files** (`.sql` files in `drizzle/` directories).
@@ -308,21 +363,22 @@ while all tests continue to pass. Always use the real package.
 
 **Only mock at true external boundaries:**
 
-| What to mock | Why |
-|---|---|
-| `~/lib/auth.client` | Real network calls to the auth server |
-| `~/lib/trpc.client` | Real network calls to the tRPC API |
-| `~/lib/db.collections` | Real database/sync operations |
-| `sonner` | Side-effect notification sink |
-| `~/components/blocker` | Router-blocking behaviour tested separately |
+| What to mock                   | Why                                         |
+| ------------------------------ | ------------------------------------------- |
+| `~/lib/auth.client`            | Real network calls to the auth server       |
+| `~/lib/trpc.client`            | Real network calls to the tRPC API          |
+| `~/lib/db.collections`         | Real database/sync operations               |
+| `sonner`                       | Side-effect notification sink               |
+| `~/components/blocker`         | Router-blocking behaviour tested separately |
 | `~/components/markdown-editor` | Heavy third-party editor with its own tests |
 
 **Never mock:** `@tanstack/react-router`, `@tanstack/react-query`,
-`@headlessui/react`, `lucide-react`, `@packages/shared-ui/*`, `class-variance-authority`, or any other UI / utility npm package.
+`@headlessui/react`, `lucide-react`, `@packages/shared-ui/*`,
+`class-variance-authority`, or any other UI / utility npm package.
 
-**Exception:** `react-youtube` is legitimately mocked because the YouTube
-IFrame API is a browser-only runtime API that cannot work in JSDOM. Mock it
-with a realistic `<iframe src="https://www.youtube.com/embed/{videoId}">`.
+**Exception:** `react-youtube` is legitimately mocked because the YouTube IFrame
+API is a browser-only runtime API that cannot work in JSDOM. Mock it with a
+realistic `<iframe src="https://www.youtube.com/embed/{videoId}">`.
 
 ### Shared test utilities — `apps/web/src/test-utils.tsx`
 
@@ -355,9 +411,7 @@ const { router } = await renderWithProviders(<SignInForm />, {
   initialPath: "/signin",
 });
 await user.click(submitButton);
-await waitFor(() =>
-  expect(router.state.location.pathname).toBe("/dashboard"),
-);
+await waitFor(() => expect(router.state.location.pathname).toBe("/dashboard"));
 
 // ❌ Only proves navigate() was called — doesn't prove the route changed
 expect(mockNavigate).toHaveBeenCalledWith({ to: "/dashboard" });
@@ -406,14 +460,14 @@ vi.mock("~/lib/trpc.client", () => ({
 
 ### Query selectors — prefer accessible queries
 
-| Priority | Query | Use when |
-|---|---|---|
-| 1 | `getByRole` | Buttons, links, headings, inputs with a label |
-| 2 | `getByLabelText` | Form inputs associated with a `<label>` |
-| 3 | `getByPlaceholderText` | Input placeholder (last resort) |
-| 4 | `getByText` | Static text content |
-| 5 | `getByDisplayValue` | Current value of form element |
-| 6 | `getByTestId` | **Avoid**; only when no semantic alternative exists |
+| Priority | Query                  | Use when                                            |
+| -------- | ---------------------- | --------------------------------------------------- |
+| 1        | `getByRole`            | Buttons, links, headings, inputs with a label       |
+| 2        | `getByLabelText`       | Form inputs associated with a `<label>`             |
+| 3        | `getByPlaceholderText` | Input placeholder (last resort)                     |
+| 4        | `getByText`            | Static text content                                 |
+| 5        | `getByDisplayValue`    | Current value of form element                       |
+| 6        | `getByTestId`          | **Avoid**; only when no semantic alternative exists |
 
 Never use `getByTestId` to query for icons or SVGs — that asserts an
 implementation detail, not user-visible behaviour.
@@ -462,8 +516,6 @@ const offlineTab = await screen.findByRole("tab", { name: /offline/i });
 await user.click(offlineTab);
 expect(screen.getByText("OfflineCollection")).toBeInTheDocument();
 ```
-
-
 
 For deeper, context-specific guidance, see the instruction files in
 `.github/instructions/`:
