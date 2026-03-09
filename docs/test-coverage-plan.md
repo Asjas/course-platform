@@ -3,18 +3,32 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-09.
 >
-> **Latest run (2026-03-09):** Server 38.44% stmts / 38.08% lines (49 files, 512
-> tests) | Web 40.77% stmts / 38.61% lines (82 files, 596 tests)
+> **Latest run (2026-03-09):** Server 41.74% stmts / 41.37% lines (55 files, 539
+> tests) | Web 40.73% stmts / 38.57% lines (82 files, 596 tests)
 >
 > **Coverage Delta (vs previous 2026-03-09 batch):**
 >
-> - Server: **+1.21% lines** (36.87% -> 38.08%)
-> - Server: **+1.22% statements** (37.22% -> 38.44%)
-> - Web: **+0.00% lines** (38.61% -> 38.61%)
-> - Web: **+0.00% statements** (40.77% -> 40.77%)
-> - Server test inventory: **+2 files** (47 -> 49), **+12 passing tests** (500
->   -> 512)
+> - Server: **+3.29% lines** (38.08% -> 41.37%)
+> - Server: **+3.30% statements** (38.44% -> 41.74%)
+> - Web: **-0.04% lines** (38.61% -> 38.57%)
+> - Web: **-0.04% statements** (40.77% -> 40.73%)
+> - Server test inventory: **+6 files** (49 -> 55), **+27 passing tests** (512
+>   -> 539)
 > - Web test inventory: **no change** (82 files, 596 passing tests)
+
+> **Batch Delta (2026-03-09, server six-router integration expansion):**
+>
+> - Added **6 backend router integration test files** (27 tests total):
+>   - `apps/server/src/routers/audit/__tests__/index.test.ts` (3 tests)
+>   - `apps/server/src/routers/purchases/__tests__/index.test.ts` (5 tests)
+>   - `apps/server/src/routers/images/__tests__/index.test.ts` (4 tests)
+>   - `apps/server/src/routers/chatReports/__tests__/index.test.ts` (5 tests)
+>   - `apps/server/src/routers/reviews/__tests__/index.test.ts` (5 tests)
+>   - `apps/server/src/routers/courseWishlist/__tests__/index.test.ts` (5 tests)
+> - New coverage focus: auth/role gating, ownership and not-found handling, and
+>   internal-error mapping for router procedures.
+> - Expanded `createCaller` integration coverage across admin-only, public, and
+>   authenticated server router paths.
 
 > **Batch Delta (2026-03-09, server notifications/sync-status integration):**
 >
@@ -83,20 +97,20 @@
 
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
-| **Server** | 38.44% (1201/3124) | 41.21% (481/1167)  | 43.11% (316/733)  | 38.08% (1159/3043) | 49          |
-| **Web**    | 40.77% (2377/5830) | 34.29% (1489/4342) | 24.14% (284/1176) | 38.61% (1764/4568) | 82 (1 skip) |
+| **Server** | 41.74% (1304/3124) | 43.35% (506/1167)  | 45.15% (331/733)  | 41.37% (1259/3043) | 55          |
+| **Web**    | 40.73% (2375/5830) | 34.29% (1489/4342) | 24.06% (283/1176) | 38.57% (1762/4568) | 82 (1 skip) |
 
-### Server (`apps/server`) — 38.08% Line Coverage (+1.21%)
+### Server (`apps/server`) — 41.37% Line Coverage (+3.29%)
 
 #### Server Coverage Snapshot
 
-137 total files: 120 untested, 12 partial, 5 fully covered
+137 total files: 114 untested, 18 partial, 5 fully covered
 
 #### Server Coverage by Area
 
 | Area                      | Files Tested | Line Coverage | Lines   |
 | ------------------------- | ------------ | ------------- | ------- |
-| tRPC Routers (17 modules) | 9/42         | partial       | —       |
+| tRPC Routers (17 modules) | 15/42        | partial       | —       |
 | REST Routes (3 modules)   | 1/16         | partial       | —       |
 | DB Queries                | 2/9          | partial       | —       |
 | DB Mutations              | 1/9          | partial       | —       |
@@ -122,6 +136,12 @@
 | `src/lib/metrics.ts`                   | 72%   | 0%       |
 | `src/routers/chatReports/queries.ts`   | new   | new      |
 | `src/routers/chatReports/mutations.ts` | new   | new      |
+| `src/routers/audit/index.ts`           | new   | new      |
+| `src/routers/chatReports/index.ts`     | new   | new      |
+| `src/routers/courseWishlist/index.ts`  | new   | new      |
+| `src/routers/images/index.ts`          | new   | new      |
+| `src/routers/purchases/index.ts`       | new   | new      |
+| `src/routers/reviews/index.ts`         | new   | new      |
 | `src/routers/syncStatus/queries.ts`    | new   | new      |
 | `src/routers/syncStatus/mutations.ts`  | new   | new      |
 | `src/db/queries/courseWishlist.ts`     | new   | new      |
@@ -130,7 +150,7 @@
 
 #### Server — Untested Files (0% Coverage)
 
-#### 105 Files With Zero Coverage
+#### 99 Files With Zero Coverage
 
 **Bootstrap & Core:**
 
@@ -218,24 +238,18 @@
 - `src/plugins/external/rate-limit.ts`
 - `src/plugins/external/sensible.ts`
 
-**tRPC Routers (20 files):**
+**tRPC Routers (14 files):**
 
 - `src/routers/index.ts`
 - `src/routers/announcements/index.ts`
-- `src/routers/audit/index.ts`
 - `src/routers/chat/dmValidation.ts`
 - `src/routers/chat/index.ts`
-- `src/routers/chatReports/index.ts`
 - `src/routers/coupons/index.ts`
-- `src/routers/courseWishlist/index.ts`
 - `src/routers/courses/index.ts`
 - `src/routers/dataExport/index.ts`
 - `src/routers/dataExport/queries.ts`
 - `src/routers/directMessages/index.ts`
-- `src/routers/images/index.ts`
 - `src/routers/mentions/index.ts`
-- `src/routers/purchases/index.ts`
-- `src/routers/reviews/index.ts`
 - `src/routers/stats/index.ts`
 - `src/routers/support-tickets/index.ts`
 - `src/routers/supportStatus/index.ts`
