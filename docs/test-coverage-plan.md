@@ -1,16 +1,22 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Last updated 2026-03-08.
+> the course platform. Last updated 2026-03-09.
 >
-> **Latest run (2026-03-08):** Server 31.56% stmts / 31.57% lines (38 files, 436
-> tests) | Web 27.49% stmts / 25.89% lines (49 files, 471 tests)
+> **Latest run (2026-03-09):** Server 31.56% stmts / 31.57% lines (38 files, 436
+> tests) | Web 36.87% stmts / 34.40% lines (64 files, 514 tests)
 >
-> **Coverage Delta (vs 2026-03-07):**
+> **Coverage Delta (vs 2026-03-08):**
 >
-> - Server: **+3.15% lines** (28.42% → 31.57%) ✅ IMPROVED
-> - Web: **-0.11% lines** (26.00% → 25.89%) ⚠️ Slight decrease (1 test file now
->   skipped)
+> - Server: **Not rerun in this batch** (kept at 31.57% lines)
+> - Web: **+8.51% lines** (25.89% → 34.40%) ✅ IMPROVED
+> - Web test inventory: **+15 files** (49 → 64), **+43 tests** (471 → 514)
+
+> **Batch Delta (2026-03-09, RTL):**
+>
+> - Added **10 new React Testing Library spec files** (24 tests)
+> - New specs include: header, support comment, admin/default layouts, and UI
+>   primitives (card, input, label, nav-link, form-status-message, table)
 >
 > **Latest E2E Delta (2026-03-08):**
 >
@@ -24,10 +30,10 @@
 
 ### Overall Summary
 
-| App        | Statements         | Branches          | Functions         | Lines              | Test Files  |
-| ---------- | ------------------ | ----------------- | ----------------- | ------------------ | ----------- |
-| **Server** | 31.56% (985/3121)  | 36.85% (429/1164) | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
-| **Web**    | 27.49% (1453/5284) | 21.91% (815/3721) | 14.88% (189/1270) | 25.89% (1147/4430) | 49 (1 skip) |
+| App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
+| ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
+| **Server** | 31.56% (985/3121)  | 36.85% (429/1164)  | 31.87% (233/731)  | 31.57% (960/3040)  | 38          |
+| **Web**    | 36.87% (2051/5562) | 31.45% (1296/4120) | 20.23% (238/1176) | 34.40% (1529/4444) | 64 (1 skip) |
 
 ### Server (`apps/server`) — 31.57% Line Coverage (+3.15%)
 
@@ -238,7 +244,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 25.89% Line Coverage
+### Web (`apps/web`) — 34.40% Line Coverage
 
 #### Web Coverage Snapshot
 
@@ -620,25 +626,28 @@ These are the largest untested areas containing core business logic.
 
 ### Phase 3: Web Components (Highest Untested Line Count)
 
-| #   | Test to Create                                      | Target            | Lines | Status     |
-| --- | --------------------------------------------------- | ----------------- | ----- | ---------- |
-| 29  | `src/hooks/__tests__/useSseSync.test.ts`            | SSE sync hook     | 327   | - [x] Done |
-| 30  | `src/components/__tests__/header.test.tsx`          | Header component  | —     | - [ ] Todo |
-| 31  | `src/components/__tests__/footer.test.tsx`          | Footer component  | —     | - [x] Done |
-| 32  | `src/components/__tests__/error-boundary.test.tsx`  | Error boundary    | —     | - [x] Done |
-| 33  | `src/components/__tests__/confirm-dialog.test.tsx`  | Confirm dialog    | —     | - [x] Done |
-| 34  | `src/components/__tests__/video-player.test.tsx`    | Video player      | —     | - [x] Done |
-| 35  | `src/components/__tests__/course-card.test.tsx`     | Course card (11%) | —     | - [x] Done |
-| 36  | `src/components/__tests__/theme-toggle.test.tsx`    | Theme toggle      | —     | - [x] Done |
-| 37  | `src/components/__tests__/loading.test.tsx`         | Loading component | —     | - [x] Done |
-| 38  | `src/components/__tests__/empty-state.test.tsx`     | Empty state       | —     | - [x] Done |
-| 39  | `src/components/__tests__/chat-message.test.tsx`    | Chat message      | —     | - [ ] Todo |
-| 40  | `src/components/__tests__/code-block-copy.test.tsx` | Code block copy   | —     | - [x] Done |
-| 40b | `src/components/__tests__/blocker.test.tsx`         | Blocker component | —     | - [x] Done |
-| 40c | `src/components/__tests__/cta-section.test.tsx`     | CTA section       | —     | - [x] Done |
-| 40d | `src/components/__tests__/file-attachment.test.tsx` | File attachment   | —     | - [x] Done |
-| 40e | `src/components/__tests__/mention-picker.test.tsx`  | Mention picker    | —     | - [x] Done |
-| 40f | `src/components/__tests__/pricing-section.test.tsx` | Pricing section   | —     | - [x] Done |
+| #   | Test to Create                                             | Target            | Lines | Status     |
+| --- | ---------------------------------------------------------- | ----------------- | ----- | ---------- |
+| 29  | `src/hooks/__tests__/useSseSync.test.ts`                   | SSE sync hook     | 327   | - [x] Done |
+| 30  | `src/components/__tests__/header.test.tsx`                 | Header component  | —     | - [x] Done |
+| 31  | `src/components/__tests__/footer.test.tsx`                 | Footer component  | —     | - [x] Done |
+| 32  | `src/components/__tests__/error-boundary.test.tsx`         | Error boundary    | —     | - [x] Done |
+| 33  | `src/components/__tests__/confirm-dialog.test.tsx`         | Confirm dialog    | —     | - [x] Done |
+| 34  | `src/components/__tests__/video-player.test.tsx`           | Video player      | —     | - [x] Done |
+| 35  | `src/components/__tests__/course-card.test.tsx`            | Course card (11%) | —     | - [x] Done |
+| 36  | `src/components/__tests__/theme-toggle.test.tsx`           | Theme toggle      | —     | - [x] Done |
+| 37  | `src/components/__tests__/loading.test.tsx`                | Loading component | —     | - [x] Done |
+| 38  | `src/components/__tests__/empty-state.test.tsx`            | Empty state       | —     | - [x] Done |
+| 39  | `src/components/__tests__/chat-message.test.tsx`           | Chat message      | —     | - [ ] Todo |
+| 40  | `src/components/__tests__/code-block-copy.test.tsx`        | Code block copy   | —     | - [x] Done |
+| 40b | `src/components/__tests__/blocker.test.tsx`                | Blocker component | —     | - [x] Done |
+| 40c | `src/components/__tests__/cta-section.test.tsx`            | CTA section       | —     | - [x] Done |
+| 40d | `src/components/__tests__/file-attachment.test.tsx`        | File attachment   | —     | - [x] Done |
+| 40e | `src/components/__tests__/mention-picker.test.tsx`         | Mention picker    | —     | - [x] Done |
+| 40f | `src/components/__tests__/pricing-section.test.tsx`        | Pricing section   | —     | - [x] Done |
+| 40g | `src/components/__tests__/support-comment.test.tsx`        | Support comment   | —     | - [x] Done |
+| 40h | `src/components/layouts/__tests__/admin-layout.test.tsx`   | Admin layout      | —     | - [x] Done |
+| 40i | `src/components/layouts/__tests__/default-layout.test.tsx` | Default layout    | —     | - [x] Done |
 
 ### Phase 4: Web Forms and UI Components
 
@@ -656,6 +665,12 @@ These are the largest untested areas containing core business logic.
 | 47c | `src/components/forms/__tests__/delete-account-form.test.tsx`         | Delete account form  | —         | - [x] Done |
 | 48  | `src/lib/__tests__/auth.client.test.ts`                               | Auth client          | —         | - [ ] Todo |
 | 49  | `src/lib/__tests__/markdown.test.ts`                                  | Markdown utils       | —         | - [x] Done |
+| 49a | `src/components/ui/__tests__/card.test.tsx`                           | UI card primitives   | —         | - [x] Done |
+| 49b | `src/components/ui/__tests__/input.test.tsx`                          | UI input primitives  | —         | - [x] Done |
+| 49c | `src/components/ui/__tests__/label.test.tsx`                          | UI label             | —         | - [x] Done |
+| 49d | `src/components/ui/__tests__/nav-link.test.tsx`                       | UI nav-link          | —         | - [x] Done |
+| 49e | `src/components/ui/__tests__/form-status-message.test.tsx`            | UI form status       | —         | - [x] Done |
+| 49f | `src/components/ui/__tests__/table.test.tsx`                          | UI table primitives  | —         | - [x] Done |
 
 ### Phase 5: Missing E2E Tests
 
@@ -784,7 +799,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (50 test files, 483 tests + 12 todo)
+### Web (64 test files, 514 tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
@@ -799,14 +814,19 @@ Reports are generated in:
 - `src/components/__tests__/file-attachment.test.tsx` — 9 tests _(new)_
 - `src/components/__tests__/footer.test.tsx` — 10 tests
 - `src/components/__tests__/format-duration.test.ts` — 7 tests
+- `src/components/__tests__/header.test.tsx` — 3 tests _(new)_
 - `src/components/__tests__/instructor-card.test.tsx` — 6 tests
 - `src/components/__tests__/loading.test.tsx` — 4 tests
 - `src/components/__tests__/mention-picker.test.tsx` — 7 tests _(new)_
 - `src/components/__tests__/message-reactions-helpers.test.ts` — 10 tests
 - `src/components/__tests__/not-found.test.tsx` — 2 tests
 - `src/components/__tests__/pricing-section.test.tsx` — 9 tests _(new)_
+- `src/components/__tests__/report-message-dialog.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/support-comment.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
 - `src/components/__tests__/theme-toggle.test.tsx` — 6 tests
+- `src/components/__tests__/username-requirement-modal.test.tsx` — 5 tests
+  _(new)_
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
@@ -825,6 +845,14 @@ Reports are generated in:
   _(new)_
 - `src/components/forms/__tests__/delete-account-form.test.tsx` — 5 tests
   _(new)_
+- `src/components/layouts/__tests__/admin-layout.test.tsx` — 2 tests _(new)_
+- `src/components/layouts/__tests__/default-layout.test.tsx` — 3 tests _(new)_
+- `src/components/ui/__tests__/card.test.tsx` — 1 test _(new)_
+- `src/components/ui/__tests__/form-status-message.test.tsx` — 3 tests _(new)_
+- `src/components/ui/__tests__/input.test.tsx` — 3 tests _(new)_
+- `src/components/ui/__tests__/label.test.tsx` — 1 test _(new)_
+- `src/components/ui/__tests__/nav-link.test.tsx` — 2 tests _(new)_
+- `src/components/ui/__tests__/table.test.tsx` — 2 tests _(new)_
 - `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
 - `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
@@ -843,15 +871,18 @@ Reports are generated in:
 - `src/schema/__tests__/sign-up.test.ts` — 8 tests
 - `src/schema/__tests__/support-ticket.test.ts` — 16 tests
 
-### Cypress E2E (20 spec files)
+### Cypress E2E (23 spec files)
 
 - `account.cy.ts`
 - `admin-announcements.cy.ts`
 - `admin-course-creation-flow.cy.ts`
 - `admin-course-editor.cy.ts`
 - `admin-courses.cy.ts`
+- `admin-coupons.cy.ts`
 - `admin-navigation.cy.ts`
+- `admin-reviews.cy.ts`
 - `admin-stats.cy.ts`
+- `admin-users.cy.ts`
 - `auth-forms.cy.ts`
 - `blog.cy.ts` _(new)_
 - `support-tickets.cy.ts`
@@ -868,16 +899,14 @@ Reports are generated in:
 
 ---
 
-## Coverage Delta (2026-03-07)
+## Coverage Delta (2026-03-09)
 
-Compared to the previous baseline in this document:
+Compared to the previous baseline in this document (2026-03-08):
 
-> Pending next coverage rerun: +6 web tests were added after this snapshot.
-
-| App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
-| ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
-| **Server** | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
-| **Web**    | +2.08 pp   | +1.46 pp | +1.29 pp  | +1.87 pp | +3         | +9    |
+| App        | Statements      | Branches        | Functions       | Lines           | Test Files | Tests |
+| ---------- | --------------- | --------------- | --------------- | --------------- | ---------- | ----- |
+| **Server** | N/A (not rerun) | N/A (not rerun) | N/A (not rerun) | N/A (not rerun) | +0         | +0    |
+| **Web**    | +9.38 pp        | +9.54 pp        | +5.35 pp        | +8.51 pp        | +15        | +43   |
 
 ## Coverage Update Rule
 
@@ -899,3 +928,6 @@ After every test batch:
   testing them is low vs. testing queries and mutations that use them.
 - Plugin files are mostly thin configuration wrappers — lower priority unless
   they contain custom logic.
+- Some per-file coverage inventory tables above are now stale relative to the
+  2026-03-09 coverage run and should be refreshed from the HTML reports before
+  the next planning pass.
