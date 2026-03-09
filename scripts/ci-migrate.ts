@@ -87,6 +87,18 @@ async function runMigrations() {
       sql = sql.replaceAll("'my_schema'", `'${schemaName}'`);
       sql = sql.replaceAll("'my_schema.", `'${schemaName}.`);
 
+      // Guard against future migration patterns that are not covered by the
+      // rewrite logic above. Failing fast here makes schema-isolated CI safer.
+      if (
+        sql.includes('"my_schema"') ||
+        sql.includes("'my_schema'") ||
+        sql.includes("'my_schema.")
+      ) {
+        throw new Error(
+          `Migration ${file} still contains hardcoded my_schema after rewrite. Please update scripts/ci-migrate.ts replacement rules.`,
+        );
+      }
+
       // Split by Drizzle's statement breakpoint marker and execute each statement
       const statements = sql
         .split("--> statement-breakpoint")

@@ -111,6 +111,7 @@ jobs:
 
   server-tests:
     runs-on: ubuntu-latest
+    needs: check-format-lint-and-type-check
 
     strategy:
       matrix:
@@ -118,7 +119,7 @@ jobs:
         node-version: [22, 24, 25]
 
     env:
-      DATABASE_SCHEMA: ci_server_${{ matrix.node-version }}_${{ github.run_id }}
+      DATABASE_SCHEMA: ci_server_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
 
     steps:
       - name: Check out repository
@@ -165,6 +166,7 @@ jobs:
 
   web-tests:
     runs-on: ubuntu-latest
+    needs: check-format-lint-and-type-check
 
     strategy:
       matrix:
@@ -172,7 +174,7 @@ jobs:
         node-version: [22, 24, 25]
 
     env:
-      DATABASE_SCHEMA: ci_web_${{ matrix.node-version }}_${{ github.run_id }}
+      DATABASE_SCHEMA: ci_web_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
 
     steps:
       - name: Check out repository
@@ -219,6 +221,7 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    needs: check-format-lint-and-type-check
 
     strategy:
       matrix:
@@ -226,7 +229,7 @@ jobs:
         node-version: [22, 24, 25]
 
     env:
-      DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}
+      DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
 
     steps:
       - name: Check out repository
