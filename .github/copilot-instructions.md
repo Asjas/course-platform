@@ -65,6 +65,32 @@ These commands ensure code quality and catch errors early. Never commit without 
 
 **CRITICAL**: Always use `pnpm format` (which includes `--cache --cache-location .cache/prettier`). Never run `prettier --write` directly without cache flags - it bypasses the optimized configuration and is significantly slower.
 
+### Efficient Validation Workflow
+
+**CRITICAL**: Run validation strategically, not after every file edit.
+
+**Good workflow:**
+```bash
+# 1. Make ALL code changes first
+# 2. Run validation ONCE as a chain
+pnpm format && pnpm lint && pnpm typecheck
+
+# 3. If errors found, fix them
+# 4. Run validation again (once)
+```
+
+**Bad workflow (wasteful):**
+```bash
+# ❌ Running format multiple times
+pnpm format
+# ... edit file ...
+pnpm format
+# ... check output ...
+pnpm format 2>&1 | tail -20
+```
+
+**Why:** Even with caching, each run has overhead. Batch edits and validate once after completing a logical unit of work.
+
 ### Database (Drizzle)
 ```bash
 # Generate migration from schema (use this command in apps/server folder)

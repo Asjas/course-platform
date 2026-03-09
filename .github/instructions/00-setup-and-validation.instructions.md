@@ -123,11 +123,53 @@ pnpm format && pnpm lint && pnpm typecheck && pnpm build
 
 **All must pass before you commit**.
 
+## Efficient Validation Workflow
+
+**CRITICAL**: Run validation strategically, not after every file edit.
+
+### Good Workflow: Batch and Validate Once
+
+```bash
+# 1. Make ALL code changes/edits first
+# ... edit file1.ts ...
+# ... edit file2.ts ...
+# ... edit file3.ts ...
+
+# 2. Run validation ONCE as a chain
+pnpm format && pnpm lint && pnpm typecheck
+
+# 3. If errors found, fix them
+# 4. Run validation again (once)
+```
+
+### Bad Workflow: Multiple Separate Runs (WASTEFUL)
+
+```bash
+# ❌ WASTEFUL: Running format multiple times
+pnpm format
+# ... edit a file ...
+pnpm format
+# ... check output ...
+pnpm format 2>&1 | tail -20
+# ... then separately ...
+pnpm lint
+pnpm typecheck
+```
+
+### Why This Matters
+
+- Even with Prettier caching, each `pnpm format` run has overhead (cache checks, process startup, file I/O)
+- Running format "just to check" is unnecessary — it's deterministic (passes or fails)
+- Batching validation commands saves time and compute resources
+- Validation should happen after completing a logical unit of work, not after each keystroke
+- Using `pnpm format && pnpm lint && pnpm typecheck` in one chain is always better than running each separately
+
 ## Common Mistakes to AVOID
 
 ❌ **NEVER** skip validation steps
 ❌ **NEVER** commit when validation fails
 ❌ **NEVER** manually fix formatting - use `pnpm format`
+❌ **NEVER** run `pnpm format` multiple times when not needed - batch your edits first
 ❌ **NEVER** ignore "command not found" errors - install the tool first
 ❌ **NEVER** use npm or yarn - always use pnpm
 ❌ **NEVER** add new dependencies without updating package.json first

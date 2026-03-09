@@ -238,22 +238,48 @@ Readiness checks before running E2E:
 
 ### Frequent Validation (During Development)
 
-Run these checks **frequently** while developing — not just before commits.
-Catch issues early:
+Run validation checks strategically — not after every single file edit.
+
+**Efficient workflow:**
 
 ```bash
-# After modifying any file, format it:
-pnpm format
+# 1. Make ALL your code changes/edits first
+# 2. Run validation ONCE as a chain
+pnpm format && pnpm lint && pnpm typecheck
 
-# After significant code changes, check types:
-pnpm typecheck
-
-# After adding new code, check for lint issues:
-pnpm lint
+# 3. If errors are found, fix them
+# 4. Run validation again (once) after fixes
 
 # Periodically verify the build still works:
 pnpm build
 ```
+
+**CRITICAL: Avoid wasteful multiple runs**
+
+```bash
+# ❌ WASTEFUL: Running format multiple times
+pnpm format
+# ... edit a file ...
+pnpm format
+# ... check output ...
+pnpm format 2>&1 | tail -20
+
+# ✅ EFFICIENT: Batch edits, then validate once
+# ... edit file1.ts ...
+# ... edit file2.ts ...
+# ... edit file3.ts ...
+pnpm format && pnpm lint && pnpm typecheck
+```
+
+**Why this matters:**
+
+- Even with Prettier caching, each run has overhead (cache checks, process
+  startup, file I/O)
+- Running format "just to check" is unnecessary — it's deterministic (passes or
+  fails)
+- Batching validation commands saves time and compute resources
+- Validation should happen after completing a logical unit of work, not after
+  each keystroke
 
 ### Route Creation Workflow
 
