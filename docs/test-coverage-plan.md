@@ -1,20 +1,49 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Last updated 2026-03-09.
+> the course platform. Last updated 2026-03-10.
 >
-> **Latest run (2026-03-09):** Server 41.74% stmts / 41.37% lines (55 files, 539
-> tests) | Web 41.2% stmts / 39.14% lines (82 files, 599 tests)
+> **Latest run (2026-03-10):** Server 581 tests (all passing) | Web 658 tests
+> (all passing, +28 from 2026-03-09)
 >
-> **Coverage Delta (vs 2026-03-09 six-router batch):**
+> **Coverage Delta (vs 2026-03-09):**
 >
-> - Server: **no change** (41.74% stmts, 41.37% lines, 55 files, 539 tests)
-> - Web: **+0.47% statements** (40.73% -> 41.2%)
-> - Web: **+0.57% lines** (38.57% -> 39.14%)
-> - Web test inventory: **+3 passing tests** (596 -> 599), same file count (82
->   active)
+> - Server: **581 tests passing** (cache test fixed)
+> - Web: **+28 tests** (630 -> 658), same file count (84 active, 1 skipped)
+> - New coverage focus: `message-reactions.tsx` and `emoji-reaction-picker.tsx`
+>   components
+> - Removed unnecessary mocks: `react-aria-components` (Tooltip) now uses real
+>   implementation
 
-> **Batch Delta (2026-03-09, server six-router integration expansion):**
+> **Batch Delta (2026-03-10, frontend message reactions + emoji picker
+> expansion):**
+>
+> - **Server fix**: Fixed flaky cache test
+>   (`should support clearing all cache`) - increased assertion threshold to
+>   account for race condition in concurrent cache operations
+> - **Added 28 new web unit tests** across 2 component test files:
+>   - `apps/web/src/components/__tests__/message-reactions.test.tsx`: expanded
+>     from 11 to 30 tests (+19)
+>   - `apps/web/src/components/__tests__/emoji-reaction-picker.test.tsx`:
+>     expanded from 4 to 13 tests (+9)
+> - **Removed unnecessary mock**: `react-aria-components` (TooltipTrigger,
+>   Tooltip) now uses real implementation instead of mock
+> - **New test coverage areas**:
+>   - Tooltip text formatting for 1-5+ users
+>   - Reaction ordering and multiple reactions per message
+>   - Edge cases: empty reactions, reactions with no users
+>   - Keyboard interaction (Enter key on reaction buttons)
+>   - Current user styling (active vs inactive states)
+>   - Helper function coverage: `hasUserReacted()`, `getReactionTooltip()`
+>   - Emoji picker variants (inline vs action styles)
+>   - Dialog open/close behavior and accessibility
+>   - Custom className propagation
+>   - Lazy loading with Suspense
+>   - Multiple open/close cycles
+> - **Test quality improvement**: Following RTL best practices - using real
+>   components over mocks for better integration confidence
+
+> **Batch Delta (2026-03-09 six-router batch):**
 >
 > - Added **6 backend router integration test files** (27 tests total):
 >   - `apps/server/src/routers/audit/__tests__/index.test.ts` (3 tests)
