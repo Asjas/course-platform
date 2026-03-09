@@ -3,17 +3,36 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-10.
 >
-> **Latest run (2026-03-10):** Server 581 tests (all passing) | Web 658 tests
-> (all passing, +28 from 2026-03-09)
+> **Latest run (2026-03-10):** Server 581 tests (all passing) | Web 693 tests
+> (all passing, +63 from 2026-03-09 baseline: 630)
 >
-> **Coverage Delta (vs 2026-03-09):**
+> **Coverage Delta (vs 2026-03-09 baseline: 630 tests):**
 >
 > - Server: **581 tests passing** (cache test fixed)
-> - Web: **+28 tests** (630 -> 658), same file count (84 active, 1 skipped)
-> - New coverage focus: `message-reactions.tsx` and `emoji-reaction-picker.tsx`
->   components
+> - Web: **+63 tests** (630 -> 693), same file count (84 active, 1 skipped)
+> - New coverage focus: message reactions, emoji picker, chat UI, empty states,
+>   confirm dialogs
 > - Removed unnecessary mocks: `react-aria-components` (Tooltip) now uses real
 >   implementation
+
+> **Batch Delta (2026-03-10, component UI expansion - batch 2):**
+>
+> - **Added 35 new web unit tests** across 3 component test files:
+>   - `apps/web/src/components/__tests__/chat-date-divider.test.tsx`: expanded
+>     from 6 to 15 tests (+9)
+>   - `apps/web/src/components/__tests__/confirm-dialog.test.tsx`: expanded from
+>     7 to 20 tests (+13)
+>   - `apps/web/src/components/__tests__/empty-state.test.tsx`: expanded from 5
+>     to 19 tests (+14)
+> - **New test coverage areas**:
+>   - Chat date divider: horizontal dividers, pill styling, date formatting,
+>     year boundaries, semantic roles
+>   - Confirm dialog: variant styling (destructive/default), keyboard
+>     navigation, dialog roles, modal overlay behavior
+>   - Empty state: border/spacing styling, responsive layout, dark mode classes,
+>     long title/description handling
+> - **Test quality focus**: Testing visual styling, accessibility attributes,
+>   and user interaction patterns
 
 > **Batch Delta (2026-03-10, frontend message reactions + emoji picker
 > expansion):**
