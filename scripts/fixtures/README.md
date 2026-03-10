@@ -1,6 +1,8 @@
 # Test Fixtures
 
-This directory contains hardcoded, deterministic test data for the course platform. Using fixtures instead of randomly generated data provides several advantages:
+This directory contains hardcoded, deterministic test data for the course
+platform. Using fixtures instead of randomly generated data provides several
+advantages:
 
 ## Benefits
 
@@ -8,52 +10,64 @@ This directory contains hardcoded, deterministic test data for the course platfo
 2. **Faster** - No generation overhead, just load and insert
 3. **Simpler** - No complex generation logic or constraint handling
 4. **Easier to debug** - Inspect exact data being used
-5. **No FK issues** - Pre-validated relationships with guaranteed referential integrity
+5. **No FK issues** - Pre-validated relationships with guaranteed referential
+   integrity
 6. **Maintainable** - Easy to add/modify test scenarios
 
 ## Data Structure
 
 ### Users (`users.ts`)
+
 - 5 test users with deterministic IDs
-- IDs format: `user:01TESTUSER0000000000001` through `user:01TESTUSER0000000000005`
+- IDs format: `user:01TESTUSER0000000000001` through
+  `user:01TESTUSER0000000000005`
 - Includes students, instructor, admin, and reviewer roles
 
 ### Courses (`courses.ts`)
+
 - 2 courses:
   - **Learn Fastify** (ID: `course:01TESTCOURSE00000000001`)
     - 3 modules, 15 lessons
     - Intermediate level
     - On sale: $49 → $29
   - **TypeScript Advanced Patterns** (ID: `course:01TESTCOURSE00000000002`)
-    - 4 modules, 20 lessons  
+    - 4 modules, 20 lessons
     - Advanced level
     - Regular price: $79
 
 ### Modules (`modules.ts`)
+
 - 7 modules total across both courses
-- IDs format: `mod:01TESTMODULE000000000001` through `mod:01TESTMODULE000000000007`
+- IDs format: `mod:01TESTMODULE000000000001` through
+  `mod:01TESTMODULE000000000007`
 - Properly linked to courses via `courseId`
 - First module of each course is marked as free
 
 ### Lessons (`lessons.ts`)
+
 - 35 lessons total (15 for Fastify, 20 for TypeScript)
-- IDs format: `lesson:01TESTLESSON0000000001` through `lesson:01TESTLESSON0000000035`
+- IDs format: `lesson:01TESTLESSON0000000001` through
+  `lesson:01TESTLESSON0000000035`
 - Each lesson properly references both `moduleId` and `courseId`
 - Includes content, video URLs, durations, and ordering
 
 ### Enrollments (`enrollments.ts`)
+
 - 4 test enrollments
 - Mix of active and completed statuses
 - Various progress percentages (20%, 45%, 60%, 100%)
-- IDs format: `enrollment:01TESTENROLL00001` through `enrollment:01TESTENROLL00004`
+- IDs format: `enrollment:01TESTENROLL00001` through
+  `enrollment:01TESTENROLL00004`
 
 ### Reviews (`reviews.ts`)
+
 - 4 course reviews
 - Ratings from 3 to 5 stars
 - Mix of approved and pending reviews (to test review moderation)
 - IDs format: `review:01TESTREVIEW000001` through `review:01TESTREVIEW000004`
 
 ### Support Tickets (`support-tickets.ts`)
+
 - 4 support tickets with various statuses:
   - Open (unassigned)
   - In Progress (assigned)
@@ -65,18 +79,21 @@ This directory contains hardcoded, deterministic test data for the course platfo
 ## ID Format Convention
 
 All IDs follow a consistent pattern:
+
 - Prefix identifying the entity type
 - Colon separator
 - Base ID starting with `01TEST` followed by entity-specific padding
 - Sequential numbering
 
 Examples:
+
 - Users: `user:01TESTUSER0000000000001`
 - Courses: `course:01TESTCOURSE00000000001`
 - Modules: `mod:01TESTMODULE000000000001`
 - Lessons: `lesson:01TESTLESSON0000000001`
 
 This ensures:
+
 - Easy identification in logs/debugging
 - No conflicts with production data
 - Predictable sorting order
@@ -84,11 +101,14 @@ This ensures:
 
 ## Ghost User
 
-The seed script automatically creates a "ghost" user (`id: 'ghost'`) before inserting test data. This user is required by foreign key constraints in tables like `support_ticket` that have default values pointing to the ghost user.
+The seed script automatically creates a "ghost" user (`id: 'ghost'`) before
+inserting test data. This user is required by foreign key constraints in tables
+like `support_ticket` that have default values pointing to the ghost user.
 
 ## Usage
 
-The seed script (`seed-test-data.ts`) automatically loads all fixtures and inserts them in the correct order to respect foreign key constraints:
+The seed script (`seed-test-data.ts`) automatically loads all fixtures and
+inserts them in the correct order to respect foreign key constraints:
 
 1. Ghost user (system user)
 2. Users
@@ -112,6 +132,7 @@ To add new test data:
 ## Validation
 
 All fixture data respects database constraints:
+
 - Foreign key relationships are pre-validated
 - Check constraints are satisfied (e.g., `salePrice <= price`)
 - Required fields are populated
