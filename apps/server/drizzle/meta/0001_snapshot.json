@@ -118,12 +118,8 @@
           "tableFrom": "coupon",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "created_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["created_by"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -132,12 +128,8 @@
           "tableFrom": "coupon",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -147,9 +139,7 @@
         "coupon_code_unique": {
           "name": "coupon_code_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "code"
-          ]
+          "columns": ["code"]
         }
       },
       "policies": {},
@@ -266,12 +256,8 @@
           "tableFrom": "coupon_redemption",
           "tableTo": "coupon",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "coupon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coupon_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -280,12 +266,8 @@
           "tableFrom": "coupon_redemption",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -294,12 +276,8 @@
           "tableFrom": "coupon_redemption",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -483,12 +461,8 @@
           "tableFrom": "course",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["author_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -646,12 +620,8 @@
           "tableFrom": "course_completion_certificate",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -660,12 +630,8 @@
           "tableFrom": "course_completion_certificate",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -753,12 +719,8 @@
           "tableFrom": "course_faq",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -884,12 +846,8 @@
           "tableFrom": "course_instructor_note",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "instructor_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["instructor_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -898,12 +856,8 @@
           "tableFrom": "course_instructor_note",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1051,12 +1005,8 @@
           "tableFrom": "course_lesson",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1065,12 +1015,8 @@
           "tableFrom": "course_lesson",
           "tableTo": "course_module",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "module_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["module_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1181,12 +1127,8 @@
           "tableFrom": "course_module",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1329,12 +1271,8 @@
           "tableFrom": "course_review",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1343,12 +1281,8 @@
           "tableFrom": "course_review",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1489,12 +1423,8 @@
           "tableFrom": "course_wishlist",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1503,12 +1433,8 @@
           "tableFrom": "course_wishlist",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1773,12 +1699,8 @@
           "tableFrom": "enrollment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "gifted_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gifted_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -1787,12 +1709,8 @@
           "tableFrom": "enrollment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1801,12 +1719,8 @@
           "tableFrom": "enrollment",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1815,12 +1729,8 @@
           "tableFrom": "enrollment",
           "tableTo": "payment",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "payment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1829,12 +1739,8 @@
           "tableFrom": "enrollment",
           "tableTo": "invoice",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "invoice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invoice_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1843,12 +1749,8 @@
           "tableFrom": "enrollment",
           "tableTo": "team_license",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "team_license_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_license_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -1857,12 +1759,8 @@
           "tableFrom": "enrollment",
           "tableTo": "team_license_invite",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "team_invite_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["team_invite_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1986,12 +1884,8 @@
           "tableFrom": "account",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2067,12 +1961,8 @@
           "tableFrom": "invitation",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "inviter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["inviter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2081,12 +1971,8 @@
           "tableFrom": "invitation",
           "tableTo": "organization",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2149,12 +2035,8 @@
           "tableFrom": "member",
           "tableTo": "organization",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2163,12 +2045,8 @@
           "tableFrom": "member",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2235,9 +2113,7 @@
         "organization_slug_unique": {
           "name": "organization_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -2328,12 +2204,8 @@
           "tableFrom": "session",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2343,9 +2215,7 @@
         "session_token_unique": {
           "name": "session_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -2470,9 +2340,7 @@
         "user_email_unique": {
           "name": "user_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -2734,12 +2602,8 @@
           "tableFrom": "invoice",
           "tableTo": "payment",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "payment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2748,12 +2612,8 @@
           "tableFrom": "invoice",
           "tableTo": "coupon",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "coupon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coupon_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -2762,12 +2622,8 @@
           "tableFrom": "invoice",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         }
@@ -2777,9 +2633,7 @@
         "invoice_invoiceNumber_unique": {
           "name": "invoice_invoiceNumber_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "invoice_number"
-          ]
+          "columns": ["invoice_number"]
         }
       },
       "policies": {},
@@ -3103,12 +2957,8 @@
           "tableFrom": "payment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3117,12 +2967,8 @@
           "tableFrom": "payment",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3131,12 +2977,8 @@
           "tableFrom": "payment",
           "tableTo": "coupon",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "coupon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coupon_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3145,12 +2987,8 @@
           "tableFrom": "payment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "gift_recipient_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["gift_recipient_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -3160,9 +2998,7 @@
         "payment_transactionId_unique": {
           "name": "payment_transactionId_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "transaction_id"
-          ]
+          "columns": ["transaction_id"]
         }
       },
       "policies": {},
@@ -3421,12 +3257,8 @@
           "tableFrom": "support_ticket",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3435,12 +3267,8 @@
           "tableFrom": "support_ticket",
           "tableTo": "course_module",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "module_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["module_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3449,12 +3277,8 @@
           "tableFrom": "support_ticket",
           "tableTo": "course_lesson",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3463,12 +3287,8 @@
           "tableFrom": "support_ticket",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -3477,12 +3297,8 @@
           "tableFrom": "support_ticket",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "assigned_to_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assigned_to_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         }
@@ -3625,12 +3441,8 @@
           "tableFrom": "support_ticket_attachment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -3639,12 +3451,8 @@
           "tableFrom": "support_ticket_attachment",
           "tableTo": "support_ticket",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "ticket_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ticket_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3653,12 +3461,8 @@
           "tableFrom": "support_ticket_attachment",
           "tableTo": "support_ticket_comment",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "comment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["comment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3770,12 +3574,8 @@
           "tableFrom": "support_ticket_comment",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -3784,12 +3584,8 @@
           "tableFrom": "support_ticket_comment",
           "tableTo": "support_ticket",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "ticket_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ticket_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3942,12 +3738,8 @@
           "tableFrom": "team_license",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3956,12 +3748,8 @@
           "tableFrom": "team_license",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "purchaser_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["purchaser_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -3970,12 +3758,8 @@
           "tableFrom": "team_license",
           "tableTo": "organization",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3984,12 +3768,8 @@
           "tableFrom": "team_license",
           "tableTo": "invoice",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "invoice_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invoice_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3998,12 +3778,8 @@
           "tableFrom": "team_license",
           "tableTo": "payment",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "payment_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["payment_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4171,12 +3947,8 @@
           "tableFrom": "team_license_invite",
           "tableTo": "team_license",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "license_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["license_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4185,12 +3957,8 @@
           "tableFrom": "team_license_invite",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "invited_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invited_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         },
@@ -4199,12 +3967,8 @@
           "tableFrom": "team_license_invite",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "accepted_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["accepted_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4213,12 +3977,8 @@
           "tableFrom": "team_license_invite",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "revoked_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["revoked_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         }
@@ -4228,9 +3988,7 @@
         "team_license_invite_inviteCode_unique": {
           "name": "team_license_invite_inviteCode_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "invite_code"
-          ]
+          "columns": ["invite_code"]
         }
       },
       "policies": {},
@@ -4390,12 +4148,8 @@
           "tableFrom": "course_progress",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4404,12 +4158,8 @@
           "tableFrom": "course_progress",
           "tableTo": "course",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4555,12 +4305,8 @@
           "tableFrom": "lesson_progress",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4569,12 +4315,8 @@
           "tableFrom": "lesson_progress",
           "tableTo": "course_lesson",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "lesson_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["lesson_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4679,12 +4421,8 @@
           "tableFrom": "platform_announcement",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "author_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["author_id"],
+          "columnsTo": ["id"],
           "onDelete": "set default",
           "onUpdate": "no action"
         }
@@ -4810,12 +4548,8 @@
           "tableFrom": "platform_announcement_read",
           "tableTo": "platform_announcement",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "announcement_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["announcement_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4824,12 +4558,8 @@
           "tableFrom": "platform_announcement_read",
           "tableTo": "user",
           "schemaTo": "my_schema",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4845,127 +4575,72 @@
     "my_schema.discountType": {
       "name": "discountType",
       "schema": "my_schema",
-      "values": [
-        "percentage",
-        "fixed"
-      ]
+      "values": ["percentage", "fixed"]
     },
     "my_schema.course_access": {
       "name": "course_access",
       "schema": "my_schema",
-      "values": [
-        "public",
-        "private",
-        "unlisted"
-      ]
+      "values": ["public", "private", "unlisted"]
     },
     "my_schema.course_level": {
       "name": "course_level",
       "schema": "my_schema",
-      "values": [
-        "All levels",
-        "Beginner",
-        "Intermediate",
-        "Advanced"
-      ]
+      "values": ["All levels", "Beginner", "Intermediate", "Advanced"]
     },
     "my_schema.video_provider": {
       "name": "video_provider",
       "schema": "my_schema",
-      "values": [
-        "youtube"
-      ]
+      "values": ["youtube"]
     },
     "my_schema.course_enrollment_source": {
       "name": "course_enrollment_source",
       "schema": "my_schema",
-      "values": [
-        "direct",
-        "gift",
-        "team_invite"
-      ]
+      "values": ["direct", "gift", "team_invite"]
     },
     "my_schema.course_enrollment_status": {
       "name": "course_enrollment_status",
       "schema": "my_schema",
-      "values": [
-        "active",
-        "cancelled",
-        "refunded",
-        "completed"
-      ]
+      "values": ["active", "cancelled", "refunded", "completed"]
     },
     "my_schema.course_enrollment_type": {
       "name": "course_enrollment_type",
       "schema": "my_schema",
-      "values": [
-        "individual",
-        "gift",
-        "team"
-      ]
+      "values": ["individual", "gift", "team"]
     },
     "my_schema.members": {
       "name": "members",
       "schema": "my_schema",
-      "values": [
-        "member",
-        "admin"
-      ]
+      "values": ["member", "admin"]
     },
     "my_schema.paid_status": {
       "name": "paid_status",
       "schema": "my_schema",
-      "values": [
-        "paid",
-        "refunded"
-      ]
+      "values": ["paid", "refunded"]
     },
     "my_schema.payment_status": {
       "name": "payment_status",
       "schema": "my_schema",
-      "values": [
-        "pending",
-        "completed",
-        "failed",
-        "refunded"
-      ]
+      "values": ["pending", "completed", "failed", "refunded"]
     },
     "my_schema.purchase_type": {
       "name": "purchase_type",
       "schema": "my_schema",
-      "values": [
-        "individual",
-        "team"
-      ]
+      "values": ["individual", "team"]
     },
     "my_schema.support_ticket_priority": {
       "name": "support_ticket_priority",
       "schema": "my_schema",
-      "values": [
-        "low",
-        "medium",
-        "high",
-        "urgent"
-      ]
+      "values": ["low", "medium", "high", "urgent"]
     },
     "my_schema.support_ticket_status": {
       "name": "support_ticket_status",
       "schema": "my_schema",
-      "values": [
-        "open",
-        "in_progress",
-        "resolved",
-        "closed"
-      ]
+      "values": ["open", "in_progress", "resolved", "closed"]
     },
     "my_schema.seat_status": {
       "name": "seat_status",
       "schema": "my_schema",
-      "values": [
-        "pending",
-        "claimed",
-        "revoked"
-      ]
+      "values": ["pending", "claimed", "revoked"]
     },
     "my_schema.announcement_id_type": {
       "name": "announcement_id_type",
