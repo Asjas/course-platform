@@ -149,7 +149,7 @@ jobs:
         run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run server tests with coverage
-        run: pnpm --filter @apps/server test:coverage
+        run: pnpm turbo run test:coverage --filter=@apps/server --cache=remote:rw
 
       - name: Upload server coverage
         uses: actions/upload-artifact@v4
@@ -204,7 +204,7 @@ jobs:
         run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run web tests with coverage
-        run: pnpm --filter @apps/web test:coverage
+        run: pnpm turbo run test:coverage --filter=@apps/web --cache=remote:rw
 
       - name: Upload web coverage
         uses: actions/upload-artifact@v4

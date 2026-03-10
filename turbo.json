@@ -11,10 +11,26 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["^test"]
+      "dependsOn": ["build"],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "tests/**/*.{ts,tsx}",
+        "vitest.config.ts",
+        "test-setup.ts",
+        "package.json",
+        "tsconfig.json"
+      ]
     },
     "test:coverage": {
-      "dependsOn": ["^test"],
+      "dependsOn": ["build"],
+      "inputs": [
+        "src/**/*.{ts,tsx}",
+        "tests/**/*.{ts,tsx}",
+        "vitest.config.ts",
+        "test-setup.ts",
+        "package.json",
+        "tsconfig.json"
+      ],
       "outputs": ["coverage/**"]
     },
     "e2e:run": {
