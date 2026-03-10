@@ -21,7 +21,8 @@
         ".env",
         "package.json",
         "tsconfig.json"
-      ]
+      ],
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "test:coverage": {
       "dependsOn": ["^build"],
@@ -35,7 +36,8 @@
         "package.json",
         "tsconfig.json"
       ],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "e2e:run": {
       "dependsOn": ["build"],
@@ -51,7 +53,8 @@
         "../../scripts/seed-test-data.ts",
         "../../scripts/cleanup-test-data.ts"
       ],
-      "outputs": ["cypress/screenshots/**", "cypress/videos/**"]
+      "outputs": ["cypress/screenshots/**", "cypress/videos/**"],
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
