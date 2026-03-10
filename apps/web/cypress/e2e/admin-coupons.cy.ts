@@ -81,8 +81,8 @@ describe("Admin Coupons Management", () => {
 
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
-      cy.contains("15 %").should("be.visible");
-      cy.contains("0 / 50").should("be.visible");
+      cy.contains("25 %").should("be.visible");
+      cy.contains("0 / 100").should("be.visible");
       cy.contains("Active").should("be.visible");
     });
   });
