@@ -11,23 +11,27 @@
       "cache": false
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx}",
         "tests/**/*.{ts,tsx}",
+        "types/**/*.d.ts",
         "vitest.config.ts",
-        "test-setup.ts",
+        "vite.config.ts",
+        ".env",
         "package.json",
         "tsconfig.json"
       ]
     },
     "test:coverage": {
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx}",
         "tests/**/*.{ts,tsx}",
+        "types/**/*.d.ts",
         "vitest.config.ts",
-        "test-setup.ts",
+        "vite.config.ts",
+        ".env",
         "package.json",
         "tsconfig.json"
       ],
