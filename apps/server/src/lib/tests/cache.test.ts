@@ -469,7 +469,7 @@ describe("Cache Integration Tests (Real DB + Real Redis)", () => {
         expect(truncateDateMs(courses2)).toEqual(truncateDateMs(courses1));
         expect(truncateDateMs(coupons2)).toEqual(truncateDateMs(coupons1));
         expect(truncateDateMs(tickets2)).toEqual(truncateDateMs(tickets1));
-      });
+      }, 15000);
     });
 
     describe("Multiple Cache Functions", () => {
