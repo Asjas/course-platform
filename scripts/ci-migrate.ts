@@ -128,6 +128,36 @@ async function runMigrations() {
     }
 
     console.log("✅ All migrations completed successfully!");
+
+    // Verify critical tables exist in the target schema.
+    // This catches silent migration failures that would otherwise surface
+    // as confusing "relation does not exist" errors during tests.
+    const criticalTables = [
+      "user",
+      "course",
+      "platform_announcement",
+      "user_notification",
+      "support_ticket",
+      "enrollment",
+    ];
+
+    const { rows } = await client.query(
+      `SELECT table_name FROM information_schema.tables WHERE table_schema = $1`,
+      [schemaName],
+    );
+    const existingTables = new Set(rows.map((r) => r.table_name));
+    const missing = criticalTables.filter((t) => !existingTables.has(t));
+
+    if (missing.length > 0) {
+      throw new Error(
+        `Migration verification failed: missing tables in "${schemaName}": ${missing.join(", ")}. ` +
+          `Found ${existingTables.size} tables: ${[...existingTables].sort().join(", ")}`,
+      );
+    }
+
+    console.log(
+      `🔍 Verified ${criticalTables.length} critical tables exist (${existingTables.size} total)`,
+    );
   } finally {
     client.release();
   }
