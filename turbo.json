@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalPassThroughEnv": ["*"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -22,8 +23,7 @@
         "package.json",
         "tsconfig.json"
       ],
-      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"],
-      "passThroughEnv": ["*"]
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "test:coverage": {
       "dependsOn": ["^build"],
@@ -38,11 +38,11 @@
         "tsconfig.json"
       ],
       "outputs": ["coverage/**"],
-      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"],
-      "passThroughEnv": ["*"]
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "e2e:run": {
       "dependsOn": ["build"],
+      "cache": false,
       "inputs": [
         "cypress.config.ts",
         "cypress/**/*.ts",
@@ -56,8 +56,7 @@
         "../../scripts/cleanup-test-data.ts"
       ],
       "outputs": ["cypress/screenshots/**", "cypress/videos/**"],
-      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"],
-      "passThroughEnv": ["*"]
+      "env": ["DATABASE_SCHEMA", "DATABASE_URL", "CI"]
     },
     "typecheck": {
       "dependsOn": ["^build"],
