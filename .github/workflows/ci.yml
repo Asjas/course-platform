@@ -290,17 +290,20 @@ jobs:
           echo "=== Checking health endpoint ==="
           curl -v http://localhost:3000/health || echo "Health check failed"
 
-      - name: Cypress run
-        uses: cypress-io/github-action@v6
+      - name: Start frontend preview in background
+        env:
+          CI: true
+        run: |
+          pnpm --filter @apps/web preview > web.log 2>&1 &
+          echo $! > web.pid
+
+      - name: Wait for frontend to be ready
+        run: npx wait-on http://localhost:4173 --timeout 120000
+
+      - name: Cypress run via Turbo cache
         env:
           NO_DBUS: 1
-        with:
-          working-directory: apps/web
-          install: false
-          start: pnpm --filter @apps/web preview
-          wait-on: "http://localhost:4173"
-          wait-on-timeout: 120
-          browser: chrome
+        run: pnpm turbo run e2e:run --filter=@apps/web --cache=remote:rw -- --browser chrome
 
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
@@ -327,12 +330,27 @@ jobs:
             kill $(cat server.pid) || true
           fi
 
+      - name: Stop frontend preview
+        if: always()
+        run: |
+          if [ -f web.pid ]; then
+            kill $(cat web.pid) || true
+          fi
+
       - name: Show server logs on failure
         if: failure()
         run: |
           if [ -f server.log ]; then
             echo "=== Backend Server Logs ==="
             cat server.log
+          fi
+
+      - name: Show frontend logs on failure
+        if: failure()
+        run: |
+          if [ -f web.log ]; then
+            echo "=== Frontend Preview Logs ==="
+            cat web.log
           fi
 
       - name: Cleanup test database

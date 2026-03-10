@@ -17,6 +17,22 @@
       "dependsOn": ["^test"],
       "outputs": ["coverage/**"]
     },
+    "e2e:run": {
+      "dependsOn": ["build"],
+      "inputs": [
+        "cypress.config.ts",
+        "cypress/**/*.ts",
+        "src/**/*.{ts,tsx,css}",
+        "public/**",
+        "index.html",
+        "vite.config.ts",
+        "../server/src/**/*.ts",
+        "../server/package.json",
+        "../../scripts/seed-test-data.ts",
+        "../../scripts/cleanup-test-data.ts"
+      ],
+      "outputs": ["cypress/screenshots/**", "cypress/videos/**"]
+    },
     "typecheck": {
       "dependsOn": ["^build"],
       "outputs": [".cache/tsbuildinfo/**"]
