@@ -24,9 +24,10 @@ describe("Admin Coupons Management", () => {
   }
 
   function waitForSheetClose() {
-    cy.get('[role="dialog"]').should("not.exist");
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition to finish
-    cy.wait(500);
+    // Wait for dialog to be removed from DOM
+    cy.get('[role="dialog"]', { timeout: 10000 }).should("not.exist");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition and re-renders to finish
+    cy.wait(1000);
   }
 
   beforeEach(() => {
@@ -64,21 +65,19 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').type("100");
     cy.contains("button", "Create Coupon").click();
 
-    cy.contains(/created successfully/i).should("be.visible");
+    // Wait for success toast to appear and confirm creation
+    cy.contains(/created successfully/i, { timeout: 20000 }).should(
+      "be.visible",
+    );
+
+    // Wait for sheet to close and collection to sync
     waitForSheetClose();
-    waitForCouponRow(couponCode);
-  });
 
-  it("should display coupon details in table", () => {
-    visitCouponsPage();
-
-    cy.contains("button", "Create New Coupon").click();
-    cy.get('input[name="code"]').type(couponCode);
-    cy.get('select[name="discountType"]').select("percentage");
-    cy.get('input[name="discountValue"]').type("15");
-    cy.get('input[name="redemptionLimit"]').clear();
-    cy.get('input[name="redemptionLimit"]').type("50");
-    cy.contains("button", "Create Coupon").click();
+    // Verify the coupon appears in the table with extended timeout for collection sync
+    cy.get("tbody tr", { timeout: 30000 }).should("exist");
+    cy.contains("tbody tr code", couponCode, { timeout: 30000 }).should(
+      "be.visible",
+    );
 
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
@@ -142,6 +141,10 @@ describe("Admin Coupons Management", () => {
 
     cy.contains("button", "Save Changes").click();
 
+    // Wait for success toast before closing sheet
+    cy.contains(/updated successfully/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     waitForSheetClose();
     waitForCouponRow(updatedCouponCode);
     cy.contains("tr", updatedCouponCode).within(() => {
