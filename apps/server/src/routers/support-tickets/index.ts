@@ -138,8 +138,6 @@ export const supportTicketsRouter = router({
     .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
       const fastify = ctx.reply.server;
 
-      console.log("Creating support ticket with input:", input);
-
       const newSupportTicket: NewSupportTicket = {
         ...input,
         userId: ctx.user.id,
