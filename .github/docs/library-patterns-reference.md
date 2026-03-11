@@ -356,9 +356,8 @@ export function hasUserReacted(reaction: Reaction): boolean {
   - `src/lib/tests/` for server library tests
   - `src/hooks/tests/` for server hook tests
   - `src/schema/__tests__/` for schema validation tests
-  - `src/lib/__tests__/` for web library utility tests
-  - `src/components/__tests__/` for component utility tests
-  - `src/lib/collections/__tests__/` for collection utility tests
+  - `src/lib/__tests__/` for web library utility tests (including collection utilities)
+  - `src/components/__tests__/` for component unit tests
 
 ---
 

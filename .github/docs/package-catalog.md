@@ -119,7 +119,7 @@ CSS 4
   in loaders: `Collection.preload()` then `Collection.get(id)`, fallback to
   tRPC + `Collection.utils.writeUpsert()`.
 - **CRITICAL**: ALL data fetching MUST use collections from
-  `~/lib/collections/`. Never use tRPC or React Query directly in components.
+  `~/lib/db.collections`. Never use tRPC or React Query directly in components.
 
 #### TanStack DevTools (dev only)
 
@@ -552,8 +552,8 @@ import { useForm } from "@tanstack/react-form";
 ### TanStack React-DB (v0 BETA)
 
 ```typescript
-import { useLiveQuery } from "@tanstack/react-db";
-import { createCollection, queryCollectionOptions } from "@tanstack/db";
+import { createCollection, useLiveQuery, eq } from "@tanstack/react-db";
+import { queryCollectionOptions } from "@tanstack/query-db-collection";
 ```
 
 ### Drizzle ORM (v0.45)

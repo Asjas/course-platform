@@ -19,7 +19,7 @@ docs.
 
 ## Frontend Data Access
 
-- [ ] Component-level data access examples use `~/lib/collections`.
+- [ ] Component-level data access examples use `~/lib/db.collections`.
 - [ ] No direct component-level `useQuery`, `useMutation`, or direct tRPC usage
       is introduced unless marked as an explicit transitional exception.
 - [ ] Transitional exceptions are documented in
