@@ -60,7 +60,7 @@ Key patterns:
 
 REST + tRPC API server with PostgreSQL database.
 
-```
+```text
 apps/server/src/
 ├── routes/        # Fastify REST routes (handlers/ subdirectory per feature)
 ├── routers/       # tRPC routers (queries.ts + mutations.ts per domain)
