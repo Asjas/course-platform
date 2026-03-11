@@ -1,20 +1,3 @@
-const NOTIFICATION_LOAD_TIMEOUT = 15000;
-
-function interceptNotificationQueries() {
-  cy.intercept("GET", "**/trpc/announcements.getUnreadForUser*").as(
-    "getUnreadAnnouncements",
-  );
-  cy.intercept("GET", "**/trpc/notifications.getUnreadForUser*").as(
-    "getUnreadNotifications",
-  );
-  cy.intercept("GET", "**/trpc/announcements.getReadForUser*").as(
-    "getReadAnnouncements",
-  );
-  cy.intercept("GET", "**/trpc/notifications.getReadForUser*").as(
-    "getReadNotifications",
-  );
-}
-
 describe("Notifications - Unauthenticated", () => {
   it("should not show notifications bell when not logged in", () => {
     cy.visit("/");
@@ -50,52 +33,45 @@ describe("Notifications - Authenticated", () => {
     cy.contains("button", "Read").should("be.visible");
   });
 
-  it("should display notification items or empty state in New tab", () => {
-    interceptNotificationQueries();
-
+  it("should display empty state in New tab", () => {
     cy.contains("button", "Notifications").first().click();
-
-    // Wait for the notification data to load before asserting
-    cy.wait("@getUnreadAnnouncements", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-    cy.wait("@getUnreadNotifications", { timeout: NOTIFICATION_LOAD_TIMEOUT });
 
     // The New tab should show the empty state (test user has no notifications)
-    cy.contains("No new notifications").should("be.visible");
+    cy.contains("No new notifications", { timeout: 10000 }).should(
+      "be.visible",
+    );
   });
 
-  it("should switch to Read tab and show content", () => {
-    interceptNotificationQueries();
-
+  it("should switch to Read tab and show empty state", () => {
     cy.contains("button", "Notifications").first().click();
 
-    // Wait for initial data to load
-    cy.wait("@getUnreadAnnouncements", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-    cy.wait("@getUnreadNotifications", { timeout: NOTIFICATION_LOAD_TIMEOUT });
+    // Wait for the New tab content to settle first
+    cy.contains("No new notifications", { timeout: 10000 }).should(
+      "be.visible",
+    );
 
     // Click the Read tab
     cy.contains("button", "Read").click();
 
-    // Wait for read notifications data to load
-    cy.wait("@getReadAnnouncements", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-    cy.wait("@getReadNotifications", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-
     // The Read tab should show the empty state (test user has no read notifications)
-    cy.contains("No read notifications").should("be.visible");
+    cy.contains("No read notifications", { timeout: 10000 }).should(
+      "be.visible",
+    );
   });
 
   it("should switch back to New tab after viewing Read tab", () => {
-    interceptNotificationQueries();
-
     cy.contains("button", "Notifications").first().click();
 
-    // Wait for initial data to load
-    cy.wait("@getUnreadAnnouncements", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-    cy.wait("@getUnreadNotifications", { timeout: NOTIFICATION_LOAD_TIMEOUT });
+    // Wait for New tab content
+    cy.contains("No new notifications", { timeout: 10000 }).should(
+      "be.visible",
+    );
 
     // Switch to Read tab
     cy.contains("button", "Read").click();
-    cy.wait("@getReadAnnouncements", { timeout: NOTIFICATION_LOAD_TIMEOUT });
-    cy.wait("@getReadNotifications", { timeout: NOTIFICATION_LOAD_TIMEOUT });
+    cy.contains("No read notifications", { timeout: 10000 }).should(
+      "be.visible",
+    );
 
     // Switch back to New tab
     cy.contains("button", /^New/).click();
