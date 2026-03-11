@@ -359,3 +359,287 @@ export function hasUserReacted(reaction: Reaction): boolean {
   - `src/lib/__tests__/` for web library utility tests
   - `src/components/__tests__/` for component utility tests
   - `src/lib/collections/__tests__/` for collection utility tests
+
+---
+
+## async-cache-dedupe (Server Cache Layer)
+
+**Version**: 2.x (used in `apps/server/src/lib/cache.ts`)
+
+All hot DB reads are registered in the cache with `cache.define()`. The cache
+uses Redis as a backing store and superjson for serialization.
+
+### Registering a Cached Function
+
+```typescript
+// src/lib/cache.ts
+import { createCache } from "async-cache-dedupe";
+import { redis } from "~/lib/redis.js";
+import { ONE_HOUR } from "~/lib/constants.js";
+
+const cache = createCache({
+  storage: { type: "redis", options: { client: redis, invalidation: true } },
+});
+
+// Register a cached function with TTL and reference keys
+cache.define(
+  "getMyEntity",                             // Function name (unique)
+  {
+    ttl: ONE_HOUR,                           // Seconds to cache
+    serialize: (args) => args.entityId,      // Cache key derivation
+    references(args) {
+      // These keys are used for bulk invalidation
+      return [`entity~id~${args.entityId}`, "entity~all"];
+    },
+  },
+  getMyEntity,                               // The actual query function
+);
+
+export { cache };
+```
+
+### Calling a Cached Function
+
+```typescript
+// In a tRPC router or Fastify handler, access via fastify.cache
+const result = await fastify.cache.getMyEntity({ entityId: "123" });
+```
+
+### Invalidating Cache After Mutations
+
+After any mutation, invalidate all affected references:
+
+```typescript
+// Invalidate both the specific entity and the "all" listing
+await fastify.cache.invalidateAll([
+  `entity~all`,
+  `entity~id~${entity.id}`,
+]);
+```
+
+### Reference Key Conventions
+
+The project uses these reference key patterns:
+
+| Pattern | Example | When to use |
+|---------|---------|-------------|
+| `entity~all` | `course~all` | Invalidate all listings |
+| `entity~id~{id}` | `course~id~abc123` | Invalidate a specific entity |
+| `entity~user~{userId}` | `notification~user~xyz` | Invalidate user-scoped data |
+
+---
+
+## TanStack React-DB + query-db-collection
+
+**Packages**: `@tanstack/react-db` + `@tanstack/query-db-collection`  
+**Location**: All collections in `apps/web/src/lib/db.collections.ts`
+
+### Creating a Collection
+
+```typescript
+import { queryCollectionOptions } from "@tanstack/query-db-collection";
+import { createCollection, eq, useLiveQuery } from "@tanstack/react-db";
+import type { AllItems } from "@apps/server/src/routers/items/queries.js";
+import { trpc, trpcClient } from "~/lib/trpc.client";
+import { queryClient } from "~/lib/query-client";
+import { ulid } from "ulid";
+
+export type Item = AllItems[number];
+
+export const ItemsCollection = createCollection(
+  queryCollectionOptions<Item>({
+    queryClient,                                     // TanStack Query client
+    getKey: (item) => item.id,                       // Primary key extractor
+    queryKey: trpc.items.getAll.queryKey(),          // Integrates with React Query cache
+    queryFn: () => trpcClient.items.getAll.query(), // Fetches data
+    onInsert: async ({ transaction }) => {
+      const { modified } = transaction.mutations[0];
+      return trpcClient.items.create.mutate({ ...modified });
+    },
+    onUpdate: async ({ transaction }) => {
+      const { modified } = transaction.mutations[0];
+      return trpcClient.items.update.mutate({ ...modified });
+    },
+    onDelete: async ({ transaction }) => {
+      const { original } = transaction.mutations[0];
+      await trpcClient.items.delete.mutate({ id: original.id });
+    },
+  }),
+);
+```
+
+### Writing Hook Functions
+
+```typescript
+// Hook for all items
+export function useItems() {
+  return useLiveQuery(ItemsCollection);
+}
+
+// Hook for filtered query (single item by ID)
+export function useItemById({ itemId }: { itemId: string }) {
+  return useLiveQuery(
+    (query) =>
+      query
+        .from({ item: ItemsCollection })
+        .where(({ item }) => eq(item.id, itemId))
+        .findOne(),
+    [itemId],  // dependency array for memoization
+  );
+}
+```
+
+### Preloading in Route Loaders
+
+Always preload collections in route loaders to eliminate loading spinners:
+
+```typescript
+export const Route = createFileRoute("/_authenticated/items")({
+  loader: async () => {
+    await ItemsCollection.preload();
+  },
+  component: ItemsPage,
+});
+```
+
+For multiple collections, preload in parallel:
+
+```typescript
+await Promise.all([ItemsCollection.preload(), OtherCollection.preload()]);
+```
+
+### Inserting with ULID
+
+```typescript
+const tx = ItemsCollection.insert({
+  id: ulid(),    // Always generate a ULID for the client-side ID
+  ...itemData,
+});
+await tx.isPersisted.promise;  // Wait for server confirmation
+```
+
+### Error Handling in CRUD Handlers
+
+Wrap all onInsert/onUpdate/onDelete handlers:
+
+```typescript
+onInsert: async ({ transaction }) => {
+  try {
+    const { modified } = transaction.mutations[0];
+    return await trpcClient.items.create.mutate({ ...modified });
+  } catch (error) {
+    console.error("Failed to create item:", error);
+    toast.error("Failed to save. Please try again.");
+    throw error;  // Re-throw to roll back the optimistic update
+  }
+},
+```
+
+---
+
+## TanStack Form
+
+**Package**: `@tanstack/react-form`  
+**Validation**: Zod 4 schemas via `validators: { onBlur, onSubmit }`
+
+### Basic Form Structure
+
+```tsx
+import { useForm } from "@tanstack/react-form";
+import { mySchema } from "~/schema/my-form";
+import FieldInfo from "~/components/field-info";
+
+export default function MyForm() {
+  const form = useForm({
+    defaultValues: { title: "", description: "" },
+    validators: {
+      onBlur: mySchema,    // Validate on field blur
+      onSubmit: mySchema,  // Validate on form submit
+    },
+    onSubmit: async ({ value }) => {
+      // value is fully typed and validated
+      await doSomething(value);
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}
+      noValidate  // Disable browser native validation
+    >
+      <form.Field
+        name="title"
+        children={({ state, handleChange, handleBlur }) => (
+          <div>
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              state={state}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+            />
+            <FieldInfo field={state} />  {/* Renders validation errors */}
+          </div>
+        )}
+      />
+
+      <form.Subscribe
+        selector={(state) => [state.isDirty, state.isSubmitting]}
+        children={([isDirty, isSubmitting]) => (
+          <Button type="submit" disabled={!isDirty || isSubmitting}>
+            {isSubmitting ? "Saving..." : "Save"}
+          </Button>
+        )}
+      />
+    </form>
+  );
+}
+```
+
+### FieldInfo Component
+
+The `~/components/field-info.tsx` helper displays validation errors for a field:
+
+```tsx
+import type { AnyFieldApi } from "@tanstack/react-form";
+
+export default function FieldInfo({ field }: { field: AnyFieldApi }) {
+  const isInvalid = field.state.meta.isTouched && !field.state.meta.isValid;
+  return (
+    <>
+      {isInvalid && (
+        <em className="ml-6 text-sm/6 text-red-600">
+          {field.state.meta.errors.map((e) => e.message).join(", ")}
+        </em>
+      )}
+    </>
+  );
+}
+```
+
+### Navigation Blocker
+
+Use `<BlockerComponent formIsDirty={isDirty} />` to prevent accidental navigation
+away from an unsaved form:
+
+```tsx
+<form.Subscribe
+  selector={(state) => [state.isDirty]}
+  children={([isDirty]) => <BlockerComponent formIsDirty={isDirty} />}
+/>
+```
+
+### Zod Schema for Forms
+
+```typescript
+// src/schema/my-form.ts
+import { z } from "zod";
+
+export const myFormSchema = z.object({
+  email: z.string().trim().check(z.email()),    // Trim before email validation
+  title: z.string().trim().min(1, "Required"),  // Trim before min check
+  url: z.string().trim().check(z.url()),        // Trim before URL validation
+});
+
+export type MyFormValues = z.infer<typeof myFormSchema>;
+```
