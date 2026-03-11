@@ -25,36 +25,42 @@ describe("Notifications - Authenticated", () => {
     cy.get("h3").contains("Notifications").should("be.visible");
   });
 
-  it("should show New tab as active by default", () => {
+  it("should show New and Read tab buttons in the panel", () => {
     cy.contains("button", "Notifications").first().click();
 
-    // The New tab button should have active styling (bg-green-600)
+    // The New tab button should be visible (active by default)
     cy.contains("button", /^New/).should("be.visible");
     cy.contains("button", "Read").should("be.visible");
   });
 
-  it("should show empty state when no new notifications exist", () => {
+  it("should display notification items or empty state in New tab", () => {
     cy.contains("button", "Notifications").first().click();
 
-    // Should show no-new empty state or notification items
+    // The New tab should show either notification items or the empty state text
     cy.get("body").then(($body) => {
       if ($body.find(':contains("No new notifications")').length > 0) {
         cy.contains("No new notifications").should("be.visible");
+      } else {
+        // If there are notifications, at least one notification item should be rendered
+        cy.get("h4").should("have.length.greaterThan", 0);
       }
       return undefined;
     });
   });
 
-  it("should switch to Read tab and show read empty state or items", () => {
+  it("should switch to Read tab and show content", () => {
     cy.contains("button", "Notifications").first().click();
 
     // Click the Read tab
     cy.contains("button", "Read").click();
 
-    // Should show the read tab content (either items or empty state)
+    // The Read tab should show either read items or the empty state text
     cy.get("body").then(($body) => {
       if ($body.find(':contains("No read notifications")').length > 0) {
         cy.contains("No read notifications").should("be.visible");
+      } else {
+        // If there are read notifications, at least one should be rendered
+        cy.get("h4").should("have.length.greaterThan", 0);
       }
       return undefined;
     });
@@ -68,10 +74,12 @@ describe("Notifications - Authenticated", () => {
     // Switch back to New tab
     cy.contains("button", /^New/).click();
 
-    // Should be back on the New tab
+    // Verify the New tab content is shown (either items or empty state)
     cy.get("body").then(($body) => {
       if ($body.find(':contains("No new notifications")').length > 0) {
         cy.contains("No new notifications").should("be.visible");
+      } else {
+        cy.get("h4").should("have.length.greaterThan", 0);
       }
       return undefined;
     });

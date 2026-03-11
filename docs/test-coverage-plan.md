@@ -4,7 +4,7 @@
 > the course platform. Last updated 2026-03-11.
 >
 > **Latest run (2026-03-11):** Server 581 tests (all passing, last run
-> 2026-03-10) | Web 658 Vitest tests (78 files, 1 skipped) | Cypress 28 spec
+> 2026-03-10) | Web 658 Vitest tests (78 files, 1 skipped) | Cypress 29 spec
 > files
 >
 > **Batch Delta (2026-03-11, migrate network-dependent tests to Cypress E2E):**
@@ -36,7 +36,7 @@
 >   (notifications, header auth state, layout rendering) is now tested through
 >   real E2E flows with actual database/server, not mocked Vitest tests
 > - **Net Vitest delta**: 706 → 658 tests (−48), 84 → 78 files (−6)
-> - **Net Cypress delta**: 26 → 30 spec files (+4), ~34 new E2E assertions
+> - **Net Cypress delta**: 26 → 29 spec files (+3), ~34 new E2E assertions
 >
 > **Batch Delta (2026-03-10, component UI expansion - batch 2):**
 >
@@ -673,7 +673,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 30 Spec Files
+### Cypress E2E Tests — 29 Spec Files
 
 #### Features Covered by E2E
 
