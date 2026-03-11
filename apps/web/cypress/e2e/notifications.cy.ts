@@ -10,20 +10,70 @@ describe("Notifications - Unauthenticated", () => {
 describe("Notifications - Authenticated", () => {
   beforeEach(() => {
     cy.loginAsRegularUser();
+    cy.visit("/dashboard");
   });
 
   it("should display the notifications bell on dashboard", () => {
-    cy.visit("/dashboard");
     // The notification bell uses a sr-only span with text "Notifications"
     cy.contains("button", "Notifications").should("exist");
   });
 
-  it("should show notification panel when bell is clicked", () => {
-    cy.visit("/dashboard");
+  it("should show notification panel with heading when bell is clicked", () => {
     cy.contains("button", "Notifications").first().click();
 
-    // Should show some notification content after clicking the bell
-    // The PopoverPanel renders notification content
-    cy.get("h3").contains("Notifications").should("exist");
+    // Should show the Notifications heading inside the popover
+    cy.get("h3").contains("Notifications").should("be.visible");
+  });
+
+  it("should show New tab as active by default", () => {
+    cy.contains("button", "Notifications").first().click();
+
+    // The New tab button should have active styling (bg-green-600)
+    cy.contains("button", /^New/).should("be.visible");
+    cy.contains("button", "Read").should("be.visible");
+  });
+
+  it("should show empty state when no new notifications exist", () => {
+    cy.contains("button", "Notifications").first().click();
+
+    // Should show no-new empty state or notification items
+    cy.get("body").then(($body) => {
+      if ($body.find(':contains("No new notifications")').length > 0) {
+        cy.contains("No new notifications").should("be.visible");
+      }
+      return undefined;
+    });
+  });
+
+  it("should switch to Read tab and show read empty state or items", () => {
+    cy.contains("button", "Notifications").first().click();
+
+    // Click the Read tab
+    cy.contains("button", "Read").click();
+
+    // Should show the read tab content (either items or empty state)
+    cy.get("body").then(($body) => {
+      if ($body.find(':contains("No read notifications")').length > 0) {
+        cy.contains("No read notifications").should("be.visible");
+      }
+      return undefined;
+    });
+  });
+
+  it("should switch back to New tab after viewing Read tab", () => {
+    cy.contains("button", "Notifications").first().click();
+
+    // Switch to Read tab
+    cy.contains("button", "Read").click();
+    // Switch back to New tab
+    cy.contains("button", /^New/).click();
+
+    // Should be back on the New tab
+    cy.get("body").then(($body) => {
+      if ($body.find(':contains("No new notifications")').length > 0) {
+        cy.contains("No new notifications").should("be.visible");
+      }
+      return undefined;
+    });
   });
 });

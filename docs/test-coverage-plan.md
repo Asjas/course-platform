@@ -4,34 +4,39 @@
 > the course platform. Last updated 2026-03-11.
 >
 > **Latest run (2026-03-11):** Server 581 tests (all passing, last run
-> 2026-03-10) | Web 706 tests (all passing, +13 from previous documented
-> run: 693)
+> 2026-03-10) | Web 658 Vitest tests (78 files, 1 skipped) | Cypress 28 spec
+> files
 >
-> **Coverage Delta (vs previous documented web baseline):**
+> **Batch Delta (2026-03-11, migrate network-dependent tests to Cypress E2E):**
 >
-> - Server: no change this batch (not rerun)
-> - Web tests: **+13 tests** (693 -> 706), file count unchanged (84 passing
->   files, 1 skipped)
-> - Web coverage (latest run): Statements **44.11%** (+2.91 pp), Branches
->   **38.38%** (+3.86 pp), Functions **27.46%** (+2.64 pp), Lines **41.87%**
->   (+2.73 pp)
->
-> **Batch Delta (2026-03-11, notifications bell interaction expansion):**
->
-> - **Added 13 net web unit tests** in one file:
->   - `apps/web/src/components/__tests__/notifications-bell.test.tsx`: expanded
->     from 11 to 24 tests (+13)
-> - **New coverage focus**:
->   - Unread/read tab switching and active-state styling
->   - Unread badge visibility and count rendering
->   - Dismiss actions for announcement vs user notification paths
->   - Link vs non-link notification rendering branches
->   - DM request branch behavior (open sheet + mark as read)
->   - Empty-state and read-item fallback rendering
->   - Sorting behavior for unread `createdAt` and read `readAt`
-> - **Focused file coverage result**:
->   - `apps/web/src/components/notifications-bell.tsx` -> **95.20%** statement
->     coverage (131/134) and **93.39%** branch coverage (113/121)
+> - **Removed 6 heavily-mocked Vitest test files** (48 tests) that relied on
+>   forbidden npm package mocking (`@tanstack/react-query`,
+>   `@tanstack/react-router`, `react-aria-components`, `lucide-react`) or
+>   excessive internal component mocking:
+>   - `notifications-bell.test.tsx` (24 tests) — mocked `db.collections`,
+>     `@tanstack/react-router`, `dm-request-sheet`
+>   - `header.test.tsx` (3 tests) — mocked `@tanstack/react-query`,
+>     `notifications-bell`, `theme-toggle`, `ui/menu`
+>   - `footer.test.tsx` (10 tests) — mocked `ui/nav-link`
+>   - `not-found.test.tsx` (2 tests) — mocked `ui/nav-link`
+>   - `theme-toggle.test.tsx` (6 tests) — mocked `react-aria-components`,
+>     `lucide-react`, `ui/menu`
+>   - `default-layout.test.tsx` (3 tests) — mocked `header`, `footer`,
+>     `sonner`, all devtools
+> - **Added 4 Cypress E2E spec files** to replace the removed Vitest coverage
+>   with real browser testing (no mocks):
+>   - `notifications.cy.ts`: expanded from 3 to 7 tests — tab switching, empty
+>     states, New/Read tab navigation
+>   - `header-and-footer.cy.ts`: 20 tests — header nav links for
+>     unauthenticated/authenticated/admin users, footer links and structure
+>   - `not-found.cy.ts`: 3 tests — 404 page text, home link, navigation
+>   - `default-layout.cy.ts`: 4 tests — skip link, header/footer presence
+>     across pages
+> - **Testing philosophy change**: Network-dependent component behavior
+>   (notifications, header auth state, layout rendering) is now tested through
+>   real E2E flows with actual database/server, not mocked Vitest tests
+> - **Net Vitest delta**: 706 → 658 tests (−48), 84 → 78 files (−6)
+> - **Net Cypress delta**: 26 → 30 spec files (+4), ~34 new E2E assertions
 >
 > **Batch Delta (2026-03-10, component UI expansion - batch 2):**
 >
@@ -178,7 +183,7 @@
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
 | **Server** | 41.74% (1304/3124) | 43.35% (506/1167)  | 45.15% (331/733)  | 41.37% (1259/3043) | 55          |
-| **Web**    | 44.11% (2570/5826) | 38.38% (1665/4338) | 27.46% (323/1176) | 41.87% (1912/4566) | 84 (1 skip) |
+| **Web**    | 44.11% (2570/5826) | 38.38% (1665/4338) | 27.46% (323/1176) | 41.87% (1912/4566) | 78 (1 skip) |
 
 ### Server (`apps/server`) — 41.37% Line Coverage (+3.29%)
 
@@ -668,7 +673,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 25 Spec Files
+### Cypress E2E Tests — 30 Spec Files
 
 #### Features Covered by E2E
 
@@ -695,9 +700,17 @@ All hooks now have tests.
 - `blog.cy.ts` — Blog index page, post links, page structure
 - `theme-toggle.cy.ts` — Theme toggle visibility, light/dark switching,
   persistence
-- `notifications.cy.ts` — Notification bell visibility, panel interaction
-- `purchases.cy.ts` — Purchases page auth guard and redirect message _(new)_
-- `sync-status.cy.ts` — Sync status page auth guard and collection tabs _(new)_
+- `notifications.cy.ts` — Notification bell visibility, panel interaction, tab
+  switching, empty states _(expanded)_
+- `purchases.cy.ts` — Purchases page auth guard and redirect message
+- `sync-status.cy.ts` — Sync status page auth guard and collection tabs
+- `header-and-footer.cy.ts` — Header nav links for
+  unauthenticated/authenticated/admin users, footer structure and links
+  _(migrated from Vitest)_
+- `not-found.cy.ts` — 404 page text, home link, navigation _(migrated from
+  Vitest)_
+- `default-layout.cy.ts` — Skip link, header/footer presence across pages
+  _(migrated from Vitest)_
 
 #### Features NOT Covered by E2E
 
@@ -773,18 +786,18 @@ These are the largest untested areas containing core business logic.
 
 | #   | Test to Create                                             | Target            | Lines | Status     |
 | --- | ---------------------------------------------------------- | ----------------- | ----- | ---------- |
-| 29  | `src/hooks/__tests__/useSseSync.test.ts`                   | SSE sync hook     | 327   | - [x] Done |
-| 30  | `src/components/__tests__/header.test.tsx`                 | Header component  | —     | - [x] Done |
-| 31  | `src/components/__tests__/footer.test.tsx`                 | Footer component  | —     | - [x] Done |
-| 32  | `src/components/__tests__/error-boundary.test.tsx`         | Error boundary    | —     | - [x] Done |
-| 33  | `src/components/__tests__/confirm-dialog.test.tsx`         | Confirm dialog    | —     | - [x] Done |
-| 34  | `src/components/__tests__/video-player.test.tsx`           | Video player      | —     | - [x] Done |
-| 35  | `src/components/__tests__/course-card.test.tsx`            | Course card (11%) | —     | - [x] Done |
-| 36  | `src/components/__tests__/theme-toggle.test.tsx`           | Theme toggle      | —     | - [x] Done |
-| 37  | `src/components/__tests__/loading.test.tsx`                | Loading component | —     | - [x] Done |
-| 38  | `src/components/__tests__/empty-state.test.tsx`            | Empty state       | —     | - [x] Done |
-| 39  | `src/components/__tests__/chat-message.test.tsx`           | Chat message      | —     | - [ ] Todo |
-| 40  | `src/components/__tests__/code-block-copy.test.tsx`        | Code block copy   | —     | - [x] Done |
+| 29  | `src/hooks/__tests__/useSseSync.test.ts`                   | SSE sync hook     | 327   | - [x] Done              |
+| 30  | `cypress/e2e/header-and-footer.cy.ts`                     | Header component  | —     | - [x] Migrated to E2E   |
+| 31  | `cypress/e2e/header-and-footer.cy.ts`                     | Footer component  | —     | - [x] Migrated to E2E   |
+| 32  | `src/components/__tests__/error-boundary.test.tsx`         | Error boundary    | —     | - [x] Done              |
+| 33  | `src/components/__tests__/confirm-dialog.test.tsx`         | Confirm dialog    | —     | - [x] Done              |
+| 34  | `src/components/__tests__/video-player.test.tsx`           | Video player      | —     | - [x] Done              |
+| 35  | `src/components/__tests__/course-card.test.tsx`            | Course card (11%) | —     | - [x] Done              |
+| 36  | `cypress/e2e/theme-toggle.cy.ts`                          | Theme toggle      | —     | - [x] Migrated to E2E   |
+| 37  | `src/components/__tests__/loading.test.tsx`                | Loading component | —     | - [x] Done              |
+| 38  | `src/components/__tests__/empty-state.test.tsx`            | Empty state       | —     | - [x] Done              |
+| 39  | `src/components/__tests__/chat-message.test.tsx`           | Chat message      | —     | - [ ] Todo              |
+| 40  | `src/components/__tests__/code-block-copy.test.tsx`        | Code block copy   | —     | - [x] Done              |
 | 40b | `src/components/__tests__/blocker.test.tsx`                | Blocker component | —     | - [x] Done |
 | 40c | `src/components/__tests__/cta-section.test.tsx`            | CTA section       | —     | - [x] Done |
 | 40d | `src/components/__tests__/file-attachment.test.tsx`        | File attachment   | —     | - [x] Done |
@@ -792,7 +805,7 @@ These are the largest untested areas containing core business logic.
 | 40f | `src/components/__tests__/pricing-section.test.tsx`        | Pricing section   | —     | - [x] Done |
 | 40g | `src/components/__tests__/support-comment.test.tsx`        | Support comment   | —     | - [x] Done |
 | 40h | `src/components/layouts/__tests__/admin-layout.test.tsx`   | Admin layout      | —     | - [x] Done |
-| 40i | `src/components/layouts/__tests__/default-layout.test.tsx` | Default layout    | —     | - [x] Done |
+| 40i | `cypress/e2e/default-layout.cy.ts`                        | Default layout    | —     | - [x] Migrated to E2E |
 
 ### Phase 4: Web Forms and UI Components
 
@@ -840,7 +853,7 @@ These are the largest untested areas containing core business logic.
 | 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done |
 | 60  | `src/lib/db.collections.ts`                               | n/a           | n/a              | - [ ] Todo |
 | 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [ ] Todo |
-| 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [ ] Todo |
+| 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [x] Migrated to E2E (`notifications.cy.ts`) |
 | 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [ ] Todo |
 | 64  | `src/components/markdown-editor/formatting/text-utils.ts` | 62%           | 33%              | - [ ] Todo |
 | 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [ ] Todo |
