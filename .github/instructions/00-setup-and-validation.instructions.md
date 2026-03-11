@@ -43,4 +43,5 @@ cd apps/server && DATABASE_URL=postgresql://localhost:5432/dummy \
 - Schema definitions must use `mySchema.table()` / `mySchema.enum()` (import `mySchema` from `~/db/my-schema.js`)
 - After creating routes in `apps/web/src/routes/`, run `pnpm --filter @apps/web dev` once to regenerate `routeTree.gen.ts`
 - Server relative imports use `.js` extension (ESM output); frontend imports omit extensions (Vite resolves)
-- IDs use ULID (`import { ulid } from "ulid"`), not UUID
+- Internal/database entity IDs (e.g. primary keys for our own tables) should use ULID (`import { ulid } from "ulid"`) instead of UUID for new code
+- External IDs defined by third-party services and non-entity identifiers (e.g. upload filenames) may use UUIDs or `crypto.randomUUID()` as required by those use cases
