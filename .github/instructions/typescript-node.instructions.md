@@ -33,7 +33,8 @@ description: "Coding style guide for Node.js backend with TypeScript, Fastify, t
 - Use double quotes (`"`) for string literals.
 - Use `.js` extension for relative file imports (TypeScript compiles to ESM).
 - Use path alias `~/` for imports (maps to `src/`).
-- **IDs**: Use ULID (`import { ulid } from "ulid"`), never UUID or `crypto.randomUUID()`.
+- **Internal entity IDs** (DB primary keys and other app-generated internal IDs): Use ULID (`import { ulid } from "ulid"`); do not use UUID or `crypto.randomUUID()` for these.
+- **Allowed exceptions**: UUIDs and `crypto.randomUUID()` may be used for external identifiers and non-entity values where appropriate (for example, `LEARN_FASTIFY_POLAR_PRODUCT_ID` or upload filenames), as long as they are not used as internal primary keys.
 
 ### Fastify Routes (REST API)
 - Define routes in `/src/routes/<feature>/` directories.
