@@ -4,24 +4,34 @@ describe("Header - Unauthenticated", () => {
   });
 
   it("should show Sign In and Sign Up links for unauthenticated users", () => {
-    cy.get("a").contains("Sign In").should("have.attr", "href", "/signin");
-    cy.get("a").contains("Sign Up").should("have.attr", "href", "/signup");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Sign In").should("have.attr", "href", "/signin");
+      cy.get("a").contains("Sign Up").should("have.attr", "href", "/signup");
+    });
   });
 
   it("should not show Dashboard link for unauthenticated users", () => {
-    cy.get("a").contains("Dashboard").should("not.exist");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Dashboard").should("not.exist");
+    });
   });
 
   it("should not show Chat link for unauthenticated users", () => {
-    cy.get("a").contains("Chat").should("not.exist");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Chat").should("not.exist");
+    });
   });
 
   it("should not show Admin link for unauthenticated users", () => {
-    cy.get("a").contains("Admin").should("not.exist");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Admin").should("not.exist");
+    });
   });
 
   it("should show the theme toggle button", () => {
-    cy.get("button").filter('[aria-label*="Change theme"]').should("exist");
+    cy.get("header").within(() => {
+      cy.get("button").filter('[aria-label*="Change theme"]').should("exist");
+    });
   });
 });
 
@@ -32,20 +42,28 @@ describe("Header - Authenticated Regular User", () => {
   });
 
   it("should show Dashboard and Chat links for authenticated users", () => {
-    cy.get("a").contains("Dashboard").should("be.visible");
-    cy.get("a").contains("Chat").should("be.visible");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Dashboard").should("be.visible");
+      cy.get("a").contains("Chat").should("be.visible");
+    });
   });
 
   it("should not show Admin link for non-admin users", () => {
-    cy.get("a").contains("Admin").should("not.exist");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Admin").should("not.exist");
+    });
   });
 
   it("should show the notifications bell for authenticated users", () => {
-    cy.contains("button", "Notifications").should("exist");
+    cy.get("header").within(() => {
+      cy.contains("button", "Notifications").should("exist");
+    });
   });
 
   it("should show the theme toggle for authenticated users", () => {
-    cy.get("button").filter('[aria-label*="Change theme"]').should("exist");
+    cy.get("header").within(() => {
+      cy.get("button").filter('[aria-label*="Change theme"]').should("exist");
+    });
   });
 });
 
@@ -56,13 +74,17 @@ describe("Header - Authenticated Admin User", () => {
   });
 
   it("should show Admin link for admin users", () => {
-    cy.get("a").contains("Admin").should("be.visible");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Admin").should("be.visible");
+    });
   });
 
   it("should show Dashboard, Chat, and Admin links", () => {
-    cy.get("a").contains("Dashboard").should("be.visible");
-    cy.get("a").contains("Chat").should("be.visible");
-    cy.get("a").contains("Admin").should("be.visible");
+    cy.get('header nav[aria-label="Global"]').within(() => {
+      cy.get("a").contains("Dashboard").should("be.visible");
+      cy.get("a").contains("Chat").should("be.visible");
+      cy.get("a").contains("Admin").should("be.visible");
+    });
   });
 });
 

@@ -34,54 +34,84 @@ describe("Notifications - Authenticated", () => {
   });
 
   it("should display notification items or empty state in New tab", () => {
+    // Intercept the tRPC queries that fire when the notification panel opens
+    cy.intercept("GET", "**/trpc/announcements.getUnreadForUser*").as(
+      "getUnreadAnnouncements",
+    );
+    cy.intercept("GET", "**/trpc/notifications.getUnreadForUser*").as(
+      "getUnreadNotifications",
+    );
+
     cy.contains("button", "Notifications").first().click();
 
-    // The New tab should show either notification items or the empty state text
-    cy.get("body").then(($body) => {
-      if ($body.find(':contains("No new notifications")').length > 0) {
-        cy.contains("No new notifications").should("be.visible");
-      } else {
-        // If there are notifications, at least one notification item should be rendered
-        cy.get("h4").should("have.length.greaterThan", 0);
-      }
-      return undefined;
-    });
+    // Wait for the notification data to load before asserting
+    cy.wait("@getUnreadAnnouncements", { timeout: 15000 });
+    cy.wait("@getUnreadNotifications", { timeout: 15000 });
+
+    // The New tab should show the empty state (test user has no notifications)
+    cy.contains("No new notifications").should("be.visible");
   });
 
   it("should switch to Read tab and show content", () => {
+    cy.intercept("GET", "**/trpc/announcements.getUnreadForUser*").as(
+      "getUnreadAnnouncements",
+    );
+    cy.intercept("GET", "**/trpc/notifications.getUnreadForUser*").as(
+      "getUnreadNotifications",
+    );
+    cy.intercept("GET", "**/trpc/announcements.getReadForUser*").as(
+      "getReadAnnouncements",
+    );
+    cy.intercept("GET", "**/trpc/notifications.getReadForUser*").as(
+      "getReadNotifications",
+    );
+
     cy.contains("button", "Notifications").first().click();
+
+    // Wait for initial data to load
+    cy.wait("@getUnreadAnnouncements", { timeout: 15000 });
+    cy.wait("@getUnreadNotifications", { timeout: 15000 });
 
     // Click the Read tab
     cy.contains("button", "Read").click();
 
-    // The Read tab should show either read items or the empty state text
-    cy.get("body").then(($body) => {
-      if ($body.find(':contains("No read notifications")').length > 0) {
-        cy.contains("No read notifications").should("be.visible");
-      } else {
-        // If there are read notifications, at least one should be rendered
-        cy.get("h4").should("have.length.greaterThan", 0);
-      }
-      return undefined;
-    });
+    // Wait for read notifications data to load
+    cy.wait("@getReadAnnouncements", { timeout: 15000 });
+    cy.wait("@getReadNotifications", { timeout: 15000 });
+
+    // The Read tab should show the empty state (test user has no read notifications)
+    cy.contains("No read notifications").should("be.visible");
   });
 
   it("should switch back to New tab after viewing Read tab", () => {
+    cy.intercept("GET", "**/trpc/announcements.getUnreadForUser*").as(
+      "getUnreadAnnouncements",
+    );
+    cy.intercept("GET", "**/trpc/notifications.getUnreadForUser*").as(
+      "getUnreadNotifications",
+    );
+    cy.intercept("GET", "**/trpc/announcements.getReadForUser*").as(
+      "getReadAnnouncements",
+    );
+    cy.intercept("GET", "**/trpc/notifications.getReadForUser*").as(
+      "getReadNotifications",
+    );
+
     cy.contains("button", "Notifications").first().click();
+
+    // Wait for initial data to load
+    cy.wait("@getUnreadAnnouncements", { timeout: 15000 });
+    cy.wait("@getUnreadNotifications", { timeout: 15000 });
 
     // Switch to Read tab
     cy.contains("button", "Read").click();
+    cy.wait("@getReadAnnouncements", { timeout: 15000 });
+    cy.wait("@getReadNotifications", { timeout: 15000 });
+
     // Switch back to New tab
     cy.contains("button", /^New/).click();
 
-    // Verify the New tab content is shown (either items or empty state)
-    cy.get("body").then(($body) => {
-      if ($body.find(':contains("No new notifications")').length > 0) {
-        cy.contains("No new notifications").should("be.visible");
-      } else {
-        cy.get("h4").should("have.length.greaterThan", 0);
-      }
-      return undefined;
-    });
+    // Verify the New tab content shows the empty state
+    cy.contains("No new notifications").should("be.visible");
   });
 });
