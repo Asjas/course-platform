@@ -198,9 +198,13 @@ export default function MyForm() {
       />
 
       <form.Subscribe
-        selector={(state) => [state.isDirty, state.isSubmitting]}
-        children={([isDirty, isSubmitting]) => (
-          <Button type="submit" disabled={!isDirty || isSubmitting}>
+        selector={(state) => [state.isSubmitting]}
+        children={([isSubmitting]) => (
+          <Button
+            type="submit"
+            aria-disabled={isSubmitting}
+            data-loading={isSubmitting ? "true" : "false"}
+          >
             {isSubmitting ? "Submitting..." : "Submit"}
           </Button>
         )}
