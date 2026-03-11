@@ -33,9 +33,15 @@ apps/web/src/
 
 Key patterns:
 
-- **Offline-first**: ALL data fetching goes through `~/lib/db.collections` hooks
-  (`useSupportTickets`, `useCourses`, etc.), never direct tRPC/React Query in
-  components.
+- **Offline-first**: By default, app-facing data fetching should go through
+  hooks in `~/lib/db.collections` (e.g. `useSupportTickets`, `useCourses`, etc.)
+  rather than direct tRPC/React Query in components, so queries participate in
+  the offline cache.
+- **Exceptions**: Direct `trpc.*.useQuery` / `useQuery` + `trpc.*.queryOptions()`
+  MAY be used for request-scoped or ephemeral data, admin-only pages, or other
+  flows that are explicitly excluded from offline caching; follow the exception
+  policy in `.github/instructions/trpc-type-patterns.instructions.md` and
+  `.github/docs/ai-instructions-consistency.md`.
 - **Collections**: Use `queryCollectionOptions` from `@tanstack/query-db-collection` +
   `createCollection` from `@tanstack/react-db`. Live queries via `useLiveQuery`.
 - **File-based routing**: TanStack Router with `__root.tsx`, `index.tsx`,
