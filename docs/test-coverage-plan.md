@@ -1,20 +1,38 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Last updated 2026-03-10.
+> the course platform. Last updated 2026-03-11.
 >
-> **Latest run (2026-03-10):** Server 581 tests (all passing) | Web 693 tests
-> (all passing, +63 from 2026-03-09 baseline: 630)
+> **Latest run (2026-03-11):** Server 581 tests (all passing, last run
+> 2026-03-10) | Web 706 tests (all passing, +13 from previous documented
+> run: 693)
 >
-> **Coverage Delta (vs 2026-03-09 baseline: 630 tests):**
+> **Coverage Delta (vs previous documented web baseline):**
 >
-> - Server: **581 tests passing** (cache test fixed)
-> - Web: **+63 tests** (630 -> 693), same file count (84 active, 1 skipped)
-> - New coverage focus: message reactions, emoji picker, chat UI, empty states,
->   confirm dialogs
-> - Removed unnecessary mocks: `react-aria-components` (Tooltip) now uses real
->   implementation
-
+> - Server: no change this batch (not rerun)
+> - Web tests: **+13 tests** (693 -> 706), file count unchanged (84 passing
+>   files, 1 skipped)
+> - Web coverage (latest run): Statements **44.11%** (+2.91 pp), Branches
+>   **38.38%** (+3.86 pp), Functions **27.46%** (+2.64 pp), Lines **41.87%**
+>   (+2.73 pp)
+>
+> **Batch Delta (2026-03-11, notifications bell interaction expansion):**
+>
+> - **Added 13 net web unit tests** in one file:
+>   - `apps/web/src/components/__tests__/notifications-bell.test.tsx`: expanded
+>     from 11 to 24 tests (+13)
+> - **New coverage focus**:
+>   - Unread/read tab switching and active-state styling
+>   - Unread badge visibility and count rendering
+>   - Dismiss actions for announcement vs user notification paths
+>   - Link vs non-link notification rendering branches
+>   - DM request branch behavior (open sheet + mark as read)
+>   - Empty-state and read-item fallback rendering
+>   - Sorting behavior for unread `createdAt` and read `readAt`
+> - **Focused file coverage result**:
+>   - `apps/web/src/components/notifications-bell.tsx` -> **95.20%** statement
+>     coverage (131/134) and **93.39%** branch coverage (113/121)
+>
 > **Batch Delta (2026-03-10, component UI expansion - batch 2):**
 >
 > - **Added 35 new web unit tests** across 3 component test files:
@@ -33,7 +51,7 @@
 >     long title/description handling
 > - **Test quality focus**: Testing visual styling, accessibility attributes,
 >   and user interaction patterns
-
+>
 > **Batch Delta (2026-03-10, frontend message reactions + emoji picker
 > expansion):**
 >
@@ -61,7 +79,7 @@
 >   - Multiple open/close cycles
 > - **Test quality improvement**: Following RTL best practices - using real
 >   components over mocks for better integration confidence
-
+>
 > **Batch Delta (2026-03-09 six-router batch):**
 >
 > - Added **6 backend router integration test files** (27 tests total):
@@ -75,7 +93,7 @@
 >   internal-error mapping for router procedures.
 > - Expanded `createCaller` integration coverage across admin-only, public, and
 >   authenticated server router paths.
-
+>
 > **Batch Delta (2026-03-09, frontend admin audit and refund coverage):**
 >
 > - Added **1 frontend RTL test file** (3 tests):
@@ -89,7 +107,7 @@
 >   invalidation, and error toast on failure
 > - E2E test validates admin-only access to audit logs, table or empty state
 >   display, and permission denial for non-admin users
-
+>
 > **Batch Delta (2026-03-09, server notifications/sync-status integration):**
 >
 > - Added **2 backend router integration test files** (12 tests total):
@@ -160,7 +178,7 @@
 | App        | Statements         | Branches           | Functions         | Lines              | Test Files  |
 | ---------- | ------------------ | ------------------ | ----------------- | ------------------ | ----------- |
 | **Server** | 41.74% (1304/3124) | 43.35% (506/1167)  | 45.15% (331/733)  | 41.37% (1259/3043) | 55          |
-| **Web**    | 41.2% (2402/5830)  | 34.52% (1499/4342) | 24.82% (292/1176) | 39.14% (1788/4568) | 82 (1 skip) |
+| **Web**    | 44.11% (2570/5826) | 38.38% (1665/4338) | 27.46% (323/1176) | 41.87% (1912/4566) | 84 (1 skip) |
 
 ### Server (`apps/server`) — 41.37% Line Coverage (+3.29%)
 
@@ -369,7 +387,7 @@ clipping on announcements list causes element visibility failures after update
 
 ---
 
-### Web (`apps/web`) — 38.61% Line Coverage (+0.04%)
+### Web (`apps/web`) — 41.87% Line Coverage (+3.26%)
 
 #### Web Coverage Snapshot
 
@@ -928,7 +946,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (82 test files, 575 passing tests + 12 todo)
+### Web (84 test files, 706 passing tests + 12 todo)
 
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
@@ -959,7 +977,7 @@ Reports are generated in:
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
-- `src/components/__tests__/notifications-bell.test.tsx` — 11 tests
+- `src/components/__tests__/notifications-bell.test.tsx` — 24 tests
 - `src/components/forms/__tests__/sign-in-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/sign-up-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/profile-form.test.tsx` — 3 tests _(new)_
@@ -1027,14 +1045,14 @@ Reports are generated in:
 
 ---
 
-## Coverage Delta (2026-03-09)
+## Coverage Delta (2026-03-11)
 
-Compared to the previous baseline in this document (2026-03-09, prior batch):
+Compared to the previous documented web run in this document (693 tests):
 
 | App        | Statements | Branches | Functions | Lines    | Test Files | Tests |
 | ---------- | ---------- | -------- | --------- | -------- | ---------- | ----- |
 | **Server** | +0.00 pp   | +0.00 pp | +0.00 pp  | +0.00 pp | +0         | +0    |
-| **Web**    | +0.04 pp   | +0.00 pp | +0.08 pp  | +0.04 pp | +0         | +10   |
+| **Web**    | +2.91 pp   | +3.86 pp | +2.64 pp  | +2.73 pp | +0         | +13   |
 
 ## Coverage Update Rule
 
