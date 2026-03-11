@@ -245,7 +245,8 @@ Use a repository-local temp directory for run artifacts:
    (`pnpm format && pnpm lint && pnpm typecheck && pnpm build`) before
    committing.
 4. **ALWAYS use pnpm** with `--frozen-lockfile` for installs.
-5. **IDs** use ULID (`import { ulid } from "ulid"`), never UUID or `crypto.randomUUID()`.
+5. **IDs** — Internal entity IDs (DB primary keys) use ULID (`import { ulid } from "ulid"`).
+   UUIDs/`crypto.randomUUID()` are fine for external system identifiers and non-entity values.
 6. When creating new routes in `apps/web/src/routes/`, run the dev server once
    to generate route types.
 
