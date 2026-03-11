@@ -52,7 +52,9 @@ Key patterns:
 - **React Compiler**: `babel-plugin-react-compiler` is enabled — no need for manual
   `useMemo`/`useCallback` unless you have a measured performance reason.
 - **Forms**: Use `@tanstack/react-form` with Zod validators.
-- **IDs**: Always use ULID (`import { ulid } from "ulid"`), never UUID.
+- **IDs**: Internal entity IDs use ULID (`import { ulid } from "ulid"`). UUIDs are
+  fine for external system identifiers and non-entity values (e.g. config values,
+  temporary filenames).
 
 ### 2) Backend (`apps/server/`)
 
