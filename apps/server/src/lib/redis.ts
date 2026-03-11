@@ -5,6 +5,7 @@ const redisOptions: RedisOptions = {
   host: config.REDIS_HOST,
   port: config.REDIS_PORT,
   password: config.REDIS_PASSWORD,
+  db: config.REDIS_DB,
   enableAutoPipelining: true,
 };
 

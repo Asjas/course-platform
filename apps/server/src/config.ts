@@ -63,6 +63,11 @@ export const schema = z.object({
     .pipe(z.number().positive())
     .default(6379),
   REDIS_PASSWORD: z.string().optional(),
+  REDIS_DB: z
+    .string()
+    .transform((val) => parseInt(val, 10))
+    .pipe(z.number().min(0).max(15))
+    .default(0),
 
   // Payment variables
   POLAR_ACCESS_TOKEN: z.string().nonempty(),
