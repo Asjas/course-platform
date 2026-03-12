@@ -325,7 +325,12 @@ jobs:
       - name: Generate E2E coverage report
         if: always()
         working-directory: apps/web
-        run: pnpm e2e:coverage:report
+        run: |
+          if [ ! -d ".nyc_output" ] || [ -z "$(ls -A .nyc_output 2>/dev/null || true)" ]; then
+            echo "No NYC coverage output found in .nyc_output; skipping E2E coverage report."
+            exit 0
+          fi
+          pnpm e2e:coverage:report
 
       - name: Upload E2E coverage
         uses: actions/upload-artifact@v4
