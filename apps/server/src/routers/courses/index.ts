@@ -411,11 +411,11 @@ export const coursesRouter = router({
                 type: "course_published",
                 title: `Course updated: ${course.name}`,
                 message: `The course "${course.name}" has been updated with new content.`,
-                link: `/courses/${course.slug}`,
+                link: `/courses/${course.id}`,
               },
               emailNotification: {
                 subject: `Course update: ${course.name}`,
-                text: `The course "${course.name}" has been updated.\n\nVisit the course to see the latest changes: /courses/${course.slug}`,
+                text: `The course "${course.name}" has been updated.\n\nVisit the course to see the latest changes: /courses/${course.id}`,
               },
             }),
           ),
