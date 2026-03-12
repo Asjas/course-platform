@@ -1,4 +1,4 @@
-import { eq, inArray, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 import { enrollment } from "~/db/schema/enrollment.js";
 import { user } from "~/db/schema/user.js";

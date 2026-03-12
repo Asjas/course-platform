@@ -691,7 +691,7 @@ export const coursesRouter = router({
                 type: "course_published",
                 title: `Lesson updated: ${lesson.title}`,
                 message: `A lesson in your course has been updated: "${lesson.title}".`,
-                link: `/courses/${lesson.courseId}/lessons/${lesson.slug}`,
+                link: `/courses/${lesson.courseId}/lessons/${lesson.id}`,
               },
               emailNotification: {
                 subject: `Lesson updated: ${lesson.title}`,

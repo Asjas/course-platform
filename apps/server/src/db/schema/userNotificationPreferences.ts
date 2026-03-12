@@ -1,4 +1,5 @@
-import { boolean, index, text, uniqueIndex } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, check, index, text, uniqueIndex } from "drizzle-orm/pg-core";
 import { mySchema } from "~/db/my-schema.js";
 import { timestamps } from "~/db/schema/columns.helpers.js";
 import { user } from "~/db/schema/user.js";
@@ -64,5 +65,9 @@ export const userNotificationPreference = mySchema.table(
   (table) => [
     index("user_notif_pref_user_idx").on(table.userId),
     uniqueIndex("user_notif_pref_user_key_idx").on(table.userId, table.key),
+    check(
+      "user_notif_pref_key_check",
+      sql`${table.key} IN ('browser:support:ticket_comment', 'email:support:ticket_comment', 'browser:support:ticket_closed', 'email:support:ticket_closed', 'browser:chat:tagged_message', 'email:chat:tagged_message', 'browser:chat:dm_message', 'email:chat:dm_message', 'browser:course:course_update', 'email:course:course_update', 'browser:course:lesson_update', 'email:course:lesson_update')`,
+    ),
   ],
 );

@@ -5,7 +5,8 @@ CREATE TABLE "my_schema"."user_notification_preference" (
 	"enabled" boolean DEFAULT false NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "user_notification_preference_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action
+	CONSTRAINT "user_notification_preference_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "my_schema"."user"("id") ON DELETE cascade ON UPDATE no action,
+	CONSTRAINT "user_notif_pref_key_check" CHECK ("my_schema"."user_notification_preference"."key" IN ('browser:support:ticket_comment', 'email:support:ticket_comment', 'browser:support:ticket_closed', 'email:support:ticket_closed', 'browser:chat:tagged_message', 'email:chat:tagged_message', 'browser:chat:dm_message', 'email:chat:dm_message', 'browser:course:course_update', 'email:course:course_update', 'browser:course:lesson_update', 'email:course:lesson_update'))
 );
 --> statement-breakpoint
 CREATE INDEX "user_notif_pref_user_idx" ON "my_schema"."user_notification_preference" USING btree ("user_id");--> statement-breakpoint

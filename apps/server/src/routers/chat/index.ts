@@ -747,7 +747,7 @@ export const chatRouter = router({
             userId: recipientId,
             baseKey: "chat:dm_message",
             browserNotification: {
-              type: "dm_request_received",
+              type: "general",
               title: `New message from ${ctx.user.name}`,
               message: `"${input.message.slice(0, 120)}${input.message.length > 120 ? "…" : ""}"`,
               link: `/chat/dm/${input.conversationId}`,

@@ -6078,7 +6078,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "user_notif_pref_key_check": {
+          "name": "user_notif_pref_key_check",
+          "value": "\"my_schema\".\"user_notification_preference\".\"key\" IN ('browser:support:ticket_comment', 'email:support:ticket_comment', 'browser:support:ticket_closed', 'email:support:ticket_closed', 'browser:chat:tagged_message', 'email:chat:tagged_message', 'browser:chat:dm_message', 'email:chat:dm_message', 'browser:course:course_update', 'email:course:course_update', 'browser:course:lesson_update', 'email:course:lesson_update')"
+        }
+      },
       "isRLSEnabled": false
     }
   },
