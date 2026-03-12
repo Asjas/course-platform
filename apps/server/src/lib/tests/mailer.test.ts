@@ -37,8 +37,8 @@ describe("mailer", () => {
   });
 
   test("creates transport with auth credentials and pool enabled", async () => {
-    // The module was already imported above; createTransport was called once.
-    // Verify the same call included auth and pool settings.
+    await import("../mailer.js");
+
     expect(mockCreateTransport).toHaveBeenCalledWith(
       expect.objectContaining({
         auth: {

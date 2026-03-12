@@ -21,8 +21,12 @@ describe("Admin Chat Reports Page", () => {
     });
   });
 
-  it("should display table column headers when reports exist", () => {
+  it("should display table column headers when reports exist or show empty state", () => {
     cy.visit("/admin/chat-reports");
+
+    cy.contains("h1", "Chat Message Reports", { timeout: 10000 }).should(
+      "be.visible",
+    );
 
     cy.get("body").then(($body) => {
       if ($body.find("tbody tr").length > 0) {
@@ -30,6 +34,8 @@ describe("Admin Chat Reports Page", () => {
         cy.contains("th", "Reason").should("be.visible");
         cy.contains("th", "Status").should("be.visible");
         cy.contains("th", "Reported At").should("be.visible");
+      } else {
+        cy.contains("No reports found").should("be.visible");
       }
 
       return null;
