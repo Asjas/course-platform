@@ -89,6 +89,68 @@ describe("AdminEarlySignupsPage", () => {
     expect(screen.getByText("learnfastify")).toBeInTheDocument();
   });
 
+  it("renders status filter controls", async () => {
+    mockUseEarlySignups.mockReturnValue({
+      data: [makeSignup({ id: "signup:1" })],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Pending" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Invited" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Canceled" }),
+    ).toBeInTheDocument();
+  });
+
+  it("filters rows by selected status", async () => {
+    const user = userEvent.setup();
+    mockUseEarlySignups.mockReturnValue({
+      data: [
+        makeSignup({
+          id: "signup:pending",
+          email: "pending@example.com",
+          confirmedAt: null,
+          unsubscribedAt: null,
+        }),
+        makeSignup({
+          id: "signup:invited",
+          email: "invited@example.com",
+          confirmedAt: new Date("2024-01-20"),
+          unsubscribedAt: null,
+        }),
+        makeSignup({
+          id: "signup:canceled",
+          email: "canceled@example.com",
+          unsubscribedAt: new Date("2024-01-21"),
+        }),
+      ],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    await user.click(screen.getByRole("button", { name: "Pending" }));
+    expect(screen.getByText("pending@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("invited@example.com")).not.toBeInTheDocument();
+    expect(screen.queryByText("canceled@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Invited" }));
+    expect(screen.getByText("invited@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("pending@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Canceled" }));
+    expect(screen.getByText("canceled@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("invited@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "All" }));
+    expect(screen.getByText("pending@example.com")).toBeInTheDocument();
+    expect(screen.getByText("invited@example.com")).toBeInTheDocument();
+    expect(screen.getByText("canceled@example.com")).toBeInTheDocument();
+  });
+
   it("shows Send Invite button for unconfirmed signups", async () => {
     mockUseEarlySignups.mockReturnValue({
       data: [makeSignup({ confirmedAt: null })],
@@ -100,7 +162,7 @@ describe("AdminEarlySignupsPage", () => {
     expect(
       screen.getByRole("button", { name: /send invite/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Pending")).toBeInTheDocument();
+    expect(screen.getAllByText("Pending").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
   });
 
@@ -112,7 +174,7 @@ describe("AdminEarlySignupsPage", () => {
 
     await renderWithProviders(<AdminEarlySignupsPage />);
 
-    expect(screen.getByText("Invited")).toBeInTheDocument();
+    expect(screen.getAllByText("Invited").length).toBeGreaterThanOrEqual(1);
     expect(
       screen.queryByRole("button", { name: /send invite/i }),
     ).not.toBeInTheDocument();
@@ -129,7 +191,7 @@ describe("AdminEarlySignupsPage", () => {
 
     await renderWithProviders(<AdminEarlySignupsPage />);
 
-    expect(screen.getByText("Canceled")).toBeInTheDocument();
+    expect(screen.getAllByText("Canceled").length).toBeGreaterThanOrEqual(1);
     expect(
       screen.queryByRole("button", { name: /send invite/i }),
     ).not.toBeInTheDocument();
@@ -262,6 +324,6 @@ describe("AdminEarlySignupsPage", () => {
     expect(
       screen.getByRole("button", { name: /send invite/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Invited")).toBeInTheDocument();
+    expect(screen.getAllByText("Invited").length).toBeGreaterThanOrEqual(1);
   });
 });
