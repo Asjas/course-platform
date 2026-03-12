@@ -86,7 +86,7 @@ Scan every changed line for:
 - **A03 Injection** — Is user input ever concatenated into SQL, shell commands,
   or HTML? Drizzle prepared statements are safe; raw `sql\`...\`` with
   interpolated user input is not. Flag `.innerHTML` or `dangerouslySetInnerHTML`
-  without DOMPurify sanitization.
+  without DOMPurify sanitization (DOMPurify is already installed).
 - **A05 Security Misconfiguration** — Are verbose error messages or stack
   traces leaked to the client in production?
 - **A07 Auth Failures** — Are session cookies configured with `HttpOnly`,
@@ -97,7 +97,7 @@ Scan every changed line for:
 ## Pass 5 — Performance
 
 - **Database** — Flag N+1 queries, missing indexes on filtered/joined columns,
-  `SELECT *`, and function-scoped prepared statements.
+  `SELECT *`, and prepared statements defined inside functions.
 - **Algorithmic** — Flag O(n²) or worse complexity. Look for nested loops over
   the same or related datasets.
 - **Blocking I/O** — Flag `readFileSync`, `writeFileSync`, or any sync I/O in
