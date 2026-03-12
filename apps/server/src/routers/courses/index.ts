@@ -34,11 +34,13 @@ import {
   updateModule,
 } from "~/routers/courses/mutations.js";
 import {
+  getAllCourseProgressAsAdmin,
   getCourseProgress,
   getEnrollmentStatus,
   getLessonProgress,
 } from "~/routers/courses/queries.js";
 import type {
+  AllCourseProgressAsAdmin,
   AllCourses,
   AllCoursesAsAdmin,
   CourseById,
@@ -264,6 +266,25 @@ export const coursesRouter = router({
       }
 
       return enrollment;
+    }),
+
+  getAllProgressAsAdmin: publicProcedure
+    .use(isAdmin)
+    .query(async ({ ctx }): Promise<AllCourseProgressAsAdmin> => {
+      const fastify = ctx.reply.server;
+
+      const [err, progress] = await fastify.to(getAllCourseProgressAsAdmin());
+
+      if (err) {
+        fastify.log.error(err);
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      return progress;
     }),
 
   // ========== Course Mutations ==========
