@@ -2,6 +2,9 @@ FROM node:24.13.0-alpine3.22 AS vite-builder
 
 RUN apk --no-cache add curl bash
 
+ARG COURSE_SLUG=learn-fastify
+ENV PUBLIC_COURSE_SLUG=${COURSE_SLUG}
+
 WORKDIR /app
 COPY . .
 RUN npm i -g pnpm@9.15.9

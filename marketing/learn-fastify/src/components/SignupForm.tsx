@@ -9,10 +9,14 @@ interface SignupFormProps {
 
 type FormState = "idle" | "loading" | "success" | "error";
 
+const DEFAULT_COURSE_SLUG = "learn-fastify-fundamentals";
+const configuredCourseSlug =
+  import.meta.env.PUBLIC_COURSE_SLUG?.trim() || DEFAULT_COURSE_SLUG;
+
 export default function SignupForm({
   variant = "hero",
   className = "",
-  courseSlug = "learn-fastify-fundamentals",
+  courseSlug = configuredCourseSlug,
 }: SignupFormProps) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
