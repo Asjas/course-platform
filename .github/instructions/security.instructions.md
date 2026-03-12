@@ -28,7 +28,8 @@ Project-specific security rules based on OWASP Top 10.
 
 ## Security Headers (A05)
 
-- This project uses `@fastify/helmet` for security headers (CSP, HSTS, X-Content-Type-Options).
+- This project uses `@fastify/helmet` for security headers such as HSTS and `X-Content-Type-Options`.
+- **Content Security Policy (CSP)** is currently disabled in the helmet config (`contentSecurityPolicy: false`). If you need CSP, explicitly enable and configure it in `apps/server/src/plugins/external/helmet.ts`.
 - Disable verbose error messages in production.
 
 ## Authentication (A07)
