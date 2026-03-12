@@ -113,4 +113,55 @@ describe("logging", () => {
     expect(betterAuthLogger.level).toBe("error");
     expect(betterAuthLogger.disabled).toBe(false);
   });
+
+  test("betterAuthLogger passes non-object metadata items through unchanged", () => {
+    betterAuthLogger.log("debug", "msg", "plain-string", 42, null);
+
+    expect(mockPinoLogger.debug).toHaveBeenCalledWith(
+      expect.objectContaining({
+        metadata: ["plain-string", 42, null],
+      }),
+    );
+  });
+
+  test("betterAuthLogger handles metadata objects without a query property", () => {
+    betterAuthLogger.log("info", "msg", { module: "session", count: 5 });
+
+    expect(mockPinoLogger.info).toHaveBeenCalledWith(
+      expect.objectContaining({
+        metadata: [{ module: "session", count: 5 }],
+      }),
+    );
+  });
+
+  test("DrizzleLogger includes timestamp in log entries", () => {
+    const logger = new DrizzleLogger();
+    logger.logQuery("select 1", []);
+
+    expect(mockPinoLogger.info).toHaveBeenCalledWith(
+      expect.objectContaining({
+        timestamp: expect.stringMatching(/^\d{4}-\d{2}-\d{2}T/),
+      }),
+    );
+  });
+
+  test("withRequestContext isolates reqId per async context", async () => {
+    const logger = new DrizzleLogger();
+
+    await Promise.all([
+      withRequestContext("req-A", async () => {
+        logger.logQuery("query A", []);
+        return Promise.resolve();
+      }),
+      withRequestContext("req-B", async () => {
+        logger.logQuery("query B", []);
+        return Promise.resolve();
+      }),
+    ]);
+
+    const calls = mockPinoLogger.info.mock.calls as Record<string, unknown>[][];
+    const reqIds = calls.map((c) => c[0].reqId);
+    expect(reqIds).toContain("req-A");
+    expect(reqIds).toContain("req-B");
+  });
 });
