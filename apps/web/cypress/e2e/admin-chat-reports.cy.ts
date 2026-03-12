@@ -5,7 +5,7 @@ describe("Admin Chat Reports Page", () => {
 
   it("should display the chat reports page heading", () => {
     cy.visit("/admin/chat-reports");
-    cy.contains("h1", "Chat Reports").should("be.visible");
+    cy.contains("h1", "Chat Message Reports").should("be.visible");
   });
 
   it("should show either a reports table or empty state", () => {
@@ -14,7 +14,7 @@ describe("Admin Chat Reports Page", () => {
     cy.get("body", { timeout: 15000 }).should(($body) => {
       const text = $body.text();
       expect(
-        text.includes("No chat reports") ||
+        text.includes("No reports found") ||
           text.includes("Reporter") ||
           text.includes("Reason"),
       ).to.equal(true);
