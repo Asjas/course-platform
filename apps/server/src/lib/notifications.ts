@@ -1,6 +1,10 @@
 import { ulid } from "ulid";
-import { getAdminUserIds } from "~/db/queries/user.js";
+import { getAdminUserIds, getUserById } from "~/db/queries/user.js";
+import type { NotificationPreferenceKey } from "~/db/schema/userNotificationPreferences.js";
 import type { NewUserNotification } from "~/db/schema/userNotifications.js";
+import { pinoLogger } from "~/lib/logging.js";
+import mailer from "~/lib/mailer.js";
+import { isNotificationPreferenceEnabled } from "~/routers/notificationPreferences/queries.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 
 /**
@@ -560,4 +564,126 @@ export async function notifyAdminChatMessageReported({
     link: `/admin/chat-reports`,
     chatMessageReportId: reportId,
   }));
+}
+
+// ========== Notification Dispatch (with user preference checks) ==========
+
+/**
+ * Dispatch a notification to a user, respecting their channel preferences.
+ *
+ * For each channel ("browser", "email") the function checks the DB to see
+ * whether the user has that key enabled. Failures are logged but never thrown
+ * so that the calling business logic is never interrupted by notification
+ * problems.
+ *
+ * Key format: "{channel}:{category}:{type}"
+ *   e.g. "browser:support:ticket_comment"
+ *        "email:course:lesson_update"
+ *
+ * TODO: Add Sentry error reporting here once Sentry is configured.
+ */
+
+const notifLog = pinoLogger.child({ module: "lib:notifications:dispatch" });
+
+export interface DispatchNotificationOptions {
+  /** The user to notify */
+  userId: string;
+  /**
+   * Base key without channel prefix, e.g. "support:ticket_comment".
+   * The helper will check "browser:{base}" and "email:{base}".
+   */
+  baseKey: string;
+  /** Browser notification payload (inserted into user_notification table) */
+  browserNotification: Omit<NewUserNotification, "id" | "userId">;
+  /** Email notification payload */
+  emailNotification: {
+    subject: string;
+    /** Plain-text body */
+    text: string;
+    /** Optional HTML body; falls back to text if omitted */
+    html?: string;
+  };
+}
+
+export async function dispatchNotification({
+  userId,
+  baseKey,
+  browserNotification,
+  emailNotification,
+}: DispatchNotificationOptions): Promise<void> {
+  const channels: ("browser" | "email")[] = ["browser", "email"];
+
+  for (const channel of channels) {
+    const key = `${channel}:${baseKey}` as NotificationPreferenceKey;
+
+    let enabled = false;
+    try {
+      enabled = await isNotificationPreferenceEnabled(userId, key);
+    } catch (prefErr) {
+      // TODO: report to Sentry once configured
+      notifLog.error(
+        prefErr,
+        `Failed to read notification preference ${key} for user ${userId}`,
+      );
+      continue;
+    }
+
+    if (!enabled) continue;
+
+    if (channel === "browser") {
+      try {
+        await insertUserNotification({
+          newNotification: {
+            id: `notif:${ulid()}`,
+            userId,
+            ...browserNotification,
+          },
+        });
+      } catch (browserErr) {
+        // TODO: report to Sentry once configured
+        notifLog.error(
+          browserErr,
+          `Failed to send browser notification (key=${key}) to user ${userId}`,
+        );
+      }
+    } else {
+      // email channel
+      let recipientEmail: string | undefined;
+      try {
+        const userRecord = await getUserById(userId);
+        recipientEmail = userRecord?.email;
+      } catch (lookupErr) {
+        // TODO: report to Sentry once configured
+        notifLog.error(
+          lookupErr,
+          `Failed to look up email for user ${userId} (key=${key})`,
+        );
+        continue;
+      }
+
+      if (!recipientEmail) {
+        notifLog.warn(
+          `No email address found for user ${userId}, skipping email notification (key=${key})`,
+        );
+        continue;
+      }
+
+      try {
+        await mailer.sendMail({
+          sender: "Codewizard Training <support@codewizard.training>",
+          replyTo: "support@codewizard.training",
+          to: recipientEmail,
+          subject: emailNotification.subject,
+          text: emailNotification.text,
+          ...(emailNotification.html ? { html: emailNotification.html } : {}),
+        });
+      } catch (emailErr) {
+        // TODO: report to Sentry once configured
+        notifLog.error(
+          emailErr,
+          `Failed to send email notification (key=${key}) to ${recipientEmail}`,
+        );
+      }
+    }
+  }
 }

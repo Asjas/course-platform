@@ -14,8 +14,17 @@ vi.mock("~/db/index.js", () => ({
             execute: mockExecute,
           }),
         }),
+        findFirst: vi.fn().mockReturnValue({
+          prepare: () => ({
+            execute: mockExecute,
+          }),
+        }),
       },
     },
+    select: vi.fn().mockReturnThis(),
+    from: vi.fn().mockReturnThis(),
+    where: vi.fn().mockReturnThis(),
+    innerJoin: vi.fn().mockResolvedValue([]),
   },
 }));
 
@@ -23,6 +32,16 @@ vi.mock("~/db/schema/user.js", () => ({
   user: {
     role: "role",
     id: "id",
+    username: "username",
+    name: "name",
+    email: "email",
+  },
+}));
+
+vi.mock("~/db/schema/enrollment.js", () => ({
+  enrollment: {
+    userId: "userId",
+    courseId: "courseId",
   },
 }));
 

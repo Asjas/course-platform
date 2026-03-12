@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { ulid } from "ulid";
 import * as z from "zod";
 import config from "~/config.js";
 import type {
@@ -8,7 +7,10 @@ import type {
   SupportTicket,
   SupportTicketComment,
 } from "~/db/schema/support-tickets.js";
-import { notifyAdminNewSupportTicket } from "~/lib/notifications.js";
+import {
+  dispatchNotification,
+  notifyAdminNewSupportTicket,
+} from "~/lib/notifications.js";
 import {
   type EntitySyncUpdate,
   createSyncUpdate,
@@ -18,11 +20,11 @@ import {
   supportTicketsSyncConfig,
 } from "~/lib/sse-sync.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
-import { insertUserNotification } from "~/routers/notifications/mutations.js";
 import {
   deleteSupportTicketById,
   insertSupportTicket,
   insertSupportTicketComment,
+  updateSupportTicketById,
 } from "~/routers/support-tickets/mutations.js";
 import {
   type AllSupportTickets,
@@ -234,7 +236,7 @@ export const supportTicketsRouter = router({
         `Created new support comment with ID ${newComment.id} for ticket ID ${input.ticketId}`,
       );
 
-      // Create notification for ticket owner if the commenter is not the owner
+      // Dispatch notification for ticket owner (respects user preferences)
       try {
         const ticket = await getSupportTicketById({ ticketId: input.ticketId });
 
@@ -245,10 +247,10 @@ export const supportTicketsRouter = router({
               ? input.comment.slice(0, 100) + "..."
               : input.comment;
 
-          await insertUserNotification({
-            newNotification: {
-              id: `notif:${ulid()}`,
-              userId: ticket.userId,
+          await dispatchNotification({
+            userId: ticket.userId,
+            baseKey: "support:ticket_comment",
+            browserNotification: {
               type: "support_ticket_comment",
               title: `New comment on your ticket: ${ticket.title}`,
               message: `${ctx.user.name} commented: "${truncatedComment}"`,
@@ -256,21 +258,127 @@ export const supportTicketsRouter = router({
               supportTicketId: input.ticketId,
               actorId: ctx.user.id,
             },
+            emailNotification: {
+              subject: `New comment on your support ticket: ${ticket.title}`,
+              text: `${ctx.user.name} commented on your support ticket "${ticket.title}":\n\n"${truncatedComment}"\n\nView ticket: ${ticket.id}`,
+            },
           });
 
           ctx.request.log.debug(
-            `Created notification for ticket owner ${ticket.userId} about comment on ticket ${input.ticketId}`,
+            `Dispatched notification for ticket owner ${ticket.userId} about comment on ticket ${input.ticketId}`,
           );
         }
       } catch (notificationErr) {
         // Log but don't fail the request if notification creation fails
         ctx.request.log.error(
           notificationErr,
-          "Failed to create notification for ticket comment",
+          "Failed to dispatch notification for ticket comment",
         );
       }
 
       return newComment;
+    }),
+  updateSupportTicket: publicProcedure
+    .input(
+      z.object({
+        ticketId: z.string(),
+        status: z
+          .enum(["open", "in_progress", "resolved", "closed"])
+          .optional(),
+        priority: z.enum(["low", "medium", "high", "urgent"]).optional(),
+        assignedToUserId: z.string().nullable().optional(),
+      }),
+    )
+    .use(isAuthenticated)
+    .mutation(async ({ ctx, input }): Promise<SupportTicket> => {
+      const fastify = ctx.reply.server;
+      const isAdminUser = ctx.user.role === "admin";
+
+      const existingTicket = await getSupportTicketById({
+        ticketId: input.ticketId,
+      });
+
+      if (!existingTicket) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Support ticket not found",
+        });
+      }
+
+      // Only the ticket owner or an admin can update the ticket
+      if (existingTicket.userId !== ctx.user.id && !isAdminUser) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "You are not authorized to update this ticket",
+        });
+      }
+
+      const { ticketId, ...updates } = input;
+      const [err, updatedTicket] = await fastify.to(
+        updateSupportTicketById({ ticketId, updates }),
+      );
+
+      if (err) {
+        ctx.request.log.error(err, "Failed to update support ticket");
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      await fastify.cache.invalidateAll([
+        `support-ticket~id~${ticketId}`,
+        "support-ticket~all",
+      ]);
+
+      // Publish status change to SSE stream
+      try {
+        await publishEntityChange(
+          supportTicketsSyncConfig,
+          createSyncUpdate(
+            "updated",
+            updatedTicket.id,
+            updatedTicket,
+            ctx.user.id,
+          ),
+        );
+      } catch (sseErr) {
+        ctx.request.log.error(sseErr, "Failed to publish ticket update to SSE");
+      }
+
+      // Notify ticket owner when ticket is closed or resolved
+      const isClosed =
+        (input.status === "closed" || input.status === "resolved") &&
+        existingTicket.status !== input.status;
+
+      if (isClosed && existingTicket.userId !== ctx.user.id) {
+        try {
+          const statusLabel = input.status === "closed" ? "closed" : "resolved";
+          await dispatchNotification({
+            userId: existingTicket.userId,
+            baseKey: "support:ticket_closed",
+            browserNotification: {
+              type: "support_ticket_resolved",
+              title: `Your ticket has been ${statusLabel}`,
+              message: `Support ticket "${existingTicket.title}" has been marked as ${statusLabel}.`,
+              link: `/support/${existingTicket.id}`,
+              supportTicketId: existingTicket.id,
+              actorId: ctx.user.id,
+            },
+            emailNotification: {
+              subject: `Your support ticket has been ${statusLabel}: ${existingTicket.title}`,
+              text: `Your support ticket "${existingTicket.title}" has been marked as ${statusLabel}.\n\nIf you have any follow-up questions, please open a new ticket.`,
+            },
+          });
+        } catch (notifErr) {
+          ctx.request.log.error(
+            notifErr,
+            "Failed to dispatch ticket closed notification",
+          );
+        }
+      }
+
+      return updatedTicket;
     }),
   deleteSupportTicket: publicProcedure
     .input(z.object({ ticketId: z.string() }))

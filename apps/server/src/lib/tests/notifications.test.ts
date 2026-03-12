@@ -29,6 +29,27 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import { getAdminUserIds } from "~/db/queries/user.js";
 import { insertUserNotification } from "~/routers/notifications/mutations.js";
 
+vi.mock("~/lib/logging.js", () => ({
+  pinoLogger: {
+    child: () => ({
+      error: vi.fn(),
+      warn: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
+    }),
+  },
+}));
+
+vi.mock("~/lib/mailer.js", () => ({
+  default: {
+    sendMail: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
+vi.mock("~/routers/notificationPreferences/queries.js", () => ({
+  isNotificationPreferenceEnabled: vi.fn().mockResolvedValue(false),
+}));
+
 vi.mock("ulid", () => ({
   ulid: () => "mock-ulid-id",
 }));
@@ -39,6 +60,7 @@ vi.mock("~/routers/notifications/mutations.js", () => ({
 
 vi.mock("~/db/queries/user.js", () => ({
   getAdminUserIds: vi.fn().mockResolvedValue(["admin-1", "admin-2"]),
+  getUserById: vi.fn().mockResolvedValue(null),
 }));
 
 const mockInsert = vi.mocked(insertUserNotification);

@@ -270,6 +270,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                       Download My Data
                     </MenuItem>
 
+                    <MenuItem
+                      onAction={() => navigate({ to: "/notifications" })}
+                    >
+                      Notification Preferences
+                    </MenuItem>
+
                     {isAdmin ? (
                       <MenuItem onAction={handleToggleStatus}>
                         <span className="flex items-center gap-2">
@@ -459,6 +465,12 @@ export default function Header({ auth }: { auth: AuthState }) {
                             onAction={() => navigate({ to: "/data-export" })}
                           >
                             Download My Data
+                          </MenuItem>
+
+                          <MenuItem
+                            onAction={() => navigate({ to: "/notifications" })}
+                          >
+                            Notification Preferences
                           </MenuItem>
 
                           {isAdmin ? (

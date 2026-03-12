@@ -72,6 +72,14 @@ vi.mock("~/lib/sse-sync.js", () => ({
   streamEntityUpdates: mockStreamEntityUpdates,
 }));
 
+vi.mock("~/lib/notifications.js", () => ({
+  dispatchNotification: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock("~/db/queries/user.js", () => ({
+  getEnrolledUsersByCourseId: vi.fn().mockResolvedValue([]),
+}));
+
 interface TestUser {
   id: string;
   role: string;

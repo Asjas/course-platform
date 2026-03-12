@@ -1,5 +1,6 @@
 import { imagesRouter } from "./images/index.js";
 import { mentionsRouter } from "./mentions/index.js";
+import { notificationPreferencesRouter } from "./notificationPreferences/index.js";
 import { router } from "~/router.js";
 import { announcementsRouter } from "~/routers/announcements/index.js";
 import { auditRouter } from "~/routers/audit/index.js";
@@ -33,6 +34,7 @@ export const appRouter = router({
   images: imagesRouter,
   mentions: mentionsRouter,
   notifications: notificationsRouter,
+  notificationPreferences: notificationPreferencesRouter,
   purchases: purchasesRouter,
   reviews: reviewsRouter,
   stats: statsRouter,
