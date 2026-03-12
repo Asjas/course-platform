@@ -13,10 +13,13 @@ import {
 import { TRPCError, tracked } from "@trpc/server";
 import { ulid } from "ulid";
 import * as z from "zod";
+import { getUsersByUsernames } from "~/db/queries/user.js";
 import { chatMessageCount, redisStreamOperations } from "~/lib/chat-metrics.js";
 import { pinoLogger } from "~/lib/logging.js";
+import { dispatchNotification } from "~/lib/notifications.js";
 import { redis, subscriptionRedis } from "~/lib/redis.js";
 import { isAuthenticated, publicProcedure, router } from "~/router.js";
+import { getConversationById } from "~/routers/directMessages/queries.js";
 
 const log = pinoLogger.child({ module: "routers:chat" });
 
@@ -95,6 +98,15 @@ function isIdAfter(current: string, previous: string): boolean {
   const [pTime, pSeq] = previous.split("-").map(Number);
 
   return cTime > pTime || (cTime === pTime && cSeq > pSeq);
+}
+
+/**
+ * Extract @mentioned usernames from a chat message.
+ * Matches "@username" patterns (alphanumeric + underscores).
+ */
+function extractMentionedUsernames(message: string): string[] {
+  const matches = message.match(/@([a-zA-Z0-9_]+)/g) ?? [];
+  return [...new Set(matches.map((m) => m.slice(1).toLowerCase()))];
 }
 
 export const chatRouter = router({
@@ -236,6 +248,41 @@ export const chatRouter = router({
 
       chatMessageCount.inc({ channel: input.channelId, action: "post" });
       redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
+      // Dispatch "tagged_message" notifications to @mentioned users
+      try {
+        const mentionedUsernames = extractMentionedUsernames(input.message);
+        if (mentionedUsernames.length > 0) {
+          const mentionedUsers = await getUsersByUsernames(mentionedUsernames);
+          await Promise.all(
+            mentionedUsers
+              // Don't notify the sender about their own mention
+              .filter((u) => u.id !== ctx.user.id)
+              .map((u) =>
+                dispatchNotification({
+                  userId: u.id,
+                  baseKey: "chat:tagged_message",
+                  browserNotification: {
+                    type: "general",
+                    title: `${ctx.user.name} mentioned you in #${input.channelId}`,
+                    message: `"${input.message.slice(0, 120)}${input.message.length > 120 ? "…" : ""}"`,
+                    link: `/chat/${input.channelId}`,
+                  },
+                  emailNotification: {
+                    subject: `${ctx.user.name} mentioned you in #${input.channelId}`,
+                    text: `${ctx.user.name} mentioned you in the #${input.channelId} channel:\n\n"${input.message}"`,
+                  },
+                }),
+              ),
+          );
+        }
+      } catch (mentionErr) {
+        // TODO: report to Sentry once configured
+        log.error(
+          mentionErr,
+          "Failed to dispatch tagged message notifications",
+        );
+      }
 
       return { ...payload, streamId };
     }),
@@ -686,6 +733,35 @@ export const chatRouter = router({
         action: "post",
       });
       redisStreamOperations.inc({ operation: "xadd", status: "success" });
+
+      // Dispatch "dm_message" notification to the other participant
+      try {
+        const conversation = await getConversationById(input.conversationId);
+        if (conversation) {
+          const recipientId =
+            conversation.user1Id === ctx.user.id
+              ? conversation.user2Id
+              : conversation.user1Id;
+
+          await dispatchNotification({
+            userId: recipientId,
+            baseKey: "chat:dm_message",
+            browserNotification: {
+              type: "general",
+              title: `New message from ${ctx.user.name}`,
+              message: `"${input.message.slice(0, 120)}${input.message.length > 120 ? "…" : ""}"`,
+              link: `/chat/dm/${input.conversationId}`,
+            },
+            emailNotification: {
+              subject: `New direct message from ${ctx.user.name}`,
+              text: `${ctx.user.name} sent you a direct message:\n\n"${input.message}"`,
+            },
+          });
+        }
+      } catch (dmNotifErr) {
+        // TODO: report to Sentry once configured
+        log.error(dmNotifErr, "Failed to dispatch DM message notification");
+      }
 
       return { ...payload, streamId };
     }),

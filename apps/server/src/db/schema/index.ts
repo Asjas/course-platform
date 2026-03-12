@@ -13,3 +13,4 @@ export * from "~/db/schema/userNotifications.js";
 export * from "~/db/schema/chatMessageReports.js";
 export * from "~/db/schema/gdprAudit.js";
 export * from "~/db/schema/earlySignup.js";
+export * from "~/db/schema/userNotificationPreferences.js";

@@ -1,5 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import * as z from "zod";
+import { getEnrolledUsersByCourseId } from "~/db/queries/user.js";
+import { dispatchNotification } from "~/lib/notifications.js";
 import {
   type EntitySyncUpdate,
   coursesSyncConfig,
@@ -397,6 +399,35 @@ export const coursesRouter = router({
         fastify.log.error(sseErr, "Failed to publish course update to SSE");
       }
 
+      // Notify enrolled users about course update
+      try {
+        const enrolledUsers = await getEnrolledUsersByCourseId(id);
+        await Promise.all(
+          enrolledUsers.map((enrolledUser) =>
+            dispatchNotification({
+              userId: enrolledUser.id,
+              baseKey: "course:course_update",
+              browserNotification: {
+                type: "course_published",
+                title: `Course updated: ${course.name}`,
+                message: `The course "${course.name}" has been updated with new content.`,
+                link: `/courses/${course.id}`,
+              },
+              emailNotification: {
+                subject: `Course update: ${course.name}`,
+                text: `The course "${course.name}" has been updated.\n\nVisit the course to see the latest changes: /courses/${course.id}`,
+              },
+            }),
+          ),
+        );
+      } catch (notifErr) {
+        // TODO: report to Sentry once configured
+        fastify.log.error(
+          notifErr,
+          "Failed to dispatch course update notifications",
+        );
+      }
+
       return course;
     }),
 
@@ -647,6 +678,35 @@ export const coursesRouter = router({
         "course~all",
         `course~id~${lesson.courseId}`,
       ]);
+
+      // Notify enrolled users about lesson update
+      try {
+        const enrolledUsers = await getEnrolledUsersByCourseId(lesson.courseId);
+        await Promise.all(
+          enrolledUsers.map((enrolledUser) =>
+            dispatchNotification({
+              userId: enrolledUser.id,
+              baseKey: "course:lesson_update",
+              browserNotification: {
+                type: "course_published",
+                title: `Lesson updated: ${lesson.title}`,
+                message: `A lesson in your course has been updated: "${lesson.title}".`,
+                link: `/courses/${lesson.courseId}/lessons/${lesson.id}`,
+              },
+              emailNotification: {
+                subject: `Lesson updated: ${lesson.title}`,
+                text: `A lesson you are enrolled in has been updated: "${lesson.title}".\n\nVisit the lesson to see the changes.`,
+              },
+            }),
+          ),
+        );
+      } catch (notifErr) {
+        // TODO: report to Sentry once configured
+        fastify.log.error(
+          notifErr,
+          "Failed to dispatch lesson update notifications",
+        );
+      }
 
       return lesson;
     }),

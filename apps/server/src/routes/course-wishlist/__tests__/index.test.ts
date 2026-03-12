@@ -9,6 +9,17 @@ import {
   getCourseWishlistVerificationTokenByToken,
 } from "~/db/queries/courseWishlist.js";
 
+vi.mock("~/lib/logging.js", () => ({
+  pinoLogger: {
+    child: () => ({
+      error: vi.fn(),
+      warn: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
+    }),
+  },
+}));
+
 vi.mock("~/db/queries/courseWishlist.js", () => ({
   getCourseWishlistById: vi.fn(),
   getCourseWishlistVerificationTokenByToken: vi.fn(),
