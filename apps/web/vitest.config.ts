@@ -18,7 +18,7 @@ export default mergeConfig(
       coverage: {
         provider: "v8",
         reportsDirectory: "./coverage/unit",
-        reporter: ["text-summary", "html", "lcov", "json-summary"],
+        reporter: ["text-summary", "html", "lcov", "json-summary", "json"],
         include: ["src/**/*.{ts,tsx}"],
         exclude: [
           "src/routeTree.gen.ts",
