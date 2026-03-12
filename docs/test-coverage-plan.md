@@ -3,25 +3,32 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-11.
 >
-> **Latest run (2026-03-12):** Server 485 tests (451 passing, 34 pre-existing
-> failures) | Web 677 Vitest tests (80 files, 1 skipped) | Cypress 31 spec
-> files
+> **Latest run (2026-03-12):** Server 395 tests (all passing) | Web 669
+> Vitest tests (78 files, 1 skipped) | Cypress 28 spec files
 >
-> **Batch Delta (2026-03-12, 45-test expansion across server, web, and
-> Cypress):**
+> **Batch Delta (2026-03-12):**
 >
-> - **Added 16 new server Vitest tests** across 4 test files:
+> - **Added 11 new server Vitest tests** across 3 test files:
 >   - `src/lib/tests/mailer.test.ts` (3 tests, new file) — nodemailer transport
 >     config, auth credentials, pool setting
 >   - `src/lib/tests/r2-upload.test.ts` (4 tests, new file) — S3Client setup,
 >     presigned URL generation, object deletion
 >   - `src/lib/tests/logging.test.ts` (4 new tests) — metadata edge cases,
 >     timestamp logging, async context isolation
->   - `src/routers/dataExport/__tests__/index.test.ts` (5 tests, new file) —
->     auth gate, JSON/CSV export, GDPR audit logging, error handling
-> - **Added 19 new web Vitest tests** across 5 test files:
->   - `src/components/__tests__/view-purchase-sheet.test.tsx` (5 tests, new
->     file) — null purchase, paid/refunded badges, close callback
+> - **Removed metrics, purchases, and data-export tests** (see "Do Not Test"
+>   section):
+>   - `src/lib/tests/metrics.test.ts` (34 tests) — metrics rely on Prometheus
+>     and Grafana; mocking is unrealistic
+>   - `src/routers/purchases/__tests__/` (3 files, 18 tests) — purchases not
+>     yet implemented; tests would fail or be wrong
+>   - `src/routers/dataExport/__tests__/` (3 files, 38 tests) — data export
+>     not yet implemented; tests would fail or be wrong
+>   - `src/components/__tests__/view-purchase-sheet.test.tsx` (5 tests)
+>   - `src/components/__tests__/refund-purchase-modal.test.tsx` (3 tests)
+>   - `cypress/e2e/purchases.cy.ts`
+>   - `cypress/e2e/admin-purchases.cy.ts`
+>   - `cypress/e2e/data-export.cy.ts`
+> - **Added 14 new web Vitest tests** across 4 test files:
 >   - `src/components/__tests__/dm-request-modal.test.tsx` (5 tests, new file)
 >     — dialog title, recipient text, button states, close callback
 >   - `src/components/__tests__/markdown-content.test.tsx` (4 new tests) —
@@ -30,18 +37,11 @@
 >     syncing status, error status
 >   - `src/components/__tests__/announcements-banner.test.tsx` (3 new tests) —
 >     published date, dismissed date, empty active tab
-> - **Added 10 new Cypress E2E tests** across 2 spec files:
->   - `cypress/e2e/admin-purchases.cy.ts` (6 tests, new file) — heading, tab
->     controls, table/empty state, tab switching, access control
+> - **Added 4 new Cypress E2E tests** across 1 spec file:
 >   - `cypress/e2e/admin-chat-reports.cy.ts` (4 tests, new file) — heading,
 >     table/empty state, column headers, access control
-> - **Net Server delta**: 55→59 test files (+4 new), 435→451 passing tests (+16)
-> - **Net Web delta**: 78→80 test files (+2 new), 658→677 tests (+19)
-> - **Net Cypress delta**: 29→31 spec files (+2 new), +10 new assertions
 > - **Files moved from untested to tested**: `src/lib/mailer.ts`,
->   `src/lib/r2-upload.ts`, `src/routers/dataExport/index.ts`,
->   `src/components/view-purchase-sheet.tsx`,
->   `src/components/dm-request-modal.tsx`
+>   `src/lib/r2-upload.ts`, `src/components/dm-request-modal.tsx`
 >
 > **Batch Delta (2026-03-11, migrate network-dependent tests to Cypress E2E):**
 >
@@ -256,25 +256,22 @@
 | `src/lib/mailer.ts`                    | new   | new      |
 | `src/lib/r2-upload.ts`                 | new   | new      |
 | `src/lib/sse-sync.ts`                  | 33%   | 29%      |
-| `src/lib/metrics.ts`                   | 72%   | 0%       |
 | `src/routers/chatReports/queries.ts`   | new   | new      |
 | `src/routers/chatReports/mutations.ts` | new   | new      |
 | `src/routers/audit/index.ts`           | new   | new      |
 | `src/routers/chatReports/index.ts`     | new   | new      |
 | `src/routers/courseWishlist/index.ts`  | new   | new      |
 | `src/routers/images/index.ts`          | new   | new      |
-| `src/routers/purchases/index.ts`       | new   | new      |
 | `src/routers/reviews/index.ts`         | new   | new      |
 | `src/routers/syncStatus/queries.ts`    | new   | new      |
 | `src/routers/syncStatus/mutations.ts`  | new   | new      |
 | `src/db/queries/courseWishlist.ts`     | new   | new      |
 | `src/db/queries/user.ts`               | new   | new      |
 | `src/db/mutations/courseWishlist.ts`   | new   | new      |
-| `src/routers/dataExport/index.ts`      | new   | new      |
 
 #### Server — Untested Files (0% Coverage)
 
-#### 96 Files With Zero Coverage
+#### 97 Files With Zero Coverage
 
 **Bootstrap & Core:**
 
@@ -368,6 +365,7 @@
 - `src/routers/chat/index.ts`
 - `src/routers/coupons/index.ts`
 - `src/routers/courses/index.ts`
+- `src/routers/dataExport/index.ts`
 - `src/routers/dataExport/queries.ts`
 - `src/routers/directMessages/index.ts`
 - `src/routers/mentions/index.ts`
@@ -512,21 +510,20 @@ clipping on announcements list causes element visibility failures after update
 | `src/components/file-attachment.tsx`                               | new   | new      |
 | `src/components/mention-picker.tsx`                                | new   | new      |
 | `src/components/pricing-section.tsx`                               | new   | new      |
-| `src/components/view-purchase-sheet.tsx`                           | new   | new      |
 | `src/components/dm-request-modal.tsx`                              | new   | new      |
 | `src/components/announcements/AnnouncementsBanner.tsx`             | new   | new      |
 | `src/lib/markdown.ts`                                              | new   | new      |
 
 #### Web — Untested Files (0% Coverage)
 
-#### 155 Files With Zero Coverage
+#### 156 Files With Zero Coverage
 
 **App Bootstrap:**
 
 - `src/main.tsx`
 - `src/reportWebVitals.ts`
 
-**Components (24 files):**
+**Components (25 files):**
 
 - `src/components/chat-message-editor.tsx`
 - `src/components/chat-message.tsx`
@@ -550,6 +547,7 @@ clipping on announcements list causes element visibility failures after update
 - `src/components/user-profile-sheet.tsx`
 - `src/components/user-search-modal.tsx`
 - `src/components/username-requirement-modal.tsx`
+- `src/components/view-purchase-sheet.tsx`
 
 **Forms (4 files):**
 
@@ -709,7 +707,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 31 Spec Files
+### Cypress E2E Tests — 28 Spec Files
 
 #### Features Covered by E2E
 
@@ -721,7 +719,6 @@ All hooks now have tests.
 - `dashboard.cy.ts` — Dashboard page and navigation
 - `profile.cy.ts` — Profile page
 - `account.cy.ts` — Account management
-- `data-export.cy.ts` — Data export page
 - `downloads.cy.ts` — Downloads page
 - `cookie-policy.cy.ts` — Cookie policy page
 - `support-tickets.cy.ts` — Support ticket flows and permission boundaries
@@ -738,7 +735,6 @@ All hooks now have tests.
   persistence
 - `notifications.cy.ts` — Notification bell visibility, panel interaction, tab
   switching, empty states _(expanded)_
-- `purchases.cy.ts` — Purchases page auth guard and redirect message
 - `sync-status.cy.ts` — Sync status page auth guard and collection tabs
 - `header-and-footer.cy.ts` — Header nav links for
   unauthenticated/authenticated/admin users, footer structure and links
@@ -747,8 +743,6 @@ All hooks now have tests.
   Vitest)_
 - `default-layout.cy.ts` — Skip link, header/footer presence across pages
   _(migrated from Vitest)_
-- `admin-purchases.cy.ts` — Admin purchases page, tab controls, access control
-  _(new)_
 - `admin-chat-reports.cy.ts` — Admin chat reports page, table rendering, access
   control _(new)_
 
@@ -766,16 +760,25 @@ All hooks now have tests.
 
 Prioritized by user impact, risk, and current coverage gaps:
 
-1. `cypress/e2e/purchases.cy.ts` — checkout, failed payment handling, refund UX,
-   and admin purchase visibility.
-2. `cypress/e2e/course-enrollment.cy.ts` — enrollment start, lesson progression,
+1. `cypress/e2e/course-enrollment.cy.ts` — enrollment start, lesson progression,
    completion state, and resume behavior.
-3. `cypress/e2e/direct-messages.cy.ts` — conversation creation, unread/read
+2. `cypress/e2e/direct-messages.cy.ts` — conversation creation, unread/read
    states, and permission boundaries.
-4. `cypress/e2e/admin-announcements.cy.ts` (unskip target) — stabilize update
+3. `cypress/e2e/admin-announcements.cy.ts` (unskip target) — stabilize update
    path with deterministic list selection and form submit assertions.
-5. `cypress/e2e/admin-coupons.cy.ts` (auth depth) — explicit owner/non-owner and
+4. `cypress/e2e/admin-coupons.cy.ts` (auth depth) — explicit owner/non-owner and
    admin/non-admin permission-failure toast assertions.
+
+## Do Not Test
+
+The following areas are **explicitly excluded** from test coverage. Do not write
+tests for these modules.
+
+| Area | Reason |
+|------|--------|
+| **Metrics** (`src/lib/metrics.ts`, `src/lib/auth-metrics.ts`, `src/lib/chat-metrics.ts`, `src/lib/db-metrics.ts`, `src/lib/external-metrics.ts`, `src/lib/trpc-metrics.ts`, `src/plugins/app/metrics.ts`) | Metrics rely on Prometheus and Grafana. Mocking these external monitoring systems is unrealistic and produces tests that don't reflect real behavior. |
+| **Purchases** (`src/routers/purchases/`, `src/components/view-purchase-sheet.tsx`, `src/components/refund-purchase-modal.tsx`, purchase-related Cypress specs) | Purchases have not been fully implemented yet. Tests would either fail or be completely wrong. Defer until the purchase flow is complete. |
+| **Data Export** (`src/routers/dataExport/`, data-export-related Cypress specs) | Data export has not been fully implemented yet. Tests would either fail or be completely wrong. Defer until the data export feature is complete. |
 
 ## Test Plan — Phased Implementation
 
@@ -792,12 +795,12 @@ These are the largest untested areas containing core business logic.
 | 5   | `src/routers/chat/__tests__/queries.test.ts`              | Chat queries           | 286   | - [x] Done |
 | 6   | `src/routers/support-tickets/__tests__/queries.test.ts`   | Ticket queries         | 115   | - [x] Done |
 | 7   | `src/routers/support-tickets/__tests__/mutations.test.ts` | Ticket mutations       | —     | - [x] Done |
-| 8   | `src/routers/purchases/__tests__/queries.test.ts`         | Purchase queries       | 80    | - [x] Done |
-| 9   | `src/routers/purchases/__tests__/mutations.test.ts`       | Purchase mutations     | —     | - [x] Done |
+| 8   | ~~`src/routers/purchases/__tests__/queries.test.ts`~~     | ~~Purchase queries~~   | 80    | - [x] Removed (Do Not Test) |
+| 9   | ~~`src/routers/purchases/__tests__/mutations.test.ts`~~   | ~~Purchase mutations~~ | —     | - [x] Removed (Do Not Test) |
 | 10  | `src/routers/coupons/__tests__/queries.test.ts`           | Coupon queries         | 109   | - [x] Done |
 | 11  | `src/routers/coupons/__tests__/mutations.test.ts`         | Coupon mutations       | —     | - [x] Done |
-| 12  | `src/routers/dataExport/__tests__/csvUtils.test.ts`       | CSV utility functions  | 116   | - [x] Done |
-| 13  | `src/routers/dataExport/__tests__/rateLimit.test.ts`      | Rate limit logic       | —     | - [x] Done |
+| 12  | ~~`src/routers/dataExport/__tests__/csvUtils.test.ts`~~   | ~~CSV utility funcs~~  | 116   | - [x] Removed (Do Not Test) |
+| 13  | ~~`src/routers/dataExport/__tests__/rateLimit.test.ts`~~  | ~~Rate limit logic~~   | —     | - [x] Removed (Do Not Test) |
 | 14  | `src/routers/directMessages/__tests__/queries.test.ts`    | DM queries             | 171   | - [x] Done |
 | 15  | `src/routers/directMessages/__tests__/mutations.test.ts`  | DM mutations           | —     | - [x] Done |
 | 16  | `src/routers/notifications/__tests__/queries.test.ts`     | Notification queries   | 69    | - [x] Done |
@@ -821,7 +824,6 @@ These are the largest untested areas containing core business logic.
 | 28a | `src/routers/supportStatus/__tests__/index.test.ts` | Support status router   | —     | - [x] Done |
 | 28b | `src/routers/syncStatus/__tests__/*.test.ts`        | Sync status             | —     | - [x] Done |
 | 28c | `src/lib/tests/r2-upload.test.ts`                   | R2/S3 upload operations | —     | - [x] Done |
-| 28d | `src/routers/dataExport/__tests__/index.test.ts`    | Data export router      | —     | - [x] Done |
 
 ### Phase 3: Web Components (Highest Untested Line Count)
 
@@ -847,8 +849,7 @@ These are the largest untested areas containing core business logic.
 | 40g | `src/components/__tests__/support-comment.test.tsx`        | Support comment   | —     | - [x] Done |
 | 40h | `src/components/layouts/__tests__/admin-layout.test.tsx`   | Admin layout      | —     | - [x] Done |
 | 40i | `cypress/e2e/default-layout.cy.ts`                        | Default layout    | —     | - [x] Migrated to E2E |
-| 40j | `src/components/__tests__/view-purchase-sheet.test.tsx`    | View purchase     | —     | - [x] Done |
-| 40k | `src/components/__tests__/dm-request-modal.test.tsx`       | DM request modal  | —     | - [x] Done |
+| 40j | `src/components/__tests__/dm-request-modal.test.tsx`       | DM request modal  | —     | - [x] Done |
 
 ### Phase 4: Web Forms and UI Components
 
@@ -878,8 +879,8 @@ These are the largest untested areas containing core business logic.
 | #   | Test to Create                        | Target                               | Status     |
 | --- | ------------------------------------- | ------------------------------------ | ---------- |
 | 50  | `cypress/e2e/course-enrollment.cy.ts` | Course enrollment and lesson viewing | - [ ] Todo |
-| 51  | `cypress/e2e/purchases.cy.ts`         | Purchases page auth guard            | - [x] Done |
-| 51a | `cypress/e2e/purchases-flow.cy.ts`    | Full purchases/checkout/refund flow  | - [ ] Todo |
+| 51  | ~~`cypress/e2e/purchases.cy.ts`~~     | ~~Purchases page auth guard~~        | - [x] Removed (Do Not Test) |
+| 51a | ~~`cypress/e2e/purchases-flow.cy.ts`~~ | ~~Full purchases/checkout/refund~~ | - [x] Removed (Do Not Test) |
 | 52  | `cypress/e2e/reviews.cy.ts`           | Course reviews                       | - [ ] Todo |
 | 53  | `cypress/e2e/notifications.cy.ts`     | Notifications                        | - [x] Done |
 | 54  | `cypress/e2e/admin-coupons.cy.ts`     | Admin coupon management              | - [x] Done |
@@ -887,8 +888,7 @@ These are the largest untested areas containing core business logic.
 | 56  | `cypress/e2e/direct-messages.cy.ts`   | Direct messages                      | - [ ] Todo |
 | 57  | `cypress/e2e/theme-toggle.cy.ts`      | Theme toggling                       | - [x] Done |
 | 58  | `cypress/e2e/sync-status.cy.ts`       | Sync status page and collection tabs | - [x] Done |
-| 58a | `cypress/e2e/admin-purchases.cy.ts`   | Admin purchases page and access ctrl | - [x] Done |
-| 58b | `cypress/e2e/admin-chat-reports.cy.ts` | Admin chat reports page and access   | - [x] Done |
+| 58a | `cypress/e2e/admin-chat-reports.cy.ts` | Admin chat reports page and access   | - [x] Done |
 
 ### Phase 6: Improve Partial Coverage
 
@@ -907,7 +907,7 @@ These are the largest untested areas containing core business logic.
 | 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done |
 | 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [ ] Todo |
 | 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [x] Done |
-| 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [ ] Todo |
+| 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [x] Do Not Test (see below) |
 
 ---
 
@@ -930,7 +930,8 @@ Tests that would cover the most untested lines with the least effort:
    tests)
 7. ~~**REST course handlers** — 150 untested lines.~~ **Done** (18 tests)
 8. ~~**`src/routers/dataExport/`** — 116 untested lines (pure utility
-   functions).~~ **Done** (33 tests)
+   functions).~~ **Removed** — data export not yet implemented (see "Do Not
+   Test").
 
 ---
 
@@ -963,12 +964,11 @@ Reports are generated in:
 
 ## Existing Test Files
 
-### Server (42 test files, 451 tests)
+### Server (35 test files, 395 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
 - `src/lib/tests/config.test.ts` — 49 tests
 - `src/lib/tests/constants.test.ts` — 14 tests
-- `src/lib/tests/metrics.test.ts` — 34 tests
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
 - `src/lib/tests/sse-sync.test.ts` — 18 tests
@@ -986,15 +986,10 @@ Reports are generated in:
 - `src/routers/coupons/__tests__/mutations.test.ts` — 5 tests
 - `src/routers/courses/__tests__/queries.test.ts` — 3 tests
 - `src/routers/courses/__tests__/mutations.test.ts` — 13 tests
-- `src/routers/dataExport/__tests__/csvUtils.test.ts` — 25 tests
-- `src/routers/dataExport/__tests__/rateLimit.test.ts` — 8 tests
-- `src/routers/dataExport/__tests__/index.test.ts` — 5 tests _(new)_
 - `src/routers/directMessages/__tests__/queries.test.ts` — 3 tests
 - `src/routers/directMessages/__tests__/mutations.test.ts` — 2 tests
 - `src/routers/notifications/__tests__/queries.test.ts` — 6 tests
 - `src/routers/notifications/__tests__/mutations.test.ts` — 5 tests
-- `src/routers/purchases/__tests__/queries.test.ts` — 9 tests
-- `src/routers/purchases/__tests__/mutations.test.ts` — 4 tests
 - `src/routers/reviews/__tests__/queries.test.ts` — 4 tests
 - `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests
 - `src/routers/support-tickets/__tests__/queries.test.ts` — 9 tests
@@ -1007,7 +1002,7 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (86 test files, 677 passing tests + 12 todo)
+### Web (78 test files, 669 passing tests + 12 todo)
 
 - `src/components/__tests__/announcements-banner.test.tsx` — 9 tests _(expanded)_
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
@@ -1032,7 +1027,6 @@ Reports are generated in:
 - `src/components/__tests__/message-reactions.test.tsx` — 30 tests
 - `src/components/__tests__/emoji-reaction-picker.test.tsx` — 13 tests
 - `src/components/__tests__/pricing-section.test.tsx` — 9 tests _(new)_
-- `src/components/__tests__/refund-purchase-modal.test.tsx` — 3 tests
 - `src/components/__tests__/report-message-dialog.test.tsx` — 5 tests _(new)_
 - `src/components/__tests__/support-comment.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
@@ -1040,7 +1034,6 @@ Reports are generated in:
 - `src/components/__tests__/username-requirement-modal.test.tsx` — 5 tests
   _(new)_
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
-- `src/components/__tests__/view-purchase-sheet.test.tsx` — 5 tests _(new)_
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
 - `src/components/__tests__/notifications-bell.test.tsx` — 24 tests
@@ -1083,7 +1076,7 @@ Reports are generated in:
 - `src/schema/__tests__/sign-up.test.ts` — 8 tests
 - `src/schema/__tests__/support-ticket.test.ts` — 16 tests
 
-### Cypress E2E (31 spec files)
+### Cypress E2E (28 spec files)
 
 - `account.cy.ts`
 - `admin-announcements.cy.ts`
@@ -1093,7 +1086,6 @@ Reports are generated in:
 - `admin-courses.cy.ts`
 - `admin-coupons.cy.ts`
 - `admin-navigation.cy.ts`
-- `admin-purchases.cy.ts` _(new)_
 - `admin-reviews.cy.ts`
 - `admin-stats.cy.ts`
 - `admin-users.cy.ts`
@@ -1102,7 +1094,6 @@ Reports are generated in:
 - `support-tickets.cy.ts`
 - `cookie-policy.cy.ts`
 - `dashboard.cy.ts`
-- `data-export.cy.ts`
 - `default-layout.cy.ts` _(new)_
 - `downloads.cy.ts`
 - `header-and-footer.cy.ts` _(new)_
@@ -1110,7 +1101,6 @@ Reports are generated in:
 - `not-found.cy.ts` _(new)_
 - `notifications.cy.ts` _(new)_
 - `profile.cy.ts`
-- `purchases.cy.ts` _(new)_
 - `reset-password.cy.ts`
 - `spec.cy.ts`
 - `sync-status.cy.ts` _(new)_
@@ -1120,15 +1110,12 @@ Reports are generated in:
 
 ## Coverage Delta (2026-03-12)
 
-Compared to the previous documented web run (658 tests) and server run (435
-tests):
+New tests added: +11 server (mailer, r2-upload, logging expansion), +14 web
+(dm-request-modal, markdown-content, SyncStatusIndicator, announcements-banner
+expansions), +4 Cypress (admin-chat-reports).
 
-| App        | Test Files | Tests  | Notes                                   |
-| ---------- | ---------- | ------ | --------------------------------------- |
-| **Server** | +4 files   | +16    | mailer, r2-upload, logging, dataExport  |
-| **Web**    | +2 files   | +19    | view-purchase-sheet, dm-request-modal + expansions |
-| **Cypress** | +2 specs  | +10    | admin-purchases, admin-chat-reports     |
-| **Total**  | +8 files   | **+45** |                                         |
+Tests removed: metrics (34), purchases (18 server + 3 web + 2 Cypress specs),
+data-export (33 server). See "Do Not Test" section for rationale.
 
 ## Coverage Delta (2026-03-11)
 
