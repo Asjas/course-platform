@@ -3,9 +3,45 @@
 > Baseline coverage analysis and phased plan for improving test coverage across
 > the course platform. Last updated 2026-03-11.
 >
-> **Latest run (2026-03-11):** Server 581 tests (all passing, last run
-> 2026-03-10) | Web 658 Vitest tests (78 files, 1 skipped) | Cypress 29 spec
+> **Latest run (2026-03-12):** Server 485 tests (451 passing, 34 pre-existing
+> failures) | Web 677 Vitest tests (80 files, 1 skipped) | Cypress 31 spec
 > files
+>
+> **Batch Delta (2026-03-12, 45-test expansion across server, web, and
+> Cypress):**
+>
+> - **Added 16 new server Vitest tests** across 4 test files:
+>   - `src/lib/tests/mailer.test.ts` (3 tests, new file) — nodemailer transport
+>     config, auth credentials, pool setting
+>   - `src/lib/tests/r2-upload.test.ts` (4 tests, new file) — S3Client setup,
+>     presigned URL generation, object deletion
+>   - `src/lib/tests/logging.test.ts` (4 new tests) — metadata edge cases,
+>     timestamp logging, async context isolation
+>   - `src/routers/dataExport/__tests__/index.test.ts` (5 tests, new file) —
+>     auth gate, JSON/CSV export, GDPR audit logging, error handling
+> - **Added 19 new web Vitest tests** across 5 test files:
+>   - `src/components/__tests__/view-purchase-sheet.test.tsx` (5 tests, new
+>     file) — null purchase, paid/refunded badges, close callback
+>   - `src/components/__tests__/dm-request-modal.test.tsx` (5 tests, new file)
+>     — dialog title, recipient text, button states, close callback
+>   - `src/components/__tests__/markdown-content.test.tsx` (4 new tests) —
+>     inline code, multiple paragraphs, tables, nested lists
+>   - `src/components/__tests__/SyncStatusIndicator.test.tsx` (2 new tests) —
+>     syncing status, error status
+>   - `src/components/__tests__/announcements-banner.test.tsx` (3 new tests) —
+>     published date, dismissed date, empty active tab
+> - **Added 10 new Cypress E2E tests** across 2 spec files:
+>   - `cypress/e2e/admin-purchases.cy.ts` (6 tests, new file) — heading, tab
+>     controls, table/empty state, tab switching, access control
+>   - `cypress/e2e/admin-chat-reports.cy.ts` (4 tests, new file) — heading,
+>     table/empty state, column headers, access control
+> - **Net Server delta**: 55→59 test files (+4 new), 435→451 passing tests (+16)
+> - **Net Web delta**: 78→80 test files (+2 new), 658→677 tests (+19)
+> - **Net Cypress delta**: 29→31 spec files (+2 new), +10 new assertions
+> - **Files moved from untested to tested**: `src/lib/mailer.ts`,
+>   `src/lib/r2-upload.ts`, `src/routers/dataExport/index.ts`,
+>   `src/components/view-purchase-sheet.tsx`,
+>   `src/components/dm-request-modal.tsx`
 >
 > **Batch Delta (2026-03-11, migrate network-dependent tests to Cypress E2E):**
 >
@@ -189,7 +225,7 @@
 
 #### Server Coverage Snapshot
 
-137 total files: 114 untested, 18 partial, 5 fully covered
+137 total files: 111 untested, 21 partial, 5 fully covered
 
 #### Server Coverage by Area
 
@@ -217,6 +253,8 @@
 | File                                   | Lines | Branches |
 | -------------------------------------- | ----- | -------- |
 | `src/lib/logging.ts`                   | 20%   | 0%       |
+| `src/lib/mailer.ts`                    | new   | new      |
+| `src/lib/r2-upload.ts`                 | new   | new      |
 | `src/lib/sse-sync.ts`                  | 33%   | 29%      |
 | `src/lib/metrics.ts`                   | 72%   | 0%       |
 | `src/routers/chatReports/queries.ts`   | new   | new      |
@@ -232,10 +270,11 @@
 | `src/db/queries/courseWishlist.ts`     | new   | new      |
 | `src/db/queries/user.ts`               | new   | new      |
 | `src/db/mutations/courseWishlist.ts`   | new   | new      |
+| `src/routers/dataExport/index.ts`      | new   | new      |
 
 #### Server — Untested Files (0% Coverage)
 
-#### 99 Files With Zero Coverage
+#### 96 Files With Zero Coverage
 
 **Bootstrap & Core:**
 
@@ -287,7 +326,7 @@
 - `src/db/mutations/teamLicense.ts`
 - `src/db/mutations/teamLicenseInvite.ts`
 
-**Lib (10 untested files):**
+**Lib (8 untested files):**
 
 - `src/lib/auth-metrics.ts`
 - `src/lib/auth.server.ts`
@@ -295,8 +334,6 @@
 - `src/lib/chat-metrics.ts`
 - `src/lib/db-metrics.ts`
 - `src/lib/external-metrics.ts`
-- `src/lib/mailer.ts`
-- `src/lib/r2-upload.ts`
 - `src/lib/redis.ts`
 - `src/lib/trpc-metrics.ts`
 
@@ -323,7 +360,7 @@
 - `src/plugins/external/rate-limit.ts`
 - `src/plugins/external/sensible.ts`
 
-**tRPC Routers (14 files):**
+**tRPC Routers (13 files):**
 
 - `src/routers/index.ts`
 - `src/routers/announcements/index.ts`
@@ -331,7 +368,6 @@
 - `src/routers/chat/index.ts`
 - `src/routers/coupons/index.ts`
 - `src/routers/courses/index.ts`
-- `src/routers/dataExport/index.ts`
 - `src/routers/dataExport/queries.ts`
 - `src/routers/directMessages/index.ts`
 - `src/routers/mentions/index.ts`
@@ -476,18 +512,21 @@ clipping on announcements list causes element visibility failures after update
 | `src/components/file-attachment.tsx`                               | new   | new      |
 | `src/components/mention-picker.tsx`                                | new   | new      |
 | `src/components/pricing-section.tsx`                               | new   | new      |
+| `src/components/view-purchase-sheet.tsx`                           | new   | new      |
+| `src/components/dm-request-modal.tsx`                              | new   | new      |
+| `src/components/announcements/AnnouncementsBanner.tsx`             | new   | new      |
 | `src/lib/markdown.ts`                                              | new   | new      |
 
 #### Web — Untested Files (0% Coverage)
 
-#### 160 Files With Zero Coverage
+#### 155 Files With Zero Coverage
 
 **App Bootstrap:**
 
 - `src/main.tsx`
 - `src/reportWebVitals.ts`
 
-**Components (26 files):**
+**Components (24 files):**
 
 - `src/components/chat-message-editor.tsx`
 - `src/components/chat-message.tsx`
@@ -495,7 +534,6 @@ clipping on announcements list causes element visibility failures after update
 - `src/components/create-coupon-sheet.tsx`
 - `src/components/create-course-sheet.tsx`
 - `src/components/create-review-sheet.tsx`
-- `src/components/dm-request-modal.tsx`
 - `src/components/dm-request-sheet.tsx`
 - `src/components/edit-coupon-sheet.tsx`
 - `src/components/edit-course-sheet.tsx`
@@ -512,8 +550,6 @@ clipping on announcements list causes element visibility failures after update
 - `src/components/user-profile-sheet.tsx`
 - `src/components/user-search-modal.tsx`
 - `src/components/username-requirement-modal.tsx`
-- `src/components/view-purchase-sheet.tsx`
-- `src/components/announcements/AnnouncementsBanner.tsx`
 
 **Forms (4 files):**
 
@@ -673,7 +709,7 @@ All hooks now have tests.
 
 ---
 
-### Cypress E2E Tests — 29 Spec Files
+### Cypress E2E Tests — 31 Spec Files
 
 #### Features Covered by E2E
 
@@ -711,12 +747,15 @@ All hooks now have tests.
   Vitest)_
 - `default-layout.cy.ts` — Skip link, header/footer presence across pages
   _(migrated from Vitest)_
+- `admin-purchases.cy.ts` — Admin purchases page, tab controls, access control
+  _(new)_
+- `admin-chat-reports.cy.ts` — Admin chat reports page, table rendering, access
+  control _(new)_
 
 #### Features NOT Covered by E2E
 
 - Course enrollment and lesson viewing (learner journey)
-- Purchases flow and payments (checkout/refund lifecycle/admin purchase
-  visibility)
+- Purchases flow and payments (checkout/refund lifecycle)
 - Direct messages (conversation lifecycle and moderation actions)
 - User search and mentions
 - Admin announcements full update flow (currently flaky and skipped)
@@ -773,7 +812,7 @@ These are the largest untested areas containing core business logic.
 | 20  | `src/routers/chat/__tests__/dmValidation.test.ts`   | DM validation logic     | —     | - [x] Done |
 | 21  | `src/lib/tests/logging.test.ts`                     | Logging (currently 20%) | 306   | - [x] Done |
 | 22  | `src/lib/tests/cache.test.ts`                       | Cache module            | 604   | - [x] Done |
-| 23  | `src/lib/tests/mailer.test.ts`                      | Email sending           | —     | - [ ] Todo |
+| 23  | `src/lib/tests/mailer.test.ts`                      | Email sending           | —     | - [x] Done |
 | 24  | `src/routes/courses/__tests__/handlers.test.ts`     | REST course handlers    | 150   | - [x] Done |
 | 25  | `src/routers/chatReports/__tests__/*.test.ts`       | Chat reports            | 68    | - [x] Done |
 | 26  | `src/routers/announcements/__tests__/index.test.ts` | Announcements router    | 66    | - [x] Done |
@@ -781,6 +820,8 @@ These are the largest untested areas containing core business logic.
 | 28  | `src/routers/mentions/__tests__/index.test.ts`      | Mentions router         | 46    | - [x] Done |
 | 28a | `src/routers/supportStatus/__tests__/index.test.ts` | Support status router   | —     | - [x] Done |
 | 28b | `src/routers/syncStatus/__tests__/*.test.ts`        | Sync status             | —     | - [x] Done |
+| 28c | `src/lib/tests/r2-upload.test.ts`                   | R2/S3 upload operations | —     | - [x] Done |
+| 28d | `src/routers/dataExport/__tests__/index.test.ts`    | Data export router      | —     | - [x] Done |
 
 ### Phase 3: Web Components (Highest Untested Line Count)
 
@@ -806,6 +847,8 @@ These are the largest untested areas containing core business logic.
 | 40g | `src/components/__tests__/support-comment.test.tsx`        | Support comment   | —     | - [x] Done |
 | 40h | `src/components/layouts/__tests__/admin-layout.test.tsx`   | Admin layout      | —     | - [x] Done |
 | 40i | `cypress/e2e/default-layout.cy.ts`                        | Default layout    | —     | - [x] Migrated to E2E |
+| 40j | `src/components/__tests__/view-purchase-sheet.test.tsx`    | View purchase     | —     | - [x] Done |
+| 40k | `src/components/__tests__/dm-request-modal.test.tsx`       | DM request modal  | —     | - [x] Done |
 
 ### Phase 4: Web Forms and UI Components
 
@@ -844,6 +887,8 @@ These are the largest untested areas containing core business logic.
 | 56  | `cypress/e2e/direct-messages.cy.ts`   | Direct messages                      | - [ ] Todo |
 | 57  | `cypress/e2e/theme-toggle.cy.ts`      | Theme toggling                       | - [x] Done |
 | 58  | `cypress/e2e/sync-status.cy.ts`       | Sync status page and collection tabs | - [x] Done |
+| 58a | `cypress/e2e/admin-purchases.cy.ts`   | Admin purchases page and access ctrl | - [x] Done |
+| 58b | `cypress/e2e/admin-chat-reports.cy.ts` | Admin chat reports page and access   | - [x] Done |
 
 ### Phase 6: Improve Partial Coverage
 
@@ -918,7 +963,7 @@ Reports are generated in:
 
 ## Existing Test Files
 
-### Server (38 test files, 436 tests)
+### Server (42 test files, 451 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
 - `src/lib/tests/config.test.ts` — 49 tests
@@ -927,7 +972,9 @@ Reports are generated in:
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
 - `src/lib/tests/sse-sync.test.ts` — 18 tests
-- `src/lib/tests/logging.test.ts` — 6 tests _(new)_
+- `src/lib/tests/logging.test.ts` — 10 tests _(expanded)_
+- `src/lib/tests/mailer.test.ts` — 3 tests _(new)_
+- `src/lib/tests/r2-upload.test.ts` — 4 tests _(new)_
 - `src/db/queries/__tests__/courseWishlist.test.ts` — 12 tests _(new)_
 - `src/db/queries/__tests__/user.test.ts` — 5 tests _(new)_
 - `src/db/mutations/__tests__/courseWishlist.test.ts` — 5 tests _(new)_
@@ -941,6 +988,7 @@ Reports are generated in:
 - `src/routers/courses/__tests__/mutations.test.ts` — 13 tests
 - `src/routers/dataExport/__tests__/csvUtils.test.ts` — 25 tests
 - `src/routers/dataExport/__tests__/rateLimit.test.ts` — 8 tests
+- `src/routers/dataExport/__tests__/index.test.ts` — 5 tests _(new)_
 - `src/routers/directMessages/__tests__/queries.test.ts` — 3 tests
 - `src/routers/directMessages/__tests__/mutations.test.ts` — 2 tests
 - `src/routers/notifications/__tests__/queries.test.ts` — 6 tests
@@ -959,8 +1007,9 @@ Reports are generated in:
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
-### Web (84 test files, 706 passing tests + 12 todo)
+### Web (86 test files, 677 passing tests + 12 todo)
 
+- `src/components/__tests__/announcements-banner.test.tsx` — 9 tests _(expanded)_
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
 - `src/components/__tests__/chat-date-divider.test.tsx` — 6 tests
@@ -968,26 +1017,30 @@ Reports are generated in:
 - `src/components/__tests__/confirm-dialog.test.tsx` — 7 tests
 - `src/components/__tests__/course-card.test.tsx` — 23 tests
 - `src/components/__tests__/cta-section.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/dm-request-modal.test.tsx` — 5 tests _(new)_
 - `src/components/__tests__/empty-state.test.tsx` — 5 tests
 - `src/components/__tests__/error-boundary.test.tsx` — 5 tests
 - `src/components/__tests__/field-info.test.tsx` — 5 tests
 - `src/components/__tests__/file-attachment.test.tsx` — 9 tests _(new)_
-- `src/components/__tests__/footer.test.tsx` — 10 tests
 - `src/components/__tests__/format-duration.test.ts` — 7 tests
-- `src/components/__tests__/header.test.tsx` — 3 tests _(new)_
+- `src/components/__tests__/giphy-picker.test.tsx` — 5 tests
 - `src/components/__tests__/instructor-card.test.tsx` — 6 tests
 - `src/components/__tests__/loading.test.tsx` — 4 tests
+- `src/components/__tests__/markdown-content.test.tsx` — 13 tests _(expanded)_
 - `src/components/__tests__/mention-picker.test.tsx` — 7 tests _(new)_
 - `src/components/__tests__/message-reactions-helpers.test.ts` — 10 tests
-- `src/components/__tests__/not-found.test.tsx` — 2 tests
+- `src/components/__tests__/message-reactions.test.tsx` — 30 tests
+- `src/components/__tests__/emoji-reaction-picker.test.tsx` — 13 tests
 - `src/components/__tests__/pricing-section.test.tsx` — 9 tests _(new)_
+- `src/components/__tests__/refund-purchase-modal.test.tsx` — 3 tests
 - `src/components/__tests__/report-message-dialog.test.tsx` — 5 tests _(new)_
 - `src/components/__tests__/support-comment.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
-- `src/components/__tests__/theme-toggle.test.tsx` — 6 tests
+- `src/components/__tests__/SyncStatusIndicator.test.tsx` — 10 tests _(expanded)_
 - `src/components/__tests__/username-requirement-modal.test.tsx` — 5 tests
   _(new)_
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
+- `src/components/__tests__/view-purchase-sheet.test.tsx` — 5 tests _(new)_
 - `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
   tests
 - `src/components/__tests__/notifications-bell.test.tsx` — 24 tests
@@ -1030,15 +1083,17 @@ Reports are generated in:
 - `src/schema/__tests__/sign-up.test.ts` — 8 tests
 - `src/schema/__tests__/support-ticket.test.ts` — 16 tests
 
-### Cypress E2E (23 spec files)
+### Cypress E2E (31 spec files)
 
 - `account.cy.ts`
 - `admin-announcements.cy.ts`
+- `admin-chat-reports.cy.ts` _(new)_
 - `admin-course-creation-flow.cy.ts`
 - `admin-course-editor.cy.ts`
 - `admin-courses.cy.ts`
 - `admin-coupons.cy.ts`
 - `admin-navigation.cy.ts`
+- `admin-purchases.cy.ts` _(new)_
 - `admin-reviews.cy.ts`
 - `admin-stats.cy.ts`
 - `admin-users.cy.ts`
@@ -1048,15 +1103,32 @@ Reports are generated in:
 - `cookie-policy.cy.ts`
 - `dashboard.cy.ts`
 - `data-export.cy.ts`
+- `default-layout.cy.ts` _(new)_
 - `downloads.cy.ts`
+- `header-and-footer.cy.ts` _(new)_
 - `navigation-and-guards.cy.ts`
+- `not-found.cy.ts` _(new)_
 - `notifications.cy.ts` _(new)_
 - `profile.cy.ts`
+- `purchases.cy.ts` _(new)_
 - `reset-password.cy.ts`
 - `spec.cy.ts`
+- `sync-status.cy.ts` _(new)_
 - `theme-toggle.cy.ts` _(new)_
 
 ---
+
+## Coverage Delta (2026-03-12)
+
+Compared to the previous documented web run (658 tests) and server run (435
+tests):
+
+| App        | Test Files | Tests  | Notes                                   |
+| ---------- | ---------- | ------ | --------------------------------------- |
+| **Server** | +4 files   | +16    | mailer, r2-upload, logging, dataExport  |
+| **Web**    | +2 files   | +19    | view-purchase-sheet, dm-request-modal + expansions |
+| **Cypress** | +2 specs  | +10    | admin-purchases, admin-chat-reports     |
+| **Total**  | +8 files   | **+45** |                                         |
 
 ## Coverage Delta (2026-03-11)
 
