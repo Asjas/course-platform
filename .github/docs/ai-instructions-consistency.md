@@ -23,8 +23,8 @@ This file is the quick reconciliation map for AI-facing documentation across
 
 ## Path Canonicalization
 
-- Preferred collection import path: `~/lib/collections`
-- Legacy compatibility file may still exist: `apps/web/src/lib/db.collections.ts`
+- Preferred collection import path: `~/lib/db.collections`
+- All collections are defined in a single file: `apps/web/src/lib/db.collections.ts`
 
 ## Transitional Exceptions
 

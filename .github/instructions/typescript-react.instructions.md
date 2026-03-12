@@ -58,7 +58,7 @@ Instructions for building high-quality React.js applications with modern pattern
 - Define components using ES5 function declarations (e.g., `function MyComponent() {}`).
 - Use `export default function` for page/route components.
 - Use React hooks appropriately (`useState`, `useEffect`, etc.).
-- Use collection hooks from `~/lib/collections` for server state in components.
+- Use collection hooks from `~/lib/db.collections` for server state in components.
 
 ## Code Style
 
@@ -71,7 +71,8 @@ Instructions for building high-quality React.js applications with modern pattern
 - Include error and pending boundaries for all routes.
 - **NEVER use file extensions (`.js`, `.ts`, `.tsx`) in imports** - Vite handles module resolution automatically. Use `~/lib/utils` not `~/lib/utils.js`.
 - **NEVER use `window.confirm()` or `confirm()` for user confirmations** - use the `ConfirmDialog` component from `~/components/confirm-dialog` instead for accessible, keyboard-navigable dialogs.
-- **NEVER say "You're right" or similar agreeing phrases** - the user knows they're right. Just acknowledge and move forward with the work.
+- **React Compiler**: `babel-plugin-react-compiler` is enabled — do NOT add manual `useMemo`/`useCallback`
+  unless you have a specific, measured performance problem. The compiler handles memoization automatically.
 - Accessibility:
   - Use semantic HTML5 elements over generic `div` elements.
   - Follow WCAG 2.2 accessibility guidelines.
@@ -93,10 +94,10 @@ Instructions for building high-quality React.js applications with modern pattern
 **Architectural Exception:** This project uses an offline-first architecture for web and Tauri native apps. Standard TanStack Router patterns (returning data from loaders for component consumption via `useLoaderData()`) are intentionally replaced with a preload-plus-collection-hook pattern to enable offline sync and local-first data access. Loader-returned data is still preferred for non-synced, request-scoped data (auth checks, route metadata).
 
 All component-level data operations must use collection hooks/utilities from
-`~/lib/collections`.
+`~/lib/db.collections`.
 
 ```tsx
-import { CoursesCollection, useCourseById } from "~/lib/collections";
+import { CoursesCollection, useCourseById } from "~/lib/db.collections";
 
 // ALWAYS preload in route loader
 export const Route = createFileRoute("/_authenticated/courses/$courseId")({
@@ -138,52 +139,112 @@ documented transitional modules in `docs/offline-first-architecture.md`.
 
 ## Form Patterns
 
-### Create/Edit Mode Pattern
+### TanStack Form with Zod Validation
 
-For forms that handle both create and update operations:
+All forms use `@tanstack/react-form` with Zod schemas for validation. The form
+validates on `blur` and `submit`. Field errors are displayed via
+`~/components/field-info.tsx`:
 
 ```tsx
-// Fetch existing data via collection hook
-const { data: existingItem } = useItemById({ id });
+import { useForm } from "@tanstack/react-form";
+import { toast } from "sonner";
+import FieldInfo from "~/components/field-info";
+import { myFormSchema } from "~/schema/my-form";
+import { authClient } from "~/lib/auth.client";
 
-// Determine mode
+export default function MyForm() {
+  const form = useForm({
+    defaultValues: { email: "", password: "" },
+    validators: {
+      onBlur: myFormSchema,
+      onSubmit: myFormSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const { error } = await authClient.signIn.email(value);
+      if (error) {
+        toast.error(error.message || "Failed");
+        return;
+      }
+      toast.success("Success!");
+    },
+  });
+
+  return (
+    <form
+      onSubmit={(e) => { e.preventDefault(); form.handleSubmit(); }}
+      noValidate
+    >
+      {/* Block navigation on unsaved changes */}
+      <form.Subscribe
+        selector={(state) => [state.isDirty]}
+        children={([isDirty]) => <BlockerComponent formIsDirty={isDirty} />}
+      />
+
+      <form.Field
+        name="email"
+        children={({ state, handleChange, handleBlur }) => (
+          <div className="grid gap-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              state={state}
+              handleChange={handleChange}
+              handleBlur={handleBlur}
+            />
+            <FieldInfo field={state} />
+          </div>
+        )}
+      />
+
+      <form.Subscribe
+        selector={(state) => [state.isSubmitting]}
+        children={([isSubmitting]) => (
+          <Button
+            type="submit"
+            aria-disabled={isSubmitting}
+            data-loading={isSubmitting ? "true" : "false"}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        )}
+      />
+    </form>
+  );
+}
+```
+
+Key rules:
+- Always use `validators: { onBlur, onSubmit }` with a Zod schema.
+- Display field errors with `<FieldInfo field={state} />` from `~/components/field-info`.
+- Use `<form.Subscribe>` for reactive submit-button state — not a plain button.
+- Add `<BlockerComponent formIsDirty={isDirty} />` to prevent accidental navigation.
+- Use `noValidate` on the `<form>` element to disable native browser validation.
+
+### Create/Edit Mode Pattern
+
+For forms that handle both create and update operations, check for an existing item from
+the collection and conditionally use `Collection.insert` or `Collection.update`:
+
+```tsx
+const { data: existingItem } = useItemById({ id });
 const isEditing = !!existingItem;
 
-// Pre-populate form when opening
-useEffect(() => {
-  if (isSheetOpen && existingItem) {
-    setTitle(existingItem.title);
-    setContent(existingItem.content);
-  } else if (isSheetOpen && !existingItem) {
-    // Reset for new item
-    setTitle("");
-    setContent("");
-  }
-}, [isSheetOpen, existingItem]);
-
-// Handle submit with mode-aware logic
 async function handleSubmit() {
-  setIsSubmitting(true);
   const toastId = toast.loading(isEditing ? "Updating..." : "Creating...");
-
   try {
     if (isEditing && existingItem) {
       await ItemsCollection.update(existingItem.id, (draft) => {
         draft.title = title;
-        draft.content = content;
       });
-      toast.success("Updated successfully!", { id: toastId });
     } else {
-      // Create new item
-      const tx = ItemsCollection.insert({ id: ulid(), title, content });
+      const tx = ItemsCollection.insert({ id: ulid(), title });
       await tx.isPersisted.promise;
-      toast.success("Created successfully!", { id: toastId });
     }
+    toast.success(isEditing ? "Updated!" : "Created!", { id: toastId });
     setIsSheetOpen(false);
-  } catch (error) {
+  } catch {
     toast.error(`Failed to ${isEditing ? "update" : "create"}`, { id: toastId });
-  } finally {
-    setIsSubmitting(false);
   }
 }
 ```
@@ -330,16 +391,21 @@ export default MyComponent;
 
 ## Key Libraries
 
-- `react` + `react-dom` - React 19
-- `@tanstack/react-router` - File-based routing
-- `@tanstack/react-query` - Server state management
-- `@tanstack/react-form` - Form management
-- `@trpc/client` + `@trpc/tanstack-react-query` - Type-safe API
-- `better-auth` - Authentication client
-- `zod` - Schema validation
-- `lucide-react` - Icons
-- `react-aria-components` - Accessible components
-- `sonner` - Toast notifications
-- `tailwindcss` - CSS framework
+- `react` + `react-dom` — React 19 with React Compiler (`babel-plugin-react-compiler`)
+- `@tanstack/react-router` — File-based routing with auto code-splitting
+- `@tanstack/react-query` — Internal dependency for collection sync/caching
+- `@tanstack/react-form` — Form management with Zod validators
+- `@tanstack/react-db` + `@tanstack/query-db-collection` — Offline-first collections
+- `@trpc/client` + `@trpc/tanstack-react-query` — Type-safe API (collection internals only)
+- `better-auth` — Authentication client
+- `zod` — Schema validation (v4, use `.check()` pattern)
+- `lucide-react` — Icons
+- `react-aria-components` — Accessible interactive components
+- `sonner` — Toast notifications
+- `tailwindcss` + Lightning CSS — CSS framework with auto compilation
+- `class-variance-authority` + `tailwind-merge` — Component variants
+- `ulid` — ID generation for new entities
+- `@mdx-js/react` — MDX content rendering
+- `dompurify` — HTML sanitization for markdown output
 
 For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).

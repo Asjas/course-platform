@@ -163,6 +163,11 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').clear();
     cy.get('input[name="redemptionLimit"]').type("10");
     cy.contains("button", "Create Coupon").click();
+
+    // Wait for success toast to confirm creation before closing sheet
+    cy.contains(/created successfully/i, { timeout: 20000 }).should(
+      "be.visible",
+    );
     waitForSheetClose();
 
     waitForCouponRow(couponCode);
