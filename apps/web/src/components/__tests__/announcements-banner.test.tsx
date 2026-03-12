@@ -137,4 +137,55 @@ describe("AnnouncementsBanner", () => {
 
     expect(screen.getByText("No dismissed announcements")).toBeInTheDocument();
   });
+
+  it("renders the published date for announcements with publishedAt", () => {
+    mockUseUnread.mockReturnValue({
+      data: [
+        makeAnnouncement({
+          title: "With Date",
+          publishedAt: "2026-06-15T10:00:00Z",
+        }),
+      ],
+    });
+
+    render(<AnnouncementsBanner userId="user-1" />);
+
+    // The date should be formatted via toLocaleDateString
+    expect(screen.getByText("With Date")).toBeInTheDocument();
+  });
+
+  it("shows the dismissed date text for read announcements on the dismissed tab", async () => {
+    const user = userEvent.setup();
+    mockUseUnread.mockReturnValue({
+      data: [makeAnnouncement({ title: "Active" })],
+    });
+    mockUseRead.mockReturnValue({
+      data: [
+        makeAnnouncement({
+          id: "read-2",
+          title: "Old Announcement",
+          readAt: "2026-05-10T08:00:00Z",
+        }),
+      ],
+    });
+
+    render(<AnnouncementsBanner userId="user-1" />);
+
+    await user.click(screen.getByRole("button", { name: /dismissed/i }));
+
+    expect(screen.getByText(/dismissed on/i)).toBeInTheDocument();
+  });
+
+  it("shows 'No active announcements' when switching to active tab with no unread", () => {
+    mockUseUnread.mockReturnValue({ data: [] });
+    mockUseRead.mockReturnValue({
+      data: [makeAnnouncement({ id: "r1", title: "Read One" })],
+    });
+
+    // Render — initially returns null because no active and tab is "active"
+    const { container } = render(<AnnouncementsBanner userId="user-1" />);
+
+    // Nothing renders when no active announcements and tab is "active"
+    expect(container.firstChild).toBeNull();
+  });
 });

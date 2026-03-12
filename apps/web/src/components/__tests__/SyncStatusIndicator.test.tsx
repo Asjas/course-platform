@@ -123,4 +123,24 @@ describe("SyncStatusIndicator", () => {
 
     expect(await screen.findByText("OfflineColl")).toBeInTheDocument();
   });
+
+  it("shows 'syncing' status when a collection is syncing", () => {
+    render(
+      <SyncStatusIndicator collections={[makeStatus({ isSyncing: true })]} />,
+    );
+    expect(
+      screen.getByRole("button", { name: /sync status.*syncing/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("shows 'error' status when a collection has an error", () => {
+    render(
+      <SyncStatusIndicator
+        collections={[makeStatus({ error: new Error("oops") })]}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /sync status.*error/i }),
+    ).toBeInTheDocument();
+  });
 });
