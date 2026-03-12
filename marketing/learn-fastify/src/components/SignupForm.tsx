@@ -80,11 +80,11 @@ export default function SignupForm({
   if (formState === "success") {
     return (
       <div
-        className={`flex items-center gap-3 rounded-lg bg-green-50 p-4 text-green-700 dark:bg-green-900/30 dark:text-green-400 ${className}`}
+        className={`flex items-center justify-center gap-4 rounded-lg bg-green-50 p-4 text-green-700 dark:bg-green-900/30 dark:text-green-400 ${className}`}
         role="alert"
       >
         <CheckCircle className="h-5 w-5 flex-shrink-0" />
-        <div>
+        <div className="text-center">
           <p className="font-medium">You're on the list!</p>
           <p className="text-sm opacity-90">
             Check your inbox for a confirmation email.
