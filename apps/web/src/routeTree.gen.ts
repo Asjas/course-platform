@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from "./routes/__root"
+import { Route as VerifyCourseWishlistRouteImport } from "./routes/verify-course-wishlist"
 import { Route as TermsRouteImport } from "./routes/terms"
 import { Route as PrivacyRouteImport } from "./routes/privacy"
 import { Route as DownloadsRouteImport } from "./routes/downloads"
@@ -65,6 +66,11 @@ import { Route as AuthenticatedAdminCoursesCreateRouteImport } from "./routes/_a
 import { Route as AuthenticatedCoursesCourseIdLessonsLessonIdRouteImport } from "./routes/_authenticated/courses.$courseId.lessons.$lessonId"
 import { Route as AuthenticatedAdminCoursesCourseIdEditRouteImport } from "./routes/_authenticated/admin/courses/$courseId/edit"
 
+const VerifyCourseWishlistRoute = VerifyCourseWishlistRouteImport.update({
+  id: "/verify-course-wishlist",
+  path: "/verify-course-wishlist",
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: "/terms",
   path: "/terms",
@@ -372,6 +378,7 @@ export interface FileRoutesByFullPath {
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
+  "/verify-course-wishlist": typeof VerifyCourseWishlistRoute
   "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
   "/reset-password": typeof authResetPasswordRoute
@@ -426,6 +433,7 @@ export interface FileRoutesByTo {
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
+  "/verify-course-wishlist": typeof VerifyCourseWishlistRoute
   "/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/reset-password": typeof authResetPasswordRoute
   "/signin": typeof authSigninRoute
@@ -481,6 +489,7 @@ export interface FileRoutesById {
   "/downloads": typeof DownloadsRoute
   "/privacy": typeof PrivacyRoute
   "/terms": typeof TermsRoute
+  "/verify-course-wishlist": typeof VerifyCourseWishlistRoute
   "/_authenticated/admin": typeof AuthenticatedAdminRouteRouteWithChildren
   "/education/courses": typeof EducationCoursesRouteRouteWithChildren
   "/(auth)/reset-password": typeof authResetPasswordRoute
@@ -538,6 +547,7 @@ export interface FileRouteTypes {
     | "/downloads"
     | "/privacy"
     | "/terms"
+    | "/verify-course-wishlist"
     | "/admin"
     | "/education/courses"
     | "/reset-password"
@@ -592,6 +602,7 @@ export interface FileRouteTypes {
     | "/downloads"
     | "/privacy"
     | "/terms"
+    | "/verify-course-wishlist"
     | "/admin"
     | "/reset-password"
     | "/signin"
@@ -646,6 +657,7 @@ export interface FileRouteTypes {
     | "/downloads"
     | "/privacy"
     | "/terms"
+    | "/verify-course-wishlist"
     | "/_authenticated/admin"
     | "/education/courses"
     | "/(auth)/reset-password"
@@ -704,6 +716,7 @@ export interface RootRouteChildren {
   DownloadsRoute: typeof DownloadsRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
+  VerifyCourseWishlistRoute: typeof VerifyCourseWishlistRoute
   EducationCoursesRouteRoute: typeof EducationCoursesRouteRouteWithChildren
   BlogSlugRoute: typeof BlogSlugRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -711,6 +724,13 @@ export interface RootRouteChildren {
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
+    "/verify-course-wishlist": {
+      id: "/verify-course-wishlist"
+      path: "/verify-course-wishlist"
+      fullPath: "/verify-course-wishlist"
+      preLoaderRoute: typeof VerifyCourseWishlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     "/terms": {
       id: "/terms"
       path: "/terms"
@@ -1314,6 +1334,7 @@ const rootRouteChildren: RootRouteChildren = {
   DownloadsRoute: DownloadsRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
+  VerifyCourseWishlistRoute: VerifyCourseWishlistRoute,
   EducationCoursesRouteRoute: EducationCoursesRouteRouteWithChildren,
   BlogSlugRoute: BlogSlugRoute,
   BlogIndexRoute: BlogIndexRoute,

@@ -8,14 +8,15 @@ code in this repository.
 
 A **full-stack TypeScript monorepo** for a course platform:
 
-| Workspace | Package | Stack |
-|-----------|---------|-------|
-| `apps/web` | `@apps/web` | React 19, Vite 7, TanStack (Router, Query, Form, React-DB), Tailwind CSS 4 |
-| `apps/server` | `@apps/server` | Fastify 5, tRPC 11, Drizzle ORM, Better Auth, PostgreSQL 18 |
-| `packages/shared-ui` | `@packages/shared-ui` | Radix UI component library |
-| `marketing/learn-fastify` | `@marketing/learn-fastify` | Astro 5 static site |
+| Workspace                 | Package                    | Stack                                                                      |
+| ------------------------- | -------------------------- | -------------------------------------------------------------------------- |
+| `apps/web`                | `@apps/web`                | React 19, Vite 7, TanStack (Router, Query, Form, React-DB), Tailwind CSS 4 |
+| `apps/server`             | `@apps/server`             | Fastify 5, tRPC 11, Drizzle ORM, Better Auth, PostgreSQL 18                |
+| `packages/shared-ui`      | `@packages/shared-ui`      | Radix UI component library                                                 |
+| `marketing/learn-fastify` | `@marketing/learn-fastify` | Astro 5 static site                                                        |
 
-**Runtime requirements**: Node.js >=22.16.0, PostgreSQL 18, Redis/Dragonfly, pnpm 10
+**Runtime requirements**: Node.js >=22.16.0, PostgreSQL 18, Redis/Dragonfly,
+pnpm 10
 
 ## Commands
 
@@ -89,7 +90,8 @@ apps/web/src/
 
 - **Offline-first**: Data fetching goes through `~/lib/db.collections` hooks
   (e.g. `useSupportTickets`, `useCourses`), never direct tRPC/React Query.
-- **Collections**: `queryCollectionOptions` + `createCollection` + `useLiveQuery`.
+- **Collections**: `queryCollectionOptions` + `createCollection` +
+  `useLiveQuery`.
 - **File-based routing**: `__root.tsx`, `index.tsx`, `$param.tsx`, `(group)/`,
   `_layout/`.
 - **React Compiler**: `babel-plugin-react-compiler` is enabled — no manual
@@ -118,8 +120,8 @@ apps/server/src/
 
 ## Coding Conventions
 
-- **TypeScript**: Strict mode, no `any`, double quotes, semicolons, `const`
-  over `let`.
+- **TypeScript**: Strict mode, no `any`, double quotes, semicolons, `const` over
+  `let`.
 - **Naming**: PascalCase components, camelCase variables/functions, snake_case
   DB tables/columns.
 - **Components**: ES5 function declarations (`function MyComponent() {}`).
@@ -133,6 +135,7 @@ apps/server/src/
    `pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<spec>.cy.ts"`
 
 Key guardrails:
+
 - **tRPC uses POST** (`httpBatchStreamLink`) — always
   `cy.intercept("POST", ...)`, never GET.
 - **Register intercepts before** `cy.visit()`.
@@ -146,6 +149,7 @@ Key guardrails:
 `~/components/blocker`, `~/components/markdown-editor`.
 
 Key rules:
+
 - `renderWithProviders` is **async** — always `await` it.
 - Assert navigation via `router.state.location.pathname`.
 - Use `vi.hoisted()` for data in `vi.mock` factories.
@@ -153,33 +157,34 @@ Key rules:
 
 ## Host Environment — Shell Aliases
 
-| Alias | Actual Command | Notes |
-|-------|---------------|-------|
-| `cat` | `bat -pp` | Use `command cat` for raw output |
-| `grep` | `rg` (ripgrep) | Use `command grep` for POSIX grep |
-| `find` | `fdfind` | Use `command find` for POSIX find |
-| `rm` | `trash` | Safe delete; use `/bin/rm` for permanent |
+| Alias  | Actual Command | Notes                                    |
+| ------ | -------------- | ---------------------------------------- |
+| `cat`  | `bat -pp`      | Use `command cat` for raw output         |
+| `grep` | `rg` (ripgrep) | Use `command grep` for POSIX grep        |
+| `find` | `fdfind`       | Use `command find` for POSIX find        |
+| `rm`   | `trash`        | Safe delete; use `/bin/rm` for permanent |
 
 ## Instruction Files
 
 Detailed coding patterns are in `.github/instructions/`, auto-applied by file
 path. Reference docs are in `.github/docs/`.
 
-| File | Scope |
-|------|-------|
-| `a11y.instructions.md` | `**/*.tsx` |
-| `commit-message.instructions.md` | `**` |
-| `cypress-e2e.instructions.md` | `apps/web/cypress/**` |
-| `github-actions.instructions.md` | `.github/workflows/*.yml` |
-| `markdown.instructions.md` | `**/*.md` |
-| `performance.instructions.md` | `**/*.ts, **/*.tsx` |
-| `security.instructions.md` | `**/*.ts, **/*.tsx` |
-| `trpc-type-patterns.instructions.md` | Routers/queries/collections |
-| `typescript-node.instructions.md` | `apps/server/**` |
-| `typescript-react.instructions.md` | `apps/web/**/*.ts,tsx,css` etc. |
-| `unit-testing-rtl.instructions.md` | `apps/web/src/**/*.test.*` |
+| File                                 | Scope                           |
+| ------------------------------------ | ------------------------------- |
+| `a11y.instructions.md`               | `**/*.tsx`                      |
+| `commit-message.instructions.md`     | `**`                            |
+| `cypress-e2e.instructions.md`        | `apps/web/cypress/**`           |
+| `github-actions.instructions.md`     | `.github/workflows/*.yml`       |
+| `markdown.instructions.md`           | `**/*.md`                       |
+| `performance.instructions.md`        | `**/*.ts, **/*.tsx`             |
+| `security.instructions.md`           | `**/*.ts, **/*.tsx`             |
+| `trpc-type-patterns.instructions.md` | Routers/queries/collections     |
+| `typescript-node.instructions.md`    | `apps/server/**`                |
+| `typescript-react.instructions.md`   | `apps/web/**/*.ts,tsx,css` etc. |
+| `unit-testing-rtl.instructions.md`   | `apps/web/src/**/*.test.*`      |
 
 Reference docs in `.github/docs/`:
+
 - `library-patterns-reference.md` — Zod 4, async-cache-dedupe, TanStack, Vitest
 - `a11y-reference.md` — Accessibility patterns and code examples
 - `performance-optimization-reference.md` — Performance guide

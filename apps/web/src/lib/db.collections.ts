@@ -516,7 +516,15 @@ export const EarlySignupsCollection = createCollection(
     queryFn: () => trpcClient.earlySignups.getAll.query(),
     onUpdate: async ({ transaction }) => {
       try {
-        const { original } = transaction.mutations[0];
+        const { original, modified } = transaction.mutations[0];
+
+        if (!original.unsubscribedAt && modified.unsubscribedAt) {
+          await trpcClient.earlySignups.cancelInvite.mutate({
+            id: original.id,
+          });
+          return;
+        }
+
         await trpcClient.earlySignups.sendInvite.mutate({ id: original.id });
       } catch (error) {
         console.error("Error sending early signup invite:", error);

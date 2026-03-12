@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import * as z from "zod";
 import config from "~/config.js";
 import { db } from "~/db/index.js";
+import { courseWishlist } from "~/db/schema/course.js";
 import { earlySignup } from "~/db/schema/earlySignup.js";
 import mailer from "~/lib/mailer.js";
 import { isAdmin, publicProcedure, router } from "~/router.js";
@@ -96,10 +97,15 @@ export const earlySignupsRouter = router({
       }
 
       const [updateErr] = await fastify.to(
-        db
-          .update(earlySignup)
-          .set({ confirmedAt: new Date() })
-          .where(eq(earlySignup.id, input.id)),
+        signup.sourceTable === "course_wishlist"
+          ? db
+              .update(courseWishlist)
+              .set({ confirmedAt: new Date() })
+              .where(eq(courseWishlist.id, input.id))
+          : db
+              .update(earlySignup)
+              .set({ confirmedAt: new Date() })
+              .where(eq(earlySignup.id, input.id)),
       );
 
       if (updateErr) {
@@ -107,6 +113,60 @@ export const earlySignupsRouter = router({
           updateErr,
           "Failed to update early signup confirmedAt",
         );
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      return { success: true };
+    }),
+
+  cancelInvite: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .use(isAdmin)
+    .mutation(async ({ ctx, input }) => {
+      const fastify = ctx.reply.server;
+
+      const [findErr, signup] = await fastify.to(
+        getEarlySignupById({ id: input.id }),
+      );
+
+      if (findErr) {
+        fastify.log.error(findErr, "Failed to find early signup");
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        });
+      }
+
+      if (!signup) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Early signup not found",
+        });
+      }
+
+      if (signup.unsubscribedAt) {
+        return { success: true };
+      }
+
+      const [updateErr] = await fastify.to(
+        signup.sourceTable === "course_wishlist"
+          ? db
+              .update(courseWishlist)
+              .set({ unsubscribedAt: new Date() })
+              .where(eq(courseWishlist.id, input.id))
+          : db
+              .update(earlySignup)
+              .set({ unsubscribedAt: new Date() })
+              .where(eq(earlySignup.id, input.id)),
+      );
+
+      if (updateErr) {
+        fastify.log.error(updateErr, "Failed to cancel early signup invite");
 
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",

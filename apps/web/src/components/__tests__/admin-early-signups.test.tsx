@@ -33,6 +33,8 @@ function makeSignup(
     source: string;
     referrer: string | null;
     confirmedAt: Date | null;
+    unsubscribedAt: Date | null;
+    sourceTable: "early_signup" | "course_wishlist";
     createdAt: Date;
     updatedAt: Date;
   }> = {},
@@ -44,6 +46,8 @@ function makeSignup(
     source: "learnfastify",
     referrer: null,
     confirmedAt: null,
+    unsubscribedAt: null,
+    sourceTable: "course_wishlist",
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
     ...overrides,
@@ -85,6 +89,68 @@ describe("AdminEarlySignupsPage", () => {
     expect(screen.getByText("learnfastify")).toBeInTheDocument();
   });
 
+  it("renders status filter controls", async () => {
+    mockUseEarlySignups.mockReturnValue({
+      data: [makeSignup({ id: "signup:1" })],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Pending" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Invited" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Canceled" }),
+    ).toBeInTheDocument();
+  });
+
+  it("filters rows by selected status", async () => {
+    const user = userEvent.setup();
+    mockUseEarlySignups.mockReturnValue({
+      data: [
+        makeSignup({
+          id: "signup:pending",
+          email: "pending@example.com",
+          confirmedAt: null,
+          unsubscribedAt: null,
+        }),
+        makeSignup({
+          id: "signup:invited",
+          email: "invited@example.com",
+          confirmedAt: new Date("2024-01-20"),
+          unsubscribedAt: null,
+        }),
+        makeSignup({
+          id: "signup:canceled",
+          email: "canceled@example.com",
+          unsubscribedAt: new Date("2024-01-21"),
+        }),
+      ],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    await user.click(screen.getByRole("button", { name: "Pending" }));
+    expect(screen.getByText("pending@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("invited@example.com")).not.toBeInTheDocument();
+    expect(screen.queryByText("canceled@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Invited" }));
+    expect(screen.getByText("invited@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("pending@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Canceled" }));
+    expect(screen.getByText("canceled@example.com")).toBeInTheDocument();
+    expect(screen.queryByText("invited@example.com")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "All" }));
+    expect(screen.getByText("pending@example.com")).toBeInTheDocument();
+    expect(screen.getByText("invited@example.com")).toBeInTheDocument();
+    expect(screen.getByText("canceled@example.com")).toBeInTheDocument();
+  });
+
   it("shows Send Invite button for unconfirmed signups", async () => {
     mockUseEarlySignups.mockReturnValue({
       data: [makeSignup({ confirmedAt: null })],
@@ -96,6 +162,8 @@ describe("AdminEarlySignupsPage", () => {
     expect(
       screen.getByRole("button", { name: /send invite/i }),
     ).toBeInTheDocument();
+    expect(screen.getAllByText("Pending").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
   });
 
   it("shows Invited badge for already-confirmed signups", async () => {
@@ -106,9 +174,29 @@ describe("AdminEarlySignupsPage", () => {
 
     await renderWithProviders(<AdminEarlySignupsPage />);
 
-    expect(screen.getByText("Invited")).toBeInTheDocument();
+    expect(screen.getAllByText("Invited").length).toBeGreaterThanOrEqual(1);
     expect(
       screen.queryByRole("button", { name: /send invite/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Cancel" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows Canceled badge when signup is canceled", async () => {
+    mockUseEarlySignups.mockReturnValue({
+      data: [makeSignup({ unsubscribedAt: new Date("2024-01-21") })],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    expect(screen.getAllByText("Canceled").length).toBeGreaterThanOrEqual(1);
+    expect(
+      screen.queryByRole("button", { name: /send invite/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Cancel" }),
     ).not.toBeInTheDocument();
   });
 
@@ -185,6 +273,25 @@ describe("AdminEarlySignupsPage", () => {
     );
   });
 
+  it("cancels pending invite", async () => {
+    const user = userEvent.setup();
+    const signup = makeSignup({ id: "signup:1", email: "alice@example.com" });
+    mockUseEarlySignups.mockReturnValue({ data: [signup], isLoading: false });
+    mockEarlySignupsCollection.update.mockResolvedValueOnce(undefined);
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(mockEarlySignupsCollection.update).toHaveBeenCalledWith(
+      "signup:1",
+      expect.any(Function),
+    );
+    expect(mockToast.success).toHaveBeenCalledWith(
+      expect.stringContaining("alice@example.com"),
+      expect.anything(),
+    );
+  });
+
   it("renders dash when name is absent", async () => {
     mockUseEarlySignups.mockReturnValue({
       data: [makeSignup({ name: null })],
@@ -217,6 +324,6 @@ describe("AdminEarlySignupsPage", () => {
     expect(
       screen.getByRole("button", { name: /send invite/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Invited")).toBeInTheDocument();
+    expect(screen.getAllByText("Invited").length).toBeGreaterThanOrEqual(1);
   });
 });

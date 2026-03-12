@@ -1,9 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
+import config from "~/config.js";
 import { db } from "~/db/index.js";
 import {
   createCourseWishlistEntry,
+  createCourseWishlistVerificationToken,
   unsubscribeCourseWishlistEntry,
 } from "~/db/mutations/courseWishlist.js";
 import {
@@ -14,6 +16,45 @@ import {
 import { course } from "~/db/schema/course.js";
 import mailer from "~/lib/mailer.js";
 import { publicProcedure, router } from "~/router.js";
+
+function firstForwardedHeaderValue(value: string | string[] | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  const firstValue = rawValue.split(",")[0]?.trim();
+
+  return firstValue ? firstValue : undefined;
+}
+
+function resolveVerificationApiOrigin(
+  request:
+    | {
+        headers: Record<string, string | string[] | undefined>;
+        protocol?: string;
+      }
+    | undefined,
+) {
+  const forwardedHost = firstForwardedHeaderValue(
+    request?.headers["x-forwarded-host"],
+  );
+  const host =
+    forwardedHost ?? firstForwardedHeaderValue(request?.headers.host);
+  const forwardedProto = firstForwardedHeaderValue(
+    request?.headers["x-forwarded-proto"],
+  );
+  const protocol = forwardedProto ?? request?.protocol;
+
+  if (host && protocol) {
+    return `${protocol}://${host}`;
+  }
+
+  return (
+    config.ORIGIN.find((url) => url.includes("api.")) ??
+    "https://api.codewizard.training"
+  );
+}
 
 const signupInputSchema = z.object({
   email: z.email(),
@@ -28,7 +69,7 @@ const signupInputSchema = z.object({
 export const courseWishlistRouter = router({
   signup: publicProcedure
     .input(signupInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // Look up course by slug
       const courseResult = await db.query.course.findFirst({
         where: eq(course.slug, input.courseSlug),
@@ -69,6 +110,20 @@ export const courseWishlistRouter = router({
 
       // Send welcome email
       try {
+        const verificationToken = await createCourseWishlistVerificationToken(
+          entry.id,
+        );
+        const origin = resolveVerificationApiOrigin(
+          ctx.request as
+            | {
+                headers: Record<string, string | string[] | undefined>;
+                protocol?: string;
+              }
+            | undefined,
+        );
+        const verifyUrl = new URL("/verify-course-wishlist", origin);
+        verifyUrl.searchParams.set("token", verificationToken.token);
+
         await mailer.sendMail({
           sender: "Codewizard Training <support@codewizard.training>",
           replyTo: "support@codewizard.training",
@@ -92,10 +147,18 @@ export const courseWishlistRouter = router({
 
             <p>Here's what you can expect:</p>
             <ul style="padding-left: 20px;">
-              <li>Early access pricing (save up to 40%)</li>
-              <li>Exclusive bonus content for early supporters</li>
+              <li>Early access pricing (save up to 30%)</li>
               <li>Launch updates and sneak peeks</li>
             </ul>
+
+            <p style="margin-top: 24px;">Please verify your email to confirm you're a real person and complete your waitlist signup:</p>
+            <p>
+              <a href="${verifyUrl.toString()}" style="display: inline-block; background: #10b981; color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Verify my email
+              </a>
+            </p>
+            <p style="color: #666; font-size: 13px;">If the button does not work, copy and paste this URL into your browser:</p>
+            <p style="word-break: break-word; font-size: 13px; color: #666;">${verifyUrl.toString()}</p>
 
             <p style="margin-top: 30px;">In the meantime, feel free to reply to this email if you have any questions!</p>
 
@@ -114,7 +177,7 @@ export const courseWishlistRouter = router({
       return {
         success: true,
         message: "Welcome to the waitlist!",
-        id: entry?.id,
+        id: entry.id,
         alreadySignedUp: false,
       };
     }),
