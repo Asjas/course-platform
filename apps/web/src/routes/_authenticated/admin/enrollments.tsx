@@ -48,7 +48,7 @@ const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   },
 };
 
-function AdminEnrollmentsPage() {
+export function AdminEnrollmentsPage() {
   const { data: enrollments, isLoading } = useEnrollmentsAdmin();
   const [search, setSearch] = useState("");
 

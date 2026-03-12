@@ -24,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin/progress")({
   component: AdminProgressPage,
 });
 
-function AdminProgressPage() {
+export function AdminProgressPage() {
   const { data: progressItems, isLoading } = useCourseProgressAdmin();
 
   if (isLoading) {

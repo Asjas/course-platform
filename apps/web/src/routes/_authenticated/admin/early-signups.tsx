@@ -22,7 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin/early-signups")({
   component: AdminEarlySignupsPage,
 });
 
-function AdminEarlySignupsPage() {
+export function AdminEarlySignupsPage() {
   const { data: signups, isLoading } = useEarlySignups();
 
   async function handleSendInvite(id: string, email: string) {
