@@ -115,11 +115,19 @@ jobs:
 
     strategy:
       matrix:
-        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [22, 24, 25]
+        # Use include-only matrix to guarantee every job has a unique redis-db value.
+        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators).
+        include:
+          - node-version: 22
+            redis-db: 1
+          - node-version: 24
+            redis-db: 2
+          - node-version: 25
+            redis-db: 3
 
     env:
       DATABASE_SCHEMA: ci_server_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
+      REDIS_DB: ${{ matrix.redis-db || 0 }}
 
     steps:
       - name: Check out repository
@@ -225,11 +233,19 @@ jobs:
 
     strategy:
       matrix:
-        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators)
-        node-version: [22, 24, 25]
+        # Use include-only matrix to guarantee every job has a unique redis-db value.
+        # Use major version numbers only to avoid dots in schema names (PostgreSQL interprets dots as schema separators).
+        include:
+          - node-version: 22
+            redis-db: 4
+          - node-version: 24
+            redis-db: 5
+          - node-version: 25
+            redis-db: 6
 
     env:
       DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
+      REDIS_DB: ${{ matrix.redis-db || 0 }}
 
     steps:
       - name: Check out repository

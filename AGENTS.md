@@ -149,6 +149,14 @@ Key guardrails:
 - **Never use `cy.request()`** for auth setup — drive all flows through the real UI.
 - **Never mock/stub responses** with `cy.intercept()` — only use it to observe/wait
   on real network calls (e.g. `cy.wait("@createTicket")`).
+- ⚠️ **tRPC uses POST**: This project uses `httpBatchStreamLink` which sends
+  **all** tRPC requests via POST. Always use
+  `cy.intercept("POST", "**/trpc/...")` — never GET. Using GET will silently
+  match zero requests and `cy.wait()` will time out.
+- ⚠️ **Intercept timing**: `cy.intercept()` must be registered **before** the
+  action that triggers the request (e.g., before `cy.visit()`). Route loaders
+  fire tRPC queries on mount during navigation, so registering intercepts after
+  `cy.visit()` will miss those requests.
 - **Authorization**: non-admin navigating to `/admin/*` — assert route-level denial
   and user-facing error, then stop. Do NOT force mutation-level tests from a blocked
   page. Add server-side Vitest tests for the actual endpoint guards instead.

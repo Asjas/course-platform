@@ -238,12 +238,12 @@ describe("Cache Integration Tests (Real DB + Real Redis)", () => {
   let testRedis: Redis;
 
   beforeAll(async () => {
-    // Create a dedicated Redis client for testing
+    // Create a dedicated Redis client for testing on the same db as the cache
     testRedis = new Redis({
       host: config.REDIS_HOST,
       port: config.REDIS_PORT,
       password: config.REDIS_PASSWORD,
-      db: 1, // Use different database for testing
+      db: config.REDIS_DB,
     });
 
     // Clean up ALL existing data first to ensure test isolation
@@ -303,8 +303,7 @@ describe("Cache Integration Tests (Real DB + Real Redis)", () => {
   });
 
   beforeEach(async () => {
-    // Clear all cache before each test
-    await cache.clear();
+    // Flush only this job's Redis db to avoid clearing other CI jobs' caches
     await testRedis.flushdb();
   });
 
