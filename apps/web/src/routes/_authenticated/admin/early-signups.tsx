@@ -36,7 +36,7 @@ function AdminEarlySignupsPage() {
       toast.success(`Invite sent to ${email}.`, { id: toastId });
     } catch (error) {
       console.error("Error sending invite:", error);
-      toast.dismiss(toastId);
+      toast.error("Failed to send invite. Please try again.", { id: toastId });
     }
   }
 

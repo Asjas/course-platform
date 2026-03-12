@@ -1,7 +1,12 @@
-import { type AllEarlySignups, getAllEarlySignups } from "./queries.js";
+import {
+  type AllEarlySignups,
+  getAllEarlySignups,
+  getEarlySignupById,
+} from "./queries.js";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
+import config from "~/config.js";
 import { db } from "~/db/index.js";
 import { earlySignup } from "~/db/schema/earlySignup.js";
 import mailer from "~/lib/mailer.js";
@@ -34,9 +39,7 @@ export const earlySignupsRouter = router({
       const fastify = ctx.reply.server;
 
       const [findErr, signup] = await fastify.to(
-        db.query.earlySignup.findFirst({
-          where: (row) => eq(row.id, input.id),
-        }),
+        getEarlySignupById({ id: input.id }),
       );
 
       if (findErr) {
@@ -74,6 +77,8 @@ export const earlySignupsRouter = router({
         });
       }
 
+      const appUrl = config.ORIGIN[0] ?? "https://codewizard.training";
+
       const [mailErr] = await fastify.to(
         mailer.sendMail({
           sender: "Codewizard Training <support@codewizard.training>",
@@ -85,7 +90,7 @@ export const earlySignupsRouter = router({
             "",
             "You're invited to join Codewizard Training! Click the link below to create your account and get started:",
             "",
-            "https://codewizard.training",
+            appUrl,
             "",
             "If you did not sign up for early access, please ignore this email.",
             "",

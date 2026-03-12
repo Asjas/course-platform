@@ -15,7 +15,11 @@ import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
-import { CoursesAdminCollection, useCoursesAdmin } from "~/lib/db.collections";
+import {
+  type AdminCourseDetail,
+  CoursesAdminCollection,
+  useCoursesAdmin,
+} from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import {
@@ -154,11 +158,7 @@ function EditCoursePage() {
 }
 
 interface CourseStatsBarProps {
-  course: {
-    enrollments?: unknown[];
-    reviews?: { rating: number | null }[];
-    lessons?: unknown[];
-  };
+  course: AdminCourseDetail;
 }
 
 function CourseStatsBar({ course }: CourseStatsBarProps) {
