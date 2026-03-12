@@ -122,8 +122,47 @@ For authorization scenarios, assert both behaviors by testing through the UI:
 
 If an admin page is inaccessible to non-admin users by design, the Cypress test should stop at route-level denial and not attempt form submission from that state.
 
+### tRPC Intercept Patterns (CRITICAL)
+
+This project uses `httpBatchStreamLink` which sends **all** tRPC requests (queries and mutations) via **POST**, never GET. When using `cy.intercept()` for tRPC endpoints:
+
+1. **Always use POST method** (or omit the method to match any):
+   ```typescript
+   // ✅ CORRECT: tRPC uses POST via httpBatchStreamLink
+   cy.intercept("POST", "**/trpc/supportTickets*").as("loadTickets");
+
+   // ❌ WRONG: tRPC never sends GET requests through httpBatchStreamLink
+   cy.intercept("GET", "**/trpc/supportTickets*").as("loadTickets");
+   ```
+
+2. **Register intercepts BEFORE the action that triggers the request**:
+   ```typescript
+   // ✅ CORRECT: Intercept registered before cy.visit triggers the request
+   cy.intercept("POST", "**/trpc/supportTickets*").as("loadTickets");
+   cy.visit("/support");
+   cy.wait("@loadTickets", { timeout: 15000 });
+
+   // ❌ WRONG: Request fires on mount during cy.visit, before intercept exists
+   cy.visit("/support");
+   cy.intercept("POST", "**/trpc/supportTickets*").as("loadTickets");
+   cy.wait("@loadTickets"); // Will timeout — request already happened
+   ```
+
+3. **For data loaded in `beforeEach` hooks** (e.g., route loaders that fire on `cy.visit`), prefer `cy.contains()` with a timeout over `cy.intercept`/`cy.wait`, since the intercept would need to be registered before each `cy.visit`:
+   ```typescript
+   // ✅ SIMPLE: Use Cypress's built-in retry for content loaded via route loaders
+   cy.visit("/dashboard");
+   cy.contains("No new notifications", { timeout: 10000 }).should("be.visible");
+   ```
+
 ### Known Failure Modes (Do Not Repeat)
 
+- 2026-03-11: `cy.intercept("GET", "**/trpc/...")` never matches because
+  `httpBatchStreamLink` sends all tRPC requests via POST. Always use POST
+  method (or omit method) for tRPC intercepts.
+- 2026-03-11: `cy.intercept` registered inside a test body after `cy.visit`
+  in `beforeEach` missed the tRPC request because queries fire on component
+  mount during navigation. Register intercepts before the triggering action.
 - 2026-03-07: Running `pnpm preview` from repository root failed with
   `ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL Command "preview" not found`.
   Always run `pnpm --filter @apps/web preview`.

@@ -184,6 +184,14 @@ account setup steps.
   `/dashboard`
 - ✅ **RIGHT**: `cy.intercept()` is allowed to **observe/wait** on network calls
   (e.g., `cy.wait("@createTicket")`), but NOT to mock or stub responses
+- ⚠️ **tRPC uses POST**: This project uses `httpBatchStreamLink` which sends
+  **all** tRPC requests via POST. Always use
+  `cy.intercept("POST", "**/trpc/...")` — never GET. Using GET will silently
+  match zero requests and `cy.wait()` will time out.
+- ⚠️ **Intercept timing**: `cy.intercept()` must be registered **before** the
+  action that triggers the request (e.g., before `cy.visit()`). Route loaders
+  fire tRPC queries on mount during navigation, so registering intercepts after
+  `cy.visit()` will miss those requests.
 
 **For authorization boundary testing**:
 
