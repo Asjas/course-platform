@@ -208,6 +208,29 @@ export const courseWishlist = mySchema.table(
   ],
 );
 
+export const courseWishlistVerificationToken = mySchema.table(
+  "course_wishlist_verification_token",
+  {
+    id: text().primaryKey(),
+    wishlistId: text()
+      .notNull()
+      .references(() => courseWishlist.id, { onDelete: "cascade" }),
+    tokenHash: text().notNull(),
+    usedAt: timestamp({ withTimezone: true }),
+    expiresAt: timestamp({ withTimezone: true }).notNull(),
+    ...timestamps,
+  },
+  (table) => [
+    uniqueIndex("course_wishlist_verification_token_hash_idx").on(
+      table.tokenHash,
+    ),
+    index("course_wishlist_verification_token_wishlist_idx").on(
+      table.wishlistId,
+    ),
+    index("course_wishlist_verification_token_expires_idx").on(table.expiresAt),
+  ],
+);
+
 export const courseCompletionCertificate = mySchema.table(
   "course_completion_certificate",
   {
@@ -336,18 +359,32 @@ export const courseReviewRelations = relations(courseReview, ({ one }) => ({
   }),
 }));
 
-export const courseWishlistRelations = relations(courseWishlist, ({ one }) => ({
-  course: one(course, {
-    fields: [courseWishlist.courseId],
-    references: [course.id],
-    relationName: "course_wishlist_course",
+export const courseWishlistRelations = relations(
+  courseWishlist,
+  ({ one, many }) => ({
+    course: one(course, {
+      fields: [courseWishlist.courseId],
+      references: [course.id],
+      relationName: "course_wishlist_course",
+    }),
+    user: one(user, {
+      fields: [courseWishlist.userId],
+      references: [user.id],
+      relationName: "course_wishlist_user",
+    }),
+    verificationTokens: many(courseWishlistVerificationToken),
   }),
-  user: one(user, {
-    fields: [courseWishlist.userId],
-    references: [user.id],
-    relationName: "course_wishlist_user",
+);
+
+export const courseWishlistVerificationTokenRelations = relations(
+  courseWishlistVerificationToken,
+  ({ one }) => ({
+    wishlist: one(courseWishlist, {
+      fields: [courseWishlistVerificationToken.wishlistId],
+      references: [courseWishlist.id],
+    }),
   }),
-}));
+);
 
 export const courseCompletionCertificateRelations = relations(
   courseCompletionCertificate,

@@ -5,6 +5,7 @@ import config from "~/config.js";
 import { db } from "~/db/index.js";
 import {
   createCourseWishlistEntry,
+  createCourseWishlistVerificationToken,
   unsubscribeCourseWishlistEntry,
 } from "~/db/mutations/courseWishlist.js";
 import {
@@ -70,12 +71,15 @@ export const courseWishlistRouter = router({
 
       // Send welcome email
       try {
+        const verificationToken = await createCourseWishlistVerificationToken(
+          entry.id,
+        );
         const origin =
-          config.ORIGIN.find((url) => url.includes("codewizard.training")) ??
-          "https://codewizard.training";
+          config.ORIGIN.find((url) => url.includes("api.")) ??
+          config.ORIGIN[0] ??
+          "https://api.codewizard.training";
         const verifyUrl = new URL("/verify-course-wishlist", origin);
-        verifyUrl.searchParams.set("email", input.email.toLowerCase());
-        verifyUrl.searchParams.set("code", entry.id);
+        verifyUrl.searchParams.set("token", verificationToken.token);
 
         await mailer.sendMail({
           sender: "Codewizard Training <support@codewizard.training>",
@@ -130,7 +134,7 @@ export const courseWishlistRouter = router({
       return {
         success: true,
         message: "Welcome to the waitlist!",
-        id: entry?.id,
+        id: entry.id,
         alreadySignedUp: false,
       };
     }),

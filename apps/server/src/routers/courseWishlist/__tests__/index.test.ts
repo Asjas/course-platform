@@ -8,6 +8,7 @@ const {
   mockGetCourseWishlistCount,
   mockGetCourseWishlistById,
   mockUnsubscribeCourseWishlistEntry,
+  mockCreateCourseWishlistVerificationToken,
   mockSendMail,
 } = vi.hoisted(() => ({
   mockFindFirst: vi.fn(),
@@ -16,6 +17,7 @@ const {
   mockGetCourseWishlistCount: vi.fn(),
   mockGetCourseWishlistById: vi.fn(),
   mockUnsubscribeCourseWishlistEntry: vi.fn(),
+  mockCreateCourseWishlistVerificationToken: vi.fn(),
   mockSendMail: vi.fn(),
 }));
 
@@ -36,6 +38,8 @@ vi.mock("~/db/queries/courseWishlist.js", () => ({
 }));
 
 vi.mock("~/db/mutations/courseWishlist.js", () => ({
+  createCourseWishlistVerificationToken:
+    mockCreateCourseWishlistVerificationToken,
   createCourseWishlistEntry: mockCreateCourseWishlistEntry,
   unsubscribeCourseWishlistEntry: mockUnsubscribeCourseWishlistEntry,
 }));

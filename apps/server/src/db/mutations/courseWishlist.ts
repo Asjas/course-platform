@@ -1,7 +1,17 @@
 import { eq } from "drizzle-orm";
+import { createHash, randomBytes } from "node:crypto";
 import { ulid } from "ulid";
 import { db } from "~/db/index.js";
-import { courseWishlist } from "~/db/schema/index.js";
+import {
+  courseWishlist,
+  courseWishlistVerificationToken,
+} from "~/db/schema/index.js";
+
+const COURSE_WISHLIST_TOKEN_TTL_MS = 1000 * 60 * 60 * 24;
+
+function hashVerificationToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
+}
 
 export interface CreateCourseWishlistInput {
   email: string;
@@ -56,6 +66,45 @@ export async function unsubscribeCourseWishlistEntry(id: string) {
     .update(courseWishlist)
     .set({ unsubscribedAt: new Date() })
     .where(eq(courseWishlist.id, id))
+    .returning();
+
+  return result;
+}
+
+export async function createCourseWishlistVerificationToken(
+  wishlistId: string,
+) {
+  const id = `cwvt:${ulid()}`;
+  const token = `${ulid()}${randomBytes(16).toString("hex")}`;
+  const tokenHash = hashVerificationToken(token);
+  const expiresAt = new Date(Date.now() + COURSE_WISHLIST_TOKEN_TTL_MS);
+
+  const [result] = await db
+    .insert(courseWishlistVerificationToken)
+    .values({
+      id,
+      wishlistId,
+      tokenHash,
+      expiresAt,
+    })
+    .returning();
+
+  if (!result) {
+    throw new Error("Failed to create course wishlist verification token");
+  }
+
+  return {
+    token,
+    expiresAt,
+    id: result.id,
+  };
+}
+
+export async function markCourseWishlistVerificationTokenUsed(id: string) {
+  const [result] = await db
+    .update(courseWishlistVerificationToken)
+    .set({ usedAt: new Date() })
+    .where(eq(courseWishlistVerificationToken.id, id))
     .returning();
 
   return result;
