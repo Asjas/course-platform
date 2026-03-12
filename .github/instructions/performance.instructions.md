@@ -1,6 +1,6 @@
 ---
-applyTo: '**'
-description: 'Performance optimization principles for the course platform'
+applyTo: "**/*.ts, **/*.tsx"
+description: "Performance optimization principles for the course platform"
 ---
 
 # Performance Optimization

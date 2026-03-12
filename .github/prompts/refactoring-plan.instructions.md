@@ -1,5 +1,4 @@
 ---
-applyTo: "**"
 description: "Make a plan to refactor the codebase to improve readability, maintainability, performance, and cyclomatic complexity."
 ---
 

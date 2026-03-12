@@ -1,7 +1,7 @@
 # Performance Optimization Reference
 
 > This is the full reference document for performance optimization best practices.
-> The slim version used by AI agents is in [instructions/performance-optimization.instructions.md](../instructions/performance-optimization.instructions.md).
+> The slim version used by AI agents is in [instructions/performance.instructions.md](../instructions/performance.instructions.md).
 
 ## Introduction
 

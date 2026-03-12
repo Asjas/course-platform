@@ -1,5 +1,6 @@
 ---
 applyTo: "**"
+description: "Conventional Commits format for all commit messages"
 ---
 
 # Commit Message Guidelines

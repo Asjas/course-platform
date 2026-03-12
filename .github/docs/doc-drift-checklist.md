@@ -25,6 +25,15 @@ docs.
 - [ ] Transitional exceptions are documented in
       `docs/offline-first-architecture.md`.
 
+## File Structure
+
+- [ ] Instruction file `applyTo` patterns match the scope map in
+      `ai-instructions-consistency.md`.
+- [ ] No instruction file uses `applyTo: "**"` unless it truly applies to all
+      file types (only `copilot-instructions.md` and `commit-message` should).
+- [ ] Renamed or removed files are updated in both `AGENTS.md` and
+      `copilot-instructions.md` reference tables.
+
 ## Naming and Patterns
 
 - [ ] tRPC endpoint naming examples follow canonical patterns (`getAll`,
@@ -35,12 +44,5 @@ docs.
 ## Markdown and Lint Hygiene
 
 - [ ] No unsupported instruction frontmatter keys are present.
-- [ ] No markdown lint blockers (for example, inline HTML where disallowed,
-      emphasis-used-as-heading) are introduced.
+- [ ] No markdown lint blockers are introduced.
 - [ ] Internal links resolve correctly in repo context.
-
-## Verification
-
-- [ ] Run workspace diagnostics and resolve newly introduced issues.
-- [ ] If full command execution is unavailable in the current tool context,
-      record that limitation and use diagnostics as the fallback check.

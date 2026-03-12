@@ -372,7 +372,7 @@ pnpm run --filter "./apps/web" e2e
 - **CodeQL**: Automatic security scanning via GitHub Actions
 - **Dependency Audits**: Run `pnpm audit` to check for vulnerabilities
 - **OWASP Guidelines**: Code follows secure coding practices (see
-  `.github/instructions/security-and-owasp.instructions.md`)
+  `.github/instructions/security.instructions.md`)
 
 ## 🚀 Deployment
 
@@ -461,9 +461,9 @@ We welcome contributions! Please follow these guidelines:
 - **Accessibility**: Follow WCAG 2.2 Level AA guidelines (see
   `.github/instructions/a11y.instructions.md`)
 - **Security**: Follow OWASP guidelines (see
-  `.github/instructions/security-and-owasp.instructions.md`)
+  `.github/instructions/security.instructions.md`)
 - **Performance**: Consider performance implications (see
-  `.github/instructions/performance-optimization.instructions.md`)
+  `.github/instructions/performance.instructions.md`)
 - **Documentation**: Update relevant documentation for changes
 
 ### Code Review Process
