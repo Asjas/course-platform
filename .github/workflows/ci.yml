@@ -317,10 +317,10 @@ jobs:
       - name: Wait for frontend to be ready
         run: npx wait-on http://localhost:4173 --timeout 120000
 
-      - name: Cypress run via Turbo cache
+      - name: Cypress E2E tests
         env:
           NO_DBUS: 1
-        run: pnpm turbo run e2e:run --filter=@apps/web --cache=remote:rw -- --browser chrome
+        run: pnpm --filter @apps/web run e2e:run -- --browser chrome
 
       - name: Generate E2E coverage report
         if: always()
