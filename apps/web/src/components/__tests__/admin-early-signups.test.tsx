@@ -33,6 +33,8 @@ function makeSignup(
     source: string;
     referrer: string | null;
     confirmedAt: Date | null;
+    unsubscribedAt: Date | null;
+    sourceTable: "early_signup" | "course_wishlist";
     createdAt: Date;
     updatedAt: Date;
   }> = {},
@@ -44,6 +46,8 @@ function makeSignup(
     source: "learnfastify",
     referrer: null,
     confirmedAt: null,
+    unsubscribedAt: null,
+    sourceTable: "course_wishlist",
     createdAt: new Date("2024-01-15"),
     updatedAt: new Date("2024-01-15"),
     ...overrides,
@@ -96,6 +100,8 @@ describe("AdminEarlySignupsPage", () => {
     expect(
       screen.getByRole("button", { name: /send invite/i }),
     ).toBeInTheDocument();
+    expect(screen.getByText("Pending")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
   });
 
   it("shows Invited badge for already-confirmed signups", async () => {
@@ -109,6 +115,26 @@ describe("AdminEarlySignupsPage", () => {
     expect(screen.getByText("Invited")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: /send invite/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Cancel" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows Canceled badge when signup is canceled", async () => {
+    mockUseEarlySignups.mockReturnValue({
+      data: [makeSignup({ unsubscribedAt: new Date("2024-01-21") })],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    expect(screen.getByText("Canceled")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /send invite/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Cancel" }),
     ).not.toBeInTheDocument();
   });
 
@@ -181,6 +207,25 @@ describe("AdminEarlySignupsPage", () => {
 
     expect(mockToast.error).toHaveBeenCalledWith(
       "Failed to send invite. Please try again.",
+      expect.anything(),
+    );
+  });
+
+  it("cancels pending invite", async () => {
+    const user = userEvent.setup();
+    const signup = makeSignup({ id: "signup:1", email: "alice@example.com" });
+    mockUseEarlySignups.mockReturnValue({ data: [signup], isLoading: false });
+    mockEarlySignupsCollection.update.mockResolvedValueOnce(undefined);
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(mockEarlySignupsCollection.update).toHaveBeenCalledWith(
+      "signup:1",
+      expect.any(Function),
+    );
+    expect(mockToast.success).toHaveBeenCalledWith(
+      expect.stringContaining("alice@example.com"),
       expect.anything(),
     );
   });
