@@ -112,6 +112,27 @@ describe("AdminEarlySignupsPage", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("disables the Send Invite button while sending", async () => {
+    const user = userEvent.setup();
+    let resolveUpdate!: () => void;
+    const pendingUpdate = new Promise<void>((resolve) => {
+      resolveUpdate = resolve;
+    });
+    const signup = makeSignup({ id: "signup:1", email: "alice@example.com" });
+    mockUseEarlySignups.mockReturnValue({ data: [signup], isLoading: false });
+    mockEarlySignupsCollection.update.mockReturnValueOnce(pendingUpdate);
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    await user.click(screen.getByRole("button", { name: /send invite/i }));
+
+    // Button should be disabled while sending
+    expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
+
+    // Resolve the promise so the test doesn't hang
+    resolveUpdate();
+  });
+
   it("calls EarlySignupsCollection.update when Send Invite is clicked", async () => {
     const user = userEvent.setup();
     const signup = makeSignup({ id: "signup:1", email: "alice@example.com" });

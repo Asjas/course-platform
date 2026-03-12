@@ -6,7 +6,7 @@ export type EarlySignupById = Awaited<ReturnType<typeof getEarlySignupById>>;
 
 const preparedGetAllEarlySignups = db.query.earlySignup
   .findMany({
-    orderBy: (row) => [desc(row.created_at)],
+    orderBy: (row) => [desc(row.createdAt)],
   })
   .prepare("getAllEarlySignups");
 

@@ -58,6 +58,43 @@ export const earlySignupsRouter = router({
         });
       }
 
+      if (signup.confirmedAt) {
+        return { success: true };
+      }
+
+      const origin = config.ORIGIN[0] ?? "https://codewizard.training";
+      const signupUrl = new URL("/signup", origin).toString();
+
+      const [mailErr] = await fastify.to(
+        mailer.sendMail({
+          sender: "Codewizard Training <support@codewizard.training>",
+          replyTo: "support@codewizard.training",
+          to: signup.email,
+          subject: "You're invited to join Codewizard Training!",
+          text: [
+            `Hi ${signup.name || "there"},`,
+            "",
+            "You're invited to join Codewizard Training! Click the link below to create your account and get started:",
+            "",
+            signupUrl,
+            "",
+            "If you did not sign up for early access, please ignore this email.",
+            "",
+            "--",
+            `© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`,
+          ].join("\n"),
+        }),
+      );
+
+      if (mailErr) {
+        fastify.log.error(mailErr, "Failed to send invite email");
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send invite email",
+        });
+      }
+
       const [updateErr] = await fastify.to(
         db
           .update(earlySignup)
@@ -74,38 +111,6 @@ export const earlySignupsRouter = router({
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Internal server error",
-        });
-      }
-
-      const appUrl = config.ORIGIN[0] ?? "https://codewizard.training";
-
-      const [mailErr] = await fastify.to(
-        mailer.sendMail({
-          sender: "Codewizard Training <support@codewizard.training>",
-          replyTo: "support@codewizard.training",
-          to: signup.email,
-          subject: "You're invited to join Codewizard Training!",
-          text: [
-            `Hi ${signup.name || "there"},`,
-            "",
-            "You're invited to join Codewizard Training! Click the link below to create your account and get started:",
-            "",
-            appUrl,
-            "",
-            "If you did not sign up for early access, please ignore this email.",
-            "",
-            "--",
-            `© ${new Date().getFullYear()} Codewizard Training. All rights reserved.`,
-          ].join("\n"),
-        }),
-      );
-
-      if (mailErr) {
-        fastify.log.error(mailErr, "Failed to send invite email");
-
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to send invite email",
         });
       }
 

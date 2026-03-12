@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
-import * as z from "zod/v4";
+import * as z from "zod";
 import { db } from "~/db/index.js";
 import {
   createCourseWishlistEntry,

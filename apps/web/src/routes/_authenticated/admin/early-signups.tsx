@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import { MailIcon } from "lucide-react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -24,8 +25,12 @@ export const Route = createFileRoute("/_authenticated/admin/early-signups")({
 
 export function AdminEarlySignupsPage() {
   const { data: signups, isLoading } = useEarlySignups();
+  const [sendingIds, setSendingIds] = useState<Set<string>>(new Set());
 
   async function handleSendInvite(id: string, email: string) {
+    if (sendingIds.has(id)) return;
+
+    setSendingIds((prev) => new Set(prev).add(id));
     const toastId = toast.loading(`Sending invite to ${email}...`);
 
     try {
@@ -37,6 +42,12 @@ export function AdminEarlySignupsPage() {
     } catch (error) {
       console.error("Error sending invite:", error);
       toast.error("Failed to send invite. Please try again.", { id: toastId });
+    } finally {
+      setSendingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   }
 
@@ -128,8 +139,10 @@ export function AdminEarlySignupsPage() {
                           </span>
                         ) : (
                           <button
-                            className="inline-flex cursor-pointer items-center gap-x-1.5 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                            className="inline-flex cursor-pointer items-center gap-x-1.5 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                             type="button"
+                            disabled={sendingIds.has(signup.id)}
+                            aria-disabled={sendingIds.has(signup.id)}
                             onClick={() =>
                               handleSendInvite(signup.id, signup.email)
                             }
@@ -138,7 +151,9 @@ export function AdminEarlySignupsPage() {
                               className="-ml-0.5 h-3.5 w-3.5"
                               aria-hidden="true"
                             />
-                            Send Invite
+                            {sendingIds.has(signup.id)
+                              ? "Sending…"
+                              : "Send Invite"}
                           </button>
                         )}
                       </TableBodyCell>
