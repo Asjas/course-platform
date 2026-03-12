@@ -68,7 +68,7 @@ export async function getUsersByUsernames(
   return db
     .select({ id: user.id, name: user.name, email: user.email })
     .from(user)
-    .where(inArray(user.username, lower));
+    .where(sql`lower(${user.username}) = any(${lower})`);
 }
 
 /**
