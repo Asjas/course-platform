@@ -34,7 +34,7 @@ Project-specific security rules based on OWASP Top 10.
 
 ## Authentication (A07)
 
-- **Session management**: Better Auth handles session cookies with `HttpOnly`, `Secure`, `SameSite=Strict`.
+- **Session management**: Ensure session cookies are configured with `HttpOnly`, `Secure`, and a strict `SameSite` policy (for example, `SameSite=Strict`) in your Better Auth setup.
 - **Rate limiting**: `@fastify/rate-limit` is configured on the server.
 
 ## Dependency Security (A06)
