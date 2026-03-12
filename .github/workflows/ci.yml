@@ -246,7 +246,7 @@ jobs:
     env:
       DATABASE_SCHEMA: ci_e2e_${{ matrix.node-version }}_${{ github.run_id }}_${{ github.run_attempt }}
       REDIS_DB: ${{ matrix.redis-db || 0 }}
-      CYPRESS_COVERAGE: "true"
+      CYPRESS_COVERAGE: ${{ matrix.node-version == 22 && 'true' || 'false' }}
 
     steps:
       - name: Check out repository
