@@ -1043,21 +1043,18 @@ Reports are generated in:
 ### Server (52 test files, 455 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
-- ~~`src/lib/tests/config.test.ts` — 49 tests~~ _(removed — SMTP dependency)_
 - `src/lib/tests/constants.test.ts` — 14 tests
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
-- `src/lib/tests/sse-sync.test.ts` — 18 tests
+- `src/lib/tests/sse-sync.test.ts` — 25 tests
 - `src/lib/tests/logging.test.ts` — 10 tests _(expanded)_
 - `src/lib/tests/mailer.test.ts` — 3 tests _(new)_
 - `src/lib/tests/r2-upload.test.ts` — 4 tests _(new)_
-- ~~`src/lib/tests/cache.test.ts` — 33 tests~~ _(removed — SMTP dependency)_
 - `src/db/queries/__tests__/courseWishlist.test.ts` — 12 tests _(new)_
 - `src/db/queries/__tests__/user.test.ts` — 5 tests _(new)_
 - `src/db/queries/__tests__/invoice.test.ts` — 9 tests _(new)_
 - `src/db/queries/__tests__/payment.test.ts` — 9 tests _(new)_
 - `src/db/queries/__tests__/teamLicense.test.ts` — 7 tests _(new)_
-- ~~`src/db/queries/__tests__/platformAnnouncements.test.ts` — 5 tests~~ _(removed — SMTP dependency)_
 - `src/db/mutations/__tests__/courseWishlist.test.ts` — 5 tests _(new)_
 - `src/db/mutations/__tests__/session.test.ts` — 8 tests _(new)_
 - `src/db/mutations/__tests__/invoice.test.ts` — 8 tests _(new)_
@@ -1086,6 +1083,20 @@ Reports are generated in:
 - `src/routers/mentions/__tests__/index.test.ts` — 8 tests _(new)_
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
+
+#### Removed Server Test Files (SMTP dependency — see "Do Not Test")
+
+These files were removed because they fail at module load time due to
+transitive `config.ts` SMTP env var requirements. Re-add when `config.ts`
+supports optional SMTP configuration.
+
+- `src/lib/tests/config.test.ts` — 49 tests
+- `src/lib/tests/cache.test.ts` — 33 tests
+- `src/db/queries/__tests__/platformAnnouncements.test.ts` — 5 tests
+- `src/routers/chatReports/__tests__/index.test.ts` — 5 tests
+- `src/routers/coupons/__tests__/index.test.ts` — 6 tests
+- `src/routers/notifications/__tests__/index.test.ts` — 6 tests
+- `src/routers/syncStatus/__tests__/index.test.ts` — 6 tests
 
 ### Web (84 test files, 714 passing tests + 12 todo)
 
