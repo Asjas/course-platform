@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import * as z from "zod";
+import config from "~/config.js";
 import { db } from "~/db/index.js";
 import {
   createCourseWishlistEntry,
@@ -69,6 +70,13 @@ export const courseWishlistRouter = router({
 
       // Send welcome email
       try {
+        const origin =
+          config.ORIGIN.find((url) => url.includes("codewizard.training")) ??
+          "https://codewizard.training";
+        const verifyUrl = new URL("/verify-course-wishlist", origin);
+        verifyUrl.searchParams.set("email", input.email.toLowerCase());
+        verifyUrl.searchParams.set("code", entry.id);
+
         await mailer.sendMail({
           sender: "Codewizard Training <support@codewizard.training>",
           replyTo: "support@codewizard.training",
@@ -92,10 +100,18 @@ export const courseWishlistRouter = router({
 
             <p>Here's what you can expect:</p>
             <ul style="padding-left: 20px;">
-              <li>Early access pricing (save up to 40%)</li>
-              <li>Exclusive bonus content for early supporters</li>
+              <li>Early access pricing (save up to 30%)</li>
               <li>Launch updates and sneak peeks</li>
             </ul>
+
+            <p style="margin-top: 24px;">Please verify your email to confirm you're a real person and complete your waitlist signup:</p>
+            <p>
+              <a href="${verifyUrl.toString()}" style="display: inline-block; background: #10b981; color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Verify my email
+              </a>
+            </p>
+            <p style="color: #666; font-size: 13px;">If the button does not work, copy and paste this URL into your browser:</p>
+            <p style="word-break: break-word; font-size: 13px; color: #666;">${verifyUrl.toString()}</p>
 
             <p style="margin-top: 30px;">In the meantime, feel free to reply to this email if you have any questions!</p>
 

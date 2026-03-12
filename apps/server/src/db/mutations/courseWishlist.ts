@@ -34,6 +34,10 @@ export async function createCourseWishlistEntry(
     })
     .returning();
 
+  if (!result) {
+    throw new Error("Failed to create course wishlist entry");
+  }
+
   return result;
 }
 

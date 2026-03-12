@@ -28,6 +28,20 @@ export async function getCourseWishlistById(
   return result;
 }
 
+export async function getCourseWishlistByIdAndEmail(
+  id: string,
+  email: string,
+): Promise<CourseWishlistEntry | undefined> {
+  const result = await db.query.courseWishlist.findFirst({
+    where: and(
+      eq(courseWishlist.id, id),
+      eq(courseWishlist.email, email.toLowerCase()),
+    ),
+  });
+
+  return result;
+}
+
 export async function getCourseWishlistCount(
   courseId: string,
 ): Promise<number> {
