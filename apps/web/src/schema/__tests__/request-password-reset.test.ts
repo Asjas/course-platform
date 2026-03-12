@@ -23,12 +23,14 @@ describe("requestPasswordResetFormSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  test("rejects email with leading/trailing whitespace", () => {
+  test("accepts and trims email with leading/trailing whitespace", () => {
     const result = requestPasswordResetFormSchema.safeParse({
       email: "  user@example.com  ",
     });
-    // z.email() validates before trim is applied
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.email).toBe("user@example.com");
+    }
   });
 
   test("rejects missing email field", () => {
