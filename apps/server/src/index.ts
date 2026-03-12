@@ -2,9 +2,11 @@ import closeWithGrace from "close-with-grace";
 import config from "~/config.js";
 import { pool } from "~/db/index.js";
 import { polarPool } from "~/lib/auth.server.js";
+import { bootstrapDatabase } from "~/lib/bootstrapDatabase.js";
 import createServer from "~/server.js";
 
 const app = await createServer(config);
+await bootstrapDatabase(app.log);
 
 process.on("uncaughtException", (err) => {
   app.log.error({ err }, "Uncaught Exception occurred");

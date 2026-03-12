@@ -14,9 +14,6 @@ COPY --chown=node:node . .
 RUN npm i -g pnpm@9.15.9
 RUN pnpm i
 RUN pnpm run build
-RUN npm run drizzle:migrate:prod
-
-RUN psql $DATABASE_URL -f /app/scripts/createDefaultDatabaseUsers.sql
 
 USER node
 
