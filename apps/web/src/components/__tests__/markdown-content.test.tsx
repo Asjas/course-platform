@@ -88,4 +88,33 @@ describe("MarkdownContent", () => {
     const { container } = render(<MarkdownContent html="" />);
     expect(container.firstChild).toBeInTheDocument();
   });
+
+  it("renders inline code elements", () => {
+    render(<MarkdownContent html="<p>Use <code>const</code> keyword</p>" />);
+    expect(screen.getByText("const")).toBeInTheDocument();
+  });
+
+  it("renders multiple paragraphs of content", () => {
+    render(
+      <MarkdownContent html="<p>First paragraph</p><p>Second paragraph</p>" />,
+    );
+    expect(screen.getByText("First paragraph")).toBeInTheDocument();
+    expect(screen.getByText("Second paragraph")).toBeInTheDocument();
+  });
+
+  it("renders a table with rows and cells", () => {
+    render(
+      <MarkdownContent html="<table><thead><tr><th>Name</th></tr></thead><tbody><tr><td>Alice</td></tr></tbody></table>" />,
+    );
+    expect(screen.getByRole("table")).toBeInTheDocument();
+    expect(screen.getByText("Name")).toBeInTheDocument();
+    expect(screen.getByText("Alice")).toBeInTheDocument();
+  });
+
+  it("renders nested list structure", () => {
+    render(
+      <MarkdownContent html="<ul><li>Item 1<ul><li>Sub-item</li></ul></li></ul>" />,
+    );
+    expect(screen.getByText("Sub-item")).toBeInTheDocument();
+  });
 });
