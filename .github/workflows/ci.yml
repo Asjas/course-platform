@@ -464,9 +464,9 @@ jobs:
       - name: Check coverage file availability
         id: coverage-files
         run: |
-          [ -f coverage/server-unit/coverage-summary.json ] && echo "server-unit=true" >> "$GITHUB_OUTPUT"
-          [ -f coverage/web-unit/coverage-summary.json ] && echo "web-unit=true" >> "$GITHUB_OUTPUT"
-          [ -f coverage/web-e2e/coverage-summary.json ] && echo "web-e2e=true" >> "$GITHUB_OUTPUT"
+          [ -f coverage/server-unit/coverage-summary.json ] && [ -f coverage/server-unit/coverage-final.json ] && echo "server-unit=true" >> "$GITHUB_OUTPUT"
+          [ -f coverage/web-unit/coverage-summary.json ] && [ -f coverage/web-unit/coverage-final.json ] && echo "web-unit=true" >> "$GITHUB_OUTPUT"
+          [ -f coverage/web-e2e/coverage-summary.json ] && [ -f coverage/web-e2e/coverage-final.json ] && echo "web-e2e=true" >> "$GITHUB_OUTPUT"
           [ -f base-coverage/server-unit/coverage-summary.json ] && echo "base-server-unit=true" >> "$GITHUB_OUTPUT"
           [ -f base-coverage/web-unit/coverage-summary.json ] && echo "base-web-unit=true" >> "$GITHUB_OUTPUT"
           [ -f base-coverage/web-e2e/coverage-summary.json ] && echo "base-web-e2e=true" >> "$GITHUB_OUTPUT"
