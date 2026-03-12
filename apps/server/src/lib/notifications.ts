@@ -613,23 +613,40 @@ export async function dispatchNotification({
 }: DispatchNotificationOptions): Promise<void> {
   const channels: ("browser" | "email")[] = ["browser", "email"];
 
+  // Pre-fetch notification preferences for all channels in parallel
+  const enabledByChannel: Record<"browser" | "email", boolean> = {
+    browser: false,
+    email: false,
+  };
+
+  const prefResults = await Promise.allSettled(
+    channels.map(function (channel): Promise<boolean> {
+      const key = `${channel}:${baseKey}` as NotificationPreferenceKey;
+      return isNotificationPreferenceEnabled(userId, key);
+    }),
+  );
+
+  channels.forEach(function (channel, index): void {
+    const key = `${channel}:${baseKey}` as NotificationPreferenceKey;
+    const result = prefResults[index];
+
+    if (result.status === "fulfilled") {
+      enabledByChannel[channel] = result.value;
+    } else {
+      // TODO: report to Sentry once configured
+      notifLog.error(
+        result.reason,
+        `Failed to read notification preference ${key} for user ${userId}`,
+      );
+    }
+  });
+
   for (const channel of channels) {
     const key = `${channel}:${baseKey}` as NotificationPreferenceKey;
 
-    let enabled = false;
-    try {
-      enabled = await isNotificationPreferenceEnabled(userId, key);
-    } catch (prefErr) {
-      // TODO: report to Sentry once configured
-      notifLog.error(
-        prefErr,
-        `Failed to read notification preference ${key} for user ${userId}`,
-      );
+    if (!enabledByChannel[channel]) {
       continue;
     }
-
-    if (!enabled) continue;
-
     if (channel === "browser") {
       try {
         await insertUserNotification({
