@@ -151,18 +151,11 @@ describe("Support Ticket Management", () => {
     cy.signUp(otherUser);
 
     cy.then(() => {
-      // Intercept the tRPC query that loads all support tickets so we can wait
-      // for it to complete before asserting on content. The route loader calls
-      // SupportTicketsCollection.preload() which triggers this request.
-      cy.intercept("POST", "**/trpc/supportTickets*").as("loadTickets");
       cy.visit(`/support/${ownerTicketId}`);
-      cy.wait("@loadTickets", { timeout: 15000 });
 
-      // Wait for any loading state to clear before asserting on ticket content.
-      // This assertion passes immediately when the loader is absent and retries
-      // until it disappears when it is present.
-      cy.get('[data-testid="loading"]', { timeout: 15000 }).should("not.exist");
-
+      // Use content-based waiting instead of cy.intercept/cy.wait because
+      // httpBatchStreamLink may batch the supportTickets query with other
+      // procedures, producing a URL that doesn't match a simple glob.
       cy.contains(ticketTitle, { timeout: 15000 }).should("be.visible");
       cy.contains(ticketDescription).should("be.visible");
 
