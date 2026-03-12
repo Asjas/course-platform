@@ -1,4 +1,5 @@
 import {
+  getAllCourseProgressAsAdmin,
   getCourseProgress,
   getEnrollmentStatus,
   getLessonProgress,
@@ -32,6 +33,11 @@ vi.mock("~/db/index.js", () => ({
         findFirst: vi.fn(),
       },
       courseProgress: {
+        findMany: vi.fn().mockReturnValue({
+          prepare: () => ({
+            execute: vi.fn().mockResolvedValue([]),
+          }),
+        }),
         findFirst: vi.fn(),
       },
       enrollment: {
@@ -68,5 +74,20 @@ describe("getEnrollmentStatus", () => {
 
   test("is a function that accepts userId and courseId", () => {
     expect(typeof getEnrollmentStatus).toBe("function");
+  });
+});
+
+describe("getAllCourseProgressAsAdmin", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("is an exported function", () => {
+    expect(typeof getAllCourseProgressAsAdmin).toBe("function");
+  });
+
+  test("returns an array", async () => {
+    const result = await getAllCourseProgressAsAdmin();
+    expect(Array.isArray(result)).toBe(true);
   });
 });

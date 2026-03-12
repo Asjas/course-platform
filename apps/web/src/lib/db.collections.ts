@@ -8,11 +8,14 @@ import type {
 import type { AllChatReports } from "@apps/server/src/routers/chatReports/queries";
 import type { CouponsReturnType } from "@apps/server/src/routers/coupons/queries";
 import type {
+  AllCourseProgressAsAdmin,
   AllCourses,
   AllCoursesAsAdmin,
   CourseById,
 } from "@apps/server/src/routers/courses/queries";
 import type { SearchableUsers } from "@apps/server/src/routers/directMessages/queries";
+import type { AllEarlySignups } from "@apps/server/src/routers/earlySignups/queries";
+import type { AllEnrollmentsAsAdmin } from "@apps/server/src/routers/enrollments/queries";
 import type { AllPurchases } from "@apps/server/src/routers/purchases/queries";
 import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import type { AllSupportTickets } from "@apps/server/src/routers/support-tickets/queries";
@@ -456,6 +459,72 @@ export function useReviewById({ reviewId }: { reviewId: string }) {
     },
     [reviewId],
   );
+}
+
+// ========== Early Signups ==========
+
+export type EarlySignup = AllEarlySignups[number];
+
+export const EarlySignupsCollection = createCollection(
+  queryCollectionOptions<EarlySignup>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.earlySignups.getAll.queryKey(),
+    queryFn: () => trpcClient.earlySignups.getAll.query(),
+    onUpdate: async ({ transaction }) => {
+      try {
+        const { original } = transaction.mutations[0];
+        await trpcClient.earlySignups.sendInvite.mutate({ id: original.id });
+      } catch (error) {
+        console.error("Error sending early signup invite:", error);
+        toast.error(
+          getBackendErrorMessage(
+            error,
+            "An error occurred while sending the invite. Please try again.",
+          ),
+        );
+        throw error;
+      }
+    },
+  }),
+);
+
+export function useEarlySignups() {
+  return useLiveQuery(EarlySignupsCollection);
+}
+
+// ========== Enrollments (Admin) ==========
+
+export type EnrollmentAdmin = AllEnrollmentsAsAdmin[number];
+
+export const EnrollmentsAdminCollection = createCollection(
+  queryCollectionOptions<EnrollmentAdmin>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.enrollments.getAll.queryKey(),
+    queryFn: () => trpcClient.enrollments.getAll.query(),
+  }),
+);
+
+export function useEnrollmentsAdmin() {
+  return useLiveQuery(EnrollmentsAdminCollection);
+}
+
+// ========== Course Progress (Admin) ==========
+
+export type CourseProgressAdmin = AllCourseProgressAsAdmin[number];
+
+export const CourseProgressAdminCollection = createCollection(
+  queryCollectionOptions<CourseProgressAdmin>({
+    queryClient,
+    getKey: (item) => item.id,
+    queryKey: trpc.courses.getAllProgressAsAdmin.queryKey(),
+    queryFn: () => trpcClient.courses.getAllProgressAsAdmin.query(),
+  }),
+);
+
+export function useCourseProgressAdmin() {
+  return useLiveQuery(CourseProgressAdminCollection);
 }
 
 // ========== Chat Reports ==========

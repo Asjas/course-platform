@@ -190,3 +190,25 @@ export async function getEnrollmentStatus({
 
   return enrollment ?? null;
 }
+
+export type AllCourseProgressAsAdmin = Awaited<
+  ReturnType<typeof getAllCourseProgressAsAdmin>
+>;
+
+const preparedGetAllCourseProgressAsAdmin = db.query.courseProgress
+  .findMany({
+    with: {
+      user: {
+        columns: { id: true, name: true, email: true, image: true },
+      },
+      course: {
+        columns: { id: true, name: true, slug: true },
+      },
+    },
+    orderBy: (progress, { desc }) => [desc(progress.lastAccessedAt)],
+  })
+  .prepare("getAllCourseProgressAsAdmin");
+
+export async function getAllCourseProgressAsAdmin() {
+  return preparedGetAllCourseProgressAsAdmin.execute();
+}

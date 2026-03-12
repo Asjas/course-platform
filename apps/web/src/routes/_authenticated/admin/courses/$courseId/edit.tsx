@@ -1,14 +1,25 @@
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { ArrowLeftIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  BookOpenIcon,
+  SaveIcon,
+  StarIcon,
+  Trash2Icon,
+  UsersIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
-import { CoursesAdminCollection, useCoursesAdmin } from "~/lib/db.collections";
+import {
+  type AdminCourseDetail,
+  CoursesAdminCollection,
+  useCoursesAdmin,
+} from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import {
@@ -108,6 +119,9 @@ function EditCoursePage() {
         </div>
       </header>
 
+      {/* Course Stats Bar */}
+      <CourseStatsBar course={course} />
+
       {/* Main Content Area */}
       <div className="mt-8 flex flex-1 gap-6 overflow-hidden">
         {/* Sidebar */}
@@ -138,6 +152,96 @@ function EditCoursePage() {
             <EmptyState />
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+interface CourseStatsBarProps {
+  course: AdminCourseDetail;
+}
+
+function CourseStatsBar({ course }: CourseStatsBarProps) {
+  const enrollmentCount = course.enrollments?.length ?? 0;
+  const reviewsWithRating = (course.reviews ?? []).filter(
+    (r) => r.rating !== null,
+  );
+  const avgRating =
+    reviewsWithRating.length > 0
+      ? reviewsWithRating.reduce((sum, r) => sum + (r.rating ?? 0), 0) /
+        reviewsWithRating.length
+      : null;
+  const reviewCount = course.reviews?.length ?? 0;
+  const lessonCount = course.lessons?.length ?? 0;
+
+  return (
+    <div className="mt-6 grid grid-cols-2 gap-4 rounded-lg border border-gray-200 bg-gray-50 p-4 sm:grid-cols-4 dark:border-gray-700 dark:bg-gray-900">
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+          <UsersIcon
+            className="h-3.5 w-3.5"
+            aria-hidden="true"
+          />
+          Enrollments
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">
+            {enrollmentCount}
+          </span>
+          <Link
+            className="text-xs text-blue-600 hover:underline dark:text-blue-400"
+            to="/admin/enrollments"
+          >
+            View Enrollments
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+          <StarIcon
+            className="h-3.5 w-3.5"
+            aria-hidden="true"
+          />
+          Avg Rating
+        </div>
+        <span className="text-xl font-semibold text-gray-900 dark:text-white">
+          {avgRating !== null ? avgRating.toFixed(1) : "—"}
+        </span>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+          <StarIcon
+            className="h-3.5 w-3.5"
+            aria-hidden="true"
+          />
+          Reviews
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-semibold text-gray-900 dark:text-white">
+            {reviewCount}
+          </span>
+          <Link
+            className="text-xs text-blue-600 hover:underline dark:text-blue-400"
+            to="/admin/reviews"
+          >
+            View Reviews
+          </Link>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+          <BookOpenIcon
+            className="h-3.5 w-3.5"
+            aria-hidden="true"
+          />
+          Lessons
+        </div>
+        <span className="text-xl font-semibold text-gray-900 dark:text-white">
+          {lessonCount}
+        </span>
       </div>
     </div>
   );

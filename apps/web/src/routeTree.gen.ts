@@ -41,6 +41,9 @@ import { Route as AuthenticatedAdminUsersRouteImport } from "./routes/_authentic
 import { Route as AuthenticatedAdminStatsRouteImport } from "./routes/_authenticated/admin/stats"
 import { Route as AuthenticatedAdminReviewsRouteImport } from "./routes/_authenticated/admin/reviews"
 import { Route as AuthenticatedAdminPurchasesRouteImport } from "./routes/_authenticated/admin/purchases"
+import { Route as AuthenticatedAdminProgressRouteImport } from "./routes/_authenticated/admin/progress"
+import { Route as AuthenticatedAdminEnrollmentsRouteImport } from "./routes/_authenticated/admin/enrollments"
+import { Route as AuthenticatedAdminEarlySignupsRouteImport } from "./routes/_authenticated/admin/early-signups"
 import { Route as AuthenticatedAdminChatReportsRouteImport } from "./routes/_authenticated/admin/chat-reports"
 import { Route as AuthenticatedAdminAuditRouteImport } from "./routes/_authenticated/admin/audit"
 import { Route as AuthenticatedAdminAnnouncementsRouteImport } from "./routes/_authenticated/admin/announcements"
@@ -224,6 +227,24 @@ const AuthenticatedAdminPurchasesRoute =
     path: "/purchases",
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminProgressRoute =
+  AuthenticatedAdminProgressRouteImport.update({
+    id: "/progress",
+    path: "/progress",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminEnrollmentsRoute =
+  AuthenticatedAdminEnrollmentsRouteImport.update({
+    id: "/enrollments",
+    path: "/enrollments",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminEarlySignupsRoute =
+  AuthenticatedAdminEarlySignupsRouteImport.update({
+    id: "/early-signups",
+    path: "/early-signups",
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminChatReportsRoute =
   AuthenticatedAdminChatReportsRouteImport.update({
     id: "/chat-reports",
@@ -366,6 +387,9 @@ export interface FileRoutesByFullPath {
   "/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
   "/admin/audit": typeof AuthenticatedAdminAuditRoute
   "/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
+  "/admin/early-signups": typeof AuthenticatedAdminEarlySignupsRoute
+  "/admin/enrollments": typeof AuthenticatedAdminEnrollmentsRoute
+  "/admin/progress": typeof AuthenticatedAdminProgressRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -413,6 +437,9 @@ export interface FileRoutesByTo {
   "/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
   "/admin/audit": typeof AuthenticatedAdminAuditRoute
   "/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
+  "/admin/early-signups": typeof AuthenticatedAdminEarlySignupsRoute
+  "/admin/enrollments": typeof AuthenticatedAdminEnrollmentsRoute
+  "/admin/progress": typeof AuthenticatedAdminProgressRoute
   "/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -467,6 +494,9 @@ export interface FileRoutesById {
   "/_authenticated/admin/announcements": typeof AuthenticatedAdminAnnouncementsRoute
   "/_authenticated/admin/audit": typeof AuthenticatedAdminAuditRoute
   "/_authenticated/admin/chat-reports": typeof AuthenticatedAdminChatReportsRoute
+  "/_authenticated/admin/early-signups": typeof AuthenticatedAdminEarlySignupsRoute
+  "/_authenticated/admin/enrollments": typeof AuthenticatedAdminEnrollmentsRoute
+  "/_authenticated/admin/progress": typeof AuthenticatedAdminProgressRoute
   "/_authenticated/admin/purchases": typeof AuthenticatedAdminPurchasesRoute
   "/_authenticated/admin/reviews": typeof AuthenticatedAdminReviewsRoute
   "/_authenticated/admin/stats": typeof AuthenticatedAdminStatsRoute
@@ -520,6 +550,9 @@ export interface FileRouteTypes {
     | "/admin/announcements"
     | "/admin/audit"
     | "/admin/chat-reports"
+    | "/admin/early-signups"
+    | "/admin/enrollments"
+    | "/admin/progress"
     | "/admin/purchases"
     | "/admin/reviews"
     | "/admin/stats"
@@ -567,6 +600,9 @@ export interface FileRouteTypes {
     | "/admin/announcements"
     | "/admin/audit"
     | "/admin/chat-reports"
+    | "/admin/early-signups"
+    | "/admin/enrollments"
+    | "/admin/progress"
     | "/admin/purchases"
     | "/admin/reviews"
     | "/admin/stats"
@@ -620,6 +656,9 @@ export interface FileRouteTypes {
     | "/_authenticated/admin/announcements"
     | "/_authenticated/admin/audit"
     | "/_authenticated/admin/chat-reports"
+    | "/_authenticated/admin/early-signups"
+    | "/_authenticated/admin/enrollments"
+    | "/_authenticated/admin/progress"
     | "/_authenticated/admin/purchases"
     | "/_authenticated/admin/reviews"
     | "/_authenticated/admin/stats"
@@ -883,6 +922,27 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedAdminPurchasesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    "/_authenticated/admin/progress": {
+      id: "/_authenticated/admin/progress"
+      path: "/progress"
+      fullPath: "/admin/progress"
+      preLoaderRoute: typeof AuthenticatedAdminProgressRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    "/_authenticated/admin/enrollments": {
+      id: "/_authenticated/admin/enrollments"
+      path: "/enrollments"
+      fullPath: "/admin/enrollments"
+      preLoaderRoute: typeof AuthenticatedAdminEnrollmentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    "/_authenticated/admin/early-signups": {
+      id: "/_authenticated/admin/early-signups"
+      path: "/early-signups"
+      fullPath: "/admin/early-signups"
+      preLoaderRoute: typeof AuthenticatedAdminEarlySignupsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     "/_authenticated/admin/chat-reports": {
       id: "/_authenticated/admin/chat-reports"
       path: "/chat-reports"
@@ -1041,6 +1101,9 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminAnnouncementsRoute: typeof AuthenticatedAdminAnnouncementsRoute
   AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminChatReportsRoute: typeof AuthenticatedAdminChatReportsRoute
+  AuthenticatedAdminEarlySignupsRoute: typeof AuthenticatedAdminEarlySignupsRoute
+  AuthenticatedAdminEnrollmentsRoute: typeof AuthenticatedAdminEnrollmentsRoute
+  AuthenticatedAdminProgressRoute: typeof AuthenticatedAdminProgressRoute
   AuthenticatedAdminPurchasesRoute: typeof AuthenticatedAdminPurchasesRoute
   AuthenticatedAdminReviewsRoute: typeof AuthenticatedAdminReviewsRoute
   AuthenticatedAdminStatsRoute: typeof AuthenticatedAdminStatsRoute
@@ -1058,6 +1121,9 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminAnnouncementsRoute: AuthenticatedAdminAnnouncementsRoute,
     AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminChatReportsRoute: AuthenticatedAdminChatReportsRoute,
+    AuthenticatedAdminEarlySignupsRoute: AuthenticatedAdminEarlySignupsRoute,
+    AuthenticatedAdminEnrollmentsRoute: AuthenticatedAdminEnrollmentsRoute,
+    AuthenticatedAdminProgressRoute: AuthenticatedAdminProgressRoute,
     AuthenticatedAdminPurchasesRoute: AuthenticatedAdminPurchasesRoute,
     AuthenticatedAdminReviewsRoute: AuthenticatedAdminReviewsRoute,
     AuthenticatedAdminStatsRoute: AuthenticatedAdminStatsRoute,

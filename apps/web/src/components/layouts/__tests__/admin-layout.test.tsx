@@ -31,6 +31,40 @@ describe("AdminLayout", () => {
     expect(screen.getByText("Admin page content")).toBeInTheDocument();
   });
 
+  it("renders the new Enrollments nav link", async () => {
+    await renderWithProviders(
+      <AdminLayout>
+        <p>Content</p>
+      </AdminLayout>,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Enrollments" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the new Early Signups nav link", async () => {
+    await renderWithProviders(
+      <AdminLayout>
+        <p>Content</p>
+      </AdminLayout>,
+    );
+
+    expect(
+      screen.getByRole("link", { name: "Early Signups" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the new Progress nav link", async () => {
+    await renderWithProviders(
+      <AdminLayout>
+        <p>Content</p>
+      </AdminLayout>,
+    );
+
+    expect(screen.getByRole("link", { name: "Progress" })).toBeInTheDocument();
+  });
+
   it("exposes the main content landmark and skip target id", async () => {
     await renderWithProviders(
       <AdminLayout>
