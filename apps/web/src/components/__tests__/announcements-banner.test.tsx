@@ -139,19 +139,21 @@ describe("AnnouncementsBanner", () => {
   });
 
   it("renders the published date for announcements with publishedAt", () => {
+    const publishedAt = "2026-06-15T10:00:00Z";
     mockUseUnread.mockReturnValue({
       data: [
         makeAnnouncement({
           title: "With Date",
-          publishedAt: "2026-06-15T10:00:00Z",
+          publishedAt,
         }),
       ],
     });
 
     render(<AnnouncementsBanner userId="user-1" />);
 
-    // The date should be formatted via toLocaleDateString
     expect(screen.getByText("With Date")).toBeInTheDocument();
+    const expectedDate = new Date(publishedAt).toLocaleDateString();
+    expect(screen.getByText(expectedDate)).toBeInTheDocument();
   });
 
   it("shows the dismissed date text for read announcements on the dismissed tab", async () => {
@@ -176,7 +178,7 @@ describe("AnnouncementsBanner", () => {
     expect(screen.getByText(/dismissed on/i)).toBeInTheDocument();
   });
 
-  it("shows 'No active announcements' when switching to active tab with no unread", () => {
+  it("renders nothing when there are no unread announcements even if dismissed exist", () => {
     mockUseUnread.mockReturnValue({ data: [] });
     mockUseRead.mockReturnValue({
       data: [makeAnnouncement({ id: "r1", title: "Read One" })],
