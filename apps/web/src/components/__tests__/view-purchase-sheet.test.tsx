@@ -2,12 +2,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import ViewPurchaseSheet from "~/components/view-purchase-sheet";
+import type { Purchase } from "~/lib/db.collections";
 
 vi.mock("~/lib/db.collections", () => ({}));
 
-function makePurchase(
-  overrides: Record<string, unknown> = {},
-): Record<string, unknown> {
+function makePurchase(overrides: Partial<Purchase> = {}): Purchase {
   return {
     id: "purchase-1",
     totalAmount: 9900,
@@ -32,7 +31,7 @@ function makePurchase(
       email: "alice@example.com",
     },
     ...overrides,
-  };
+  } as Purchase;
 }
 
 describe("ViewPurchaseSheet", () => {
@@ -50,7 +49,7 @@ describe("ViewPurchaseSheet", () => {
   it("displays the purchase title and order date", () => {
     render(
       <ViewPurchaseSheet
-        purchase={makePurchase() as never}
+        purchase={makePurchase()}
         open={true}
         onOpenChange={vi.fn()}
       />,
@@ -65,7 +64,7 @@ describe("ViewPurchaseSheet", () => {
   it("shows 'Paid' status badge for paid purchases", () => {
     render(
       <ViewPurchaseSheet
-        purchase={makePurchase({ paid: true, refundedAmount: 0 }) as never}
+        purchase={makePurchase({ paid: true, refundedAmount: 0 })}
         open={true}
         onOpenChange={vi.fn()}
       />,
@@ -77,7 +76,7 @@ describe("ViewPurchaseSheet", () => {
   it("shows 'Refunded' status badge when refundedAmount is greater than zero", () => {
     render(
       <ViewPurchaseSheet
-        purchase={makePurchase({ refundedAmount: 4900 }) as never}
+        purchase={makePurchase({ refundedAmount: 4900 })}
         open={true}
         onOpenChange={vi.fn()}
       />,
@@ -93,7 +92,7 @@ describe("ViewPurchaseSheet", () => {
 
     render(
       <ViewPurchaseSheet
-        purchase={makePurchase() as never}
+        purchase={makePurchase()}
         open={true}
         onOpenChange={onOpenChange}
       />,

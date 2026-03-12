@@ -65,7 +65,10 @@ const mockUserData = {
 
 function createCaller(user?: { id: string; role: string }) {
   const log = { info: vi.fn(), error: vi.fn() };
-  return dataExportRouter.createCaller({
+  // Minimal context matching the subset the router procedures access.
+  // Full tRPC context includes Fastify request/reply + cache but these
+  // procedures only touch user, hasRole, and request.log.
+  const ctx = {
     user: user || null,
     hasRole: (role: string) => user?.role === role,
     request: {
@@ -73,7 +76,10 @@ function createCaller(user?: { id: string; role: string }) {
       headers: { "user-agent": "test-agent" },
       ip: "127.0.0.1",
     },
-  } as never);
+  };
+  return dataExportRouter.createCaller(
+    ctx as unknown as Parameters<typeof dataExportRouter.createCaller>[0],
+  );
 }
 
 describe("dataExportRouter", () => {
