@@ -36,12 +36,22 @@ describe("bootstrapDatabase", () => {
         migrationsFolder: expect.stringContaining("/drizzle"),
       }),
     );
-    expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(queryMock).toHaveBeenCalledWith(
+    expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(queryMock).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining(
+        'CREATE TABLE IF NOT EXISTS "my_schema"."user_notification_preference"',
+      ),
+    );
+    expect(queryMock).toHaveBeenNthCalledWith(
+      2,
       expect.stringContaining('INSERT INTO "my_schema"."user"'),
     );
     expect(migrateMock.mock.invocationCallOrder[0]).toBeLessThan(
       queryMock.mock.invocationCallOrder[0],
+    );
+    expect(queryMock.mock.invocationCallOrder[0]).toBeLessThan(
+      queryMock.mock.invocationCallOrder[1],
     );
   });
 
@@ -54,10 +64,14 @@ describe("bootstrapDatabase", () => {
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       2,
-      "Ensuring default database users exist",
+      "Repairing notification preference schema drift",
     );
     expect(logger.info).toHaveBeenNthCalledWith(
       3,
+      "Ensuring default database users exist",
+    );
+    expect(logger.info).toHaveBeenNthCalledWith(
+      4,
       "Database bootstrap complete",
     );
   });
