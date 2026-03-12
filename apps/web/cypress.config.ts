@@ -87,6 +87,52 @@ export default defineConfig({
             await client.end();
           }
         },
+        async createEarlySignup({
+          id,
+          email,
+          name,
+          source,
+          confirmedAt,
+          unsubscribedAt,
+        }: {
+          id: string;
+          email: string;
+          name: string;
+          source?: "learnfastify" | "codewizard" | "other";
+          confirmedAt?: string | null;
+          unsubscribedAt?: string | null;
+        }) {
+          const client = new pg.Client({
+            connectionString: process.env.DATABASE_URL,
+          });
+          await client.connect();
+          try {
+            await client.query(
+              `
+                INSERT INTO "${dbSchema}"."early_signup"
+                (id, email, name, source, confirmed_at, unsubscribed_at)
+                VALUES ($1, $2, $3, $4, $5, $6)
+                ON CONFLICT (email) DO UPDATE
+                SET
+                  name = EXCLUDED.name,
+                  source = EXCLUDED.source,
+                  confirmed_at = EXCLUDED.confirmed_at,
+                  unsubscribed_at = EXCLUDED.unsubscribed_at
+              `,
+              [
+                id,
+                email,
+                name,
+                source ?? "learnfastify",
+                confirmedAt ? new Date(confirmedAt) : null,
+                unsubscribedAt ? new Date(unsubscribedAt) : null,
+              ],
+            );
+            return null;
+          } finally {
+            await client.end();
+          }
+        },
       });
 
       return config;
