@@ -9,11 +9,12 @@ Rules and patterns for the CI workflows in this repository.
 
 ## Workflow Structure
 
-This project has three workflows:
+This project has four workflows:
 
 | File | Purpose |
 |------|---------|
 | `ci.yml` | Main CI — lint, typecheck, build, server tests, web tests, E2E tests |
+| `copilot-code-review.yml` | Automatic Copilot AI code review on pull requests |
 | `codeql-analysis.yml` | CodeQL security scanning |
 | `gh-actions-cache-cleanup.yml` | Automatic cache cleanup on PR close |
 
