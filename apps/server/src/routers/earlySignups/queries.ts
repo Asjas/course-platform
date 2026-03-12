@@ -1,11 +1,13 @@
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
 
 export type AllEarlySignups = Awaited<ReturnType<typeof getAllEarlySignups>>;
 export type EarlySignupById = Awaited<ReturnType<typeof getEarlySignupById>>;
 
 const preparedGetAllEarlySignups = db.query.earlySignup
-  .findMany()
+  .findMany({
+    orderBy: (row) => [desc(row.created_at)],
+  })
   .prepare("getAllEarlySignups");
 
 const preparedGetEarlySignupById = db.query.earlySignup
