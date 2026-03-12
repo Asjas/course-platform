@@ -116,7 +116,7 @@ For every changed `.tsx` file:
 - Semantic HTML elements used instead of generic `<div>` where appropriate.
 - Exactly one `<h1>` per page. Heading levels are not skipped.
 - All `<input>`, `<select>`, `<textarea>` have a visible `<label>` with a
-  matching `for`/`id` pair.
+  matching `htmlFor`/`id` pair in TSX/JSX (use `for`/`id` in plain HTML).
 - Interactive elements are keyboard operable with visible focus indicators.
 - Text contrast is at least 4.5:1 (3:1 for large text ≥18.5px bold or ≥24px).
 - Color is not the sole means of conveying information.
