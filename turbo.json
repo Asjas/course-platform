@@ -4,7 +4,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "build/**", ".astro/**"]
+      "outputs": ["dist/**", "build/**", ".astro/**"],
+      "env": ["CYPRESS_COVERAGE"]
     },
     "tauri:build": {
       "dependsOn": ["build"],
