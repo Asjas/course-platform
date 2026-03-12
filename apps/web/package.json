@@ -15,7 +15,7 @@
     "e2e:run": "cypress run",
     "e2e:coverage": "CYPRESS_COVERAGE=true cypress run",
     "e2e:coverage:open": "CYPRESS_COVERAGE=true cypress open",
-    "e2e:coverage:report": "nyc report --report-dir coverage/e2e --reporter=html --reporter=text-summary --reporter=lcov --temp-dir .nyc_output",
+    "e2e:coverage:report": "nyc report --report-dir coverage/e2e --reporter=html --reporter=text-summary --reporter=lcov --reporter=json-summary --reporter=json --temp-dir .nyc_output",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
