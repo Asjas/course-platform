@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import * as z from "zod";
 
 const verificationSearchSchema = z.object({
+  token: z.string().optional(),
   status: z
     .enum(["verified", "used", "expired", "invalid", "error"])
-    .optional()
-    .default("invalid"),
+    .optional(),
 });
 
 export const Route = createFileRoute("/verify-course-wishlist")({
@@ -52,8 +53,38 @@ const STATUS_CONFIG = {
 } as const;
 
 function VerifyCourseWishlistPage() {
-  const { status } = Route.useSearch();
-  const config = STATUS_CONFIG[status];
+  const { status, token } = Route.useSearch();
+  const resolvedStatus = status ?? "invalid";
+  const config = STATUS_CONFIG[resolvedStatus];
+
+  useEffect(() => {
+    if (!token || status) {
+      return;
+    }
+
+    const verifyUrl = new URL(
+      "/verify-course-wishlist",
+      import.meta.env.VITE_TRPC_URL,
+    );
+    verifyUrl.searchParams.set("token", token);
+
+    window.location.replace(verifyUrl.toString());
+  }, [status, token]);
+
+  if (token && !status) {
+    return (
+      <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl items-center justify-center px-4 py-16">
+        <section className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-8 text-slate-900 shadow-sm md:p-10 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200">
+          <h1 className="text-2xl font-semibold md:text-3xl">
+            Verifying your email...
+          </h1>
+          <p className="mt-3 text-base leading-relaxed opacity-90 md:text-lg">
+            Please wait while we confirm your waitlist signup.
+          </p>
+        </section>
+      </main>
+    );
+  }
 
   return (
     <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl items-center justify-center px-4 py-16">

@@ -17,6 +17,45 @@ import { course } from "~/db/schema/course.js";
 import mailer from "~/lib/mailer.js";
 import { publicProcedure, router } from "~/router.js";
 
+function firstForwardedHeaderValue(value: string | string[] | undefined) {
+  if (!value) {
+    return undefined;
+  }
+
+  const rawValue = Array.isArray(value) ? value[0] : value;
+  const firstValue = rawValue.split(",")[0]?.trim();
+
+  return firstValue ? firstValue : undefined;
+}
+
+function resolveVerificationApiOrigin(
+  request:
+    | {
+        headers: Record<string, string | string[] | undefined>;
+        protocol?: string;
+      }
+    | undefined,
+) {
+  const forwardedHost = firstForwardedHeaderValue(
+    request?.headers["x-forwarded-host"],
+  );
+  const host =
+    forwardedHost ?? firstForwardedHeaderValue(request?.headers.host);
+  const forwardedProto = firstForwardedHeaderValue(
+    request?.headers["x-forwarded-proto"],
+  );
+  const protocol = forwardedProto ?? request?.protocol;
+
+  if (host && protocol) {
+    return `${protocol}://${host}`;
+  }
+
+  return (
+    config.ORIGIN.find((url) => url.includes("api.")) ??
+    "https://api.codewizard.training"
+  );
+}
+
 const signupInputSchema = z.object({
   email: z.email(),
   name: z.string().optional(),
@@ -30,7 +69,7 @@ const signupInputSchema = z.object({
 export const courseWishlistRouter = router({
   signup: publicProcedure
     .input(signupInputSchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // Look up course by slug
       const courseResult = await db.query.course.findFirst({
         where: eq(course.slug, input.courseSlug),
@@ -74,10 +113,14 @@ export const courseWishlistRouter = router({
         const verificationToken = await createCourseWishlistVerificationToken(
           entry.id,
         );
-        const origin =
-          config.ORIGIN.find((url) => url.includes("api.")) ??
-          config.ORIGIN[0] ??
-          "https://api.codewizard.training";
+        const origin = resolveVerificationApiOrigin(
+          ctx.request as
+            | {
+                headers: Record<string, string | string[] | undefined>;
+                protocol?: string;
+              }
+            | undefined,
+        );
         const verifyUrl = new URL("/verify-course-wishlist", origin);
         verifyUrl.searchParams.set("token", verificationToken.token);
 
