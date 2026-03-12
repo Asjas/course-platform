@@ -2,12 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import * as z from "zod";
 
-const verificationSearchSchema = z.object({
+export const verificationSearchSchema = z.object({
   token: z.string().optional(),
   status: z
     .enum(["verified", "used", "expired", "invalid", "error"])
     .optional(),
 });
+
+export type VerificationStatus =
+  | "verified"
+  | "used"
+  | "expired"
+  | "invalid"
+  | "error";
 
 export const Route = createFileRoute("/verify-course-wishlist")({
   validateSearch: verificationSearchSchema,
@@ -52,23 +59,36 @@ const STATUS_CONFIG = {
   },
 } as const;
 
+export function resolveVerificationStatus(
+  status: VerificationStatus | undefined,
+): VerificationStatus {
+  return status ?? "invalid";
+}
+
+export function buildCourseWishlistVerifyUrl(apiOrigin: string, token: string) {
+  const verifyUrl = new URL("/verify-course-wishlist", apiOrigin);
+  verifyUrl.searchParams.set("token", token);
+
+  return verifyUrl.toString();
+}
+
+export function getVerificationStatusConfig(status: VerificationStatus) {
+  return STATUS_CONFIG[status];
+}
+
 function VerifyCourseWishlistPage() {
   const { status, token } = Route.useSearch();
-  const resolvedStatus = status ?? "invalid";
-  const config = STATUS_CONFIG[resolvedStatus];
+  const resolvedStatus = resolveVerificationStatus(status);
+  const config = getVerificationStatusConfig(resolvedStatus);
 
   useEffect(() => {
     if (!token || status) {
       return;
     }
 
-    const verifyUrl = new URL(
-      "/verify-course-wishlist",
-      import.meta.env.VITE_TRPC_URL,
+    window.location.replace(
+      buildCourseWishlistVerifyUrl(import.meta.env.VITE_TRPC_URL, token),
     );
-    verifyUrl.searchParams.set("token", token);
-
-    window.location.replace(verifyUrl.toString());
   }, [status, token]);
 
   if (token && !status) {

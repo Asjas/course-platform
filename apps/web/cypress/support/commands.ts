@@ -41,6 +41,18 @@ declare global {
        * @example cy.loginAsRegularUser()
        */
       loginAsRegularUser(): Chainable<void>;
+      /**
+       * Insert or update an early signup row for admin early-signups E2E setup.
+       * @example cy.createEarlySignup({ id: 'signup:1', email: 'a@b.com', name: 'A' })
+       */
+      createEarlySignup(input: {
+        id: string;
+        email: string;
+        name: string;
+        source?: "learnfastify" | "codewizard" | "other";
+        confirmedAt?: string | null;
+        unsubscribedAt?: string | null;
+      }): Chainable<void>;
     }
   }
 }
@@ -172,5 +184,19 @@ Cypress.Commands.add("loginAsRegularUser", () => {
     },
   );
 });
+
+Cypress.Commands.add(
+  "createEarlySignup",
+  (input: {
+    id: string;
+    email: string;
+    name: string;
+    source?: "learnfastify" | "codewizard" | "other";
+    confirmedAt?: string | null;
+    unsubscribedAt?: string | null;
+  }) => {
+    cy.task("createEarlySignup", input);
+  },
+);
 
 export {};
