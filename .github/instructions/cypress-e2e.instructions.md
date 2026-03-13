@@ -32,6 +32,18 @@ description: "Cypress E2E test generation instructions for the web application"
 - **URL**: Use `cy.url().should("include", "/path")` for navigation verification.
 - **Network (Non-Auth)**: Use `cy.intercept()` for CRUD operations to wait for API calls and verify network timing.
 - **Network (Authorization)**: Do NOT use `cy.intercept()` to mock permission responses. Test through the UI and let the real backend enforce permissions.
+- **Post-mutation assertions**: When asserting on UI feedback that follows a
+  network mutation (create, update, delete), always use `{ timeout: 10000 }`.
+  This applies to toast messages (e.g. "created successfully", "deleted
+  successfully") and table row assertions that depend on server responses. The
+  default 4000ms is too short because the backend round-trip adds latency.
+  ```typescript
+  // ✅ CORRECT — explicit timeout for post-mutation toast
+  cy.contains(/deleted successfully/i, { timeout: 10000 }).should("be.visible");
+
+  // ❌ WRONG — default 4s timeout can flake after slow mutations
+  cy.contains(/deleted successfully/i).should("be.visible");
+  ```
 
 ## Example Test Structure
 
