@@ -15,8 +15,8 @@ describe("collapsed-media", () => {
       store[key] = value;
     });
     const removeItem = vi.fn((key: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [key]: _removed, ...rest } = store;
+      void _removed;
       store = rest;
     });
     const clear = vi.fn(() => {
@@ -39,8 +39,8 @@ describe("collapsed-media", () => {
         store[storageKey] = value;
       });
       removeItem.mockImplementation((storageKey: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { [storageKey]: _removed, ...rest } = store;
+        void _removed;
         store = rest;
       });
       clear.mockImplementation(() => {

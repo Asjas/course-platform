@@ -6,7 +6,10 @@ import * as z from "zod";
 import BlockerComponent from "~/components/blocker";
 import FieldInfo from "~/components/field-info";
 import { GitHubMessageEditor } from "~/components/markdown-editor";
-import { SupportTicketsCollection } from "~/lib/db.collections";
+import {
+  type SupportTicket,
+  SupportTicketsCollection,
+} from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
 
@@ -31,8 +34,12 @@ export default function NewSupportTicketForm() {
       try {
         const id = `suptick:${ulid()}`;
         const newSupportTicketWithId = { id, ...value };
-        // @ts-expect-error must use any to satisfy the type system
-        const tx = SupportTicketsCollection.insert(newSupportTicketWithId);
+        // The server-set and relational fields (userId, createdAt, updatedAt,
+        // user, comments, etc.) cannot be provided optimistically at insert
+        // time. We immediately refetch so the real data replaces the stub.
+        const tx = SupportTicketsCollection.insert(
+          newSupportTicketWithId as unknown as SupportTicket,
+        );
         await tx.isPersisted.promise;
         await SupportTicketsCollection.utils.refetch();
 

@@ -6,6 +6,14 @@ import * as schemas from "~/db/schema/index.js";
 
 const isCI = process.env.CI === "true";
 
+// pg client exposes the socket via .connection.stream, which is not in the
+// public type definitions but exists at runtime for all pg versions.
+interface PgClientWithSocket {
+  connection?: {
+    stream?: { setKeepAlive: (enabled: boolean, delay: number) => void };
+  };
+}
+
 // Append PostgreSQL libpq keepalive parameters to the connection URL.
 // These are separate from Node.js TCP keepalive (keepAlive / setKeepAlive)
 // and tell the PostgreSQL server to send keepalive probes, which prevents
@@ -40,8 +48,7 @@ const pool = new Pool({
 // Also attach a per-client error listener so a connection termination on a
 // checked-out (but query-idle) client doesn't become an uncaughtException.
 pool.on("connect", (client) => {
-  // @ts-expect-error -- pg client exposes the socket via .connection.stream
-  client.connection?.stream?.setKeepAlive(true, 10000);
+  (client as PgClientWithSocket).connection?.stream?.setKeepAlive(true, 10000);
   client.on("error", (err) => {
     console.error("Database client error:", err.message);
   });

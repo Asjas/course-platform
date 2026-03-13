@@ -1,5 +1,5 @@
 import { Moon, Sun } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark" | "system";
 
@@ -8,21 +8,20 @@ function getInitialTheme(): Theme {
   return (localStorage.getItem("theme") as Theme | null) ?? "system";
 }
 
+const noopSubscribe = () => () => undefined;
+
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
-  const mountedRef = useRef(false);
-  const [hasMounted, setHasMounted] = useState(false);
 
-  // Track hydration completion - this is a valid pattern for SSR hydration
+  // useSyncExternalStore returns false on the server and true on the client,
+  // avoiding the setState-inside-useEffect hydration pattern.
+  const hasMounted = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
+
   useEffect(() => {
-    mountedRef.current = true;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- valid hydration pattern
-    setHasMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mountedRef.current) return;
-
     const root = document.documentElement;
 
     if (theme === "system") {
