@@ -82,8 +82,11 @@ describe("User Authentication", () => {
 Use this form for targeted runs:
 
 ```bash
-pnpm --filter @apps/web e2e:run -- --spec "cypress/e2e/<changed-spec>.cy.ts"
+pnpm --filter @apps/web exec cypress run --spec "cypress/e2e/<changed-spec>.cy.ts"
 ```
+
+Avoid using wrapper-arg forms that can accidentally ignore `--spec` and run the
+entire suite.
 
 After creating or editing an E2E spec, run that spec immediately.
 Do not run the full E2E suite for targeted validation unless explicitly requested.
