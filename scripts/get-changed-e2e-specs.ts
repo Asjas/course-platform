@@ -138,7 +138,7 @@ const SPEC_MAPPINGS: { patterns: string[]; specs: string[] }[] = [
     specs: ["downloads.cy.ts"],
   },
   {
-    patterns: ["routes/support", "routers/supportTickets"],
+    patterns: ["routes/support", "routers/support-tickets"],
     specs: ["support-tickets.cy.ts"],
   },
   // Home page, terms and privacy pages
