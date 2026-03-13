@@ -197,6 +197,9 @@ export function ThreadPanel({
 
   // Get current user info for optimistic message display
   const auth = useAuth();
+  // Timestamp captured in handleSubmit (event handler) so it is not inside
+  // the onSubmit hook argument, which would be flagged as an impure call.
+  const submitTimestampRef = useRef(0);
 
   const form = useAppForm({
     defaultValues: {
@@ -213,9 +216,7 @@ export function ThreadPanel({
           return;
         }
 
-        // Capture timestamp before insert
-        // eslint-disable-next-line react-hooks/purity -- Date.now() is safe in async event handler
-        const now = Date.now();
+        const now = submitTimestampRef.current;
 
         // Insert via collection - triggers onInsert which calls the server
         // SSE subscription will handle updates for all clients
@@ -250,6 +251,7 @@ export function ThreadPanel({
       toast.error("You can't send an empty reply");
       return;
     }
+    submitTimestampRef.current = Date.now();
     form.handleSubmit();
   };
 

@@ -236,7 +236,7 @@ function AdminUsersPage() {
                           "sticky right-0 py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 sm:pr-3 dark:text-gray-400",
                           rowIndex % 2 === 0
                             ? "bg-white dark:bg-gray-900"
-                            : "bg-gray-100/80 dark:bg-gray-700/25",
+                            : "bg-[rgb(245,246,248)] dark:bg-[rgb(27,34,50)]",
                         )}
                       >
                         <div className="flex justify-end gap-4">

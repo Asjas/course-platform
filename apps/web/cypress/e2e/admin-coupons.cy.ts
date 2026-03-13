@@ -24,10 +24,13 @@ describe("Admin Coupons Management", () => {
   }
 
   function waitForSheetClose() {
-    // Wait for dialog to be removed from DOM
+    // Wait for dialog to be removed from DOM, then for the page to stabilize
     cy.get('[role="dialog"]', { timeout: 10000 }).should("not.exist");
-    // eslint-disable-next-line cypress/no-unnecessary-waiting -- allow overlay exit transition and re-renders to finish
-    cy.wait(1000);
+    // Wait for the open-sheet button to be interactive again, signalling that
+    // any overlay exit animations and post-close re-renders have completed.
+    cy.contains("button", "Create New Coupon", { timeout: 5000 })
+      .should("be.visible")
+      .should("not.be.disabled");
   }
 
   beforeEach(() => {

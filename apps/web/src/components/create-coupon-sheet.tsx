@@ -44,8 +44,6 @@ export default function CreateCouponSheet({
       const toastId = toast.loading(`Creating coupon ${value.code}...`);
 
       try {
-        // @ts-expect-error collection insert accepts optimistic client shape and
-        // is reconciled by collection sync (createdAt/updatedAt set by server)
         const tx = CouponsCollection.insert({
           id: `coup:${ulid()}`,
           active: value.active,
@@ -58,6 +56,9 @@ export default function CreateCouponSheet({
           validFrom: value.validFrom,
           validUntil: value.validUntil,
           redemptions: [],
+          // Optimistic placeholders — the server reconciles the actual values on sync
+          createdAt: new Date(),
+          updatedAt: new Date(),
         });
 
         // Close immediately after optimistic insert so UI interaction is not blocked

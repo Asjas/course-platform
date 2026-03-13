@@ -61,7 +61,6 @@ export function UserSearchModal({
     });
   }, [allUsersMap, searchTerm, auth.session?.user.id]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: filteredUsers.length,
     getScrollElement: () => parentRef.current,
