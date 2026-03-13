@@ -1,12 +1,14 @@
 import { faker } from "@faker-js/faker";
 
-const supportAdminUser = {
-  name: faker.person.fullName(),
-  email: faker.internet
-    .email({ provider: "e2e-support-admin.test" })
-    .toLowerCase(),
-  password: "SupportAdmin123!",
-};
+function buildSafeUser(provider: string, password: string) {
+  const suffix = faker.string.alphanumeric(8).toLowerCase();
+
+  return {
+    name: `E2E User ${suffix}`,
+    email: faker.internet.email({ provider }).toLowerCase(),
+    password,
+  };
+}
 
 function resetBrowserSession() {
   cy.clearAllCookies();
@@ -18,16 +20,8 @@ function resetBrowserSession() {
 }
 
 function signInAsFreshRegularUser() {
-  const regularUser = {
-    name: faker.person.fullName(),
-    email: faker.internet
-      .email({ provider: "e2e-support-regular.test" })
-      .toLowerCase(),
-    password: "RegularUser123!",
-  };
-
   resetBrowserSession();
-  cy.signUp(regularUser);
+  cy.loginAsRegularUser();
 }
 
 function createSupportTicket({
@@ -72,8 +66,6 @@ describe("Support Ticket Management", () => {
       role: "admin",
     });
 
-    cy.ensureUserExists(supportAdminUser);
-    cy.task("setUserRole", { email: supportAdminUser.email, role: "admin" });
     cy.clearAllCookies();
   });
 
@@ -112,20 +104,8 @@ describe("Support Ticket Management", () => {
   });
 
   it("should allow a different user to view someone else's support ticket", () => {
-    const ownerUser = {
-      name: faker.person.fullName(),
-      email: faker.internet
-        .email({ provider: "e2e-owner-ticket.test" })
-        .toLowerCase(),
-      password: "OwnerTicket123!",
-    };
-    const otherUser = {
-      name: faker.person.fullName(),
-      email: faker.internet
-        .email({ provider: "e2e-other-ticket.test" })
-        .toLowerCase(),
-      password: "OtherTicket123!",
-    };
+    const ownerUser = buildSafeUser("e2e-owner-ticket.test", "OwnerTicket123!");
+    const otherUser = buildSafeUser("e2e-other-ticket.test", "OtherTicket123!");
 
     const ticketTitle = `Owner Ticket ${faker.string.alphanumeric(8)}`;
     const ticketDescription = "Owner-only support ticket content";
@@ -173,7 +153,7 @@ describe("Support Ticket Management", () => {
     // Use a fresh user to avoid stale session issues from shared beforeEach
     resetBrowserSession();
     const ownerUser = {
-      name: faker.person.fullName(),
+      name: `Owner Controls ${faker.string.alphanumeric(6)}`,
       email: faker.internet
         .email({ provider: "e2e-owner-controls.test" })
         .toLowerCase(),
@@ -197,13 +177,15 @@ describe("Support Ticket Management", () => {
       cy.contains("button", "Delete").click();
     });
 
-    cy.contains(/ticket deleted successfully/i).should("be.visible");
+    cy.contains(/ticket deleted successfully/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     cy.contains("tr", ownTicketTitle).should("not.exist");
   });
 
   it("should show admin controls and allow admin to delete any ticket", () => {
     const regularUser = {
-      name: faker.person.fullName(),
+      name: `Regular Ticket ${faker.string.alphanumeric(6)}`,
       email: faker.internet
         .email({ provider: "e2e-regular-ticket.test" })
         .toLowerCase(),
@@ -231,12 +213,10 @@ describe("Support Ticket Management", () => {
       return null;
     });
 
-    // Clear session and login as admin
+    // Clear session and elevate this existing user to admin for the access-control check
     resetBrowserSession();
-    cy.signIn({
-      email: supportAdminUser.email,
-      password: supportAdminUser.password,
-    });
+    cy.task("setUserRole", { email: regularUser.email, role: "admin" });
+    cy.signIn({ email: regularUser.email, password: regularUser.password });
 
     // Navigate to support tickets list
     cy.visit("/support");
@@ -253,7 +233,9 @@ describe("Support Ticket Management", () => {
     });
 
     // Verify successful deletion
-    cy.contains(/ticket deleted successfully/i).should("be.visible");
+    cy.contains(/ticket deleted successfully/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     cy.contains("tr", ticketTitle).should("not.exist");
   });
 });

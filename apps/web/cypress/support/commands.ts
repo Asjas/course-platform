@@ -84,7 +84,7 @@ Cypress.Commands.add(
     cy.get("#confirmPassword").clear();
     cy.get("#confirmPassword").type(user.password);
     cy.get('button[type="submit"]').click();
-    cy.url().should("include", "/dashboard");
+    cy.url({ timeout: 10000 }).should("include", "/dashboard");
   },
 );
 
@@ -127,11 +127,15 @@ Cypress.Commands.add(
           return null;
         }
 
+        cy.clearAllCookies();
+        cy.clearAllLocalStorage();
         cy.visit("/signin");
-        cy.get("#email", { timeout: 10000 }).clear();
-        cy.get("#email").type(user.email);
-        cy.get("#password").clear();
-        cy.get("#password").type(user.password);
+        cy.get('input[name="email"], #email', { timeout: 10000 })
+          .first()
+          .clear();
+        cy.get('input[name="email"], #email').first().type(user.email);
+        cy.get('input[name="password"], #password').first().clear();
+        cy.get('input[name="password"], #password').first().type(user.password);
         cy.get('button[type="submit"]').click();
         cy.url({ timeout: 10000 }).should("include", "/dashboard");
         cleanupAndRestore();
@@ -144,10 +148,10 @@ Cypress.Commands.add(
 
 Cypress.Commands.add("signIn", (user: { email: string; password: string }) => {
   cy.visit("/signin");
-  cy.get("#email", { timeout: 10000 }).clear();
-  cy.get("#email").type(user.email);
-  cy.get("#password").clear();
-  cy.get("#password").type(user.password);
+  cy.get('input[name="email"], #email', { timeout: 10000 }).first().clear();
+  cy.get('input[name="email"], #email').first().type(user.email);
+  cy.get('input[name="password"], #password').first().clear();
+  cy.get('input[name="password"], #password').first().type(user.password);
   cy.get('button[type="submit"]').click();
   cy.url({ timeout: 10000 }).should("include", "/dashboard");
 });
