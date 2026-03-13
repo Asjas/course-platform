@@ -218,7 +218,7 @@ The same rule applies to **plugins** and **route handlers**:
 // ✅ callback plugin — no await needed, no extra Promise
 export default function timingPlugin(fastify, _opts, done) {
   fastify.addHook("onSend", function (_request, reply, _payload, done) {
-    reply.header("Timing-Allow-Origin", fastify.config.ORIGIN);
+    reply.header("Timing-Allow-Origin", fastify.config.ORIGIN.join(", "));
     done();
   });
   done();
