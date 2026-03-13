@@ -187,7 +187,6 @@ const SHARED_CODE_PATTERNS = [
   "apps/web/src/styles/",
   "apps/web/tailwind.css",
   "apps/web/vite.config.ts",
-  "apps/web/src/components/", // generic shared UI components
   "apps/server/src/lib/",
   "apps/server/src/plugins/",
   "apps/server/src/hooks/",
