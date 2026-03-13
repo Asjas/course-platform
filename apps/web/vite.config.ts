@@ -42,6 +42,7 @@ export default defineConfig({
         ],
         cypress: true,
         requireEnv: true,
+        forceBuildInstrument: true,
       }) as PluginOption),
     mdx({
       remarkPlugins: [remarkGfm],
