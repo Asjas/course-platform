@@ -321,9 +321,27 @@ function main(): void {
       continue;
     }
 
-    // Shared / foundational code — must run everything
+    // Cypress support/fixture files (commands.ts, cypress.d.ts, fixtures/**) —
+    // they affect all specs but should NOT override specific spec detection.
+    // If specific spec files are also changed in the PR we run just those;
+    // if ONLY support files changed we fall through to the full-suite fallback.
+    if (
+      file.startsWith("apps/web/cypress/support/") ||
+      file.startsWith("apps/web/cypress/fixtures/")
+    ) {
+      console.log(
+        `🔧 Cypress support/fixture changed: ${file} → will run all if no specs detected`,
+      );
+      hasE2ERelevantChanges = true;
+      continue;
+    }
+
+    // Shared / foundational code — record intent to run all specs, but specific
+    // spec file changes still take priority (see end-of-function logic).
     if (isSharedCode(file)) {
-      console.log(`🌐 Shared code changed: ${file} → running all specs`);
+      console.log(
+        `🌐 Shared code changed: ${file} → will run all if no specs detected`,
+      );
       runAll = true;
       hasE2ERelevantChanges = true;
       continue;
@@ -345,10 +363,11 @@ function main(): void {
       file.startsWith("apps/web/src/") ||
       file.startsWith("apps/server/src/") ||
       file.startsWith("packages/") ||
-      file.startsWith("apps/web/cypress/") ||
       file === "apps/web/cypress.config.ts"
     ) {
-      console.log(`❓ Unmapped source change: ${file} → running all specs`);
+      console.log(
+        `❓ Unmapped source change: ${file} → will run all if no specs detected`,
+      );
       runAll = true;
       hasE2ERelevantChanges = true;
     }
@@ -360,20 +379,23 @@ function main(): void {
     return;
   }
 
-  if (runAll || specFiles.size === 0) {
-    // runAll is set when shared/foundational code changed.
-    // specFiles.size === 0 with hasE2ERelevantChanges === true means a source
-    // file that belongs to a source directory was changed but didn't match any
-    // known mapping — conservative fallback is to run the full suite.
-    console.log("🔄 Running all E2E specs");
-    writeOutput("specs", "");
+  // When specific spec files were directly changed (or mapped from source changes),
+  // always run exactly those specs — even if shared/foundational code also changed.
+  // The full suite on main after merge catches broader regressions; the PR minimal
+  // workflow is intentionally scoped to specs that are directly affected by the PR.
+  if (specFiles.size > 0) {
+    const specList = [...specFiles].map((s) => `cypress/e2e/${s}`).join(",");
+    console.log(`✅ Running ${specFiles.size} spec(s): ${specList}`);
+    writeOutput("specs", specList);
     return;
   }
 
-  const specList = [...specFiles].map((s) => `cypress/e2e/${s}`).join(",");
-
-  console.log(`✅ Running ${specFiles.size} spec(s): ${specList}`);
-  writeOutput("specs", specList);
+  // No direct spec changes found, but E2E-relevant files changed (shared code,
+  // support files, or unmapped source) — run the full suite as a safe fallback.
+  console.log(
+    "🔄 Running all E2E specs (shared/support code changed, no direct spec changes)",
+  );
+  writeOutput("specs", "");
 }
 
 main();
