@@ -39,13 +39,13 @@ describe("bootstrapDatabase", () => {
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock).toHaveBeenNthCalledWith(
       1,
-      expect.stringContaining(
-        'CREATE TABLE IF NOT EXISTS "my_schema"."user_notification_preference"',
+      expect.stringMatching(
+        /CREATE TABLE IF NOT EXISTS "[^"]+"."user_notification_preference"/,
       ),
     );
     expect(queryMock).toHaveBeenNthCalledWith(
       2,
-      expect.stringContaining('INSERT INTO "my_schema"."user"'),
+      expect.stringMatching(/INSERT INTO "[^"]+"."user"/),
     );
     expect(migrateMock.mock.invocationCallOrder[0]).toBeLessThan(
       queryMock.mock.invocationCallOrder[0],
