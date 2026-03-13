@@ -118,7 +118,7 @@ export function AdminEarlySignupsPage() {
 
       {signups.length > 0 ? (
         <div className="mt-12 flow-root">
-          <div className="mb-4 flex flex-wrap items-center gap-2 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Status:
             </span>
