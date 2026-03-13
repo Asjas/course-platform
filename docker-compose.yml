@@ -8,7 +8,7 @@ services:
       - POSTGRES_DB=cw_db
     command: >
       postgres -c shared_buffers=64MB -c effective_cache_size=192MB -c
-      work_mem=4MB -c maintenance_work_mem=32MB
+      work_mem=4MB -c maintenance_work_mem=32MB -c max_connections=400
     volumes:
       - cw-postgres-data:/var/lib/postgresql
     ports:
