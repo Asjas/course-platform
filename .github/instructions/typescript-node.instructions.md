@@ -52,6 +52,213 @@ if (err) {
 }
 ```
 
+- **Custom typed errors**: Use `@fastify/error` to create typed HTTP errors with codes:
+
+```typescript
+import createError from "@fastify/error";
+
+const NotFoundError = createError("NOT_FOUND", "%s not found", 404);
+const ConflictError = createError("CONFLICT", "%s already exists", 409);
+
+// Usage in a handler
+throw new NotFoundError("Course");
+throw new ConflictError("Email");
+```
+
+- **Always define response schemas** for serialization performance — Fastify uses
+  `fast-json-stringify` when a response schema is present, which is significantly faster than
+  `JSON.stringify`. Use `fastify-type-provider-zod` schemas:
+
+```typescript
+app.get("/courses", {
+  schema: {
+    response: {
+      200: z.array(courseSchema),
+    },
+  },
+  handler: async () => getAllCourses(),
+});
+```
+
+### Fastify Plugins and Encapsulation
+
+Fastify plugins are **encapsulated by default** — decorators, hooks, and sub-plugins registered
+inside a plugin are **not visible** to sibling or parent scopes. Use
+[`fastify-plugin`](https://github.com/fastify/fastify-plugin) (`fp`) when you need a plugin's
+decorators to be accessible from the parent scope (e.g. `fastify.db`, `fastify.cache`):
+
+```typescript
+import fp from "fastify-plugin";
+import type { FastifyPluginAsync } from "fastify";
+
+// Without fp: decorator is only visible inside this plugin (scoped)
+// With fp: decorator is promoted to the parent scope (shared)
+const dbPlugin: FastifyPluginAsync = fp(async function (fastify) {
+  const db = await createConnection();
+  fastify.decorate("db", db);
+
+  fastify.addHook("onClose", async () => {
+    await db.end(); // use the closed-over `db`, not fastify.db
+  });
+});
+
+export default dbPlugin;
+```
+
+Use encapsulation **intentionally** for route groups that need isolated hooks (e.g. admin-only
+auth) — register those as plain plugins **without** `fp`.
+
+### TypeScript Declaration Merging for Fastify Decorators
+
+When a plugin decorates the Fastify instance (e.g. `fastify.db`, `fastify.cache`,
+`fastify.config`), extend the Fastify type interfaces via declaration merging so callers get
+full type inference:
+
+```typescript
+// apps/server/src/@types/fastify.d.ts  (or in the plugin file itself)
+import "fastify";
+import type { Cache } from "async-cache-dedupe";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type { Config } from "~/config.js";
+import type * as schema from "~/db/schema/index.js";
+
+declare module "fastify" {
+  interface FastifyInstance {
+    config: Config;
+    db: NodePgDatabase<typeof schema>;
+    cache: Cache;
+  }
+
+  interface FastifyRequest {
+    user?: {
+      id: string;
+      email: string;
+      role: string;
+    };
+  }
+}
+```
+
+This makes `fastify.db`, `fastify.cache`, and `request.user` fully typed throughout the server
+without manual casts.
+
+### Fastify Request Lifecycle and Hooks
+
+Hooks execute in this order per request:
+
+```
+onRequest → preParsing → preValidation → preHandler → Handler
+  → preSerialization → onSend → onResponse
+```
+
+**Hook selection guide:**
+
+| Hook | Use for |
+|------|---------|
+| `onRequest` | Authentication checks, request ID setup, early rejection (body not yet parsed) |
+| `preValidation` | Normalize/transform body before Zod validation (e.g. lowercase email) |
+| `preHandler` | Authorization, load related resources, transaction setup |
+| `preSerialization` | Add metadata to every response, strip sensitive fields |
+| `onSend` | Modify serialized payload, add response timing headers |
+| `onResponse` | Log response metrics, cleanup — cannot modify response |
+| `onError` | Cleanup resources (temp files, transactions) on error |
+| `onClose` | Disconnect external resources when server shuts down |
+
+Always use **async hooks** (never the `done` callback style for new code):
+
+```typescript
+// ✅ async hook
+fastify.addHook("onRequest", async (request, reply) => {
+  request.startTime = Date.now();
+});
+
+// ❌ callback style (legacy, avoid for new hooks)
+fastify.addHook("onRequest", (request, reply, done) => {
+  request.startTime = Date.now();
+  done();
+});
+```
+
+Scoped hooks only apply to routes registered **within the same plugin scope**. Use this to
+apply an admin-only auth check to a subtree of routes:
+
+```typescript
+fastify.register(async function adminRoutes(fastify) {
+  fastify.addHook("preHandler", isAdmin); // only runs for routes in this plugin
+  fastify.get("/admin/users", handler);
+});
+```
+
+### Graceful Shutdown
+
+This server uses [`close-with-grace`](https://github.com/fastify/close-with-grace) for
+graceful shutdown. The shutdown sequence in `index.ts` follows this order:
+
+1. `closeWithGrace` receives `SIGTERM`/`SIGINT` signal
+2. External connections (`polarPool`, `pool`) close first
+3. Fastify server (`app.close()`) closes last — this drains in-flight requests
+
+**Important**: Do NOT call `closeWithGrace()` again inside `process.on('uncaughtException')`.
+Re-calling it re-registers signal handlers and causes the DB pool to end immediately, crashing
+any remaining in-flight requests. The `uncaughtException` handler should only log:
+
+```typescript
+process.on("uncaughtException", (err) => {
+  app.log.error({ err }, "Uncaught Exception occurred");
+  // Do NOT call closeWithGrace() here
+});
+```
+
+Register per-plugin cleanup in `onClose` hooks rather than in the top-level shutdown handler:
+
+```typescript
+fastify.addHook("onClose", async (fastify) => {
+  await fastify.db.$client.end();
+});
+```
+
+### Pino Structured Logging
+
+Use **structured logging** (object first, message second) throughout. Avoid string
+concatenation:
+
+```typescript
+// ✅ Structured — searchable and parseable
+request.log.info({ userId: user.id, action: "course_enrolled" }, "User enrolled in course");
+request.log.error({ err, courseId }, "Failed to enroll user");
+
+// ❌ Unstructured — hard to parse or search in log aggregators
+request.log.info(`User ${user.id} enrolled in course ${courseId}`);
+```
+
+Use **`request.log`** (not `fastify.log`) inside route handlers and hooks — it includes the
+request ID automatically and correlates logs across the full request lifecycle. Use
+**`request.log.child({})`** to add extra context without losing the request ID:
+
+```typescript
+const log = request.log.child({ handler: "createCourse", courseId });
+log.info("Starting course creation");
+```
+
+**Redact sensitive fields** in the Pino logger config to prevent them from appearing in logs.
+In this project, the Pino instance is created in `src/lib/logging.ts` — add redactions there:
+
+```typescript
+const logger = pino({
+  level: "info",
+  redact: {
+    paths: [
+      "req.headers.authorization",
+      "req.headers.cookie",
+      "*.password",
+      "*.token",
+      "*.secret",
+    ],
+    censor: "[REDACTED]",
+  },
+});
+```
+
 ### tRPC Routers (Type-safe API)
 - Define routers in `/src/routers/<feature>/` directories.
 - Use Zod for input validation.
@@ -129,6 +336,65 @@ Reference patterns in `lib/cache.ts` and `lib/constants.ts` for TTL values.
 - Use `vi.useFakeTimers()` for time-dependent tests. Always call `vi.useRealTimers()` in `afterEach`.
 - See [library-patterns-reference.md](../docs/library-patterns-reference.md#vitest-4) for full Vitest 4 patterns.
 
+### Async Patterns
+
+Prefer `async/await` over Promise chains. For **concurrent but independent** operations, always
+use `Promise.all`:
+
+```typescript
+// ✅ Parallel — both queries run concurrently
+const [courses, users] = await Promise.all([getAllCourses(), getAllUsers()]);
+
+// ❌ Sequential — unnecessary latency
+const courses = await getAllCourses();
+const users = await getAllUsers();
+```
+
+When **some failures are acceptable** (e.g. enriching a list from multiple sources), use
+`Promise.allSettled`:
+
+```typescript
+const results = await Promise.allSettled(items.map((item) => enrichItem(item)));
+const enriched = results
+  .filter((r) => r.status === "fulfilled")
+  .map((r) => r.value);
+```
+
+**Limit concurrency** for bulk operations that could exhaust DB connections or memory. Use
+[`p-limit`](https://github.com/sindresorhus/p-limit):
+
+```typescript
+import pLimit from "p-limit";
+
+const limit = pLimit(5); // max 5 concurrent DB calls
+
+const results = await Promise.all(
+  ids.map((id) => limit(() => db.query.items.findFirst({ where: eq(items.id, id) }))),
+);
+```
+
+### Environment Configuration
+
+**Avoid using `NODE_ENV` to toggle application behaviour.** `NODE_ENV` conflates multiple
+concerns (logging verbosity, security settings, infrastructure choices) into one variable.
+Use **explicit environment variables** for each concern instead:
+
+```typescript
+// ❌ Antipattern — NODE_ENV conflates concerns
+if (process.env.NODE_ENV === "development") {
+  disableRateLimiting();
+  enableVerboseLogging();
+}
+
+// ✅ Explicit variables per concern
+const rateLimitEnabled = process.env.RATE_LIMIT_ENABLED !== "false";
+const logLevel = process.env.LOG_LEVEL ?? "info";
+```
+
+`NODE_ENV` may still be used where third-party libraries (React, Vite, etc.) require it. For
+this project's server config, prefer the explicit-variable pattern already established in
+`src/config.ts`.
+
 ## File Organization
 
 - REST Routes: `/src/routes/<feature>/index.ts` with handlers in `/src/routes/<feature>/handlers/`.
@@ -143,16 +409,20 @@ Reference patterns in `lib/cache.ts` and `lib/constants.ts` for TTL values.
 ## Key Libraries
 
 - `fastify` + `@fastify/sensible` — HTTP server + `fastify.to()` error handling
+- `fastify-plugin` (`fp`) — break plugin encapsulation to share decorators with parent scope
+- `@fastify/error` — typed custom HTTP error factory (`createError(code, message, statusCode)`)
 - `fastify-type-provider-zod` — Zod schema validation for REST routes
 - `drizzle-orm` + `drizzle-kit` — Database ORM and migrations
 - `@trpc/server` — Type-safe API
 - `better-auth` + `fastify-better-auth` — Authentication
 - `ioredis` — Redis client
 - `async-cache-dedupe` + `superjson` — Redis-backed result caching
+- `close-with-grace` — graceful shutdown (SIGTERM/SIGINT + uncaughtException handling)
 - `nodemailer` — Email sending
 - `zod` — Schema validation
 - `pino` — Structured logging
 - `prom-client` — Prometheus metrics
+- `p-limit` — Concurrency limiting for bulk async operations
 - `ulid` — ID generation
 
 For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).
@@ -162,4 +432,13 @@ For verified library patterns, gotchas, and testing best practices, see [docs/li
 - Use prepared statements and indexes in Drizzle queries.
 - Use Redis/Dragonfly + `async-cache-dedupe` for caching hot query results.
 - Use `async-cache-dedupe`'s reference-based invalidation for cache coherency.
+- **Always define response schemas** on Fastify routes — Fastify uses `fast-json-stringify` when
+  a response schema is present (much faster than `JSON.stringify`). The project uses
+  `fastify-type-provider-zod` schemas for this.
+- **`@fastify/under-pressure`** is configured via `fastify-healthcheck` in
+  `src/plugins/external/healthcheck.ts`. Tune `maxEventLoopDelay`, `maxHeapUsedBytes`,
+  and `maxRssBytes` in the `underPressureOptions` there to shed load before the event loop
+  falls behind (returns 503 when thresholds are exceeded).
+- Use `p-limit` to cap concurrency for bulk async operations (e.g., batch-enriching rows from
+  the DB) to prevent pool exhaustion.
 - Monitor with Prometheus metrics.

@@ -75,6 +75,17 @@ those flags.
     example `tmp/<task>/`) and not system `/tmp`.
 11. **Commit messages** follow Conventional Commits:
     `<type>(<scope>): <subject>`.
+12. **Fastify plugins that decorate `fastify.*`** must use `fastify-plugin` (`fp`)
+    so decorators are promoted to the parent scope and accessible by all routes.
+13. **Fastify TypeScript decorators** require `declare module "fastify"` augmentation
+    — extend `FastifyInstance` / `FastifyRequest` so the compiler knows about
+    `fastify.db`, `fastify.cache`, `request.user`, etc.
+14. **Structured logging** — use `request.log` (not `fastify.log`) inside handlers; always
+    pass an object first (`request.log.info({ userId }, "message")`), never interpolated
+    strings.
+15. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — it
+    re-registers handlers and immediately ends the DB pool, crashing in-flight requests.
+    Log the error and let the existing `closeWithGrace` handler do the cleanup.
 
 ## Architecture
 
@@ -118,6 +129,10 @@ apps/server/src/
 - **Cache layer**: `async-cache-dedupe` wraps DB reads; invalidate with
   `cache.invalidateAll([refs])`.
 - **Error handling**: Use `fastify.to(promise)` for `[err, result]` tuples.
+  Use `@fastify/error` (`createError`) for typed custom HTTP errors.
+- **Graceful shutdown**: `close-with-grace` handles SIGTERM/SIGINT. Cleanup order:
+  external connections first, then `app.close()`. Never re-call `closeWithGrace` inside
+  `uncaughtException`.
 - **Real-time sync**: SSE via Redis Streams.
 
 ## Coding Conventions

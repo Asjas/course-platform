@@ -57,6 +57,12 @@ The `format` and `lint` scripts already use `--cache` flags — never call
 8. **Prepared statements** must be module-scoped (top-level), never inside functions.
 9. **Scratch files/logs** must be stored under repository-local `tmp/` (for example `tmp/<task>/`) and not system `/tmp`.
 10. **Commit messages** follow Conventional Commits: `<type>(<scope>): <subject>`.
+11. **Fastify plugins that add `fastify.*` decorators** must use `fastify-plugin` (`fp`) so the
+    decorator is visible outside the plugin scope.
+12. **Structured logging** — always pass an object first: `request.log.info({ userId }, "msg")`.
+    Use `request.log` (not `app.log`) inside handlers for automatic request-ID correlation.
+13. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — only log
+    the error. The existing `closeWithGrace` handler handles all shutdown cleanup.
 
 ## Architecture
 
