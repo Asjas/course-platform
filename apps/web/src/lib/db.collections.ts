@@ -77,7 +77,6 @@ export const SupportTicketsCollection = createCollection(
       try {
         const { original } = transaction.mutations[0];
 
-        // @ts-ignore Property 'deleteSupportTicket' does not exist
         await trpcClient.supportTickets.deleteSupportTicket.mutate({
           ticketId: original.id,
         });

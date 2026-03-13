@@ -116,8 +116,7 @@ describe("ReportMessageDialog", () => {
     const user = userEvent.setup();
     const { trpcClient } = await import("~/lib/trpc.client");
     vi.mocked(trpcClient.chatReports.reportMessage.mutate).mockImplementation(
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      () => new Promise(() => {}),
+      () => new Promise<never>(() => undefined),
     );
 
     renderWithQueryClient(<ReportMessageDialog {...defaultProps} />);

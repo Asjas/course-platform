@@ -11,8 +11,7 @@ export interface ThemeState {
 export const defaultThemeState: ThemeState = {
   theme: "system",
   resolvedTheme: "dark",
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setTheme: () => {},
+  setTheme: () => undefined,
 };
 
 export const ThemeContext = createContext<ThemeState>(defaultThemeState);

@@ -1,6 +1,6 @@
 import { useParams } from "@tanstack/react-router";
 import { CircleArrowRightIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
 import * as z from "zod";
@@ -15,8 +15,11 @@ const formSchema = z.object({
   message: z.string().min(1, "Message cannot be empty"),
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/consistent-type-definitions
-type AnyCollection = { insert: (data: any) => void };
+// Method syntax is intentional: it provides bivariance so that any
+// Collection<T> subtype (e.g. Collection<ChannelMessage>) is assignable here.
+interface AnyCollection {
+  insert(data: object): unknown;
+}
 
 interface ChatMessageFormProps {
   onMessageSent?: () => void;
@@ -48,6 +51,9 @@ export default function ChatMessageForm({
 
   const [submitAttempted, setSubmitAttempted] = useState(false);
   const auth = useAuth();
+  // Timestamp captured in handleSubmit (event handler) so it is not inside
+  // the onSubmit hook argument, which would be flagged as an impure call.
+  const submitTimestampRef = useRef(0);
 
   const form = useAppForm({
     defaultValues: {
@@ -69,9 +75,7 @@ export default function ChatMessageForm({
           return;
         }
 
-        // Capture timestamp before insert
-        // eslint-disable-next-line react-hooks/purity -- Date.now() is safe in async event handler
-        const now = Date.now();
+        const now = submitTimestampRef.current;
 
         // Insert via collection - triggers onInsert which calls the server
         // SSE subscription will handle updates for all clients
@@ -109,6 +113,7 @@ export default function ChatMessageForm({
       toast.error("You can't send an empty message");
       return;
     }
+    submitTimestampRef.current = Date.now();
     form.handleSubmit();
   };
 
