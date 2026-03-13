@@ -123,8 +123,8 @@ export const courseWishlistRouter = router({
         verifyUrl.searchParams.set("token", verificationToken.token);
 
         await mailer.sendMail({
-          sender: "Codewizard Training <support@codewizard.training>",
-          replyTo: "support@codewizard.training",
+          sender: "Codewizard Training <contact@codewizard.training>",
+          replyTo: "contact@codewizard.training",
           to: input.email,
           subject: `Your ${courseResult.name} verification email`,
           html: `
@@ -186,8 +186,8 @@ export const courseWishlistRouter = router({
         verifyUrl.searchParams.set("token", verificationToken.token);
 
         await mailer.sendMail({
-          sender: "Codewizard Training <support@codewizard.training>",
-          replyTo: "support@codewizard.training",
+          sender: "Codewizard Training <contact@codewizard.training>",
+          replyTo: "contact@codewizard.training",
           to: input.email,
           subject: `You're on the ${courseResult.name} waitlist!`,
           html: `

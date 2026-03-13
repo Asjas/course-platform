@@ -68,8 +68,8 @@ export const earlySignupsRouter = router({
 
       const [mailErr] = await fastify.to(
         mailer.sendMail({
-          sender: "Codewizard Training <support@codewizard.training>",
-          replyTo: "support@codewizard.training",
+          sender: "Codewizard Training <contact@codewizard.training>",
+          replyTo: "contact@codewizard.training",
           to: signup.email,
           subject: "You're invited to join Codewizard Training!",
           text: [
