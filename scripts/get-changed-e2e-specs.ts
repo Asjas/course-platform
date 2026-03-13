@@ -13,8 +13,8 @@
  *   specs=                                       run all specs (empty = run all)
  *   specs=skip                                   no e2e-relevant changes detected, skip run
  */
-import { appendFileSync } from "node:fs";
 import { execSync } from "node:child_process";
+import { appendFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -27,7 +27,7 @@ const baseRef = process.env.GITHUB_BASE_REF ?? "main";
 // Each entry lists one or more path substrings; when any changed file contains
 // one of those substrings, the associated spec(s) are added to the run list.
 // ---------------------------------------------------------------------------
-const SPEC_MAPPINGS: Array<{ patterns: string[]; specs: string[] }> = [
+const SPEC_MAPPINGS: { patterns: string[]; specs: string[] }[] = [
   // Auth routes
   {
     patterns: [
@@ -112,10 +112,7 @@ const SPEC_MAPPINGS: Array<{ patterns: string[]; specs: string[] }> = [
     specs: ["dashboard.cy.ts"],
   },
   {
-    patterns: [
-      "routes/_authenticated/notifications",
-      "routers/notifications",
-    ],
+    patterns: ["routes/_authenticated/notifications", "routers/notifications"],
     specs: ["notifications.cy.ts"],
   },
   {
@@ -236,10 +233,10 @@ function isNonE2EFile(file: string): boolean {
 
 function getChangedFiles(): string[] | null {
   try {
-    const output = execSync(
-      `git diff --name-only origin/${baseRef}...HEAD`,
-      { cwd: repoRoot, encoding: "utf8" },
-    );
+    const output = execSync(`git diff --name-only origin/${baseRef}...HEAD`, {
+      cwd: repoRoot,
+      encoding: "utf8",
+    });
     return output.trim().split("\n").filter(Boolean);
   } catch (error) {
     console.error("⚠️  Error getting changed files:", error);
@@ -363,9 +360,7 @@ function main(): void {
     return;
   }
 
-  const specList = [...specFiles]
-    .map((s) => `cypress/e2e/${s}`)
-    .join(",");
+  const specList = [...specFiles].map((s) => `cypress/e2e/${s}`).join(",");
 
   console.log(`✅ Running ${specFiles.size} spec(s): ${specList}`);
   writeOutput("specs", specList);
