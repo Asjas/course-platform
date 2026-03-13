@@ -63,13 +63,14 @@ The `format` and `lint` scripts already use `--cache` flags — never call
     Use `request.log` (not `app.log`) inside handlers for automatic request-ID correlation.
 13. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — only log
     the error. The existing `closeWithGrace` handler handles all shutdown cleanup.
+14. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
 
 ## Architecture
 
 ```
 apps/web/src/
 ├── routes/           # TanStack Router (file-based, auto code-split)
-├── components/       # React components (PascalCase)
+├── components/       # React components (kebab-case filenames, PascalCase exports)
 ├── lib/
 │   └── db.collections.ts  # ALL collection definitions + hooks
 └── schema/           # Zod validation schemas

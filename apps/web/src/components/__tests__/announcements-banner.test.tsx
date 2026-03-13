@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
+import { AnnouncementsBanner } from "~/components/announcements/announcements-banner";
 
 const { mockMarkAsRead, mockUseUnread, mockUseRead } = vi.hoisted(() => ({
   mockMarkAsRead: vi.fn().mockResolvedValue(undefined),

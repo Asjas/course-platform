@@ -25,7 +25,7 @@ import {
   useNotificationsSync,
   useReviewsSync,
   useSupportTicketsSync,
-} from "~/hooks/useSseSync";
+} from "~/hooks/use-sse-sync";
 import { useAuth } from "~/lib/auth.context";
 import { cn } from "~/lib/utils";
 
