@@ -231,7 +231,7 @@ function AdminUsersPage() {
                         })}
                       </TableBodyCell>
 
-                      <TableBodyCell className="sticky right-0 bg-white py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 shadow-sm sm:pr-3 dark:bg-gray-900 dark:text-gray-400">
+                      <TableBodyCell className="sticky right-0 bg-inherit py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 shadow-sm sm:pr-3 dark:text-gray-400">
                         <div className="flex justify-end gap-4">
                           <button
                             className="cursor-pointer text-green-400 no-underline hover:text-green-300 hover:underline"
