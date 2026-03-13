@@ -71,7 +71,9 @@ those flags.
    functions.
 9. **Drizzle schemas** use `mySchema.table()` / `mySchema.enum()` — import
    `mySchema` from `~/db/my-schema.js`.
-10. **Commit messages** follow Conventional Commits:
+10. **Scratch files/logs** must be stored under repository-local `tmp/` (for
+    example `tmp/<task>/`) and not system `/tmp`.
+11. **Commit messages** follow Conventional Commits:
     `<type>(<scope>): <subject>`.
 
 ## Architecture

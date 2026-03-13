@@ -55,7 +55,8 @@ The `format` and `lint` scripts already use `--cache` flags — never call
 6. **IDs** use ULID (`import { ulid } from "ulid"`); UUIDs are fine for external/non-entity identifiers.
 7. **Server imports** use `.js` extension (ESM); **frontend imports** omit extensions (Vite resolves).
 8. **Prepared statements** must be module-scoped (top-level), never inside functions.
-9. **Commit messages** follow Conventional Commits: `<type>(<scope>): <subject>`.
+9. **Scratch files/logs** must be stored under repository-local `tmp/` (for example `tmp/<task>/`) and not system `/tmp`.
+10. **Commit messages** follow Conventional Commits: `<type>(<scope>): <subject>`.
 
 ## Architecture
 
