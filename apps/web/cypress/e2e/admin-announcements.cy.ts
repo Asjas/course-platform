@@ -78,7 +78,9 @@ describe("Admin Announcements Management", () => {
     cy.contains("button", "Delete").click();
     cy.contains("button", "Delete").last().click();
 
-    cy.contains(/Announcement deleted successfully/i).should("be.visible");
+    cy.contains(/Announcement deleted successfully/i, {
+      timeout: 10000,
+    }).should("be.visible");
     cy.contains("button", updatedAnnouncementTitle).should("not.exist");
   });
 

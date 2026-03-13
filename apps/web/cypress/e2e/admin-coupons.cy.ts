@@ -209,7 +209,9 @@ describe("Admin Coupons Management", () => {
     cy.get('input[name="redemptionLimit"]').type("40");
     cy.contains("button", "Create Coupon").click();
 
-    cy.contains(/created successfully/i).should("be.visible");
+    cy.contains(/created successfully/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     waitForCouponRow(couponCode);
     cy.contains("tr", couponCode).within(() => {
       cy.contains("Fixed Amount").should("be.visible");

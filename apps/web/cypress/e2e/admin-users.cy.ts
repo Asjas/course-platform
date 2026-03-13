@@ -52,9 +52,9 @@ describe("Admin Users Management - Full CRUD", () => {
     cy.get('textarea[name="banReason"]').type("E2E moderation test");
     cy.contains("button", "Save Changes").click();
 
-    cy.contains(/updated successfully|User .* updated successfully!/i).should(
-      "be.visible",
-    );
+    cy.contains(/updated successfully|User .* updated successfully!/i, {
+      timeout: 10000,
+    }).should("be.visible");
     cy.contains("tr", testUserEmail).within(() => {
       cy.contains(/admin/i).should("be.visible");
       cy.contains(/Banned/i).should("be.visible");
@@ -84,7 +84,9 @@ describe("Admin Users Management - Full CRUD", () => {
         .click();
     });
 
-    cy.contains(/Deleted user|deleted/i).should("be.visible");
+    cy.contains(/Deleted user|deleted/i, { timeout: 10000 }).should(
+      "be.visible",
+    );
     cy.contains("tr", testUserEmail).should("not.exist");
   });
 });

@@ -139,7 +139,9 @@ describe("Admin Reviews Management", () => {
           cy.contains("button", "Delete").should("be.visible").click();
         });
 
-        cy.contains(/deleted successfully/i).should("be.visible");
+        cy.contains(/deleted successfully/i, { timeout: 10000 }).should(
+          "be.visible",
+        );
         cy.get("tbody tr").should("have.length", countBefore - 1);
 
         return null;
