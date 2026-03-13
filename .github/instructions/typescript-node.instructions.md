@@ -139,21 +139,22 @@ full type inference.
 ```typescript
 // apps/server/types/fastify.d.ts
 import type { Config } from "~/config.js";
-import type { db } from "~/db/index.js";
-import type { cache } from "~/lib/cache.js";
-import type { mailer } from "~/lib/mailer.js";
 import type { User } from "~/db/schema/user.js";
+
+type DB = typeof import("~/db/index.js").db;
+type Cache = typeof import("~/lib/cache.js").cache;
+type Mailer = typeof import("~/lib/mailer.js").mailer;
 
 declare module "fastify" {
   interface FastifyInstance {
     config: Config;
-    cache: typeof cache;
-    db: typeof db;
-    mailer: typeof mailer;
+    cache: Cache;
+    db: DB;
+    mailer: Mailer;
   }
 
   interface FastifyRequest {
-    user: Pick<User, "id" | "email" | "role" | "banned" | ...> | null;
+    user: Pick<User, "id" | "email" | "role" | "banned"> | null;
     startTime: bigint;
     normalizedRoute: string;
   }
