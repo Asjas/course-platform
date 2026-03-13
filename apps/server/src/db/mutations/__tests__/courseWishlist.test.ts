@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const mockInsert = vi.fn();
 const mockUpdate = vi.fn();
+const mockSet = vi.fn();
 
 vi.mock("~/db/index.js", () => ({
   db: {
@@ -16,13 +17,15 @@ vi.mock("~/db/index.js", () => ({
       }),
     }),
     update: () => ({
-      set: () => ({
-        where: () => ({
-          returning: mockUpdate,
-        }),
-      }),
+      set: mockSet,
     }),
   },
+}));
+
+mockSet.mockImplementation(() => ({
+  where: () => ({
+    returning: mockUpdate,
+  }),
 }));
 
 vi.mock("~/db/schema/index.js", () => ({
@@ -94,6 +97,11 @@ describe("createCourseWishlistEntry", () => {
 describe("confirmCourseWishlistEntry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockSet.mockImplementation(() => ({
+      where: () => ({
+        returning: mockUpdate,
+      }),
+    }));
   });
 
   test("confirms a wishlist entry", async () => {
@@ -106,6 +114,22 @@ describe("confirmCourseWishlistEntry", () => {
     const result = await confirmCourseWishlistEntry("cwl:123");
     expect(result).toEqual(confirmed);
     expect(result.confirmedAt).toBeDefined();
+  });
+
+  test("clears unsubscribedAt when confirming a wishlist entry", async () => {
+    const confirmed = {
+      id: "cwl:123",
+      confirmedAt: new Date(),
+      unsubscribedAt: null,
+    };
+    mockUpdate.mockResolvedValueOnce([confirmed]);
+
+    await confirmCourseWishlistEntry("cwl:123");
+
+    expect(mockSet).toHaveBeenCalledWith({
+      confirmedAt: expect.any(Date),
+      unsubscribedAt: null,
+    });
   });
 });
 

@@ -151,6 +151,37 @@ describe("AdminEarlySignupsPage", () => {
     expect(screen.getByText("canceled@example.com")).toBeInTheDocument();
   });
 
+  it("shows reactivated signup as invited only after unsubscribedAt is cleared", async () => {
+    const user = userEvent.setup();
+
+    mockUseEarlySignups.mockReturnValue({
+      data: [
+        makeSignup({
+          id: "signup:still-canceled",
+          email: "still-canceled@example.com",
+          confirmedAt: new Date("2024-01-20"),
+          unsubscribedAt: new Date("2024-01-21"),
+        }),
+        makeSignup({
+          id: "signup:reactivated",
+          email: "reactivated@example.com",
+          confirmedAt: new Date("2024-01-22"),
+          unsubscribedAt: null,
+        }),
+      ],
+      isLoading: false,
+    });
+
+    await renderWithProviders(<AdminEarlySignupsPage />);
+
+    await user.click(screen.getByRole("button", { name: "Invited" }));
+
+    expect(screen.getByText("reactivated@example.com")).toBeInTheDocument();
+    expect(
+      screen.queryByText("still-canceled@example.com"),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows Send Invite button for unconfirmed signups", async () => {
     mockUseEarlySignups.mockReturnValue({
       data: [makeSignup({ confirmedAt: null })],
