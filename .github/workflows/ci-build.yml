@@ -107,7 +107,7 @@ jobs:
         run: pnpm typecheck
 
       - name: Build
-        run: pnpm build --cache=remote:rw
+        run: pnpm build
 
   server-tests:
     runs-on: ubuntu-latest
@@ -148,7 +148,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build --cache=remote:rw
+        run: pnpm build
 
       - name: Run database migrations
         run: pnpm tsx scripts/ci-migrate.ts
@@ -157,7 +157,7 @@ jobs:
         run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run server tests with coverage
-        run: pnpm turbo run test:coverage --filter=@apps/server --cache=remote:rw
+        run: pnpm turbo run test:coverage --filter=@apps/server
 
       - name: Upload server coverage
         uses: actions/upload-artifact@v4
@@ -203,7 +203,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build --cache=remote:rw
+        run: pnpm build
 
       - name: Run database migrations
         run: pnpm tsx scripts/ci-migrate.ts
@@ -212,7 +212,7 @@ jobs:
         run: pnpm tsx scripts/seed-test-data.ts
 
       - name: Run web tests with coverage
-        run: pnpm turbo run test:coverage --filter=@apps/web --cache=remote:rw
+        run: pnpm turbo run test:coverage --filter=@apps/web
 
       - name: Upload web coverage
         uses: actions/upload-artifact@v4
@@ -278,7 +278,7 @@ jobs:
         env:
           VITE_BETTER_AUTH_URL: http://localhost:3000
           VITE_TRPC_URL: http://localhost:3000/trpc
-        run: pnpm build --cache=remote:rw
+        run: pnpm build
 
       - name: Run database migrations
         run: pnpm tsx scripts/ci-migrate.ts
