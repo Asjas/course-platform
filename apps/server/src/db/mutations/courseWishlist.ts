@@ -54,7 +54,10 @@ export async function createCourseWishlistEntry(
 export async function confirmCourseWishlistEntry(id: string) {
   const [result] = await db
     .update(courseWishlist)
-    .set({ confirmedAt: new Date() })
+    .set({
+      confirmedAt: new Date(),
+      unsubscribedAt: null,
+    })
     .where(eq(courseWishlist.id, id))
     .returning();
 

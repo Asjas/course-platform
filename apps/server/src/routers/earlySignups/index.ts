@@ -59,7 +59,7 @@ export const earlySignupsRouter = router({
         });
       }
 
-      if (signup.confirmedAt) {
+      if (signup.confirmedAt && !signup.unsubscribedAt) {
         return { success: true };
       }
 
@@ -100,11 +100,17 @@ export const earlySignupsRouter = router({
         signup.sourceTable === "course_wishlist"
           ? db
               .update(courseWishlist)
-              .set({ confirmedAt: new Date() })
+              .set({
+                confirmedAt: signup.confirmedAt ?? new Date(),
+                unsubscribedAt: null,
+              })
               .where(eq(courseWishlist.id, input.id))
           : db
               .update(earlySignup)
-              .set({ confirmedAt: new Date() })
+              .set({
+                confirmedAt: signup.confirmedAt ?? new Date(),
+                unsubscribedAt: null,
+              })
               .where(eq(earlySignup.id, input.id)),
       );
 
