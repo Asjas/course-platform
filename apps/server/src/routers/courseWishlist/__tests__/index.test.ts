@@ -92,6 +92,48 @@ describe("courseWishlistRouter", () => {
 
     expect(result).toMatchObject({
       success: true,
+      status: "email_already_sent",
+      canResend: true,
+      alreadySignedUp: true,
+    });
+  });
+
+  test("signup resend sends verification email for existing entry", async () => {
+    const caller = courseWishlistRouter.createCaller({
+      request: {
+        headers: {
+          "host": "api.codewizard.training",
+          "x-forwarded-proto": "https",
+        },
+        protocol: "https",
+      },
+    } as never);
+
+    mockFindFirst.mockResolvedValue({ id: "course-1", name: "Course One" });
+    mockGetCourseWishlistByEmailAndCourse.mockResolvedValue({
+      id: "wishlist-1",
+      unsubscribedAt: null,
+    });
+    mockCreateCourseWishlistVerificationToken.mockResolvedValue({
+      id: "token-1",
+      token: "raw-token",
+    });
+    mockSendMail.mockResolvedValue(undefined);
+
+    const result = await caller.signup({
+      email: "user@example.com",
+      courseSlug: "course-one",
+      resend: true,
+    });
+
+    expect(mockCreateCourseWishlistVerificationToken).toHaveBeenCalledWith(
+      "wishlist-1",
+    );
+    expect(mockSendMail).toHaveBeenCalledTimes(1);
+    expect(result).toMatchObject({
+      success: true,
+      status: "email_resent",
+      canResend: true,
       alreadySignedUp: true,
     });
   });
@@ -159,5 +201,31 @@ describe("courseWishlistRouter", () => {
     expect(html).toContain(
       "https://api.codewizard.training/verify-course-wishlist?token=raw-token",
     );
+  });
+
+  test("signup returns accepted status for new entries", async () => {
+    const caller = courseWishlistRouter.createCaller({} as never);
+
+    mockFindFirst.mockResolvedValue({ id: "course-1", name: "Course One" });
+    mockGetCourseWishlistByEmailAndCourse.mockResolvedValue(null);
+    mockCreateCourseWishlistEntry.mockResolvedValue({ id: "wishlist-1" });
+    mockCreateCourseWishlistVerificationToken.mockResolvedValue({
+      id: "token-1",
+      token: "raw-token",
+    });
+    mockSendMail.mockResolvedValue(undefined);
+
+    const result = await caller.signup({
+      email: "user@example.com",
+      courseSlug: "course-one",
+    });
+
+    expect(result).toMatchObject({
+      success: true,
+      status: "signup_accepted",
+      canResend: false,
+      alreadySignedUp: false,
+      id: "wishlist-1",
+    });
   });
 });

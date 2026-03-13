@@ -13,7 +13,7 @@ import {
   getCourseWishlistById,
   getCourseWishlistCount,
 } from "~/db/queries/courseWishlist.js";
-import { course } from "~/db/schema/course.js";
+import { course, courseWishlist } from "~/db/schema/course.js";
 import mailer from "~/lib/mailer.js";
 import { publicProcedure, router } from "~/router.js";
 
@@ -60,6 +60,7 @@ const signupInputSchema = z.object({
   email: z.email(),
   name: z.string().optional(),
   courseSlug: z.string().min(1),
+  resend: z.boolean().optional(),
   referrer: z.string().optional(),
   utmSource: z.string().optional(),
   utmMedium: z.string().optional(),
@@ -89,11 +90,71 @@ export const courseWishlistRouter = router({
       );
 
       if (existing) {
-        // Already signed up - return success without error
+        if (!input.resend) {
+          return {
+            success: true,
+            status: "email_already_sent" as const,
+            message: "Email has already been sent, check spam/junk folders.",
+            alreadySignedUp: true,
+            canResend: true,
+          };
+        }
+
+        // If a previously canceled signup asks for resend, reactivate it.
+        if (existing.unsubscribedAt) {
+          await db
+            .update(courseWishlist)
+            .set({ unsubscribedAt: null })
+            .where(eq(courseWishlist.id, existing.id));
+        }
+
+        const verificationToken = await createCourseWishlistVerificationToken(
+          existing.id,
+        );
+        const origin = resolveVerificationApiOrigin(
+          ctx.request as
+            | {
+                headers: Record<string, string | string[] | undefined>;
+                protocol?: string;
+              }
+            | undefined,
+        );
+        const verifyUrl = new URL("/verify-course-wishlist", origin);
+        verifyUrl.searchParams.set("token", verificationToken.token);
+
+        await mailer.sendMail({
+          sender: "Codewizard Training <support@codewizard.training>",
+          replyTo: "support@codewizard.training",
+          to: input.email,
+          subject: `Your ${courseResult.name} verification email`,
+          html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+            <h1 style="color: #10b981;">Verification email resent</h1>
+            <p>Hey${input.name ? ` ${input.name}` : ""}!</p>
+            <p>As requested, we sent a fresh verification link for <strong>${courseResult.name}</strong>.</p>
+            <p>
+              <a href="${verifyUrl.toString()}" style="display: inline-block; background: #10b981; color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                Verify my email
+              </a>
+            </p>
+            <p style="word-break: break-word; font-size: 13px; color: #666;">${verifyUrl.toString()}</p>
+          </body>
+          </html>
+        `,
+        });
+
         return {
           success: true,
-          message: "You're already on the wishlist!",
+          status: "email_resent" as const,
+          message: "Verification email has been resent.",
           alreadySignedUp: true,
+          canResend: true,
         };
       }
 
@@ -176,9 +237,11 @@ export const courseWishlistRouter = router({
 
       return {
         success: true,
-        message: "Welcome to the waitlist!",
+        status: "signup_accepted" as const,
+        message: "That signup has been accepted.",
         id: entry.id,
         alreadySignedUp: false,
+        canResend: false,
       };
     }),
 

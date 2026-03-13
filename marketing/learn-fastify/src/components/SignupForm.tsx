@@ -7,7 +7,42 @@ interface SignupFormProps {
   courseSlug?: string;
 }
 
-type FormState = "idle" | "loading" | "success" | "error";
+type FormState =
+  | "idle"
+  | "loading"
+  | "accepted"
+  | "alreadySent"
+  | "resent"
+  | "error";
+
+interface SignupApiResponse {
+  success: boolean;
+  status: "signup_accepted" | "email_already_sent" | "email_resent";
+  message: string;
+  canResend?: boolean;
+}
+
+function extractTrpcData(payload: unknown): SignupApiResponse | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+
+  const maybeBatch = Array.isArray(payload) ? payload[0] : payload;
+
+  if (!maybeBatch || typeof maybeBatch !== "object") {
+    return null;
+  }
+
+  const result = (maybeBatch as { result?: { data?: { json?: unknown } } })
+    .result;
+  const json = result?.data?.json;
+
+  if (!json || typeof json !== "object") {
+    return null;
+  }
+
+  return json as SignupApiResponse;
+}
 
 const DEFAULT_COURSE_SLUG = "learn-fastify-fundamentals";
 const configuredCourseSlug =
@@ -22,14 +57,18 @@ export default function SignupForm({
   const [name, setName] = useState("");
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [infoMessage, setInfoMessage] = useState("");
+  const [canResend, setCanResend] = useState(false);
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!email) return;
+  const submitSignup = async ({ resend }: { resend: boolean }) => {
+    if (!email) {
+      return;
+    }
 
     setFormState("loading");
     setErrorMessage("");
+    setInfoMessage("");
+    setCanResend(false);
 
     try {
       // Get UTM params from URL
@@ -50,6 +89,7 @@ export default function SignupForm({
               email,
               name: name || undefined,
               courseSlug,
+              resend,
               referrer: document.referrer || undefined,
               utmSource,
               utmMedium,
@@ -64,7 +104,31 @@ export default function SignupForm({
         throw new Error(data?.error?.message || "Failed to sign up");
       }
 
-      setFormState("success");
+      const payload = await response.json();
+      const data = extractTrpcData(payload);
+
+      if (!data || !data.success) {
+        throw new Error("Failed to sign up");
+      }
+
+      if (data.status === "email_already_sent") {
+        setFormState("alreadySent");
+        setInfoMessage("Email has already been sent, check spam/junk folders.");
+        setCanResend(Boolean(data.canResend));
+        return;
+      }
+
+      if (data.status === "email_resent") {
+        setFormState("resent");
+        setInfoMessage(
+          "Email has been resent. Please check your spam/junk folders.",
+        );
+        setCanResend(true);
+        return;
+      }
+
+      setFormState("accepted");
+      setInfoMessage("That signup has been accepted.");
       setEmail("");
       setName("");
     } catch (error) {
@@ -77,7 +141,16 @@ export default function SignupForm({
     }
   };
 
-  if (formState === "success") {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    await submitSignup({ resend: false });
+  };
+
+  const handleResend = async () => {
+    await submitSignup({ resend: true });
+  };
+
+  if (formState === "accepted" || formState === "resent") {
     return (
       <div
         className={`flex items-center justify-center gap-4 rounded-lg bg-green-50 p-4 text-green-700 dark:bg-green-900/30 dark:text-green-400 ${className}`}
@@ -85,11 +158,39 @@ export default function SignupForm({
       >
         <CheckCircle className="h-5 w-5 flex-shrink-0" />
         <div className="text-center">
-          <p className="font-medium">You're on the list!</p>
+          <p className="font-medium">{infoMessage}</p>
           <p className="text-sm opacity-90">
             Check your inbox for a confirmation email.
           </p>
         </div>
+      </div>
+    );
+  }
+
+  if (formState === "alreadySent") {
+    return (
+      <div
+        className={`space-y-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200 ${className}`}
+        role="alert"
+      >
+        <p className="font-medium">{infoMessage}</p>
+        {canResend ? (
+          <button
+            className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-amber-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
+            type="button"
+            onClick={handleResend}
+            disabled={formState === "loading"}
+          >
+            {formState === "loading" ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Resending...</span>
+              </>
+            ) : (
+              <span>Resend Email</span>
+            )}
+          </button>
+        ) : null}
       </div>
     );
   }
