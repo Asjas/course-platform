@@ -33,6 +33,15 @@ describe("Course Enrollment - Authenticated", () => {
   it("can navigate to an individual course page when courses exist", () => {
     cy.visit("/dashboard");
 
+    // Wait for async course data to render before inspecting the DOM
+    cy.get("body").should(($body) => {
+      expect(
+        $body.find('a[href*="/courses/"]').length > 0 ||
+          $body.text().includes("No courses available yet"),
+        "courses or empty state to render",
+      ).to.equal(true);
+    });
+
     cy.get("body").then(($body) => {
       // Only test navigation if course cards are present
       const hasCards = $body.find('a[href*="/courses/"]').length > 0;
@@ -50,6 +59,15 @@ describe("Course Enrollment - Authenticated", () => {
 
   it("shows lesson links inside a course when modules are available", () => {
     cy.visit("/dashboard");
+
+    // Wait for async course data to render before inspecting the DOM
+    cy.get("body").should(($body) => {
+      expect(
+        $body.find('a[href*="/courses/"]').length > 0 ||
+          $body.text().includes("No courses available yet"),
+        "courses or empty state to render",
+      ).to.equal(true);
+    });
 
     cy.get("body").then(($body) => {
       const hasCards = $body.find('a[href*="/courses/"]').length > 0;
@@ -80,6 +98,15 @@ describe("Course Enrollment - Authenticated", () => {
 
   it("shows Back to Courses navigation on a course detail page", () => {
     cy.visit("/dashboard");
+
+    // Wait for async course data to render before inspecting the DOM
+    cy.get("body").should(($body) => {
+      expect(
+        $body.find('a[href*="/courses/"]').length > 0 ||
+          $body.text().includes("No courses available yet"),
+        "courses or empty state to render",
+      ).to.equal(true);
+    });
 
     cy.get("body").then(($body) => {
       const hasCards = $body.find('a[href*="/courses/"]').length > 0;

@@ -1,3 +1,20 @@
+/**
+ * If a new user visits /chat without a username, the "Username Required for Chat"
+ * modal automatically opens. Fill in the username field and submit so the rest of
+ * the test can interact with the real chat UI.
+ */
+function setUsernameIfRequired() {
+  cy.get("body").then(($body) => {
+    if ($body.text().includes("Username Required for Chat")) {
+      cy.get("#username").type("chatuser");
+      cy.contains("button", "Set Username & Join Chat").click();
+      // Page reloads after a successful username update
+      cy.url({ timeout: 10000 }).should("include", "/chat");
+    }
+    return null;
+  });
+}
+
 describe("Direct Messages - Unauthenticated", () => {
   it("redirects to sign-in when visiting chat without authentication", () => {
     cy.clearAllCookies();
@@ -30,6 +47,16 @@ describe("Direct Messages - Authenticated", () => {
 
   it("shows empty state when no DMs exist", () => {
     cy.visit("/chat");
+    setUsernameIfRequired();
+
+    // Wait for the DM list to render (either empty state or actual DM links)
+    cy.get("body").should(($body) => {
+      expect(
+        $body.text().includes("No direct messages yet") ||
+          $body.find('a[href*="/chat/dm"]').length > 0,
+        "DM section to be loaded",
+      ).to.equal(true);
+    });
 
     cy.get("body").then(($body) => {
       if ($body.text().includes("No direct messages yet")) {
@@ -44,6 +71,8 @@ describe("Direct Messages - Authenticated", () => {
 
   it("shows a user search dialog when New direct message button is clicked", () => {
     cy.visit("/chat");
+    setUsernameIfRequired();
+
     cy.get('button[aria-label="New direct message"]').click();
 
     // Clicking the button opens the UserSearchModal whose heading is "Search Users"
