@@ -53,6 +53,13 @@ declare global {
         confirmedAt?: string | null;
         unsubscribedAt?: string | null;
       }): Chainable<void>;
+      /**
+       * Wait for async content to render before inspecting the DOM.
+       * Retries (via `.should`) until either `selector` matches an element OR
+       * the body text includes `emptyText`.
+       * @example cy.waitForContent('a[href*="/courses/"]', "No courses available yet")
+       */
+      waitForContent(selector: string, emptyText: string): Chainable<void>;
     }
   }
 }

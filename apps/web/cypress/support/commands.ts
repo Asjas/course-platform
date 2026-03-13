@@ -147,4 +147,26 @@ Cypress.Commands.add(
   },
 );
 
+/**
+ * Wait for async content to render before inspecting the DOM.
+ * Retries until either `selector` matches at least one element OR the page
+ * body contains `emptyText` (the empty-state message). Use this before a
+ * `cy.get("body").then()` block that branches on whether content has loaded.
+ *
+ * @example
+ * cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
+ * cy.waitForContent('a[href*="/chat/dm"]', "No direct messages yet");
+ */
+Cypress.Commands.add(
+  "waitForContent",
+  (selector: string, emptyText: string) => {
+    cy.get("body").should(($body) => {
+      expect(
+        $body.find(selector).length > 0 || $body.text().includes(emptyText),
+        `"${selector}" elements or "${emptyText}" to appear`,
+      ).to.equal(true);
+    });
+  },
+);
+
 export {};

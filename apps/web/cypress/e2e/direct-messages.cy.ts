@@ -48,15 +48,7 @@ describe("Direct Messages - Authenticated", () => {
   it("shows empty state when no DMs exist", () => {
     cy.visit("/chat");
     setUsernameIfRequired();
-
-    // Wait for the DM list to render (either empty state or actual DM links)
-    cy.get("body").should(($body) => {
-      expect(
-        $body.text().includes("No direct messages yet") ||
-          $body.find('a[href*="/chat/dm"]').length > 0,
-        "DM section to be loaded",
-      ).to.equal(true);
-    });
+    cy.waitForContent('a[href*="/chat/dm"]', "No direct messages yet");
 
     cy.get("body").then(($body) => {
       if ($body.text().includes("No direct messages yet")) {
