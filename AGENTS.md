@@ -88,7 +88,10 @@ those flags.
 15. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — it
     re-registers handlers and immediately ends the DB pool, crashing in-flight requests.
     Log the error and let the existing `closeWithGrace` handler do the cleanup.
-16. **Filenames and folder names** must use kebab-case (hyphenated lowercase) —
+16. **`async` only when `await` is needed** — `async` wraps the return in a Promise (extra
+    allocation per call). Use callback (`done`) style for synchronous hooks/plugins; only use
+    `async` when the body contains `await`. Never mix `async` + `done()`.
+17. **Filenames and folder names** must use kebab-case (hyphenated lowercase) —
     e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`.
     Never use PascalCase or camelCase for file or folder names.
 

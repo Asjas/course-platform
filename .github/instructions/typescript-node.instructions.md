@@ -188,23 +188,51 @@ onRequest → preParsing → preValidation → preHandler → Handler
 | `onError` | Cleanup resources (temp files, transactions) on error |
 | `onClose` | Disconnect external resources when server shuts down |
 
-Prefer **async hooks** for new code. The existing plugins use the callback `done()` style
-(legacy pattern), but new hooks should be async:
+**Hook and plugin `async` rule — only use `async` if `await` is needed.** `async` wraps the
+return value in a Promise, which allocates an extra object on every call. For synchronous work
+(setting a header, incrementing a counter), use the callback (`done`) style instead:
 
 ```typescript
-// ✅ async hook (preferred for new code)
-fastify.addHook("onRequest", async (request, reply) => {
-  request.startTime = process.hrtime.bigint();
-});
-
-// ⚠️ callback style (used in existing plugins — do not mix async+done in the same function)
+// ✅ callback style — no async allocation, correct for synchronous work
 fastify.addHook("onRequest", function metricsHook(request, _reply, done) {
   request.startTime = process.hrtime.bigint();
   done();
 });
+
+// ✅ async style — only when await is actually used
+fastify.addHook("onRequest", async function authHook(request, reply) {
+  const session = await auth.api.getSession({ headers: request.headers });
+  request.user = session?.user ?? null;
+});
+
+// ❌ unnecessary async — no await, wastes a Promise allocation on every request
+fastify.addHook("onRequest", async (request, _reply) => {
+  request.startTime = process.hrtime.bigint();
+});
 ```
 
-**Important**: Never declare a hook `async` and also call `done()` — pick one style only.
+The same rule applies to **plugins** and **route handlers**:
+
+```typescript
+// ✅ callback plugin — no await needed, no extra Promise
+export default function timingPlugin(fastify, _opts, done) {
+  fastify.addHook("onSend", function (_request, reply, _payload, done) {
+    reply.header("Timing-Allow-Origin", fastify.config.ORIGIN);
+    done();
+  });
+  done();
+}
+
+// ✅ async plugin — only when await is needed for setup
+export default async function dbPlugin(fastify) {
+  const db = await createConnection();
+  fastify.decorate("db", db);
+}
+```
+
+**Important**: Never declare a hook or plugin `async` and also call `done()` — pick one style
+per function. Mixing them (returning a resolved Promise AND calling `done`) triggers Fastify's
+"reply already sent" guard.
 
 Scoped hooks only apply to routes registered **within the same plugin scope**. Use this to
 apply an admin-only auth check to a subtree of routes:
@@ -411,7 +439,7 @@ const enriched = results
 ```
 
 **Limit concurrency** for bulk operations that could exhaust DB connections or memory. Use
-[`p-limit`](https://github.com/sindresorhus/p-limit) (add to `package.json` if not present):
+[`p-limit`](https://github.com/sindresorhus/p-limit) (already in `apps/server/package.json`):
 
 ```typescript
 import pLimit from "p-limit";
@@ -476,7 +504,7 @@ verification behaviour — these cannot be replaced with custom env vars.
 - `zod` — Schema validation
 - `pino` — Structured logging
 - `prom-client` — Prometheus metrics
-- `p-limit` — Concurrency limiting for bulk async operations; install if needed
+- `p-limit` — Concurrency limiting for bulk async operations (`apps/server`)
 - `ulid` — ID generation
 
 For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).

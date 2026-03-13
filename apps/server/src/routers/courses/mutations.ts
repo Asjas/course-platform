@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import pLimit from "p-limit";
 import { ulid } from "ulid";
 import { db } from "~/db/index.js";
 import { course, courseLesson, courseModule } from "~/db/schema/course.js";
@@ -134,13 +135,16 @@ export async function reorderModules({
   modules: { id: string; order: number }[];
 }) {
   try {
+    const limit = pLimit(5);
     const results = await Promise.all(
       modules.map(({ id, order }) =>
-        db
-          .update(courseModule)
-          .set({ order })
-          .where(eq(courseModule.id, id))
-          .returning(),
+        limit(() =>
+          db
+            .update(courseModule)
+            .set({ order })
+            .where(eq(courseModule.id, id))
+            .returning(),
+        ),
       ),
     );
 
@@ -214,13 +218,16 @@ export async function reorderLessons({
   lessons: { id: string; order: number }[];
 }) {
   try {
+    const limit = pLimit(5);
     const results = await Promise.all(
       lessons.map(({ id, order }) =>
-        db
-          .update(courseLesson)
-          .set({ order })
-          .where(eq(courseLesson.id, id))
-          .returning(),
+        limit(() =>
+          db
+            .update(courseLesson)
+            .set({ order })
+            .where(eq(courseLesson.id, id))
+            .returning(),
+        ),
       ),
     );
 

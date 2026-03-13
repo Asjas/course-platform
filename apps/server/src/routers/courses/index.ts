@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import pLimit from "p-limit";
 import * as z from "zod";
 import { getEnrolledUsersByCourseId } from "~/db/queries/user.js";
 import { dispatchNotification } from "~/lib/notifications.js";
@@ -402,22 +403,25 @@ export const coursesRouter = router({
       // Notify enrolled users about course update
       try {
         const enrolledUsers = await getEnrolledUsersByCourseId(id);
+        const limit = pLimit(10);
         await Promise.all(
           enrolledUsers.map((enrolledUser) =>
-            dispatchNotification({
-              userId: enrolledUser.id,
-              baseKey: "course:course_update",
-              browserNotification: {
-                type: "course_published",
-                title: `Course updated: ${course.name}`,
-                message: `The course "${course.name}" has been updated with new content.`,
-                link: `/courses/${course.id}`,
-              },
-              emailNotification: {
-                subject: `Course update: ${course.name}`,
-                text: `The course "${course.name}" has been updated.\n\nVisit the course to see the latest changes: /courses/${course.id}`,
-              },
-            }),
+            limit(() =>
+              dispatchNotification({
+                userId: enrolledUser.id,
+                baseKey: "course:course_update",
+                browserNotification: {
+                  type: "course_published",
+                  title: `Course updated: ${course.name}`,
+                  message: `The course "${course.name}" has been updated with new content.`,
+                  link: `/courses/${course.id}`,
+                },
+                emailNotification: {
+                  subject: `Course update: ${course.name}`,
+                  text: `The course "${course.name}" has been updated.\n\nVisit the course to see the latest changes: /courses/${course.id}`,
+                },
+              }),
+            ),
           ),
         );
       } catch (notifErr) {
@@ -682,22 +686,25 @@ export const coursesRouter = router({
       // Notify enrolled users about lesson update
       try {
         const enrolledUsers = await getEnrolledUsersByCourseId(lesson.courseId);
+        const limit = pLimit(10);
         await Promise.all(
           enrolledUsers.map((enrolledUser) =>
-            dispatchNotification({
-              userId: enrolledUser.id,
-              baseKey: "course:lesson_update",
-              browserNotification: {
-                type: "course_published",
-                title: `Lesson updated: ${lesson.title}`,
-                message: `A lesson in your course has been updated: "${lesson.title}".`,
-                link: `/courses/${lesson.courseId}/lessons/${lesson.id}`,
-              },
-              emailNotification: {
-                subject: `Lesson updated: ${lesson.title}`,
-                text: `A lesson you are enrolled in has been updated: "${lesson.title}".\n\nVisit the lesson to see the changes.`,
-              },
-            }),
+            limit(() =>
+              dispatchNotification({
+                userId: enrolledUser.id,
+                baseKey: "course:lesson_update",
+                browserNotification: {
+                  type: "course_published",
+                  title: `Lesson updated: ${lesson.title}`,
+                  message: `A lesson in your course has been updated: "${lesson.title}".`,
+                  link: `/courses/${lesson.courseId}/lessons/${lesson.id}`,
+                },
+                emailNotification: {
+                  subject: `Lesson updated: ${lesson.title}`,
+                  text: `A lesson you are enrolled in has been updated: "${lesson.title}".\n\nVisit the lesson to see the changes.`,
+                },
+              }),
+            ),
           ),
         );
       } catch (notifErr) {

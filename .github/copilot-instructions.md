@@ -65,7 +65,10 @@ The `format` and `lint` scripts already use `--cache` flags — never call
     Use `fastify.log` only in plugin-level code with no per-request context.
 13. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — only log
     the error. The existing `closeWithGrace` handler handles all shutdown cleanup.
-14. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
+14. **`async` only when `await` is needed** — `async` wraps the return value in a Promise
+    (extra allocation on every call). Use callback style for synchronous hooks/plugins; only
+    use `async` when the body contains an `await`. Never mix `async` + `done()`.
+15. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
 
 ## Architecture
 
