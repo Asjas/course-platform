@@ -1,8 +1,9 @@
 import mdx from "@mdx-js/rollup";
+import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
-import react from "@vitejs/plugin-react";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import browserslist from "browserslist";
 import { browserslistToTargets } from "lightningcss";
 import { resolve } from "node:path";
@@ -24,9 +25,8 @@ export default defineConfig({
       autoCodeSplitting: true,
       quoteStyle: "double",
     }),
-    react({
-      babel: { plugins: ["babel-plugin-react-compiler"] },
-    }),
+    react(),
+    babel({ presets: [reactCompilerPreset()] }),
     devtools({ removeDevtoolsOnBuild: true }),
     tailwindcss(),
     cypressCoverage &&
