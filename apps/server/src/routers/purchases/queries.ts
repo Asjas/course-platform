@@ -10,16 +10,8 @@ const polarClient = new Polar({
 });
 
 // Define types locally to avoid ESLint import resolution issues with SDK sub-paths
-export type OrderStatus =
-  | "paid"
-  | "refunded"
-  | "partially_refunded"
-  | "pending";
-export type OrderBillingReason =
-  | "purchase"
-  | "subscription_create"
-  | "subscription_cycle"
-  | "subscription_update";
+export type OrderStatus = string;
+export type OrderBillingReason = string;
 
 // Simplified order type for API response (serializable)
 export interface PolarOrderResponse {
@@ -36,7 +28,7 @@ export interface PolarOrderResponse {
   customerId: string;
   productId: string | null;
   checkoutId: string | null;
-  userId: string;
+  userId: string | null;
   invoiceNumber: string;
   description: string;
   customer: {
@@ -58,40 +50,7 @@ export interface PolarOrderResponse {
 
 export type AllPurchases = PolarOrderResponse[];
 
-// Use interface to type the order from SDK response
-interface PolarOrder {
-  id: string;
-  createdAt: Date;
-  modifiedAt: Date | null;
-  status: OrderStatus;
-  paid: boolean;
-  totalAmount: number;
-  refundedAmount: number;
-  taxAmount: number;
-  currency: string;
-  billingReason: OrderBillingReason;
-  customerId: string;
-  productId: string | null;
-  checkoutId: string | null;
-  userId: string;
-  invoiceNumber: string;
-  description: string;
-  customer: {
-    id: string;
-    email: string;
-    emailVerified: boolean;
-    name: string | null;
-    avatarUrl: string;
-    organizationId: string;
-  };
-  product: {
-    id: string;
-    name: string;
-    description: string | null;
-    isRecurring: boolean;
-    isArchived: boolean;
-  } | null;
-}
+type PolarOrder = Awaited<ReturnType<typeof polarClient.orders.get>>;
 
 function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
   return {
@@ -108,7 +67,7 @@ function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
     customerId: order.customerId,
     productId: order.productId,
     checkoutId: order.checkoutId,
-    userId: order.userId,
+    userId: null,
     invoiceNumber: order.invoiceNumber,
     description: order.description,
     customer: {

@@ -25,7 +25,7 @@ export interface RefundResult {
   refundId: string;
   orderId: string;
   createdAt: string;
-  reason: RefundReason;
+  reason: string;
   amount: number;
   currency: string;
 }

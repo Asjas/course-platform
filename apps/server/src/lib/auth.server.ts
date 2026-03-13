@@ -147,7 +147,10 @@ export const auth = betterAuth({
     },
     changeEmail: {
       enabled: true,
-      async sendChangeEmailVerification(data) {
+      async sendChangeEmailVerification(data: {
+        token: string;
+        newEmail: string;
+      }) {
         let text = "";
 
         text += `You can verify your email address change by clicking the link below:\n\n${config.ORIGIN}/verify-email-change?token=${data.token}`;
@@ -241,4 +244,4 @@ export const auth = betterAuth({
     }),
   ],
   logger: betterAuthLogger,
-}) as ReturnType<typeof betterAuth>;
+});

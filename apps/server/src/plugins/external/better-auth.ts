@@ -1,3 +1,4 @@
+import type { Auth, BetterAuthOptions } from "better-auth";
 import { fromNodeHeaders } from "better-auth/node";
 import type {
   FastifyInstance,
@@ -16,7 +17,9 @@ export default function betterAuthPlugin(
 ) {
   fastify.decorateRequest("user", null);
 
-  fastify.register(fastifyBetterAuth, { auth });
+  fastify.register(fastifyBetterAuth, {
+    auth: auth as unknown as Auth<BetterAuthOptions>,
+  });
 
   fastify.addHook("onRequest", async (request, reply) => {
     const auth = getAuthDecorator(reply.server);
