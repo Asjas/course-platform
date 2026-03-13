@@ -102,47 +102,49 @@ describe("Course Reviews - Admin", () => {
     cy.contains("button", "Add Review").click();
     cy.contains("Create Review").should("be.visible");
 
-    cy.get("body").then(($body) => {
-      const hasUserSelect = $body.find('select[name="userId"]').length > 0;
-      const hasCourseSelect = $body.find('select[name="courseId"]').length > 0;
+    // The form uses native <select> elements with name attributes.
+    // Assert they are present before checking for data.
+    cy.get('select[name="userId"]').should("exist");
+    cy.get('select[name="courseId"]').should("exist");
 
-      if (!hasUserSelect || !hasCourseSelect) {
-        // Form may use different selectors — just verify the sheet opened
-        cy.contains("Create Review").should("be.visible");
+    cy.get('select[name="userId"] option').then(($userOptions) => {
+      if ($userOptions.length <= 1) {
+        // No users in DB — log and cancel rather than silently passing
+        cy.log(
+          "Skipping create-review test: no users available in the database",
+        );
+        cy.contains("button", "Cancel").click();
         return null;
       }
 
-      // Check if there are options available
-      cy.get('select[name="userId"] option').then(($options) => {
-        const hasUsers = $options.length > 1; // More than the placeholder
-        if (!hasUsers) {
-          cy.contains("Cancel").click();
+      cy.get('select[name="courseId"] option').then(($courseOptions) => {
+        if ($courseOptions.length <= 1) {
+          cy.log(
+            "Skipping create-review test: no courses available in the database",
+          );
+          cy.contains("button", "Cancel").click();
           return null;
         }
 
         const randomTitle = `E2E Test Review ${faker.string.alphanumeric(6)}`;
 
-        cy.get('select[name="userId"]').select($options.eq(1).val() as string);
+        cy.get('select[name="userId"]').select(
+          $userOptions.eq(1).val() as string,
+        );
+        cy.get('select[name="courseId"]').select(
+          $courseOptions.eq(1).val() as string,
+        );
+        cy.get('input[name="title"]').type(randomTitle);
+        cy.get('select[name="rating"]').select("5");
+        cy.get('textarea[name="comment"]').type(
+          "Great course, highly recommended.",
+        );
 
-        cy.get('select[name="courseId"] option').then(($courseOptions) => {
-          if ($courseOptions.length <= 1) {
-            cy.contains("Cancel").click();
-            return null;
-          }
-          cy.get('select[name="courseId"]').select(
-            $courseOptions.eq(1).val() as string,
-          );
-          cy.get('input[name="title"]').type(randomTitle);
-          cy.get('select[name="rating"]').select("5");
+        cy.intercept("POST", "**/trpc/reviews*").as("createReview");
+        cy.contains("button", "Save").click();
 
-          cy.intercept("POST", "**/trpc/reviews*").as("createReview");
-          cy.contains("button", "Save").click();
-
-          cy.wait("@createReview", { timeout: 15000 });
-          cy.contains(randomTitle, { timeout: 10000 }).should("be.visible");
-          return null;
-        });
-
+        cy.wait("@createReview", { timeout: 15000 });
+        cy.contains(randomTitle, { timeout: 10000 }).should("be.visible");
         return null;
       });
 

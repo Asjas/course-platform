@@ -42,25 +42,12 @@ describe("Direct Messages - Authenticated", () => {
     });
   });
 
-  it("shows a DM request dialog when New direct message button is clicked", () => {
+  it("shows a user search dialog when New direct message button is clicked", () => {
     cy.visit("/chat");
     cy.get('button[aria-label="New direct message"]').click();
 
-    // The DM request modal or a user picker should appear
-    cy.get("body").then(($body) => {
-      const hasDialog =
-        $body.find('[role="dialog"]').length > 0 ||
-        $body.find('[role="alertdialog"]').length > 0;
-
-      if (hasDialog) {
-        cy.get('[role="dialog"], [role="alertdialog"]').should("be.visible");
-      } else {
-        // Might render inline search or different UI
-        cy.get("body").should("be.visible");
-      }
-
-      return null;
-    });
+    // Clicking the button opens the UserSearchModal whose heading is "Search Users"
+    cy.contains("Search Users").should("be.visible");
   });
 
   it("can navigate to an existing DM conversation", () => {
