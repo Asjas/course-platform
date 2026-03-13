@@ -19,6 +19,11 @@ describe("Course Enrollment - Authenticated", () => {
 
   it("shows the courses page with a grid or empty state", () => {
     cy.visit("/dashboard");
+
+    // Gate: wait for the collection to render course cards or the empty state
+    // before taking the one-shot DOM snapshot.
+    cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
+
     cy.get("body").then(($body) => {
       if ($body.text().includes("No courses available yet")) {
         cy.contains("No courses available yet").should("be.visible");

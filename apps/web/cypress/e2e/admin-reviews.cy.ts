@@ -4,6 +4,11 @@ function visitReviewsPage() {
 }
 
 function withReviewsTable(assertion: () => void) {
+  // Gate the snapshot until the table has rendered (rows present) or the empty
+  // state message is visible. Without this, cy.get("body").then() fires before
+  // the React Query collection populates the table, making the hasRows check
+  // silently wrong.
+  cy.waitForContent("tbody tr", "No reviews found");
   cy.get("body").then(($body) => {
     const hasRows = $body.find("tbody tr").length > 0;
 
@@ -150,6 +155,7 @@ describe("Admin Reviews Management", () => {
   it("should show empty state when no reviews exist", () => {
     visitReviewsPage();
 
+    cy.waitForContent("tbody tr", "No reviews found");
     cy.get("body").then(($body) => {
       if ($body.find("tbody tr").length === 0) {
         cy.contains(

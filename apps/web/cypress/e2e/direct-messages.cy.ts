@@ -85,6 +85,8 @@ describe("Direct Messages - Authenticated", () => {
 
   it("can navigate to an existing DM conversation", () => {
     cy.visit("/chat");
+    setUsernameIfRequired();
+    cy.waitForContent('a[href*="/chat/dm"]', "No direct messages yet");
 
     cy.get("body").then(($body) => {
       const hasDMLinks = $body.find('a[href*="/chat/dm"]').length > 0;

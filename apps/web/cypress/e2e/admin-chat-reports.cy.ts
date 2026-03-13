@@ -23,6 +23,11 @@ describe("Admin Chat Reports Page", () => {
       "be.visible",
     );
 
+    // Gate: wait for the reports table or empty state to appear before
+    // inspecting the DOM. The heading renders from static HTML, but the table
+    // rows are populated asynchronously by the collection.
+    cy.waitForContent("tbody tr", "No reports found", { timeout: 15000 });
+
     cy.get("body").then(($body) => {
       if ($body.find("tbody tr").length > 0) {
         cy.contains("th", "Reporter").should("be.visible");

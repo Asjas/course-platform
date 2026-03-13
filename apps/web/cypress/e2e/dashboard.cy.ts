@@ -13,6 +13,12 @@ describe("Dashboard Page", () => {
     cy.visit("/dashboard");
     cy.get("h1").contains("My Courses").should("be.visible");
 
+    // Gate the snapshot: wait until course card links have rendered or the
+    // empty-state message is present. The dashboard loads course data from the
+    // collection asynchronously, so firing cy.get("body").then() too early
+    // returns an empty DOM and falls into the wrong branch.
+    cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
+
     // Should either show course cards or an empty state
     cy.get("body").then(($body) => {
       if ($body.find(':contains("No courses available yet")').length > 0) {
