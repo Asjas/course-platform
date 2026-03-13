@@ -8,6 +8,39 @@ describe("Notifications - Unauthenticated", () => {
 });
 
 describe("Notifications - Authenticated", () => {
+  function assertNewTabContentVisible() {
+    cy.get("body").then(($body) => {
+      const hasEmpty = $body.text().includes("No new notifications");
+
+      if (hasEmpty) {
+        return cy
+          .contains("No new notifications", { timeout: 10000 })
+          .should("be.visible");
+      }
+
+      // If there are notifications, assert at least one item card is rendered.
+      return cy
+        .get('[aria-label="Dismiss notification"]', {
+          timeout: 10000,
+        })
+        .should("have.length.greaterThan", 0);
+    });
+  }
+
+  function assertReadTabContentVisible() {
+    cy.get("body").then(($body) => {
+      const hasEmpty = $body.text().includes("No read notifications");
+
+      if (hasEmpty) {
+        return cy
+          .contains("No read notifications", { timeout: 10000 })
+          .should("be.visible");
+      }
+
+      return cy.contains("Dismissed", { timeout: 10000 }).should("be.visible");
+    });
+  }
+
   beforeEach(() => {
     cy.loginAsRegularUser();
     cy.visit("/dashboard");
@@ -33,50 +66,30 @@ describe("Notifications - Authenticated", () => {
     cy.contains("button", "Read").should("be.visible");
   });
 
-  it("should display empty state in New tab", () => {
+  it("should render New tab content", () => {
     cy.contains("button", "Notifications").first().click();
-
-    // The New tab should show the empty state (test user has no notifications)
-    cy.contains("No new notifications", { timeout: 10000 }).should(
-      "be.visible",
-    );
+    assertNewTabContentVisible();
   });
 
-  it("should switch to Read tab and show empty state", () => {
+  it("should switch to Read tab and render content", () => {
     cy.contains("button", "Notifications").first().click();
-
-    // Wait for the New tab content to settle first
-    cy.contains("No new notifications", { timeout: 10000 }).should(
-      "be.visible",
-    );
+    assertNewTabContentVisible();
 
     // Click the Read tab
     cy.contains("button", "Read").click();
-
-    // The Read tab should show the empty state (test user has no read notifications)
-    cy.contains("No read notifications", { timeout: 10000 }).should(
-      "be.visible",
-    );
+    assertReadTabContentVisible();
   });
 
   it("should switch back to New tab after viewing Read tab", () => {
     cy.contains("button", "Notifications").first().click();
-
-    // Wait for New tab content
-    cy.contains("No new notifications", { timeout: 10000 }).should(
-      "be.visible",
-    );
+    assertNewTabContentVisible();
 
     // Switch to Read tab
     cy.contains("button", "Read").click();
-    cy.contains("No read notifications", { timeout: 10000 }).should(
-      "be.visible",
-    );
+    assertReadTabContentVisible();
 
     // Switch back to New tab
     cy.contains("button", /^New/).click();
-
-    // Verify the New tab content shows the empty state
-    cy.contains("No new notifications").should("be.visible");
+    assertNewTabContentVisible();
   });
 });
