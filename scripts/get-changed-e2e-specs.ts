@@ -303,7 +303,6 @@ function main(): void {
   }
 
   const specFiles = new Set<string>();
-  let runAll = false;
   let hasE2ERelevantChanges = false;
 
   for (const file of changedFiles) {
@@ -342,7 +341,6 @@ function main(): void {
       console.log(
         `🌐 Shared code changed: ${file} → will run all if no specs detected`,
       );
-      runAll = true;
       hasE2ERelevantChanges = true;
       continue;
     }
@@ -368,7 +366,6 @@ function main(): void {
       console.log(
         `❓ Unmapped source change: ${file} → will run all if no specs detected`,
       );
-      runAll = true;
       hasE2ERelevantChanges = true;
     }
   }
