@@ -4,8 +4,26 @@
 > the course platform. Last updated 2026-03-12.
 >
 > **Latest run (2026-03-12):** Server 455 tests (all passing, 52 files) | Web
-> 714 Vitest tests (84 files, 1 skipped) | Cypress 28 spec files **Batch Delta
-> (2026-03-13, early-signups resend/accept regression hardening):**
+> 714 Vitest tests (84 files, 1 skipped) | Cypress 28 spec files
+>
+> **Batch Delta (2026-03-13, Learn Fastify signup status contract update):**
+>
+> - **Added 2 server Vitest tests** in
+>   `apps/server/src/routers/courseWishlist/__tests__/index.test.ts`:
+>   - `signup resend sends verification email for existing entry`
+>   - `signup returns accepted status for new entries`
+> - **Updated 1 server Vitest assertion** in
+>   `apps/server/src/routers/courseWishlist/__tests__/index.test.ts`:
+>   - Existing-signup flow now asserts richer response values
+>     (`status: email_already_sent`, `canResend: true`).
+> - **Net test delta for this batch**: +2 new tests
+>   - Server Vitest: +2
+>   - Web Vitest: +0
+> - **Execution status**:
+>   - Executed and passing: targeted server + web Vitest files (24 passed)
+>
+> **Batch Delta (2026-03-13, early-signups resend/accept regression
+> hardening):**
 >
 > - **Added 1 new server Vitest test**:
 >   - `apps/server/src/db/mutations/__tests__/courseWishlist.test.ts`
