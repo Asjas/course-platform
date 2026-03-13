@@ -13,7 +13,10 @@ describe("Notifications - Authenticated", () => {
     // the "no notifications" empty state appears. The notifications panel opens
     // asynchronously; without this gate the one-shot then() can fire before
     // the panel content has been painted.
-    cy.waitForContent('[aria-label="Dismiss notification"]', "No new notifications");
+    cy.waitForContent(
+      '[aria-label="Dismiss notification"]',
+      "No new notifications",
+    );
     cy.get("body").then(($body) => {
       const hasEmpty = $body.text().includes("No new notifications");
 
