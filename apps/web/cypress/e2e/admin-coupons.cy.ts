@@ -28,9 +28,9 @@ describe("Admin Coupons Management", () => {
     cy.get('[role="dialog"]', { timeout: 10000 }).should("not.exist");
     // Wait for the open-sheet button to be interactive again, signalling that
     // any overlay exit animations and post-close re-renders have completed.
-    cy.contains("button", "Create New Coupon", { timeout: 5000 }).should(
-      "be.visible",
-    );
+    cy.contains("button", "Create New Coupon", { timeout: 5000 })
+      .should("be.visible")
+      .should("not.be.disabled");
   }
 
   beforeEach(() => {
