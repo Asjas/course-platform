@@ -2,14 +2,26 @@
  * If a new user visits /chat without a username, the "Username Required for Chat"
  * modal automatically opens. Fill in the username field and submit so the rest of
  * the test can interact with the real chat UI.
+ *
+ * Uses cy.waitForContent to gate the snapshot so the cy.get("body").then() check
+ * only fires once the page has settled (either the DM button is in the DOM or
+ * the modal text is present). Without this gate the snapshot can fire before the
+ * modal renders and silently miss it, leaving the overlay in place.
  */
 function setUsernameIfRequired() {
+  cy.waitForContent(
+    'button[aria-label="New direct message"]',
+    "Username Required for Chat",
+    { timeout: 10000 },
+  );
   cy.get("body").then(($body) => {
     if ($body.text().includes("Username Required for Chat")) {
       cy.get("#username").type("chatuser");
       cy.contains("button", "Set Username & Join Chat").click();
-      // Page reloads after a successful username update
-      cy.url({ timeout: 10000 }).should("include", "/chat");
+      // Wait for the modal overlay to disappear and the DM button to be interactive
+      cy.get('button[aria-label="New direct message"]', {
+        timeout: 15000,
+      }).should("be.visible");
     }
     return null;
   });
