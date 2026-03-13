@@ -179,10 +179,7 @@ describe("Admin Coupons Management", () => {
     });
 
     cy.contains("Delete Coupon").should("be.visible");
-    cy.contains('[role="dialog"] button', "Delete")
-      .should("be.visible")
-      .should("not.be.disabled")
-      .click();
+    cy.confirmDeleteDialog();
 
     // Increase timeout to allow for toast rendering and collection update settling
     cy.contains(/deleted successfully/i, { timeout: 10000 }).should(
@@ -231,9 +228,6 @@ describe("Admin Coupons Access Control", () => {
   it("should block non-admin users from coupons page", () => {
     visitCouponsPage();
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

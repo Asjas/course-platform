@@ -135,9 +135,7 @@ describe("Admin Reviews Management", () => {
             cy.contains("button", "Delete review").click();
           });
 
-        cy.get('[role="dialog"]').within(() => {
-          cy.contains("button", "Delete").should("be.visible").click();
-        });
+        cy.confirmDeleteDialog();
 
         cy.contains(/deleted successfully/i, { timeout: 10000 }).should(
           "be.visible",
@@ -172,9 +170,6 @@ describe("Admin Reviews Access Control", () => {
   it("should block non-admin users from reviews page", () => {
     cy.visit("/admin/reviews");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

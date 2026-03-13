@@ -11,13 +11,8 @@ describe("Admin Chat Reports Page", () => {
   it("should show either a reports table or empty state", () => {
     cy.visit("/admin/chat-reports");
 
-    cy.get("body", { timeout: 15000 }).should(($body) => {
-      const text = $body.text();
-      expect(
-        text.includes("No reports found") ||
-          text.includes("Reporter") ||
-          text.includes("Reason"),
-      ).to.equal(true);
+    cy.waitForContent('th:contains("Reporter")', "No reports found", {
+      timeout: 15000,
     });
   });
 
@@ -51,9 +46,6 @@ describe("Admin Chat Reports Access Control", () => {
   it("should block non-admin users from chat reports page", () => {
     cy.visit("/admin/chat-reports");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

@@ -77,12 +77,7 @@ describe("Admin Users Management - Full CRUD", () => {
       .should("be.visible")
       .click();
 
-    cy.get('[role="dialog"]').within(() => {
-      cy.contains("button", "Delete")
-        .should("be.visible")
-        .should("not.be.disabled")
-        .click();
-    });
+    cy.confirmDeleteDialog();
 
     cy.contains(/Deleted user|deleted/i, { timeout: 10000 }).should(
       "be.visible",
@@ -99,9 +94,6 @@ describe("Admin Users Access Control", () => {
   it("should block non-admin users from admin users page", () => {
     cy.visit("/admin/users");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

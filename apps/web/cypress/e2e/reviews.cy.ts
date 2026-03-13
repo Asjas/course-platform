@@ -160,9 +160,6 @@ describe("Course Reviews - Regular User Access", () => {
 
   it("blocks regular users from accessing the admin reviews page", () => {
     cy.visit("/admin/reviews");
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

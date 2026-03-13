@@ -35,10 +35,7 @@ describe("Auth Guards - Role-Based Access", () => {
     cy.loginAsRegularUser();
     cy.visit("/admin/stats");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 
   it("should allow admin users to access admin content", () => {

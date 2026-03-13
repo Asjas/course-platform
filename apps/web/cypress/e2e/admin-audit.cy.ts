@@ -16,11 +16,8 @@ describe("Admin Audit Page", () => {
   it("shows either empty state or GDPR logs table", () => {
     cy.visit("/admin/audit");
 
-    cy.get("body", { timeout: 15000 }).should(($body) => {
-      const text = $body.text();
-      expect(
-        text.includes("No audit logs yet") || text.includes("Timestamp"),
-      ).to.equal(true);
+    cy.waitForContent('th:contains("Timestamp")', "No audit logs yet", {
+      timeout: 15000,
     });
 
     cy.get("body").then(($body) => {
@@ -46,9 +43,6 @@ describe("Admin Audit Access Control", () => {
   it("blocks non-admin users from admin audit page", () => {
     cy.visit("/admin/audit");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });
