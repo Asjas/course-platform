@@ -173,9 +173,12 @@ describe("Support Ticket Management", () => {
       cy.contains("button", "Delete").should("be.visible").click();
     });
 
-    cy.get('[role="dialog"]').within(() => {
-      cy.contains("button", "Delete").click();
-    });
+    cy.contains('[role="dialog"] button', "Delete")
+      .should("be.visible")
+      .should("not.be.disabled")
+      .click();
+
+    cy.get('[role="dialog"]').should("not.exist");
 
     cy.contains(/ticket deleted successfully/i, { timeout: 10000 }).should(
       "be.visible",
@@ -228,9 +231,12 @@ describe("Support Ticket Management", () => {
     });
 
     // Confirm deletion
-    cy.get('[role="dialog"]').within(() => {
-      cy.contains("button", "Delete").click();
-    });
+    cy.contains('[role="dialog"] button', "Delete")
+      .should("be.visible")
+      .should("not.be.disabled")
+      .click();
+
+    cy.get('[role="dialog"]').should("not.exist");
 
     // Verify successful deletion
     cy.contains(/ticket deleted successfully/i, { timeout: 10000 }).should(

@@ -23,6 +23,25 @@ try {
 // otherwise fall back to the default "my_schema".
 const dbSchema = process.env.DATABASE_SCHEMA || "my_schema";
 
+// Shared connection pool for Cypress tasks — avoids exhausting PostgreSQL
+// connections by reusing a small number of clients across all task calls.
+let pool: pg.Pool | null = null;
+function getPool() {
+  if (!pool) {
+    pool = new pg.Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 2,
+      idleTimeoutMillis: 30000,
+    });
+    // Prevent unhandled 'error' events from crashing the Cypress process
+    // when an idle client is unexpectedly terminated by the server.
+    pool.on("error", () => {
+      pool = null;
+    });
+  }
+  return pool;
+}
+
 export default defineConfig({
   allowCypressEnv: false,
   expose: {
@@ -44,10 +63,7 @@ export default defineConfig({
 
       on("task", {
         async setUserRole({ email, role }: { email: string; role: string }) {
-          const client = new pg.Client({
-            connectionString: process.env.DATABASE_URL,
-          });
-          await client.connect();
+          const client = await getPool().connect();
           try {
             await client.query(
               `UPDATE "${dbSchema}"."user" SET role = $1 WHERE email = $2`,
@@ -55,7 +71,7 @@ export default defineConfig({
             );
             return null;
           } finally {
-            await client.end();
+            client.release();
           }
         },
         async createTestUser({
@@ -69,10 +85,7 @@ export default defineConfig({
           email: string;
           role?: "member" | "admin";
         }) {
-          const client = new pg.Client({
-            connectionString: process.env.DATABASE_URL,
-          });
-          await client.connect();
+          const client = await getPool().connect();
           try {
             await client.query(
               `
@@ -84,7 +97,7 @@ export default defineConfig({
             );
             return null;
           } finally {
-            await client.end();
+            client.release();
           }
         },
         async createEarlySignup({
@@ -102,10 +115,7 @@ export default defineConfig({
           confirmedAt?: string | null;
           unsubscribedAt?: string | null;
         }) {
-          const client = new pg.Client({
-            connectionString: process.env.DATABASE_URL,
-          });
-          await client.connect();
+          const client = await getPool().connect();
           try {
             await client.query(
               `
@@ -130,7 +140,7 @@ export default defineConfig({
             );
             return null;
           } finally {
-            await client.end();
+            client.release();
           }
         },
       });

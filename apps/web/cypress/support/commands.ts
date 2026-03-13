@@ -84,7 +84,7 @@ Cypress.Commands.add(
     cy.get("#confirmPassword").clear();
     cy.get("#confirmPassword").type(user.password);
     cy.get('button[type="submit"]').click();
-    cy.url({ timeout: 10000 }).should("include", "/dashboard");
+    cy.url({ timeout: 15000 }).should("include", "/dashboard");
   },
 );
 
