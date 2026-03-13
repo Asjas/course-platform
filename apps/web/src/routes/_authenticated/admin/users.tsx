@@ -139,7 +139,7 @@ function AdminUsersPage() {
                 </TableHeader>
 
                 <TableBody>
-                  {usersWithUsername.map((user) => (
+                  {usersWithUsername.map((user, rowIndex) => (
                     <TableBodyRow key={user.id}>
                       <TableBodyCell className="py-4 pr-3 pl-4 text-sm font-medium whitespace-nowrap sm:pl-3">
                         <span className="flex items-center gap-2">
@@ -231,7 +231,14 @@ function AdminUsersPage() {
                         })}
                       </TableBodyCell>
 
-                      <TableBodyCell className="sticky right-0 bg-inherit py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 shadow-sm sm:pr-3 dark:text-gray-400">
+                      <TableBodyCell
+                        className={cn(
+                          "sticky right-0 py-4 pr-4 pl-3 text-right text-sm font-medium whitespace-nowrap text-gray-600 shadow-sm sm:pr-3 dark:text-gray-400",
+                          rowIndex % 2 === 0
+                            ? "bg-white dark:bg-gray-900"
+                            : "bg-gray-100/80 dark:bg-gray-700/25",
+                        )}
+                      >
                         <div className="flex justify-end gap-4">
                           <button
                             className="cursor-pointer text-green-400 no-underline hover:text-green-300 hover:underline"
