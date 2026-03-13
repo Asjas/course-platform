@@ -345,7 +345,9 @@ function main(): void {
     if (
       file.startsWith("apps/web/src/") ||
       file.startsWith("apps/server/src/") ||
-      file.startsWith("packages/")
+      file.startsWith("packages/") ||
+      file.startsWith("apps/web/cypress/") ||
+      file === "apps/web/cypress.config.ts"
     ) {
       console.log(`❓ Unmapped source change: ${file} → running all specs`);
       runAll = true;
