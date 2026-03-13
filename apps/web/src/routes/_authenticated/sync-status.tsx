@@ -16,7 +16,7 @@ import {
   WifiOff,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { CollectionSyncStatus } from "~/components/SyncStatusIndicator";
+import type { CollectionSyncStatus } from "~/components/sync-status-indicator";
 import {
   useAnnouncementsSync,
   useChatReportsSync,

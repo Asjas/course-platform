@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { SyncStatusIndicator } from "~/components/SyncStatusIndicator";
-import type { CollectionSyncStatus } from "~/components/SyncStatusIndicator";
+import { SyncStatusIndicator } from "~/components/sync-status-indicator";
+import type { CollectionSyncStatus } from "~/components/sync-status-indicator";
 
 function makeStatus(
   overrides: Partial<CollectionSyncStatus> = {},

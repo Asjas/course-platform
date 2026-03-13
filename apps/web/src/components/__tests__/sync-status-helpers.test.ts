@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   formatRelativeTime,
   getOverallStatus,
-} from "~/components/SyncStatusIndicator";
-import type { CollectionSyncStatus } from "~/components/SyncStatusIndicator";
+} from "~/components/sync-status-indicator";
+import type { CollectionSyncStatus } from "~/components/sync-status-indicator";
 
 function makeStatus(
   overrides: Partial<CollectionSyncStatus> = {},
