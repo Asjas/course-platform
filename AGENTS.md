@@ -75,14 +75,16 @@ those flags.
     example `tmp/<task>/`) and not system `/tmp`.
 11. **Commit messages** follow Conventional Commits:
     `<type>(<scope>): <subject>`.
-12. **Fastify plugins that decorate `fastify.*`** must use `fastify-plugin` (`fp`)
-    so decorators are promoted to the parent scope and accessible by all routes.
-13. **Fastify TypeScript decorators** require `declare module "fastify"` augmentation
-    — extend `FastifyInstance` / `FastifyRequest` so the compiler knows about
-    `fastify.db`, `fastify.cache`, `request.user`, etc.
-14. **Structured logging** — use `request.log` (not `fastify.log`) inside handlers; always
-    pass an object first (`request.log.info({ userId }, "message")`), never interpolated
-    strings.
+12. **Fastify plugins that add `fastify.*` decorators** — the project uses `encapsulate: false`
+    in `@fastify/autoload` so all plugins in `plugins/app/` and `plugins/external/` share the
+    same scope. For individual plugins outside autoload, use `fastify-plugin` (`fp`).
+13. **Fastify TypeScript decorators** require `declare module "fastify"` augmentation in
+    `apps/server/types/fastify.d.ts` — extend `FastifyInstance` / `FastifyRequest` so the
+    compiler knows about `fastify.db`, `fastify.cache`, `request.user`, etc.
+14. **Structured logging** — use `request.log` (not `fastify.log`) inside route handlers and
+    tRPC procedures; always pass an object first (`request.log.info({ userId }, "message")`),
+    never a bare error without a message or an interpolated string. Use `fastify.log` only in
+    plugin-level code with no per-request context.
 15. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — it
     re-registers handlers and immediately ends the DB pool, crashing in-flight requests.
     Log the error and let the existing `closeWithGrace` handler do the cleanup.
@@ -127,12 +129,16 @@ apps/server/src/
 └── lib/
     ├── cache.ts      # async-cache-dedupe with Redis
     └── sse-sync.ts   # Redis Streams for real-time SSE sync
+
+apps/server/types/
+└── fastify.d.ts      # declare module "fastify" — FastifyInstance/FastifyRequest augmentation
 ```
 
 - **Cache layer**: `async-cache-dedupe` wraps DB reads; invalidate with
   `cache.invalidateAll([refs])`.
 - **Error handling**: Use `fastify.to(promise)` for `[err, result]` tuples.
-  Use `@fastify/error` (`createError`) for typed custom HTTP errors.
+  `@fastify/sensible` reply helpers (`reply.notFound()`, `reply.badRequest()`) cover most cases;
+  for typed error classes, add `@fastify/error`.
 - **Graceful shutdown**: `close-with-grace` handles SIGTERM/SIGINT. Cleanup order:
   external connections first, then `app.close()`. Never re-call `closeWithGrace` inside
   `uncaughtException`.

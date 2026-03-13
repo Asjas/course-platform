@@ -52,7 +52,8 @@ if (err) {
 }
 ```
 
-- **Custom typed errors**: Use `@fastify/error` to create typed HTTP errors with codes:
+- **Custom typed errors**: Use `@fastify/error` to create typed HTTP errors with codes (install
+  `@fastify/error` if not already in `package.json`):
 
 ```typescript
 import createError from "@fastify/error";
@@ -64,6 +65,10 @@ const ConflictError = createError("CONFLICT", "%s already exists", 409);
 throw new NotFoundError("Course");
 throw new ConflictError("Email");
 ```
+
+For most cases, the `@fastify/sensible` reply helpers already installed (`reply.notFound()`,
+`reply.badRequest()`, `reply.internalServerError()`) are sufficient and don't require a
+separate package.
 
 - **Always define response schemas** for serialization performance — Fastify uses
   `fast-json-stringify` when a response schema is present, which is significantly faster than
@@ -83,16 +88,30 @@ app.get("/courses", {
 ### Fastify Plugins and Encapsulation
 
 Fastify plugins are **encapsulated by default** — decorators, hooks, and sub-plugins registered
-inside a plugin are **not visible** to sibling or parent scopes. Use
-[`fastify-plugin`](https://github.com/fastify/fastify-plugin) (`fp`) when you need a plugin's
-decorators to be accessible from the parent scope (e.g. `fastify.db`, `fastify.cache`):
+inside a plugin are **not visible** to sibling or parent scopes.
+
+**This project's approach** uses `@fastify/autoload` with `encapsulate: false` so all plugins
+in `plugins/external/` and `plugins/app/` share the same scope and their decorators are
+available to all routes:
+
+```typescript
+// server.ts — plugins loaded without encapsulation
+await server.register(fastifyAutoload, {
+  dir: join(import.meta.dirname, "plugins", "app"),
+  encapsulate: false, // makes fastify.db, fastify.cache etc. visible globally
+});
+```
+
+**Alternative** — for individual plugins outside the autoloaded directories, use
+[`fastify-plugin`](https://github.com/fastify/fastify-plugin) (`fp`) to promote decorators
+to the parent scope:
 
 ```typescript
 import fp from "fastify-plugin";
 import type { FastifyPluginAsync } from "fastify";
 
-// Without fp: decorator is only visible inside this plugin (scoped)
-// With fp: decorator is promoted to the parent scope (shared)
+// Without fp: decorator only visible inside this plugin (scoped)
+// With fp: decorator promoted to parent scope (shared)
 const dbPlugin: FastifyPluginAsync = fp(async function (fastify) {
   const db = await createConnection();
   fastify.decorate("db", db);
@@ -106,41 +125,46 @@ export default dbPlugin;
 ```
 
 Use encapsulation **intentionally** for route groups that need isolated hooks (e.g. admin-only
-auth) — register those as plain plugins **without** `fp`.
+auth) — register those as plain plugins **without** `fp` or `encapsulate: false`.
 
 ### TypeScript Declaration Merging for Fastify Decorators
 
 When a plugin decorates the Fastify instance (e.g. `fastify.db`, `fastify.cache`,
 `fastify.config`), extend the Fastify type interfaces via declaration merging so callers get
-full type inference:
+full type inference.
+
+**In this project**, the declarations live in `apps/server/types/fastify.d.ts` (referenced by
+`tsconfig.json`'s `typeRoots`). Add new decorator types here:
 
 ```typescript
-// apps/server/src/@types/fastify.d.ts  (or in the plugin file itself)
-import "fastify";
-import type { Cache } from "async-cache-dedupe";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+// apps/server/types/fastify.d.ts
 import type { Config } from "~/config.js";
-import type * as schema from "~/db/schema/index.js";
+import type { db } from "~/db/index.js";
+import type { cache } from "~/lib/cache.js";
+import type { mailer } from "~/lib/mailer.js";
+import type { User } from "~/db/schema/user.js";
 
 declare module "fastify" {
   interface FastifyInstance {
     config: Config;
-    db: NodePgDatabase<typeof schema>;
-    cache: Cache;
+    cache: typeof cache;
+    db: typeof db;
+    mailer: typeof mailer;
   }
 
   interface FastifyRequest {
-    user?: {
-      id: string;
-      email: string;
-      role: string;
-    };
+    user: Pick<User, "id" | "email" | "role" | "banned" | ...> | null;
+    startTime: bigint;
+    normalizedRoute: string;
   }
 }
 ```
 
 This makes `fastify.db`, `fastify.cache`, and `request.user` fully typed throughout the server
 without manual casts.
+
+**Note**: `fastify.config` is decorated directly in `server.ts` (not via a plugin), using
+`server.decorate("config", config)` before any plugins are registered.
 
 ### Fastify Request Lifecycle and Hooks
 
@@ -164,20 +188,23 @@ onRequest → preParsing → preValidation → preHandler → Handler
 | `onError` | Cleanup resources (temp files, transactions) on error |
 | `onClose` | Disconnect external resources when server shuts down |
 
-Always use **async hooks** (never the `done` callback style for new code):
+Prefer **async hooks** for new code. The existing plugins use the callback `done()` style
+(legacy pattern), but new hooks should be async:
 
 ```typescript
-// ✅ async hook
+// ✅ async hook (preferred for new code)
 fastify.addHook("onRequest", async (request, reply) => {
-  request.startTime = Date.now();
+  request.startTime = process.hrtime.bigint();
 });
 
-// ❌ callback style (legacy, avoid for new hooks)
-fastify.addHook("onRequest", (request, reply, done) => {
-  request.startTime = Date.now();
+// ⚠️ callback style (used in existing plugins — do not mix async+done in the same function)
+fastify.addHook("onRequest", function metricsHook(request, _reply, done) {
+  request.startTime = process.hrtime.bigint();
   done();
 });
 ```
+
+**Important**: Never declare a hook `async` and also call `done()` — pick one style only.
 
 Scoped hooks only apply to routes registered **within the same plugin scope**. Use this to
 apply an admin-only auth check to a subtree of routes:
@@ -220,25 +247,48 @@ fastify.addHook("onClose", async (fastify) => {
 ### Pino Structured Logging
 
 Use **structured logging** (object first, message second) throughout. Avoid string
-concatenation:
+concatenation or passing only an error with no message:
 
 ```typescript
 // ✅ Structured — searchable and parseable
 request.log.info({ userId: user.id, action: "course_enrolled" }, "User enrolled in course");
 request.log.error({ err, courseId }, "Failed to enroll user");
 
-// ❌ Unstructured — hard to parse or search in log aggregators
+// ❌ Error only, no message — hard to query in log aggregators
+fastify.log.error(err);
+
+// ❌ Unstructured — hard to parse or search
 request.log.info(`User ${user.id} enrolled in course ${courseId}`);
 ```
 
-Use **`request.log`** (not `fastify.log`) inside route handlers and hooks — it includes the
-request ID automatically and correlates logs across the full request lifecycle. Use
-**`request.log.child({})`** to add extra context without losing the request ID:
+Use **`request.log`** (not `fastify.log`) inside route handlers — it includes the request ID
+automatically and correlates logs across the full request lifecycle. Use
+**`request.log.child({})`** to add extra context:
 
 ```typescript
+// REST handler — use request.log
 const log = request.log.child({ handler: "createCourse", courseId });
 log.info("Starting course creation");
 ```
+
+**In tRPC routers**, access the request logger via the context:
+
+```typescript
+// tRPC handler — use ctx.request.log
+getAll: publicProcedure.query(async ({ ctx }): Promise<AllCourses> => {
+  const [err, courses] = await ctx.reply.server.to(
+    ctx.reply.server.cache.getAllCourses(),
+  );
+  if (err) {
+    ctx.request.log.error({ err }, "Failed to fetch courses");
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
+  }
+  return courses;
+}),
+```
+
+Use `fastify.log` (not `request.log`) only in plugin-level code and hooks where no per-request
+context exists (e.g. `onClose`, plugin initialization, `metricsPlugin`).
 
 **Redact sensitive fields** in the Pino logger config to prevent them from appearing in logs.
 In this project, the Pino instance is created in `src/lib/logging.ts` — add redactions there:
@@ -361,7 +411,7 @@ const enriched = results
 ```
 
 **Limit concurrency** for bulk operations that could exhaust DB connections or memory. Use
-[`p-limit`](https://github.com/sindresorhus/p-limit):
+[`p-limit`](https://github.com/sindresorhus/p-limit) (add to `package.json` if not present):
 
 ```typescript
 import pLimit from "p-limit";
@@ -391,9 +441,10 @@ const rateLimitEnabled = process.env.RATE_LIMIT_ENABLED !== "false";
 const logLevel = process.env.LOG_LEVEL ?? "info";
 ```
 
-`NODE_ENV` may still be used where third-party libraries (React, Vite, etc.) require it. For
-this project's server config, prefer the explicit-variable pattern already established in
-`src/config.ts`.
+**Exception**: `NODE_ENV` is legitimately used when third-party libraries require it to select
+their own environment mode. In this project, `config.NODE_ENV` is used to switch the Polar
+payment API between `production` and `sandbox` servers, and to control Better Auth's email
+verification behaviour — these cannot be replaced with custom env vars.
 
 ## File Organization
 
@@ -405,12 +456,14 @@ this project's server config, prefer the explicit-variable pattern already estab
 - Plugins: `/src/plugins/` for Fastify plugins.
 - Hooks: `/src/hooks/` for Fastify hooks.
 - Libraries: `/src/lib/` for utilities (auth, logging, redis, email).
+- **TypeScript type augmentations**: `/types/fastify.d.ts` — `declare module "fastify"` for `FastifyInstance` and `FastifyRequest` extensions.
 
 ## Key Libraries
 
-- `fastify` + `@fastify/sensible` — HTTP server + `fastify.to()` error handling
-- `fastify-plugin` (`fp`) — break plugin encapsulation to share decorators with parent scope
-- `@fastify/error` — typed custom HTTP error factory (`createError(code, message, statusCode)`)
+- `fastify` + `@fastify/sensible` — HTTP server + `fastify.to()` error handling + reply helpers
+- `@fastify/autoload` — auto-registers plugins from directories; use `encapsulate: false` to share decorators globally
+- `fastify-plugin` (`fp`) — alternative to `encapsulate: false` for individual plugins that need to promote decorators to parent scope
+- `@fastify/error` — typed custom HTTP error factory (`createError(code, message, statusCode)`); install if needed
 - `fastify-type-provider-zod` — Zod schema validation for REST routes
 - `drizzle-orm` + `drizzle-kit` — Database ORM and migrations
 - `@trpc/server` — Type-safe API
@@ -418,11 +471,12 @@ this project's server config, prefer the explicit-variable pattern already estab
 - `ioredis` — Redis client
 - `async-cache-dedupe` + `superjson` — Redis-backed result caching
 - `close-with-grace` — graceful shutdown (SIGTERM/SIGINT + uncaughtException handling)
+- `@dotenvx/dotenvx` — environment file loading (`.env`); called at the top of `config.ts`
 - `nodemailer` — Email sending
 - `zod` — Schema validation
 - `pino` — Structured logging
 - `prom-client` — Prometheus metrics
-- `p-limit` — Concurrency limiting for bulk async operations
+- `p-limit` — Concurrency limiting for bulk async operations; install if needed
 - `ulid` — ID generation
 
 For verified library patterns, gotchas, and testing best practices, see [docs/library-patterns-reference.md](../docs/library-patterns-reference.md).
