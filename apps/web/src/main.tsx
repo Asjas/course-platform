@@ -9,7 +9,7 @@ import { defaultAuthState, useAuth } from "~/lib/auth.context";
 import { AuthProvider } from "~/lib/auth.provider";
 import { queryClient } from "~/lib/query.client";
 import { ThemeProvider } from "~/lib/theme.provider";
-import reportWebVitals from "~/reportWebVitals";
+import reportWebVitals from "~/report-web-vitals";
 import { routeTree } from "~/routeTree.gen";
 import "~/styles/code-blocks.css";
 import "~/styles/media-embeds.css";

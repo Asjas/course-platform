@@ -57,13 +57,14 @@ The `format` and `lint` scripts already use `--cache` flags — never call
 8. **Prepared statements** must be module-scoped (top-level), never inside functions.
 9. **Scratch files/logs** must be stored under repository-local `tmp/` (for example `tmp/<task>/`) and not system `/tmp`.
 10. **Commit messages** follow Conventional Commits: `<type>(<scope>): <subject>`.
+11. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
 
 ## Architecture
 
 ```
 apps/web/src/
 ├── routes/           # TanStack Router (file-based, auto code-split)
-├── components/       # React components (PascalCase)
+├── components/       # React components (kebab-case filenames, PascalCase exports)
 ├── lib/
 │   └── db.collections.ts  # ALL collection definitions + hooks
 └── schema/           # Zod validation schemas
