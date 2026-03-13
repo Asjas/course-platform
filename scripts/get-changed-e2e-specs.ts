@@ -199,6 +199,14 @@ const SHARED_CODE_PATTERNS = [
   "packages/", // shared-ui package changes affect many components
 ];
 
+// Scripts that are invoked by CI and directly affect the E2E environment.
+// Changes to these files should be treated as E2E-relevant and must not be
+// filtered out by isNonE2EFile.
+const E2E_CRITICAL_SCRIPTS = [
+  "scripts/ci-migrate.ts",
+  "scripts/seed-test-data.ts",
+];
+
 // ---------------------------------------------------------------------------
 // Files that have no impact on E2E behaviour and should not trigger any run.
 // ---------------------------------------------------------------------------
@@ -220,9 +228,10 @@ function isNonE2EFile(file: string): boolean {
   if (file.endsWith(".md") || file.startsWith("docs/")) {
     return true;
   }
-  // CI helper scripts (not application code)
+  // CI helper scripts (not application code). Some scripts are E2E-critical
+  // and must not be ignored; those are listed in E2E_CRITICAL_SCRIPTS.
   if (file.startsWith("scripts/")) {
-    return true;
+    return !E2E_CRITICAL_SCRIPTS.includes(file);
   }
   return false;
 }
