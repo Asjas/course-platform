@@ -57,7 +57,18 @@ The `format` and `lint` scripts already use `--cache` flags — never call
 8. **Prepared statements** must be module-scoped (top-level), never inside functions.
 9. **Scratch files/logs** must be stored under repository-local `tmp/` (for example `tmp/<task>/`) and not system `/tmp`.
 10. **Commit messages** follow Conventional Commits: `<type>(<scope>): <subject>`.
-11. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
+11. **Fastify plugins that add `fastify.*` decorators** — the project uses `encapsulate: false`
+    in `@fastify/autoload` (see `server.ts`). For individual plugins outside autoload, use
+    `fastify-plugin` (`fp`) so the decorator is visible outside the plugin scope.
+12. **Structured logging** — always pass an object first: `request.log.info({ userId }, "msg")`.
+    Use `request.log` (not `app.log`) inside handlers for automatic request-ID correlation.
+    Use `fastify.log` only in plugin-level code with no per-request context.
+13. **Do NOT re-call `closeWithGrace()`** inside `process.on('uncaughtException')` — only log
+    the error. The existing `closeWithGrace` handler handles all shutdown cleanup.
+14. **`async` only when `await` is needed** — `async` wraps the return value in a Promise
+    (extra allocation on every call). Use callback style for synchronous hooks/plugins; only
+    use `async` when the body contains an `await`. Never mix `async` + `done()`.
+15. **Filenames and folder names** must use kebab-case (hyphenated lowercase) — e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`. Never use PascalCase or camelCase for file or folder names.
 
 ## Architecture
 

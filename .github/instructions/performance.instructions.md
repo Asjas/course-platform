@@ -32,6 +32,13 @@ Core principles and project-specific performance guidelines. For the full refere
 - Use connection pooling for database and Redis connections.
 - Use `async-cache-dedupe` for request deduplication.
 - Minimize logging in hot paths. Use structured logging with Pino.
+- **Always define response schemas** on Fastify routes — Fastify uses `fast-json-stringify` for
+  routes that have a `response` schema, which is significantly faster than `JSON.stringify`.
+- **Define schemas at route registration time (startup), not dynamically inside handlers.** A
+  schema constructed inside a handler is compiled on every request, bypassing Fastify's compiled
+  validator cache and negating the performance benefit.
+- Use `p-limit` to cap concurrency for bulk async operations and prevent connection pool
+  exhaustion.
 - Monitor with Prometheus metrics (`prom-client`).
 
 ## Database (Drizzle + PostgreSQL)
@@ -55,3 +62,5 @@ Core principles and project-specific performance guidelines. For the full refere
 - [ ] Large payloads paginated, streamed, or chunked
 - [ ] No memory leaks or unbounded resource usage
 - [ ] No blocking operations in hot paths
+- [ ] Fastify routes have response schemas (enables fast-json-stringify)
+- [ ] Bulk async operations use `p-limit` to cap concurrency

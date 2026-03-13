@@ -1,3 +1,4 @@
+import pLimit from "p-limit";
 import { ulid } from "ulid";
 import { getAdminUserIds, getUserById } from "~/db/queries/user.js";
 import type { NotificationPreferenceKey } from "~/db/schema/userNotificationPreferences.js";
@@ -341,10 +342,13 @@ async function notifyAllAdmins(
   createNotification: (userId: string) => NewUserNotification,
 ) {
   const adminUserIds = await getAdminUserIds();
+  const limit = pLimit(5);
   const notifications = adminUserIds.map((userId) =>
-    insertUserNotification({
-      newNotification: createNotification(userId),
-    }),
+    limit(() =>
+      insertUserNotification({
+        newNotification: createNotification(userId),
+      }),
+    ),
   );
 
   return Promise.all(notifications);
