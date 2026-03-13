@@ -50,6 +50,7 @@ Instructions for building high-quality React.js applications with modern pattern
 
 - Use PascalCase for component names (e.g., `SignIn`, `UserProfile`).
 - Use camelCase for variables, functions, and methods.
+- Use **kebab-case (hyphenated lowercase) for all filenames and folder names** (e.g., `sync-status-indicator.tsx`, `use-sse-sync.ts`). Never PascalCase or camelCase for file/folder names.
 - Avoid abbreviations unless widely understood.
 - Use descriptive prop names that reflect their purpose.
 

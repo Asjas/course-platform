@@ -75,6 +75,9 @@ those flags.
     example `tmp/<task>/`) and not system `/tmp`.
 11. **Commit messages** follow Conventional Commits:
     `<type>(<scope>): <subject>`.
+12. **Filenames and folder names** must use kebab-case (hyphenated lowercase) —
+    e.g. `sync-status-indicator.tsx`, `use-sse-sync.ts`, `report-web-vitals.ts`.
+    Never use PascalCase or camelCase for file or folder names.
 
 ## Architecture
 
@@ -83,7 +86,7 @@ those flags.
 ```
 apps/web/src/
 ├── routes/           # TanStack Router (file-based, auto code-split)
-├── components/       # React components (PascalCase)
+├── components/       # React components (kebab-case filenames, PascalCase exports)
 ├── lib/
 │   └── db.collections.ts  # ALL collection definitions + hooks
 ├── schema/           # Zod validation schemas

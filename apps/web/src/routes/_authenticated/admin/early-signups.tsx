@@ -236,7 +236,7 @@ export function AdminEarlySignupsPage() {
                           ) : (
                             <div className="flex items-center gap-2">
                               <button
-                                className="inline-flex cursor-pointer items-center gap-x-1.5 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="inline-flex cursor-pointer items-center gap-x-1.5 rounded-md bg-blue-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
                                 type="button"
                                 disabled={
                                   sendingIds.has(signup.id) ||
@@ -259,7 +259,7 @@ export function AdminEarlySignupsPage() {
                                   : "Send Invite"}
                               </button>
                               <button
-                                className="inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
+                                className="inline-flex cursor-pointer items-center rounded-md border border-gray-300 bg-white px-2.5 py-1 text-xs font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
                                 type="button"
                                 disabled={
                                   cancellingIds.has(signup.id) ||

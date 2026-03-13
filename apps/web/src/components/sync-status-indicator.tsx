@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "~/components/ui/button";
-import type { SyncStatus } from "~/hooks/useSseSync";
+import type { SyncStatus } from "~/hooks/use-sse-sync";
 import { cn } from "~/lib/utils";
 
 /**

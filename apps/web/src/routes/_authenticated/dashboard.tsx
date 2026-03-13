@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
-import { AnnouncementsBanner } from "~/components/announcements/AnnouncementsBanner";
+import { AnnouncementsBanner } from "~/components/announcements/announcements-banner";
 import { CourseCard } from "~/components/course-card";
 import { EmptyState } from "~/components/empty-state";
 import { getBackendErrorMessage } from "~/lib/api-error";

@@ -1,5 +1,5 @@
-import type { SyncStatus } from "../useSseSync";
-import { useSupportTicketsSync } from "../useSseSync";
+import type { SyncStatus } from "../use-sse-sync";
+import { useSupportTicketsSync } from "../use-sse-sync";
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { syncUtils } from "~/lib/db.collections";

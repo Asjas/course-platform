@@ -1081,7 +1081,7 @@ export function applySyncUpdate<T extends { id: string }>(
   update: EntitySyncUpdate<T>,
 ): void {
   // Currently using query invalidation instead of direct collection updates
-  // See useSseSync.ts hooks for the implementation
+  // See use-sse-sync.ts hooks for the implementation
   console.debug(
     "applySyncUpdate called - using query invalidation instead",
     collection,
@@ -1094,7 +1094,7 @@ export function applySyncUpdate<T extends { id: string }>(
  * Fetches all updates since the last sync timestamp and applies them.
  *
  * Note: This function is currently not used as we're using query invalidation
- * instead of direct collection updates for SSE sync. The useSseSync.ts hooks
+ * instead of direct collection updates for SSE sync. The use-sse-sync.ts hooks
  * handle offline sync by fetching updates and invalidating queries.
  */
 export async function syncOfflineUpdates<T extends { id: string }>(
