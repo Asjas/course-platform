@@ -17,6 +17,8 @@ vi.mock("~/db/index.js", () => ({
   },
 }));
 
+const expectedSchema = process.env.DATABASE_SCHEMA ?? "my_schema";
+
 describe("bootstrapDatabase", () => {
   const logger = {
     info: vi.fn(),
@@ -40,12 +42,16 @@ describe("bootstrapDatabase", () => {
     expect(queryMock).toHaveBeenNthCalledWith(
       1,
       expect.stringMatching(
-        /CREATE TABLE IF NOT EXISTS "[^"]+"."user_notification_preference"/,
+        new RegExp(
+          `CREATE TABLE IF NOT EXISTS "${expectedSchema}"."user_notification_preference"`,
+        ),
       ),
     );
     expect(queryMock).toHaveBeenNthCalledWith(
       2,
-      expect.stringMatching(/INSERT INTO "[^"]+"."user"/),
+      expect.stringMatching(
+        new RegExp(`INSERT INTO "${expectedSchema}"."user"`),
+      ),
     );
     expect(migrateMock.mock.invocationCallOrder[0]).toBeLessThan(
       queryMock.mock.invocationCallOrder[0],
