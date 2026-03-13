@@ -4,7 +4,33 @@
 > the course platform. Last updated 2026-03-12.
 >
 > **Latest run (2026-03-12):** Server 455 tests (all passing, 52 files) | Web
-> 714 Vitest tests (84 files, 1 skipped) | Cypress 28 spec files
+> 714 Vitest tests (84 files, 1 skipped) | Cypress 28 spec files **Batch Delta
+> (2026-03-13, early-signups resend/accept regression hardening):**
+>
+> - **Added 1 new server Vitest test**:
+>   - `apps/server/src/db/mutations/__tests__/courseWishlist.test.ts`
+>     - `clears unsubscribedAt when confirming a wishlist entry`
+>     - Verifies confirmation writes `unsubscribedAt: null` so accepted
+>       re-invites cannot remain canceled in persisted state.
+> - **Added 1 new web Vitest test**:
+>   - `apps/web/src/components/__tests__/admin-early-signups.test.tsx`
+>     - `shows reactivated signup as invited only after unsubscribedAt is cleared`
+>     - Verifies admin status filtering treats reactivated records as invited
+>       only when canceled state has been cleared.
+> - **Added 1 new Cypress E2E test**:
+>   - `apps/web/cypress/e2e/admin-early-signups.cy.ts`
+>     - `shows signup as invited after persisted reactivation`
+>     - Verifies the admin table reflects backend-persisted reactivation after a
+>       reload (canceled -> invited when `unsubscribedAt` becomes null).
+> - **Net test delta for this batch**: +3 tests total
+>   - Server Vitest: +1
+>   - Web Vitest: +1
+>   - Cypress: +1
+> - **Execution status**:
+>   - Executed and passing: targeted Vitest files (22 passed total in focused
+>     run)
+>   - Added but not executed in this batch: Cypress spec (requires full E2E
+>     runtime with app/server dependencies)
 >
 > **Batch Delta (2026-03-12, DB layer + schema validation expansion):**
 >
