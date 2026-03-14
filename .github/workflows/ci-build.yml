@@ -344,6 +344,15 @@ jobs:
           retention-days: 14
           if-no-files-found: ignore
 
+      - name: Upload E2E NYC raw output (for PR coverage merge)
+        uses: actions/upload-artifact@v4
+        if: always() && matrix.node-version == 22
+        with:
+          name: web-e2e-nyc-output-node${{ matrix.node-version }}
+          path: apps/web/.nyc_output
+          retention-days: 14
+          if-no-files-found: ignore
+
       - name: Upload Cypress screenshots
         uses: actions/upload-artifact@v4
         if: failure()
@@ -447,6 +456,19 @@ jobs:
         run: pnpm tsx scripts/get-changed-e2e-specs.ts
         env:
           GITHUB_BASE_REF: ${{ github.base_ref }}
+
+      - name: Download base E2E NYC output (seed for full coverage merge)
+        if: steps.changed-specs.outputs.specs != 'skip' && matrix.node-version == 22
+        uses: dawidd6/action-download-artifact@v8
+        continue-on-error: true
+        with:
+          workflow: ci-build.yml
+          branch: main
+          name: web-e2e-nyc-output-node22
+          path: apps/web/.nyc_output
+          if_no_artifact_found: warn
+          check_artifacts: true
+          search_artifacts: true
 
       - name: Cache Cypress
         if: steps.changed-specs.outputs.specs != 'skip'
