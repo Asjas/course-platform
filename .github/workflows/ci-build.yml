@@ -538,9 +538,9 @@ jobs:
           CYPRESS_SPECS: ${{ steps.changed-specs.outputs.specs }}
         run: |
           if [ -n "$CYPRESS_SPECS" ]; then
-            pnpm --filter @apps/web run e2e:run -- --browser chrome --spec "$CYPRESS_SPECS"
+            pnpm --filter @apps/web exec cypress run --browser chrome --spec "$CYPRESS_SPECS"
           else
-            pnpm --filter @apps/web run e2e:run -- --browser chrome
+            pnpm --filter @apps/web exec cypress run --browser chrome
           fi
 
       - name: Generate E2E coverage report

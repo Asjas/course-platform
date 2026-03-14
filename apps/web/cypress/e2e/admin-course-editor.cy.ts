@@ -15,6 +15,12 @@ describe("Admin Course Editor", () => {
   it("should open edit page from courses table when a course exists", () => {
     cy.visit("/admin/courses");
 
+    // Gate: wait for the course table to render before taking the one-shot
+    // DOM snapshot. Without this the snapshot may fire before the collection
+    // populates the table, returning no edit links and silently skipping the
+    // real assertions.
+    cy.waitForContent("tbody tr", "No courses found");
+
     cy.get("body").then(($body) => {
       if ($body.text().includes("No courses found")) {
         cy.contains("No courses found").should("be.visible");
@@ -62,9 +68,6 @@ describe("Admin Course Editor Access Control", () => {
   it("should block non-admin users from admin course editor routes", () => {
     cy.visit("/admin/courses");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

@@ -20,6 +20,10 @@ describe("Admin Courses Management", () => {
   it("should open and close delete confirmation", () => {
     cy.visit("/admin/courses");
 
+    // Gate: wait for the course table to fully render before inspecting the
+    // DOM. The collection loads asynchronously after the page heading appears.
+    cy.waitForContent("tbody tr", "No courses found");
+
     cy.get("body").then(($body) => {
       if ($body.text().includes("No courses found")) {
         cy.contains("No courses found").should("be.visible");
@@ -54,9 +58,6 @@ describe("Admin Courses Access Control", () => {
   it("should block non-admin users from admin courses page", () => {
     cy.visit("/admin/courses");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

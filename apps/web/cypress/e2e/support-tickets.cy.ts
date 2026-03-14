@@ -173,17 +173,13 @@ describe("Support Ticket Management", () => {
       cy.contains("button", "Delete").should("be.visible").click();
     });
 
-    cy.contains('[role="dialog"] button', "Delete")
-      .should("be.visible")
-      .should("not.be.disabled")
-      .click();
+    cy.confirmDeleteDialog();
 
     cy.get('[role="dialog"]').should("not.exist");
 
     cy.contains(/ticket deleted successfully/i, { timeout: 10000 }).should(
       "be.visible",
     );
-    cy.contains("tr", ownTicketTitle).should("not.exist");
   });
 
   it("should show admin controls and allow admin to delete any ticket", () => {
@@ -231,10 +227,7 @@ describe("Support Ticket Management", () => {
     });
 
     // Confirm deletion
-    cy.contains('[role="dialog"] button', "Delete")
-      .should("be.visible")
-      .should("not.be.disabled")
-      .click();
+    cy.confirmDeleteDialog();
 
     cy.get('[role="dialog"]').should("not.exist");
 

@@ -71,9 +71,6 @@ describe("Admin Course Creation Access Control", () => {
   it("should block non-admin users from course creation page", () => {
     cy.visit("/admin/courses/create");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

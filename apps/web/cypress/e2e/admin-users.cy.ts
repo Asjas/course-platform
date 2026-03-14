@@ -25,12 +25,14 @@ describe("Admin Users Management - Full CRUD", () => {
   });
 
   it("should create and view user in admin list", () => {
-    cy.contains("tr", testUserEmail).should("be.visible");
-    cy.contains("tr", testUserName).should("be.visible");
+    // The users table is populated by the collection asynchronously; use an
+    // explicit timeout so CI's slower network doesn't exhaust the 4 s default.
+    cy.contains("tr", testUserEmail, { timeout: 10000 }).should("be.visible");
+    cy.contains("tr", testUserName, { timeout: 10000 }).should("be.visible");
   });
 
   it("should display user details in edit sheet", () => {
-    cy.contains("tr", testUserEmail).within(() => {
+    cy.contains("tr", testUserEmail, { timeout: 10000 }).within(() => {
       cy.contains("button", "Edit").click();
     });
 
@@ -42,7 +44,7 @@ describe("Admin Users Management - Full CRUD", () => {
   });
 
   it("should update user role and ban state", () => {
-    cy.contains("tr", testUserEmail).within(() => {
+    cy.contains("tr", testUserEmail, { timeout: 10000 }).within(() => {
       cy.contains("button", "Edit").click();
     });
 
@@ -71,18 +73,13 @@ describe("Admin Users Management - Full CRUD", () => {
       return null;
     });
 
-    cy.contains("tr", testUserEmail)
+    cy.contains("tr", testUserEmail, { timeout: 10000 })
       .find("button")
       .contains("Delete")
       .should("be.visible")
       .click();
 
-    cy.get('[role="dialog"]').within(() => {
-      cy.contains("button", "Delete")
-        .should("be.visible")
-        .should("not.be.disabled")
-        .click();
-    });
+    cy.confirmDeleteDialog();
 
     cy.contains(/Deleted user|deleted/i, { timeout: 10000 }).should(
       "be.visible",
@@ -99,9 +96,6 @@ describe("Admin Users Access Control", () => {
   it("should block non-admin users from admin users page", () => {
     cy.visit("/admin/users");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

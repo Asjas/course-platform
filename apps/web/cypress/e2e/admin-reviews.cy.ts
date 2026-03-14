@@ -4,6 +4,11 @@ function visitReviewsPage() {
 }
 
 function withReviewsTable(assertion: () => void) {
+  // Gate the snapshot until the table has rendered (rows present) or the empty
+  // state message is visible. Without this, cy.get("body").then() fires before
+  // the React Query collection populates the table, making the hasRows check
+  // silently wrong.
+  cy.waitForContent("tbody tr", "No reviews found");
   cy.get("body").then(($body) => {
     const hasRows = $body.find("tbody tr").length > 0;
 
@@ -135,9 +140,7 @@ describe("Admin Reviews Management", () => {
             cy.contains("button", "Delete review").click();
           });
 
-        cy.get('[role="dialog"]').within(() => {
-          cy.contains("button", "Delete").should("be.visible").click();
-        });
+        cy.confirmDeleteDialog();
 
         cy.contains(/deleted successfully/i, { timeout: 10000 }).should(
           "be.visible",
@@ -152,6 +155,7 @@ describe("Admin Reviews Management", () => {
   it("should show empty state when no reviews exist", () => {
     visitReviewsPage();
 
+    cy.waitForContent("tbody tr", "No reviews found");
     cy.get("body").then(($body) => {
       if ($body.find("tbody tr").length === 0) {
         cy.contains(
@@ -172,9 +176,6 @@ describe("Admin Reviews Access Control", () => {
   it("should block non-admin users from reviews page", () => {
     cy.visit("/admin/reviews");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

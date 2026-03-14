@@ -147,4 +147,63 @@ Cypress.Commands.add(
   },
 );
 
+/**
+ * Wait for async content to render before inspecting the DOM.
+ * Retries until either `selector` matches at least one element OR the page
+ * body contains `emptyText` (the empty-state message). Use this before a
+ * `cy.get("body").then()` block that branches on whether content has loaded.
+ *
+ * `selector` supports jQuery extended selectors (e.g. `th:contains("Timestamp")`).
+ * Pass `{ timeout }` when the data takes longer than the default to load.
+ *
+ * @example
+ * cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
+ * cy.waitForContent('th:contains("Timestamp")', "No audit logs yet", { timeout: 15000 });
+ */
+Cypress.Commands.add(
+  "waitForContent",
+  (selector: string, emptyText: string, options?: { timeout?: number }) => {
+    cy.get("body", { timeout: options?.timeout ?? 10000 }).should(($body) => {
+      expect(
+        $body.find(selector).length > 0 || $body.text().includes(emptyText),
+        `"${selector}" elements or "${emptyText}" to appear`,
+      ).to.equal(true);
+    });
+  },
+);
+
+/**
+ * Assert that a non-admin user was denied access and redirected to /dashboard
+ * with the "Access denied. Admin privileges are required." toast visible.
+ * Use this as the single assertion in every "Access Control" describe block.
+ *
+ * @example
+ * cy.visit("/admin/stats");
+ * cy.assertAccessDenied();
+ */
+Cypress.Commands.add("assertAccessDenied", () => {
+  cy.url().should("include", "/dashboard");
+  cy.contains("Access denied. Admin privileges are required.").should(
+    "be.visible",
+  );
+});
+
+/**
+ * Confirm a delete action inside the `ConfirmDialog` by clicking the Delete
+ * button inside `[role="dialog"]`. Waits for the button to be visible and
+ * enabled before clicking.
+ *
+ * @example
+ * cy.contains("button", "Delete review").click();
+ * cy.confirmDeleteDialog();
+ */
+Cypress.Commands.add("confirmDeleteDialog", () => {
+  cy.get('[role="dialog"]').within(() => {
+    cy.contains("button", "Delete")
+      .should("be.visible")
+      .should("not.be.disabled")
+      .click();
+  });
+});
+
 export {};

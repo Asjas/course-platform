@@ -9,6 +9,14 @@ describe("Notifications - Unauthenticated", () => {
 
 describe("Notifications - Authenticated", () => {
   function assertNewTabContentVisible() {
+    // Gate the snapshot until either a dismissible notification is rendered or
+    // the "no notifications" empty state appears. The notifications panel opens
+    // asynchronously; without this gate the one-shot then() can fire before
+    // the panel content has been painted.
+    cy.waitForContent(
+      '[aria-label="Dismiss notification"]',
+      "No new notifications",
+    );
     cy.get("body").then(($body) => {
       const hasEmpty = $body.text().includes("No new notifications");
 
@@ -28,6 +36,12 @@ describe("Notifications - Authenticated", () => {
   }
 
   function assertReadTabContentVisible() {
+    // Gate until either a dismissed notification badge or the empty-state text
+    // is present. jQuery :contains() matches any ancestor element whose text
+    // content includes "Dismissed", so length > 0 whenever any dismissed item
+    // is rendered. Without this gate, the then() snapshot fires before React
+    // re-renders the Read tab panel after switching.
+    cy.waitForContent(':contains("Dismissed")', "No read notifications");
     cy.get("body").then(($body) => {
       const hasEmpty = $body.text().includes("No read notifications");
 

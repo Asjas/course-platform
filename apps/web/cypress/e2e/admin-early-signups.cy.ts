@@ -57,6 +57,11 @@ describe("Admin Early Signups - Status filters", () => {
   it("filters rows by selected status", () => {
     cy.visit("/admin/early-signups");
 
+    // Gate: wait for the signups table to be populated by the collection
+    // before clicking filter tabs. Without this, the filter click can fire
+    // before the async data renders and the email assertions time out.
+    cy.waitForContent("tbody tr", "No early signups");
+
     cy.contains("button", "Pending").click();
     cy.contains(pendingEmail).should("be.visible");
     cy.contains(invitedEmail).should("not.exist");
@@ -80,6 +85,9 @@ describe("Admin Early Signups - Status filters", () => {
 
   it("shows signup as invited after persisted reactivation", () => {
     cy.visit("/admin/early-signups");
+
+    // Gate: wait for the table to render before clicking the Canceled filter
+    cy.waitForContent("tbody tr", "No early signups");
 
     cy.contains("button", "Canceled").click();
     cy.contains(reactivatedEmail).should("be.visible");

@@ -26,21 +26,22 @@ describe("Admin Stats Dashboard", () => {
       .parent()
       .parent()
       .within(() => {
-        cy.contains(/^\$\d+\.\d{2}$/).should("be.visible");
+        // KPI values load via tRPC — allow extra time beyond the 4 s default
+        cy.contains(/^\$\d+\.\d{2}$/, { timeout: 10000 }).should("be.visible");
       });
 
     cy.contains("Verified Users")
       .parent()
       .parent()
       .within(() => {
-        cy.contains(/% verified$/).should("be.visible");
+        cy.contains(/% verified$/, { timeout: 10000 }).should("be.visible");
       });
 
     cy.contains("Resolution Rate")
       .parent()
       .parent()
       .within(() => {
-        cy.contains(/^\d+%$/).should("be.visible");
+        cy.contains(/^\d+%$/, { timeout: 10000 }).should("be.visible");
       });
   });
 
@@ -82,9 +83,6 @@ describe("Admin Stats Access Control", () => {
   it("should block non-admin users from admin stats page", () => {
     cy.visit("/admin/stats");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

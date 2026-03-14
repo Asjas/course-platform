@@ -135,9 +135,6 @@ describe("Admin Announcements Access Control", () => {
   it("should block non-admin users from admin announcements", () => {
     cy.visit("/admin/announcements");
 
-    cy.url().should("include", "/dashboard");
-    cy.contains("Access denied. Admin privileges are required.").should(
-      "be.visible",
-    );
+    cy.assertAccessDenied();
   });
 });

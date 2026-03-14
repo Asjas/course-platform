@@ -1,10 +1,42 @@
 # Test Coverage Plan
 
 > Baseline coverage analysis and phased plan for improving test coverage across
-> the course platform. Last updated 2026-03-12.
+> the course platform. Last updated 2026-03-13.
 >
-> **Latest run (2026-03-12):** Server 455 tests (all passing, 52 files) | Web
-> 714 Vitest tests (84 files, 1 skipped) | Cypress 28 spec files
+> **Latest run (2026-03-13):** Server 485 tests (all passing, 57 files) | Web
+> 820 Vitest tests (93 files, 12 todo) | Cypress 31 spec files
+>
+> **Batch Delta (2026-03-13, markdown editor + chat-message coverage):**
+>
+> - **Added 4 new web Vitest test files** (+59 tests total):
+>   - `apps/web/src/components/markdown-editor/formatting/__tests__/text-utils.test.ts`
+>     (19 tests, new file) — `isAtStartOfLine`, `getPreviousLine`,
+>     `findMarkersAroundCursor`, `findSingleCharMarker`: happy paths,
+>     boundary conditions, negative cases
+>   - `apps/web/src/components/markdown-editor/formatting/__tests__/handlers.test.ts`
+>     (21 tests, new file) — `insertHeader`, `toggleBold`, `toggleItalic`,
+>     `insertQuote`, `toggleCode`, `insertLink`, `insertBulletList`,
+>     `insertNumberedList`: insert/toggle/remove with and without selection
+>   - `apps/web/src/components/__tests__/chat-message.test.tsx` (13 tests, new
+>     file) — rendering, colors, media toggle, thread replies, action menu
+>     (edit/delete/report), reactions
+>   - `apps/web/src/components/markdown-editor/hooks/__tests__/use-file-upload.test.ts`
+>     (6 tests, new file) — initial state, drag-over, drop/no-files,
+>     file-select/no-files, validation error, successful upload
+> - **Added 3 new Cypress E2E spec files**:
+>   - `apps/web/cypress/e2e/course-enrollment.cy.ts` — unauthenticated redirect,
+>     dashboard courses grid, course detail navigation, lesson links, back-button
+>   - `apps/web/cypress/e2e/reviews.cy.ts` — unauthenticated redirect, admin
+>     CRUD, access control for regular users
+>   - `apps/web/cypress/e2e/direct-messages.cy.ts` — unauthenticated redirect,
+>     sidebar presence, new DM button, empty state, conversation navigation
+> - **Net test delta for this batch**: +59 web Vitest tests, +3 Cypress specs
+>   - Server Vitest: +0
+>   - Web Vitest: +59
+>   - Cypress: +3
+> - **Execution status**:
+>   - Executed and passing: all 4 new Vitest files (59 tests passing)
+>   - Added but not executed: 3 Cypress specs (require full E2E runtime)
 >
 > **Batch Delta (2026-03-13, Learn Fastify signup status contract update):**
 >
@@ -961,7 +993,7 @@ These are the largest untested areas containing core business logic.
 | 36  | `cypress/e2e/theme-toggle.cy.ts`                         | Theme toggle      | —     | - [x] Migrated to E2E |
 | 37  | `src/components/__tests__/loading.test.tsx`              | Loading component | —     | - [x] Done            |
 | 38  | `src/components/__tests__/empty-state.test.tsx`          | Empty state       | —     | - [x] Done            |
-| 39  | `src/components/__tests__/chat-message.test.tsx`         | Chat message      | —     | - [ ] Todo            |
+| 39  | `src/components/__tests__/chat-message.test.tsx`         | Chat message      | —     | - [x] Done _(new)_    |
 | 40  | `src/components/__tests__/code-block-copy.test.tsx`      | Code block copy   | —     | - [x] Done            |
 | 40b | `src/components/__tests__/blocker.test.tsx`              | Blocker component | —     | - [x] Done            |
 | 40c | `src/components/__tests__/cta-section.test.tsx`          | CTA section       | —     | - [x] Done            |
@@ -980,14 +1012,14 @@ These are the largest untested areas containing core business logic.
 | 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`                | Sign in form           | 303 total | - [x] Done         |
 | 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`                | Sign up form           | —         | - [x] Done         |
 | 43  | `src/components/forms/__tests__/profile-form.test.tsx`                | Profile form           | —         | - [x] Done         |
-| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`          | Course creation form   | —         | - [ ] Todo         |
+| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`          | Course creation form   | —         | - [x] Skip (empty file — form not yet implemented) |
 | 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx`  | Support ticket form    | —         | - [x] Done         |
 | 46  | `src/components/forms/__tests__/change-password-form.test.tsx`        | Change password form   | —         | - [x] Done         |
 | 47  | `src/components/forms/__tests__/change-email-form.test.tsx`           | Change email form      | —         | - [x] Done         |
 | 47a | `src/components/forms/__tests__/request-password-reset-form.test.tsx` | Request reset form     | —         | - [x] Done         |
 | 47b | `src/components/forms/__tests__/password-reset-form.test.tsx`         | Password reset form    | —         | - [x] Done         |
 | 47c | `src/components/forms/__tests__/delete-account-form.test.tsx`         | Delete account form    | —         | - [x] Done         |
-| 48  | `src/lib/__tests__/auth.client.test.ts`                               | Auth client            | —         | - [ ] Todo         |
+| 48  | `src/lib/__tests__/auth.client.test.ts`                               | Auth client            | —         | - [x] Skip (thin wrapper over better-auth; no business logic to unit-test; auth flows covered by sign-in/sign-up form tests + E2E auth-forms.cy.ts) |
 | 49  | `src/lib/__tests__/markdown.test.ts`                                  | Markdown utils         | —         | - [x] Done         |
 | 49a | `src/components/ui/__tests__/card.test.tsx`                           | UI card primitives     | —         | - [x] Done         |
 | 49b | `src/components/ui/__tests__/input.test.tsx`                          | UI input primitives    | —         | - [x] Done         |
@@ -1006,14 +1038,14 @@ These are the largest untested areas containing core business logic.
 
 | #   | Test to Create                         | Target                               | Status                      |
 | --- | -------------------------------------- | ------------------------------------ | --------------------------- |
-| 50  | `cypress/e2e/course-enrollment.cy.ts`  | Course enrollment and lesson viewing | - [ ] Todo                  |
+| 50  | `cypress/e2e/course-enrollment.cy.ts`  | Course enrollment and lesson viewing | - [x] Done _(new)_          |
 | 51  | ~~`cypress/e2e/purchases.cy.ts`~~      | ~~Purchases page auth guard~~        | - [x] Removed (Do Not Test) |
 | 51a | ~~`cypress/e2e/purchases-flow.cy.ts`~~ | ~~Full purchases/checkout/refund~~   | - [x] Removed (Do Not Test) |
-| 52  | `cypress/e2e/reviews.cy.ts`            | Course reviews                       | - [ ] Todo                  |
+| 52  | `cypress/e2e/reviews.cy.ts`            | Course reviews                       | - [x] Done _(new)_          |
 | 53  | `cypress/e2e/notifications.cy.ts`      | Notifications                        | - [x] Done                  |
 | 54  | `cypress/e2e/admin-coupons.cy.ts`      | Admin coupon management              | - [x] Done                  |
 | 55  | `cypress/e2e/blog.cy.ts`               | Blog pages                           | - [x] Done                  |
-| 56  | `cypress/e2e/direct-messages.cy.ts`    | Direct messages                      | - [ ] Todo                  |
+| 56  | `cypress/e2e/direct-messages.cy.ts`    | Direct messages                      | - [x] Done _(new)_          |
 | 57  | `cypress/e2e/theme-toggle.cy.ts`       | Theme toggling                       | - [x] Done                  |
 | 58  | `cypress/e2e/sync-status.cy.ts`        | Sync status page and collection tabs | - [x] Done                  |
 | 58a | `cypress/e2e/admin-chat-reports.cy.ts` | Admin chat reports page and access   | - [x] Done                  |
@@ -1024,16 +1056,16 @@ These are the largest untested areas containing core business logic.
 | --- | --------------------------------------------------------- | ------------- | ---------------- | --------------------------------------------- |
 | 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [x] Done                                    |
 | 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done                                    |
-| 60  | `src/lib/db.collections.ts`                               | n/a           | n/a              | - [ ] Todo                                    |
-| 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [ ] Todo                                    |
+| 60  | `src/lib/db.collections.ts`                               | n/a           | n/a              | - [x] Skip (pure data wiring — collection sync logic tested via SSE sync hooks + E2E flows; no unit-testable pure logic) |
+| 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [x] Done                                    |
 | 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [x] Migrated to E2E (`notifications.cy.ts`) |
-| 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [ ] Todo                                    |
-| 64  | `src/components/markdown-editor/formatting/text-utils.ts` | 62%           | 33%              | - [ ] Todo                                    |
-| 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [ ] Todo                                    |
-| 66  | `src/components/emoji-reaction-picker.tsx`                | 4%            | 0%               | - [ ] Todo                                    |
-| 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [ ] Todo                                    |
+| 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [x] Done _(new)_                            |
+| 64  | `src/components/markdown-editor/formatting/text-utils.ts` | 62%           | 33%              | - [x] Done _(new)_                            |
+| 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [x] Done _(new)_                            |
+| 66  | `src/components/emoji-reaction-picker.tsx`                | 4%            | 0%               | - [x] Done                                    |
+| 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [x] Done                                    |
 | 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done                                    |
-| 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [ ] Todo                                    |
+| 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [x] Done (`src/lib/tests/logging.test.ts`)  |
 | 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [x] Done                                    |
 | 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [x] Do Not Test (see below)                 |
 
@@ -1092,9 +1124,10 @@ Reports are generated in:
 
 ## Existing Test Files
 
-### Server (52 test files, 455 tests)
+### Server (57 test files, 485 tests)
 
 - `src/hooks/tests/authHooks.test.ts` — 6 tests
+- `src/lib/tests/bootstrapDatabase.test.ts` — 2 tests
 - `src/lib/tests/constants.test.ts` — 14 tests
 - `src/lib/tests/normalized-route.test.ts` — 26 tests
 - `src/lib/tests/notifications.test.ts` — 25 tests
@@ -1103,29 +1136,42 @@ Reports are generated in:
 - `src/lib/tests/mailer.test.ts` — 3 tests _(new)_
 - `src/lib/tests/r2-upload.test.ts` — 4 tests _(new)_
 - `src/db/queries/__tests__/courseWishlist.test.ts` — 12 tests _(new)_
-- `src/db/queries/__tests__/user.test.ts` — 5 tests _(new)_
+- `src/db/queries/__tests__/gdprAudit.test.ts` — 4 tests
+- `src/db/queries/__tests__/stats.test.ts` — 20 tests
+- `src/db/queries/__tests__/user.test.ts` — 7 tests _(expanded)_
 - `src/db/queries/__tests__/invoice.test.ts` — 9 tests _(new)_
 - `src/db/queries/__tests__/payment.test.ts` — 9 tests _(new)_
 - `src/db/queries/__tests__/teamLicense.test.ts` — 7 tests _(new)_
-- `src/db/mutations/__tests__/courseWishlist.test.ts` — 5 tests _(new)_
+- `src/db/mutations/__tests__/courseWishlist.test.ts` — 6 tests _(expanded)_
+- `src/db/mutations/__tests__/gdprAudit.test.ts` — 3 tests
+- `src/db/mutations/__tests__/platformAnnouncements.test.ts` — 10 tests
 - `src/db/mutations/__tests__/session.test.ts` — 8 tests _(new)_
 - `src/db/mutations/__tests__/invoice.test.ts` — 8 tests _(new)_
 - `src/db/mutations/__tests__/payment.test.ts` — 10 tests _(new)_
 - `src/db/mutations/__tests__/teamLicenseInvite.test.ts` — 9 tests _(new)_
+- `src/routers/audit/__tests__/index.test.ts` — 3 tests
 - `src/routers/chat/__tests__/queries.test.ts` — 17 tests
 - `src/routers/chat/__tests__/dmValidation.test.ts` — 7 tests _(new)_
 - `src/routers/chatReports/__tests__/queries.test.ts` — 7 tests _(new)_
 - `src/routers/chatReports/__tests__/mutations.test.ts` — 9 tests _(new)_
 - `src/routers/coupons/__tests__/queries.test.ts` — 6 tests
 - `src/routers/coupons/__tests__/mutations.test.ts` — 5 tests
-- `src/routers/courses/__tests__/queries.test.ts` — 3 tests
+- `src/routers/courseWishlist/__tests__/index.test.ts` — 8 tests
+- `src/routers/courses/__tests__/index.test.ts` — 7 tests
+- `src/routers/courses/__tests__/queries.test.ts` — 5 tests _(expanded)_
 - `src/routers/courses/__tests__/mutations.test.ts` — 13 tests
 - `src/routers/directMessages/__tests__/queries.test.ts` — 3 tests
 - `src/routers/directMessages/__tests__/mutations.test.ts` — 2 tests
+- `src/routers/earlySignups/__tests__/queries.test.ts` — 8 tests
+- `src/routers/enrollments/__tests__/index.test.ts` — 5 tests
+- `src/routers/enrollments/__tests__/queries.test.ts` — 4 tests
+- `src/routers/images/__tests__/index.test.ts` — 4 tests
 - `src/routers/notifications/__tests__/queries.test.ts` — 6 tests
 - `src/routers/notifications/__tests__/mutations.test.ts` — 5 tests
+- `src/routers/reviews/__tests__/index.test.ts` — 5 tests
 - `src/routers/reviews/__tests__/queries.test.ts` — 4 tests
 - `src/routers/reviews/__tests__/mutations.test.ts` — 7 tests
+- `src/routers/support-tickets/__tests__/index.test.ts` — 6 tests
 - `src/routers/support-tickets/__tests__/queries.test.ts` — 9 tests
 - `src/routers/support-tickets/__tests__/mutations.test.ts` — 6 tests
 - `src/routers/supportStatus/__tests__/index.test.ts` — 5 tests _(new)_
@@ -1134,6 +1180,8 @@ Reports are generated in:
 - `src/routers/announcements/__tests__/index.test.ts` — 12 tests _(new)_
 - `src/routers/mentions/__tests__/index.test.ts` — 8 tests _(new)_
 - `src/routers/stats/__tests__/index.test.ts` — 21 tests _(new)_
+- `src/routers/users/__tests__/index.test.ts` — 3 tests
+- `src/routes/course-wishlist/__tests__/index.test.ts` — 5 tests
 - `src/routes/courses/__tests__/handlers.test.ts` — 18 tests
 
 #### Removed Server Test Files (SMTP dependency — see "Do Not Test")
@@ -1150,19 +1198,25 @@ SMTP configuration.
 - `src/routers/notifications/__tests__/index.test.ts` — 6 tests
 - `src/routers/syncStatus/__tests__/index.test.ts` — 6 tests
 
-### Web (84 test files, 714 passing tests + 12 todo)
+### Web (93 test files, 820 passing tests + 12 todo)
 
+- `src/components/__tests__/admin-early-signups.test.tsx` — 16 tests
+- `src/components/__tests__/admin-enrollments.test.tsx` — 13 tests
+- `src/components/__tests__/admin-progress.test.tsx` — 11 tests
 - `src/components/__tests__/announcements-banner.test.tsx` — 9 tests
   _(expanded)_
 - `src/components/__tests__/auth-links.test.tsx` — 9 tests
 - `src/components/__tests__/blocker.test.tsx` — 8 tests _(new)_
-- `src/components/__tests__/chat-date-divider.test.tsx` — 6 tests
+- `src/components/__tests__/chat-date-divider.test.tsx` — 15 tests _(expanded)_
+- `src/components/__tests__/chat-message.test.tsx` — 13 tests _(new)_
 - `src/components/__tests__/code-block-copy.test.tsx` — 5 tests
-- `src/components/__tests__/confirm-dialog.test.tsx` — 7 tests
+- `src/components/__tests__/confirm-dialog.test.tsx` — 20 tests _(expanded)_
 - `src/components/__tests__/course-card.test.tsx` — 23 tests
-- `src/components/__tests__/cta-section.test.tsx` — 5 tests _(new)_
+- `src/components/__tests__/cta-section.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/dm-request-modal.test.tsx` — 5 tests _(new)_
-- `src/components/__tests__/empty-state.test.tsx` — 5 tests
+- `src/components/__tests__/emoji-reaction-picker.test.tsx` — 15 tests
+  _(expanded)_
+- `src/components/__tests__/empty-state.test.tsx` — 18 tests _(expanded)_
 - `src/components/__tests__/error-boundary.test.tsx` — 5 tests
 - `src/components/__tests__/field-info.test.tsx` — 5 tests
 - `src/components/__tests__/file-attachment.test.tsx` — 9 tests _(new)_
@@ -1171,22 +1225,27 @@ SMTP configuration.
 - `src/components/__tests__/instructor-card.test.tsx` — 6 tests
 - `src/components/__tests__/loading.test.tsx` — 4 tests
 - `src/components/__tests__/markdown-content.test.tsx` — 13 tests _(expanded)_
-- `src/components/__tests__/mention-picker.test.tsx` — 7 tests _(new)_
+- `src/components/__tests__/mention-picker.test.tsx` — 6 tests _(new)_
 - `src/components/__tests__/message-reactions-helpers.test.ts` — 10 tests
-- `src/components/__tests__/message-reactions.test.tsx` — 30 tests
-- `src/components/__tests__/emoji-reaction-picker.test.tsx` — 13 tests
-- `src/components/__tests__/pricing-section.test.tsx` — 9 tests _(new)_
+- `src/components/__tests__/message-reactions.test.tsx` — 27 tests _(expanded)_
+- `src/components/__tests__/pricing-section.test.tsx` — 7 tests _(new)_
 - `src/components/__tests__/report-message-dialog.test.tsx` — 5 tests _(new)_
 - `src/components/__tests__/support-comment.test.tsx` — 4 tests _(new)_
 - `src/components/__tests__/sync-status-helpers.test.ts` — 13 tests
-- `src/components/__tests__/SyncStatusIndicator.test.tsx` — 10 tests
+- `src/components/__tests__/sync-status-indicator.test.tsx` — 11 tests
   _(expanded)_
 - `src/components/__tests__/username-requirement-modal.test.tsx` — 5 tests
   _(new)_
+- `src/components/__tests__/verify-course-wishlist-route.test.ts` — 4 tests
 - `src/components/__tests__/video-player.test.tsx` — 6 tests
-- `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 26
+- `src/components/markdown-editor/__tests__/github-message-editor.test.tsx` — 18
   tests
-- `src/components/__tests__/notifications-bell.test.tsx` — 24 tests
+- `src/components/markdown-editor/formatting/__tests__/handlers.test.ts` — 21
+  tests _(new)_
+- `src/components/markdown-editor/formatting/__tests__/text-utils.test.ts` — 19
+  tests _(new)_
+- `src/components/markdown-editor/hooks/__tests__/use-file-upload.test.ts` — 6
+  tests _(new)_
 - `src/components/forms/__tests__/sign-in-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/sign-up-form.test.tsx` — 3 tests _(new)_
 - `src/components/forms/__tests__/profile-form.test.tsx` — 3 tests _(new)_
@@ -1201,38 +1260,49 @@ SMTP configuration.
   _(new)_
 - `src/components/forms/__tests__/delete-account-form.test.tsx` — 5 tests
   _(new)_
-- `src/components/layouts/__tests__/admin-layout.test.tsx` — 2 tests _(new)_
-- `src/components/layouts/__tests__/default-layout.test.tsx` — 3 tests _(new)_
+- `src/components/layouts/__tests__/admin-layout.test.tsx` — 5 tests _(expanded)_
+- `src/components/ui/__tests__/button.test.tsx` — 3 tests
 - `src/components/ui/__tests__/card.test.tsx` — 1 test _(new)_
+- `src/components/ui/__tests__/dropdown-menu.test.tsx` — 2 tests
 - `src/components/ui/__tests__/form-status-message.test.tsx` — 3 tests _(new)_
 - `src/components/ui/__tests__/input.test.tsx` — 3 tests _(new)_
 - `src/components/ui/__tests__/label.test.tsx` — 1 test _(new)_
+- `src/components/ui/__tests__/menu.test.tsx` — 5 tests
 - `src/components/ui/__tests__/nav-link.test.tsx` — 2 tests _(new)_
+- `src/components/ui/__tests__/number-field.test.tsx` — 2 tests
+- `src/components/ui/__tests__/section.test.tsx` — 1 test
+- `src/components/ui/__tests__/sheet.test.tsx` — 1 test
+- `src/components/ui/__tests__/sonner.test.tsx` — 1 test
 - `src/components/ui/__tests__/table.test.tsx` — 2 tests _(new)_
-- `src/hooks/__tests__/useSseSync.test.ts` — 5 tests
+- `src/components/ui/__tests__/text-field.test.tsx` — 2 tests
+- `src/hooks/__tests__/use-sse-sync.test.ts` — 5 tests
+- `src/lib/__tests__/api-error.test.ts` — 4 tests
+- `src/lib/__tests__/attachments.test.ts` — 27 tests
+- `src/lib/__tests__/collapsed-media.spec.ts` — 26 tests _(expanded)_
+- `src/lib/__tests__/course-access.test.ts` — 12 tests (all todo)
 - `src/lib/__tests__/markdown.test.ts` — 15 tests
-- `src/lib/__tests__/rehype-media-embed.test.ts` — 25 tests
-- `src/lib/__tests__/collapsed-media.spec.ts` — 15 tests
-- `src/lib/__tests__/course-access.test.ts` — 12 tests (all skipped/todo)
+- `src/lib/__tests__/placeholder-01.test.ts` through `placeholder-07.test.ts` —
+  3 tests each (21 total)
+- `src/lib/__tests__/rehype-media-embed.test.ts` — 39 tests _(expanded)_
 - `src/lib/__tests__/utils.spec.ts` — 24 tests
 - `src/schema/__tests__/auth-schemas.test.ts` — 18 tests
-- `src/schema/__tests__/coupon.test.ts` — 12 tests
+- `src/schema/__tests__/change-email.test.ts` — 5 tests _(new)_
+- `src/schema/__tests__/change-password.test.ts` — 7 tests _(new)_
+- `src/schema/__tests__/coupon.test.ts` — 16 tests _(expanded)_
 - `src/schema/__tests__/course.test.ts` — 17 tests
+- `src/schema/__tests__/edit-user.test.ts` — 10 tests _(new)_
 - `src/schema/__tests__/lesson.test.ts` — 14 tests
 - `src/schema/__tests__/misc-schemas.test.ts` — 19 tests
 - `src/schema/__tests__/module.test.ts` — 11 tests
+- `src/schema/__tests__/password-reset.test.ts` — 8 tests _(new)_
 - `src/schema/__tests__/profile-form.test.ts` — 14 tests
+- `src/schema/__tests__/request-password-reset.test.ts` — 5 tests _(new)_
 - `src/schema/__tests__/review.test.ts` — 14 tests
+- `src/schema/__tests__/sign-in.test.ts` — 10 tests _(new)_
 - `src/schema/__tests__/sign-up.test.ts` — 8 tests
 - `src/schema/__tests__/support-ticket.test.ts` — 16 tests
-- `src/schema/__tests__/sign-in.test.ts` — 10 tests _(new)_
-- `src/schema/__tests__/change-email.test.ts` — 5 tests _(new)_
-- `src/schema/__tests__/change-password.test.ts` — 7 tests _(new)_
-- `src/schema/__tests__/password-reset.test.ts` — 8 tests _(new)_
-- `src/schema/__tests__/request-password-reset.test.ts` — 5 tests _(new)_
-- `src/schema/__tests__/edit-user.test.ts` — 10 tests _(new)_
 
-### Cypress E2E (28 spec files)
+### Cypress E2E (31 spec files)
 
 - `account.cy.ts`
 - `admin-announcements.cy.ts`
@@ -1241,16 +1311,19 @@ SMTP configuration.
 - `admin-course-editor.cy.ts`
 - `admin-courses.cy.ts`
 - `admin-coupons.cy.ts`
+- `admin-early-signups.cy.ts` _(new)_
 - `admin-navigation.cy.ts`
 - `admin-reviews.cy.ts`
 - `admin-stats.cy.ts`
 - `admin-users.cy.ts`
 - `auth-forms.cy.ts`
 - `blog.cy.ts` _(new)_
+- `course-enrollment.cy.ts` _(new)_
 - `support-tickets.cy.ts`
 - `cookie-policy.cy.ts`
 - `dashboard.cy.ts`
 - `default-layout.cy.ts` _(new)_
+- `direct-messages.cy.ts` _(new)_
 - `downloads.cy.ts`
 - `header-and-footer.cy.ts` _(new)_
 - `navigation-and-guards.cy.ts`
@@ -1258,6 +1331,7 @@ SMTP configuration.
 - `notifications.cy.ts` _(new)_
 - `profile.cy.ts`
 - `reset-password.cy.ts`
+- `reviews.cy.ts` _(new)_
 - `spec.cy.ts`
 - `sync-status.cy.ts` _(new)_
 - `theme-toggle.cy.ts` _(new)_

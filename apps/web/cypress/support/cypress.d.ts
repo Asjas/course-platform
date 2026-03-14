@@ -53,6 +53,32 @@ declare global {
         confirmedAt?: string | null;
         unsubscribedAt?: string | null;
       }): Chainable<void>;
+      /**
+       * Wait for async content to render before inspecting the DOM.
+       * Retries (via `.should`) until either `selector` matches an element OR
+       * the body text includes `emptyText`. Supports jQuery extended selectors
+       * (e.g. `th:contains("Timestamp")`). Pass `{ timeout }` when data loads slowly.
+       * @example cy.waitForContent('a[href*="/courses/"]', "No courses available yet")
+       * @example cy.waitForContent('th:contains("Timestamp")', "No audit logs yet", { timeout: 15000 })
+       */
+      waitForContent(
+        selector: string,
+        emptyText: string,
+        options?: { timeout?: number },
+      ): Chainable<void>;
+      /**
+       * Assert that the current user was denied admin access: URL includes
+       * "/dashboard" and the "Access denied. Admin privileges are required."
+       * toast is visible. Use this in every "Access Control" describe block.
+       * @example cy.assertAccessDenied()
+       */
+      assertAccessDenied(): Chainable<void>;
+      /**
+       * Confirm a delete action inside the ConfirmDialog by clicking the Delete
+       * button within `[role="dialog"]`. Waits for visible + enabled before clicking.
+       * @example cy.confirmDeleteDialog()
+       */
+      confirmDeleteDialog(): Chainable<void>;
     }
   }
 }
