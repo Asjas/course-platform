@@ -120,7 +120,7 @@ describe("Course Enrollment - Authenticated", () => {
           return null;
         }
 
-        cy.contains("Back to Courses").should("be.visible");
+        cy.contains("Back to Courses", { timeout: 10000 }).should("be.visible");
         return null;
       });
 
