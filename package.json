@@ -11,8 +11,8 @@
     "test:coverage": "turbo test:coverage --filter \"./apps/**\"",
     "lint": "eslint --cache --cache-location .cache/eslint --cache-strategy content .",
     "prettier": "prettier \"**/*.+(ts|tsx)\"",
-    "format": "npm run prettier -- --write --cache --cache-location .cache/prettier",
-    "check-format": "npm run prettier -- --list-different --cache --cache-location .cache/prettier",
+    "format": "prettier \"**/*.+(ts|tsx)\" --write --cache --cache-location .cache/prettier",
+    "check-format": "prettier \"**/*.+(ts|tsx)\" --list-different --cache --cache-location .cache/prettier",
     "typecheck": "turbo --filter \"./apps/**\" typecheck",
     "clean": "rimraf {apps,packages}/*/node_modules {apps,packages}/*/dist {apps,packages}/*/.turbo {apps,packages}/*/.tanstack {apps,packages}/*/.cache {apps,packages}/*/tsconfig*.tsbuildinfo node_modules/",
     "prepare": "husky"
