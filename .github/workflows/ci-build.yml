@@ -459,7 +459,7 @@ jobs:
 
       - name: Download base E2E NYC output (seed for full coverage merge)
         if: steps.changed-specs.outputs.specs != 'skip' && matrix.node-version == 22
-        uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@v18
         continue-on-error: true
         with:
           workflow: ci-build.yml
@@ -647,7 +647,7 @@ jobs:
           path: coverage/web-e2e
 
       - name: Download base server unit coverage
-        uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@v18
         continue-on-error: true
         with:
           workflow: ci-build.yml
@@ -659,7 +659,7 @@ jobs:
           search_artifacts: true
 
       - name: Download base web unit coverage
-        uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@v18
         continue-on-error: true
         with:
           workflow: ci-build.yml
@@ -671,7 +671,7 @@ jobs:
           search_artifacts: true
 
       - name: Download base web E2E coverage
-        uses: dawidd6/action-download-artifact@v8
+        uses: dawidd6/action-download-artifact@v18
         continue-on-error: true
         with:
           workflow: ci-build.yml
