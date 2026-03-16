@@ -109,10 +109,14 @@ describe("Course Enrollment - Authenticated", () => {
       cy.get('a[href*="/courses/"]').first().click();
       cy.url().should("match", /\/courses\/[^/]+/);
 
-      // Wait for the course page to fully render — either an h1 appears (course
-      // loaded successfully) or "Course not found" is shown (not accessible to
-      // this test user).
-      cy.waitForContent("h1", "Course not found");
+      // Wait for the course page to fully render — either the "Back to Courses"
+      // link appears (course loaded successfully) or "Course not found" is shown
+      // (not accessible to this test user). Use the "Back to Courses" link as
+      // the selector instead of a generic h1, because the dashboard also has an
+      // h1 ("My Courses") that TanStack Router keeps visible while the new
+      // route's loader is running, which would cause the generic h1 check to
+      // resolve before the course detail page has actually rendered.
+      cy.waitForContent('a:contains("Back to Courses")', "Course not found");
 
       cy.get("body").then(($coursePage) => {
         // Course is not accessible to this test user — skip remaining assertions
