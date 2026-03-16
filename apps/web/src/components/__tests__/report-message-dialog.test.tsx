@@ -46,11 +46,11 @@ describe("ReportMessageDialog", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
-  it("renders the dialog with all report reasons, a details textarea, and action buttons when open", () => {
+  it("renders the dialog with all report reasons, a details textarea, and action buttons when open", async () => {
     renderWithQueryClient(<ReportMessageDialog {...defaultProps} />);
 
     expect(
-      screen.getByRole("heading", { name: "Report Message" }),
+      await screen.findByRole("heading", { name: "Report Message" }),
     ).toBeInTheDocument();
 
     expect(screen.getByText("This is a bad message")).toBeInTheDocument();

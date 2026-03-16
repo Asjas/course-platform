@@ -120,7 +120,9 @@ describe("ChatMessageComponent", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "alice" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "alice" }),
+    ).toBeInTheDocument();
     // timestamp is shown as HH:mm format
     expect(screen.getByTitle(/2026/)).toBeInTheDocument();
   });
@@ -139,7 +141,7 @@ describe("ChatMessageComponent", () => {
     expect(await screen.findByText("Rendered content")).toBeInTheDocument();
   });
 
-  it("uses a custom color from msg.color when provided", () => {
+  it("uses a custom color from msg.color when provided", async () => {
     render(
       <ChatMessageComponent
         msg={makeMessage({ color: "rgb(255, 0, 0)" })}
@@ -149,7 +151,7 @@ describe("ChatMessageComponent", () => {
       />,
     );
 
-    const usernameButton = screen.getByRole("button", { name: "alice" });
+    const usernameButton = await screen.findByRole("button", { name: "alice" });
     expect(usernameButton).toHaveStyle("color: rgb(255, 0, 0)");
   });
 
@@ -165,10 +167,12 @@ describe("ChatMessageComponent", () => {
       />,
     );
 
+    // Wait for async markdown render to settle before asserting
+    await screen.findByRole("button", { name: "alice" });
     expect(screen.getByText("(edited)")).toBeInTheDocument();
   });
 
-  it("shows thread reply count button when replyCount > 0", () => {
+  it("shows thread reply count button when replyCount > 0", async () => {
     render(
       <ChatMessageComponent
         msg={makeMessage({ replyCount: 3 })}
@@ -179,11 +183,11 @@ describe("ChatMessageComponent", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /3 replies/i }),
+      await screen.findByRole("button", { name: /3 replies/i }),
     ).toBeInTheDocument();
   });
 
-  it("shows singular reply label when replyCount is 1", () => {
+  it("shows singular reply label when replyCount is 1", async () => {
     render(
       <ChatMessageComponent
         msg={makeMessage({ replyCount: 1 })}
@@ -194,11 +198,11 @@ describe("ChatMessageComponent", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /1 reply/i }),
+      await screen.findByRole("button", { name: /1 reply/i }),
     ).toBeInTheDocument();
   });
 
-  it("does not show reply button when replyCount is 0 or absent", () => {
+  it("does not show reply button when replyCount is 0 or absent", async () => {
     render(
       <ChatMessageComponent
         msg={makeMessage({ replyCount: 0 })}
@@ -208,6 +212,8 @@ describe("ChatMessageComponent", () => {
       />,
     );
 
+    // Wait for async markdown render to settle, then assert absence
+    await screen.findByRole("button", { name: "alice" });
     expect(
       screen.queryByRole("button", { name: /repl/i }),
     ).not.toBeInTheDocument();
@@ -318,7 +324,7 @@ describe("ChatMessageComponent", () => {
     ).toBeInTheDocument();
   });
 
-  it("displays reaction emoji count from props", () => {
+  it("displays reaction emoji count from props", async () => {
     // MessageReactions is mocked to null so we just verify the component doesn't crash
     const reactions = [
       makeReaction("👍", [{ userId: "u1", userName: "alice" }]),
@@ -334,5 +340,8 @@ describe("ChatMessageComponent", () => {
         />,
       ),
     ).not.toThrow();
+
+    // Wait for async markdown render to settle before the test ends
+    await screen.findByRole("button", { name: "alice" });
   });
 });
