@@ -160,7 +160,7 @@ jobs:
         run: pnpm turbo run test:coverage --filter=@apps/server
 
       - name: Upload server coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: server-unit-coverage-node${{ matrix.node-version }}
@@ -215,7 +215,7 @@ jobs:
         run: pnpm turbo run test:coverage --filter=@apps/web
 
       - name: Upload web coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: web-unit-coverage-node${{ matrix.node-version }}
@@ -336,7 +336,7 @@ jobs:
           pnpm e2e:coverage:report
 
       - name: Upload E2E coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: web-e2e-coverage-node${{ matrix.node-version }}
@@ -345,7 +345,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload E2E NYC raw output (for PR coverage merge)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always() && matrix.node-version == 22
         with:
           name: web-e2e-nyc-output-node${{ matrix.node-version }}
@@ -354,7 +354,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cypress-screenshots-${{ matrix.node-version }}
@@ -363,7 +363,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Cypress videos
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: cypress-videos-${{ matrix.node-version }}
@@ -554,7 +554,7 @@ jobs:
           pnpm e2e:coverage:report
 
       - name: Upload E2E coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always() && steps.changed-specs.outputs.specs != 'skip'
         with:
           name: web-e2e-coverage-node${{ matrix.node-version }}
@@ -563,7 +563,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Cypress screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure() && steps.changed-specs.outputs.specs != 'skip'
         with:
           name: cypress-screenshots-pr-${{ matrix.node-version }}
@@ -572,7 +572,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Cypress videos
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure() && steps.changed-specs.outputs.specs != 'skip'
         with:
           name: cypress-videos-pr-${{ matrix.node-version }}
@@ -626,21 +626,21 @@ jobs:
 
     steps:
       - name: Download server unit coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: server-unit-coverage-node22
           path: coverage/server-unit
 
       - name: Download web unit coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: web-unit-coverage-node22
           path: coverage/web-unit
 
       - name: Download web E2E coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           name: web-e2e-coverage-node22
