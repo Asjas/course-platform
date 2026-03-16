@@ -85,7 +85,7 @@
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "4.2.1",
     "@tanstack/devtools-vite": "0.6.0",
-    "@tanstack/react-devtools": "0.9.13",
+    "@tanstack/react-devtools": "0.10.0",
     "@tanstack/react-form-devtools": "0.2.19",
     "@tanstack/react-query-devtools": "5.91.3",
     "@tanstack/react-router-devtools": "1.166.7",
