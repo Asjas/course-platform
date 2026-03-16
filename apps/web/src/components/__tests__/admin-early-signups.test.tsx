@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AdminEarlySignupsPage } from "~/routes/_authenticated/admin/early-signups";
@@ -248,8 +248,14 @@ describe("AdminEarlySignupsPage", () => {
     // Button should be disabled while sending
     expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
 
-    // Resolve the promise so the test doesn't hang
+    // Resolve the promise and wait for the React state update (setSendingIds in
+    // the finally block) to settle before the test ends.
     resolveUpdate();
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("button", { name: /sending/i }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("calls EarlySignupsCollection.update when Send Invite is clicked", async () => {

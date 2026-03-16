@@ -1,6 +1,6 @@
 import type { SyncStatus } from "../use-sse-sync";
 import { useSupportTicketsSync } from "../use-sse-sync";
-import { renderHook } from "@testing-library/react";
+import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { syncUtils } from "~/lib/db.collections";
 
@@ -125,13 +125,15 @@ describe("useSupportTicketsSync", () => {
     });
   });
 
-  test("initializes with lastSyncedAt from syncUtils when available", () => {
+  test("initializes with lastSyncedAt from syncUtils when available", async () => {
     const timestamp = Date.now() - 60000;
     vi.mocked(syncUtils.getLastSyncTimestamp).mockReturnValue(timestamp);
 
     const { result } = renderHook(() => useSupportTicketsSync());
 
-    expect(result.current.lastSyncedAt).toBe(timestamp);
+    await waitFor(() => {
+      expect(result.current.lastSyncedAt).toBe(timestamp);
+    });
   });
 
   test("cleans up subscription on unmount", () => {

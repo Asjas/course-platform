@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ConfirmDialog } from "~/components/confirm-dialog";
@@ -131,7 +131,9 @@ describe("ConfirmDialog", () => {
 
     await user.keyboard("{Enter}");
 
-    expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
+    await waitFor(() => {
+      expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
+    });
   });
 
   it("supports keyboard navigation to confirm button", async () => {
@@ -143,7 +145,9 @@ describe("ConfirmDialog", () => {
 
     await user.keyboard("{Enter}");
 
-    expect(defaultProps.onConfirm).toHaveBeenCalledOnce();
+    await waitFor(() => {
+      expect(defaultProps.onConfirm).toHaveBeenCalledOnce();
+    });
   });
 
   it("renders with dialog role", () => {

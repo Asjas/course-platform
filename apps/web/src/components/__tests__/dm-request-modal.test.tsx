@@ -45,7 +45,7 @@ vi.mock("~/components/markdown-editor", () => ({
 }));
 
 describe("DMRequestModal", () => {
-  it("renders the dialog title with the recipient name when open", () => {
+  it("renders the dialog title with the recipient name when open", async () => {
     render(
       <DMRequestModal
         isOpen={true}
@@ -56,13 +56,13 @@ describe("DMRequestModal", () => {
     );
 
     expect(
-      screen.getByRole("heading", {
+      await screen.findByRole("heading", {
         name: /request direct message with bob/i,
       }),
     ).toBeInTheDocument();
   });
 
-  it("shows the explanation text mentioning the recipient name", () => {
+  it("shows the explanation text mentioning the recipient name", async () => {
     render(
       <DMRequestModal
         isOpen={true}
@@ -73,11 +73,11 @@ describe("DMRequestModal", () => {
     );
 
     expect(
-      screen.getByText(/why you'd like to message charlie/i),
+      await screen.findByText(/why you'd like to message charlie/i),
     ).toBeInTheDocument();
   });
 
-  it("Send Request button is disabled when the message field is empty", () => {
+  it("Send Request button is disabled when the message field is empty", async () => {
     render(
       <DMRequestModal
         isOpen={true}
@@ -87,7 +87,9 @@ describe("DMRequestModal", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Send Request" })).toBeDisabled();
+    expect(
+      await screen.findByRole("button", { name: "Send Request" }),
+    ).toBeDisabled();
   });
 
   it("enables the Send Request button after typing a message", async () => {

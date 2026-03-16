@@ -72,7 +72,7 @@ vi.mock("@giphy/js-fetch-api", () => ({
 }));
 
 describe("GiphyPicker", () => {
-  it("shows dialog when open is true", () => {
+  it("shows dialog when open is true", async () => {
     renderWithQueryClient(
       <GiphyPicker
         isOpen={true}
@@ -81,8 +81,8 @@ describe("GiphyPicker", () => {
       />,
     );
 
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText("Select a GIF")).toBeInTheDocument();
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    expect(await screen.findByText("Select a GIF")).toBeInTheDocument();
   });
 
   it("does not show dialog when open is false", () => {
