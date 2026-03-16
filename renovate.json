@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
-  "extends": ["config:base"],
+  "extends": ["config:recommended"],
   "timezone": "Africa/Johannesburg",
   "assignees": ["Asjas"],
   "labels": ["renovate"],
@@ -14,8 +14,8 @@
   ],
   "lockFileMaintenance": {
     "enabled": true,
-    "recreateClosed": true,
-    "rebaseStalePrs": true,
+    "recreateWhen": "always",
+    "rebaseWhen": "behind-base-branch",
     "branchTopic": "lock-file-maintenance",
     "commitMessageAction": "Lock file maintenance",
     "schedule": ["before 5am on monday"],
