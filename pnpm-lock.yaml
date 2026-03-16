@@ -241,8 +241,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2
       undici:
-        specifier: 7.24.1
-        version: 7.24.1
+        specifier: 7.24.4
+        version: 7.24.4
       zod:
         specifier: 4.3.6
         version: 4.3.6
@@ -10355,8 +10355,8 @@ packages:
   undici-types@7.18.2:
     resolution: {integrity: sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==}
 
-  undici@7.24.1:
-    resolution: {integrity: sha512-5xoBibbmnjlcR3jdqtY2Lnx7WbrD/tHlT01TmvqZUFVc9Q1w4+j5hbnapTqbcXITMH1ovjq/W7BkqBilHiVAaA==}
+  undici@7.24.4:
+    resolution: {integrity: sha512-BM/JzwwaRXxrLdElV2Uo6cTLEjhSb3WXboncJamZ15NgUURmvlXvxa6xkwIOILIjPNo9i8ku136ZvWV0Uly8+w==}
     engines: {node: '>=20.18.1'}
 
   unicode-canonical-property-names-ecmascript@2.0.1:
@@ -12996,7 +12996,7 @@ snapshots:
       fast-querystring: 1.1.2
       fastify-plugin: 5.1.0
       toad-cache: 3.7.0
-      undici: 7.24.1
+      undici: 7.24.4
 
   '@fastify/sensible@6.0.4':
     dependencies:
@@ -19727,7 +19727,7 @@ snapshots:
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 6.0.0
-      undici: 7.24.1
+      undici: 7.24.4
       w3c-xmlserializer: 5.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
@@ -22539,7 +22539,7 @@ snapshots:
 
   undici-types@7.18.2: {}
 
-  undici@7.24.1: {}
+  undici@7.24.4: {}
 
   unicode-canonical-property-names-ecmascript@2.0.1: {}
 
