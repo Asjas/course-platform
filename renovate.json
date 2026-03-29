@@ -19,6 +19,22 @@
       "description": "ESLint 10 not yet supported by most plugins (react, react-hooks, promise, jsx-a11y, import, tanstack-query)"
     },
     {
+      "matchPackageNames": [
+        "@trpc/client",
+        "@trpc/server",
+        "@trpc/tanstack-react-query"
+      ],
+      "matchCurrentVersion": ">=11.14.0",
+      "enabled": false,
+      "description": "tRPC >=11.14.0 causes TS2742 errors with composite tsconfig (TrackedData type not portable); waiting for upstream fix"
+    },
+    {
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false,
+      "description": "TypeScript 6.x causes TS2883 errors with tRPC router exports (stricter declaration emit); waiting for tRPC upstream fix"
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
