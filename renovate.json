@@ -8,6 +8,17 @@
   "rangeStrategy": "update-lockfile",
   "packageRules": [
     {
+      "matchPackageNames": ["lucide-react"],
+      "enabled": false,
+      "description": "lucide-react 1.x removed YoutubeIcon and other icons with breaking renames; pinned to 0.577.x until migration is done"
+    },
+    {
+      "matchPackageNames": ["eslint", "@eslint/js"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false,
+      "description": "ESLint 10 not yet supported by most plugins (react, react-hooks, promise, jsx-a11y, import, tanstack-query)"
+    },
+    {
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "automerge": true
     }
