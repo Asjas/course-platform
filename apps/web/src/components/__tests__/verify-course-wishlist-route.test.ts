@@ -3,7 +3,7 @@ import {
   buildCourseWishlistVerifyUrl,
   getVerificationStatusConfig,
   resolveVerificationStatus,
-} from "~/routes/verify-course-wishlist";
+} from "~/lib/verify-course-wishlist";
 
 describe("verify-course-wishlist helpers", () => {
   it("defaults missing status to invalid", () => {
