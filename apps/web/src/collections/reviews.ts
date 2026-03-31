@@ -2,6 +2,7 @@ import type { AllReviews } from "@apps/server/src/routers/reviews/queries";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection } from "@tanstack/react-db";
 import { toast } from "sonner";
+import { getBackendErrorMessage } from "~/lib/api-error";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
@@ -31,7 +32,10 @@ export const ReviewsCollection = createCollection(
       } catch (error) {
         console.error("Error inserting review: ", error);
         toast.error(
-          "An error occurred while creating the review. Please try again.",
+          getBackendErrorMessage(
+            error,
+            "An error occurred while creating the review. Please try again.",
+          ),
         );
         throw error;
       }
@@ -54,7 +58,10 @@ export const ReviewsCollection = createCollection(
       } catch (error) {
         console.error("Error updating review: ", error);
         toast.error(
-          "An error occurred while updating the review. Please try again.",
+          getBackendErrorMessage(
+            error,
+            "An error occurred while updating the review. Please try again.",
+          ),
         );
         throw error;
       }
@@ -69,7 +76,10 @@ export const ReviewsCollection = createCollection(
       } catch (error) {
         console.error("Error deleting review: ", error);
         toast.error(
-          "An error occurred while deleting the review. Please try again.",
+          getBackendErrorMessage(
+            error,
+            "An error occurred while deleting the review. Please try again.",
+          ),
         );
         throw error;
       }

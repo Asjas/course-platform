@@ -50,7 +50,7 @@ export function setLastSyncTimestamp(
 }
 
 /**
- * Apply a sync update to a collection.
+ * Apply a sync update for an entity.
  * Handles created, updated, and deleted entity types.
  *
  * Note: This function is currently not used as we're using query invalidation
@@ -69,8 +69,8 @@ export function applySyncUpdate<T extends { id: string }>(
 }
 
 /**
- * Sync pending updates for a collection that was offline.
- * Fetches all updates since the last sync timestamp and applies them.
+ * Sync pending offline updates for the given collection name.
+ * Fetches all updates since the last sync timestamp and returns their count.
  *
  * Note: This function is currently not used as we're using query invalidation
  * instead of direct collection updates for SSE sync. The use-sse-sync.ts hooks

@@ -45,7 +45,9 @@ describe("VideoPlayer", () => {
   });
 
   it("shows invalid video message for bad URL", () => {
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     try {
       render(<VideoPlayer url="not-a-valid-url" />);
       expect(screen.getByText("Invalid video URL")).toBeInTheDocument();
@@ -55,7 +57,9 @@ describe("VideoPlayer", () => {
   });
 
   it("shows invalid video message for empty string", () => {
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(vi.fn());
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
     try {
       render(<VideoPlayer url="" />);
       expect(screen.getByText("Invalid video URL")).toBeInTheDocument();

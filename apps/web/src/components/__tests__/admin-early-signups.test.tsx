@@ -296,21 +296,30 @@ describe("AdminEarlySignupsPage", () => {
   });
 
   it("shows error toast when sending invite fails", async () => {
-    vi.spyOn(console, "error").mockImplementation(vi.fn());
-    const user = userEvent.setup();
-    const signup = makeSignup({ email: "alice@example.com" });
-    mockUseEarlySignups.mockReturnValue({ data: [signup], isLoading: false });
-    mockEarlySignupsCollection.update.mockRejectedValueOnce(
-      new Error("Network error"),
-    );
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    try {
+      const user = userEvent.setup();
+      const signup = makeSignup({ email: "alice@example.com" });
+      mockUseEarlySignups.mockReturnValue({
+        data: [signup],
+        isLoading: false,
+      });
+      mockEarlySignupsCollection.update.mockRejectedValueOnce(
+        new Error("Network error"),
+      );
 
-    await renderWithProviders(<AdminEarlySignupsPage />);
-    await user.click(screen.getByRole("button", { name: /send invite/i }));
+      await renderWithProviders(<AdminEarlySignupsPage />);
+      await user.click(screen.getByRole("button", { name: /send invite/i }));
 
-    expect(mockToast.error).toHaveBeenCalledWith(
-      "Failed to send invite. Please try again.",
-      expect.anything(),
-    );
+      expect(mockToast.error).toHaveBeenCalledWith(
+        "Failed to send invite. Please try again.",
+        expect.anything(),
+      );
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it("cancels pending invite", async () => {

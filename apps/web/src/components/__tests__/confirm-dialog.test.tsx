@@ -126,34 +126,46 @@ describe("ConfirmDialog", () => {
     const user = userEvent.setup();
     // react-aria-components Button fires internal press-state updates during
     // keyboard events that trigger act() warnings in JSDOM.
-    vi.spyOn(console, "error").mockImplementation(vi.fn());
-    render(<ConfirmDialog {...defaultProps} />);
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    try {
+      render(<ConfirmDialog {...defaultProps} />);
 
-    const cancelButton = screen.getByRole("button", { name: "Cancel" });
-    cancelButton.focus();
+      const cancelButton = screen.getByRole("button", { name: "Cancel" });
+      cancelButton.focus();
 
-    await user.keyboard("{Enter}");
+      await user.keyboard("{Enter}");
 
-    await waitFor(() => {
-      expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
-    });
+      await waitFor(() => {
+        expect(defaultProps.onOpenChange).toHaveBeenCalledWith(false);
+      });
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it("supports keyboard navigation to confirm button", async () => {
     const user = userEvent.setup();
     // react-aria-components Button fires internal press-state updates during
     // keyboard events that trigger act() warnings in JSDOM.
-    vi.spyOn(console, "error").mockImplementation(vi.fn());
-    render(<ConfirmDialog {...defaultProps} />);
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    try {
+      render(<ConfirmDialog {...defaultProps} />);
 
-    const confirmButton = screen.getByRole("button", { name: "Confirm" });
-    confirmButton.focus();
+      const confirmButton = screen.getByRole("button", { name: "Confirm" });
+      confirmButton.focus();
 
-    await user.keyboard("{Enter}");
+      await user.keyboard("{Enter}");
 
-    await waitFor(() => {
-      expect(defaultProps.onConfirm).toHaveBeenCalledOnce();
-    });
+      await waitFor(() => {
+        expect(defaultProps.onConfirm).toHaveBeenCalledOnce();
+      });
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it("renders with dialog role", () => {
