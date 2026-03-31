@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import { CheckCircle2Icon, XCircleIcon } from "lucide-react";
+import { CourseProgressAdminCollection } from "~/collections/course-progress";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
@@ -12,10 +13,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import {
-  CourseProgressAdminCollection,
-  useCourseProgressAdmin,
-} from "~/lib/db.collections";
+import { useCourseProgressAdmin } from "~/hooks/use-course-progress";
 
 export const Route = createFileRoute("/_authenticated/admin/progress")({
   loader: async () => {

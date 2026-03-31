@@ -14,11 +14,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CoursesCollection } from "~/collections/courses";
 import { DMRequestModal } from "~/components/dm-request-modal";
 import { UserSearchModal } from "~/components/user-search-modal";
 import { UsernameRequirementModal } from "~/components/username-requirement-modal";
+import { useCourses } from "~/hooks/use-courses";
 import { useAuth } from "~/lib/auth.context";
-import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat")({

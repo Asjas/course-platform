@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2Icon, SaveIcon, XCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { ReviewsCollection } from "~/collections/reviews";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
 import {
@@ -12,7 +13,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { ReviewsCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import {

@@ -3,13 +3,13 @@ import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ulid } from "ulid";
 import * as z from "zod";
-import BlockerComponent from "~/components/blocker";
-import FieldInfo from "~/components/field-info";
-import { GitHubMessageEditor } from "~/components/markdown-editor";
 import {
   type SupportTicket,
   SupportTicketsCollection,
-} from "~/lib/db.collections";
+} from "~/collections/support-tickets";
+import BlockerComponent from "~/components/blocker";
+import FieldInfo from "~/components/field-info";
+import { GitHubMessageEditor } from "~/components/markdown-editor";
 import { cn } from "~/lib/utils";
 import { supportTicketFormSchema } from "~/schema/support-ticket";
 

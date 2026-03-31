@@ -18,9 +18,11 @@ const { mockUseEarlySignups, mockEarlySignupsCollection, mockToast } =
     },
   }));
 
-vi.mock("~/lib/db.collections", () => ({
-  useEarlySignups: mockUseEarlySignups,
+vi.mock("~/collections/early-signups", () => ({
   EarlySignupsCollection: mockEarlySignupsCollection,
+}));
+vi.mock("~/hooks/use-early-signups", () => ({
+  useEarlySignups: mockUseEarlySignups,
 }));
 
 vi.mock("sonner", () => ({ toast: mockToast }));

@@ -1,3 +1,4 @@
+import type { AdminCourseDetail } from "~/collections/courses";
 import {
   Sheet,
   SheetContent,
@@ -5,7 +6,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { AdminCourseDetail } from "~/lib/db.collections";
 
 interface EditCourseSheetProps {
   course: AdminCourseDetail | null;

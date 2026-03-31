@@ -8,6 +8,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { DollarSignIcon, EyeIcon, RefreshCwIcon } from "lucide-react";
 import { useState } from "react";
+import { type Purchase, PurchasesCollection } from "~/collections/purchases";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import RefundPurchaseModal from "~/components/refund-purchase-modal";
@@ -21,11 +22,7 @@ import {
   TableHeaderRow,
 } from "~/components/ui/table";
 import ViewPurchaseSheet from "~/components/view-purchase-sheet";
-import {
-  type Purchase,
-  PurchasesCollection,
-  usePurchases,
-} from "~/lib/db.collections";
+import { usePurchases } from "~/hooks/use-purchases";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/purchases")({

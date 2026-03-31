@@ -25,17 +25,19 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
+import type { Announcement } from "~/collections/announcements";
 import { DMRequestSheet } from "~/components/dm-request-sheet";
 import {
-  type Announcement,
-  type UserNotification,
   markAnnouncementAsRead,
-  markUserNotificationAsRead,
   useReadAnnouncements,
-  useReadUserNotifications,
   useUnreadAnnouncements,
+} from "~/hooks/use-announcements";
+import {
+  type UserNotification,
+  markUserNotificationAsRead,
+  useReadUserNotifications,
   useUnreadUserNotifications,
-} from "~/lib/db.collections";
+} from "~/hooks/use-notifications";
 
 interface NotificationsBellProps {
   userId: string;

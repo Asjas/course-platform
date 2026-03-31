@@ -14,18 +14,20 @@ import {
   TabList,
   TabPanel,
 } from "react-aria-components";
+import {
+  type CourseWithModulesAndLessons,
+  CoursesCollection,
+} from "~/collections/courses";
+import { SupportTicketsCollection } from "~/collections/support-tickets";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import { VideoPlayer } from "~/components/video-player";
+import { useCourseById } from "~/hooks/use-courses";
 import {
-  type CourseWithModulesAndLessons,
-  CoursesCollection,
-  SupportTicketsCollection,
-  useCourseById,
   useSupportTicketById,
   useSupportTickets,
-} from "~/lib/db.collections";
+} from "~/hooks/use-support-tickets";
 import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 

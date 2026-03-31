@@ -25,7 +25,7 @@ vi.mock("~/lib/collapsed-media", () => ({
   setMediaCollapsed: vi.fn(),
 }));
 
-vi.mock("~/lib/db.collections", () => ({
+vi.mock("~/collections/chat-messages", () => ({
   toggleMessageReaction: vi.fn().mockResolvedValue([]),
 }));
 

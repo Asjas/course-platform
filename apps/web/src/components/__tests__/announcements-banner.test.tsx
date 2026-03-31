@@ -9,7 +9,7 @@ const { mockMarkAsRead, mockUseUnread, mockUseRead } = vi.hoisted(() => ({
   mockUseRead: vi.fn(),
 }));
 
-vi.mock("~/lib/db.collections", () => ({
+vi.mock("~/hooks/use-announcements", () => ({
   useUnreadAnnouncements: mockUseUnread,
   useReadAnnouncements: mockUseRead,
   markAnnouncementAsRead: mockMarkAsRead,

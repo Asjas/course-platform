@@ -11,6 +11,11 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import {
+  type CourseWithModulesAndLessons,
+  CoursesCollection,
+} from "~/collections/courses";
+import { ReviewsCollection } from "~/collections/reviews";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import {
   Sheet,
@@ -19,12 +24,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import {
-  type CourseWithModulesAndLessons,
-  CoursesCollection,
-  ReviewsCollection,
-  useCourseById,
-} from "~/lib/db.collections";
+import { useCourseById } from "~/hooks/use-courses";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";

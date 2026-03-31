@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
+import { ReviewsCollection } from "~/collections/reviews";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import CreateReviewSheet from "~/components/create-review-sheet";
 import { EmptyState } from "~/components/empty-state";
@@ -24,7 +25,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { ReviewsCollection, useReviews } from "~/lib/db.collections";
+import { useReviews } from "~/hooks/use-reviews";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/reviews")({

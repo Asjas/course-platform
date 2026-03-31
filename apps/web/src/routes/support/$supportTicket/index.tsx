@@ -8,14 +8,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { SupportTicketsCollection } from "~/collections/support-tickets";
 import SupportCommentForm from "~/components/forms/create-support-comment-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
+import { useSupportTicketById } from "~/hooks/use-support-tickets";
 import { useAuth } from "~/lib/auth.context";
-import {
-  SupportTicketsCollection,
-  useSupportTicketById,
-} from "~/lib/db.collections";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";

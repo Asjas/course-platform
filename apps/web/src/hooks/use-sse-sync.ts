@@ -14,7 +14,7 @@
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { type EntitySyncUpdate, syncUtils } from "~/lib/db.collections";
+import { type EntitySyncUpdate, syncUtils } from "~/collections/sync-utils";
 import { queryClient } from "~/lib/query.client";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 

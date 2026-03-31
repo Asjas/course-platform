@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import type { Purchase } from "~/collections/purchases";
 import {
   Sheet,
   SheetContent,
@@ -6,7 +7,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import type { Purchase } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 
 interface ViewPurchaseSheetProps {

@@ -14,11 +14,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { createChannelMessagesCollection } from "~/collections/chat-messages";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { ThreadPanel } from "~/components/thread-panel";
-import { createChannelMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/$channelId")({

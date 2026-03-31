@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { useAuth } from "~/lib/auth.context";
 import {
   type NotificationPreference,
   saveNotificationPreferences,
   useNotificationPreferences,
-} from "~/lib/db.collections";
+} from "~/hooks/use-notification-preferences";
+import { useAuth } from "~/lib/auth.context";
 
 export const Route = createFileRoute("/_authenticated/notifications")({
   component: NotificationPreferencesPage,

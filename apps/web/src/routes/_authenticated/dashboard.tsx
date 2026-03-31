@@ -3,12 +3,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import * as z from "zod";
+import { CoursesCollection } from "~/collections/courses";
 import { AnnouncementsBanner } from "~/components/announcements/announcements-banner";
 import { CourseCard } from "~/components/course-card";
 import { EmptyState } from "~/components/empty-state";
+import { useCourses } from "~/hooks/use-courses";
 import { getBackendErrorMessage } from "~/lib/api-error";
 import { useAuth } from "~/lib/auth.context";
-import { CoursesCollection, useCourses } from "~/lib/db.collections";
 import { trpc } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({

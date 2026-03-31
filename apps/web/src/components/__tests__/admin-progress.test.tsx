@@ -11,9 +11,11 @@ const { mockUseCourseProgressAdmin, mockCourseProgressAdminCollection } =
     },
   }));
 
-vi.mock("~/lib/db.collections", () => ({
-  useCourseProgressAdmin: mockUseCourseProgressAdmin,
+vi.mock("~/collections/course-progress", () => ({
   CourseProgressAdminCollection: mockCourseProgressAdminCollection,
+}));
+vi.mock("~/hooks/use-course-progress", () => ({
+  useCourseProgressAdmin: mockUseCourseProgressAdmin,
 }));
 
 function makeProgressItem(

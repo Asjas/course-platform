@@ -2,11 +2,9 @@ import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { SearchableUsersCollection } from "~/collections/searchable-users";
+import { useSearchableUsers } from "~/hooks/use-searchable-users";
 import { useAuth } from "~/lib/auth.context";
-import {
-  SearchableUsersCollection,
-  useSearchableUsers,
-} from "~/lib/db.collections";
 
 interface UserSearchModalProps {
   isOpen: boolean;

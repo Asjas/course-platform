@@ -12,11 +12,11 @@ import {
   useRef,
   useState,
 } from "react";
+import { createDMMessagesCollection } from "~/collections/chat-messages";
 import { ChatDateDivider } from "~/components/chat-date-divider";
 import ChatMessageComponent from "~/components/chat-message";
 import ChatMessageForm from "~/components/forms/chat-message-form";
 import { useAuth } from "~/lib/auth.context";
-import { createDMMessagesCollection } from "~/lib/db.collections";
 import { trpc, trpcClient } from "~/lib/trpc.client";
 
 export const Route = createFileRoute("/_authenticated/chat/dm/$conversationId")(

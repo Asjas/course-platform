@@ -12,7 +12,7 @@ const { mockCollection, mockToast } = vi.hoisted(() => ({
   mockToast: { success: vi.fn(), error: vi.fn(), loading: vi.fn() },
 }));
 
-vi.mock("~/lib/db.collections", () => ({
+vi.mock("~/collections/support-tickets", () => ({
   SupportTicketsCollection: mockCollection,
 }));
 vi.mock("sonner", () => ({ toast: mockToast }));
