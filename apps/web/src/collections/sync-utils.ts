@@ -1,5 +1,3 @@
-import { createCollection } from "@tanstack/react-db";
-
 // ========== SSE Sync Infrastructure ==========
 
 /**
@@ -60,14 +58,13 @@ export function setLastSyncTimestamp(
  * if direct collection updates are needed.
  */
 export function applySyncUpdate<T extends { id: string }>(
-  collection: ReturnType<typeof createCollection<T>>,
+  _collection: unknown,
   update: EntitySyncUpdate<T>,
 ): void {
   // Currently using query invalidation instead of direct collection updates
   // See use-sse-sync.ts hooks for the implementation
   console.debug(
     "applySyncUpdate called - using query invalidation instead",
-    collection,
     update,
   );
 }
@@ -82,7 +79,7 @@ export function applySyncUpdate<T extends { id: string }>(
  */
 export async function syncOfflineUpdates<T extends { id: string }>(
   collectionName: string,
-  _collection: ReturnType<typeof createCollection<T>>,
+  _collection: unknown,
   fetchUpdatesSince: (since: number) => Promise<EntitySyncUpdate<T>[]>,
 ): Promise<number> {
   const lastSync = getLastSyncTimestamp(collectionName);
