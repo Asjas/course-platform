@@ -73,12 +73,12 @@ describe("Course Enrollment - Authenticated", () => {
       return null;
     });
 
-    // Wait for the course page to fully render — either an h1 appears (course
-    // loaded successfully) or "Course not found" is shown (not accessible to
-    // this test user).
+    // Wait for the course page to fully render — either the "Back to Courses"
+    // link appears (course loaded successfully) or "Course not found" is shown
+    // (not accessible to this test user).
     cy.then(() => {
       if (!hasCourses) return null;
-      cy.waitForContent("h1", "Course not found");
+      cy.waitForContent('a:contains("Back to Courses")', "Course not found");
       return null;
     });
 
