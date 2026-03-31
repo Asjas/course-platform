@@ -1,7 +1,24 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
+
+// emoji-picker-react uses IntersectionObserver internally, which is not
+// available in JSDOM. Providing a minimal stub prevents the library from
+// crashing and eliminates act() warnings caused by unhandled error effects.
+beforeAll(() => {
+  global.IntersectionObserver ??= class IntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = "0px";
+    readonly thresholds: readonly number[] = [];
+    observe = vi.fn();
+    unobserve = vi.fn();
+    disconnect = vi.fn();
+    takeRecords(): IntersectionObserverEntry[] {
+      return [];
+    }
+  } as unknown as typeof globalThis.IntersectionObserver;
+});
 
 describe("EmojiReactionPicker", () => {
   it("renders action variant button with default aria label", () => {
@@ -150,6 +167,9 @@ describe("EmojiReactionPicker", () => {
 
   it("can be opened via keyboard (Enter)", async () => {
     const user = userEvent.setup();
+    // react-aria-components Button fires internal press-state updates during
+    // keyboard events that trigger act() warnings in JSDOM.
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     render(<EmojiReactionPicker onEmojiSelect={vi.fn()} />);
 
@@ -158,11 +178,16 @@ describe("EmojiReactionPicker", () => {
 
     await user.keyboard("{Enter}");
 
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
   });
 
   it("can be opened via keyboard (Space)", async () => {
     const user = userEvent.setup();
+    // react-aria-components Button fires internal press-state updates during
+    // keyboard events that trigger act() warnings in JSDOM.
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
 
     render(<EmojiReactionPicker onEmojiSelect={vi.fn()} />);
 
@@ -171,7 +196,9 @@ describe("EmojiReactionPicker", () => {
 
     await user.keyboard(" ");
 
-    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByRole("dialog")).toBeInTheDocument();
+    });
   });
 
   it("does not call onEmojiSelect when dialog is just opened", async () => {

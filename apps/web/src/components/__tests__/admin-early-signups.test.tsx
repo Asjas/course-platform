@@ -1,7 +1,7 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AdminEarlySignupsPage } from "~/routes/_authenticated/admin/early-signups";
+import { AdminEarlySignupsPage } from "~/components/admin-early-signups-page";
 import { renderWithProviders } from "~/test-utils";
 
 const { mockUseEarlySignups, mockEarlySignupsCollection, mockToast } =
@@ -296,6 +296,7 @@ describe("AdminEarlySignupsPage", () => {
   });
 
   it("shows error toast when sending invite fails", async () => {
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
     const user = userEvent.setup();
     const signup = makeSignup({ email: "alice@example.com" });
     mockUseEarlySignups.mockReturnValue({ data: [signup], isLoading: false });

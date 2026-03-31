@@ -97,6 +97,7 @@ describe("NewSupportTicketForm", () => {
 
   it("displays error toast when support ticket creation fails", async () => {
     const user = userEvent.setup();
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
     mockCollection.insert.mockImplementation(() => {
       throw new Error("Database error");
     });
