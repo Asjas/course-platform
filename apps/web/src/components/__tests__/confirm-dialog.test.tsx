@@ -124,6 +124,9 @@ describe("ConfirmDialog", () => {
 
   it("supports keyboard navigation to cancel button", async () => {
     const user = userEvent.setup();
+    // react-aria-components Button fires internal press-state updates during
+    // keyboard events that trigger act() warnings in JSDOM.
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
     render(<ConfirmDialog {...defaultProps} />);
 
     const cancelButton = screen.getByRole("button", { name: "Cancel" });
@@ -138,6 +141,9 @@ describe("ConfirmDialog", () => {
 
   it("supports keyboard navigation to confirm button", async () => {
     const user = userEvent.setup();
+    // react-aria-components Button fires internal press-state updates during
+    // keyboard events that trigger act() warnings in JSDOM.
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
     render(<ConfirmDialog {...defaultProps} />);
 
     const confirmButton = screen.getByRole("button", { name: "Confirm" });
