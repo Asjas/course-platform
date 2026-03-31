@@ -30,6 +30,9 @@ export const ReviewsCollection = createCollection(
         });
       } catch (error) {
         console.error("Error inserting review: ", error);
+        toast.error(
+          "An error occurred while creating the review. Please try again.",
+        );
         throw error;
       }
     },
