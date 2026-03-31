@@ -1,7 +1,7 @@
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AdminEarlySignupsPage } from "~/components/admin-early-signups-page";
+import { AdminEarlySignupsPage } from "~/routes/_authenticated/admin/early-signups";
 import { renderWithProviders } from "~/test-utils";
 
 const { mockUseEarlySignups, mockEarlySignupsCollection, mockToast } =

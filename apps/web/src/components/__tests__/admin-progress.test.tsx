@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AdminProgressPage } from "~/components/admin-progress-page";
+import { AdminProgressPage } from "~/routes/_authenticated/admin/progress";
 import { renderWithProviders } from "~/test-utils";
 
 const { mockUseCourseProgressAdmin, mockCourseProgressAdminCollection } =
