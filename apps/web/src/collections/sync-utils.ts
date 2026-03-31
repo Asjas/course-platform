@@ -58,7 +58,6 @@ export function setLastSyncTimestamp(
  * if direct collection updates are needed.
  */
 export function applySyncUpdate<T extends { id: string }>(
-  _collection: unknown,
   update: EntitySyncUpdate<T>,
 ): void {
   // Currently using query invalidation instead of direct collection updates
@@ -79,7 +78,6 @@ export function applySyncUpdate<T extends { id: string }>(
  */
 export async function syncOfflineUpdates<T extends { id: string }>(
   collectionName: string,
-  _collection: unknown,
   fetchUpdatesSince: (since: number) => Promise<EntitySyncUpdate<T>[]>,
 ): Promise<number> {
   const lastSync = getLastSyncTimestamp(collectionName);

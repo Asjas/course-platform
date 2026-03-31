@@ -58,28 +58,33 @@ describe("Course Enrollment - Authenticated", () => {
     cy.visit("/dashboard");
     cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
 
-    cy.get("body").then(($body) => {
-      if ($body.find('a[href*="/courses/"]').length === 0) {
-        cy.contains("No courses available yet").should("be.visible");
-      }
-      return null;
-    });
+    let hasCourses = false;
 
-    // Navigate to first course (only runs when cards exist)
     cy.get("body").then(($body) => {
-      if ($body.find('a[href*="/courses/"]').length > 0) {
-        cy.get('a[href*="/courses/"]').first().click();
-        cy.url().should("match", /\/courses\/[^/]+/);
+      hasCourses = $body.find('a[href*="/courses/"]').length > 0;
+      if (!hasCourses) {
+        cy.contains("No courses available yet").should("be.visible");
+        return null;
       }
+
+      // Navigate to first course
+      cy.get('a[href*="/courses/"]').first().click();
+      cy.url().should("match", /\/courses\/[^/]+/);
       return null;
     });
 
     // Wait for the course page to fully render — either an h1 appears (course
     // loaded successfully) or "Course not found" is shown (not accessible to
     // this test user).
-    cy.waitForContent("h1", "Course not found");
+    cy.then(() => {
+      if (!hasCourses) return null;
+      cy.waitForContent("h1", "Course not found");
+      return null;
+    });
 
     cy.get("body").then(($coursePage) => {
+      if (!hasCourses) return null;
+
       // Course is not accessible to this test user — skip remaining assertions
       if ($coursePage.text().includes("Course not found")) {
         return null;
@@ -102,32 +107,33 @@ describe("Course Enrollment - Authenticated", () => {
     cy.visit("/dashboard");
     cy.waitForContent('a[href*="/courses/"]', "No courses available yet");
 
-    cy.get("body").then(($body) => {
-      if ($body.find('a[href*="/courses/"]').length === 0) {
-        cy.contains("No courses available yet").should("be.visible");
-      }
-      return null;
-    });
+    let hasCourses = false;
 
-    // Navigate to first course (only runs when cards exist)
     cy.get("body").then(($body) => {
-      if ($body.find('a[href*="/courses/"]').length > 0) {
-        cy.get('a[href*="/courses/"]').first().click();
-        cy.url().should("match", /\/courses\/[^/]+/);
+      hasCourses = $body.find('a[href*="/courses/"]').length > 0;
+      if (!hasCourses) {
+        cy.contains("No courses available yet").should("be.visible");
+        return null;
       }
+
+      // Navigate to first course
+      cy.get('a[href*="/courses/"]').first().click();
+      cy.url().should("match", /\/courses\/[^/]+/);
       return null;
     });
 
     // Wait for the course page to fully render — either the "Back to Courses"
     // link appears (course loaded successfully) or "Course not found" is shown
-    // (not accessible to this test user). Use the "Back to Courses" link as
-    // the selector instead of a generic h1, because the dashboard also has an
-    // h1 ("My Courses") that TanStack Router keeps visible while the new
-    // route's loader is running, which would cause the generic h1 check to
-    // resolve before the course detail page has actually rendered.
-    cy.waitForContent('a:contains("Back to Courses")', "Course not found");
+    // (not accessible to this test user).
+    cy.then(() => {
+      if (!hasCourses) return null;
+      cy.waitForContent('a:contains("Back to Courses")', "Course not found");
+      return null;
+    });
 
     cy.get("body").then(($coursePage) => {
+      if (!hasCourses) return null;
+
       // Course is not accessible to this test user — skip remaining assertions
       if ($coursePage.text().includes("Course not found")) {
         return null;
