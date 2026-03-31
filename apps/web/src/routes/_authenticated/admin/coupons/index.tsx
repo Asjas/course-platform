@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CouponsCollection } from "~/collections/coupons";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import CreateCouponSheet from "~/components/create-coupon-sheet";
 import EditCouponSheet from "~/components/edit-coupon-sheet";
@@ -22,7 +23,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { CouponsCollection, useCoupons } from "~/lib/db.collections";
+import { useCoupons } from "~/hooks/use-coupons";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/coupons/")({

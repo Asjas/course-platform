@@ -4,6 +4,7 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { ExternalLinkIcon } from "lucide-react";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { ReviewsCollection } from "~/collections/reviews";
 import FieldInfo from "~/components/field-info";
 import {
   Sheet,
@@ -12,8 +13,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
+import { useCoursesAdmin } from "~/hooks/use-courses";
 import { authClient } from "~/lib/auth.client";
-import { ReviewsCollection, useCoursesAdmin } from "~/lib/db.collections";
 import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 import { createReviewSchema } from "~/schema/create-review";

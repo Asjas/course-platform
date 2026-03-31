@@ -2,6 +2,8 @@ import { Link, createFileRoute, useParams } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { CoursesCollection } from "~/collections/courses";
+import { SupportTicketsCollection } from "~/collections/support-tickets";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -14,13 +16,9 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
+import { useCourses } from "~/hooks/use-courses";
+import { useSupportTicketsByCourseId } from "~/hooks/use-support-tickets";
 import { useAuth } from "~/lib/auth.context";
-import {
-  CoursesCollection,
-  SupportTicketsCollection,
-  useCourses,
-  useSupportTicketsByCourseId,
-} from "~/lib/db.collections";
 
 export const Route = createFileRoute(
   "/_authenticated/chat/support/$courseSlug",

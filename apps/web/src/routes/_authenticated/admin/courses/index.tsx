@@ -2,6 +2,10 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  type AdminCourseDetail,
+  CoursesAdminCollection,
+} from "~/collections/courses";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -14,11 +18,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import {
-  type AdminCourseDetail,
-  CoursesAdminCollection,
-  useCoursesAdmin,
-} from "~/lib/db.collections";
+import { useCoursesAdmin } from "~/hooks/use-courses";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/")({

@@ -12,7 +12,7 @@ const { mockCollection, mockToast } = vi.hoisted(() => ({
   mockToast: { success: vi.fn(), error: vi.fn(), loading: vi.fn() },
 }));
 
-vi.mock("~/lib/db.collections", () => ({
+vi.mock("~/collections/support-tickets", () => ({
   SupportTicketsCollection: mockCollection,
 }));
 vi.mock("sonner", () => ({ toast: mockToast }));
@@ -97,6 +97,7 @@ describe("NewSupportTicketForm", () => {
 
   it("displays error toast when support ticket creation fails", async () => {
     const user = userEvent.setup();
+    vi.spyOn(console, "error").mockImplementation(vi.fn());
     mockCollection.insert.mockImplementation(() => {
       throw new Error("Database error");
     });

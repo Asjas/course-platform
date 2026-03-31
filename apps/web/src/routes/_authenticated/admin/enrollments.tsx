@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import { useState } from "react";
+import { EnrollmentsAdminCollection } from "~/collections/enrollments";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
@@ -12,10 +13,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import {
-  EnrollmentsAdminCollection,
-  useEnrollmentsAdmin,
-} from "~/lib/db.collections";
+import { useEnrollmentsAdmin } from "~/hooks/use-enrollments";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/enrollments")({

@@ -2,7 +2,7 @@ import type { SyncStatus } from "../use-sse-sync";
 import { useSupportTicketsSync } from "../use-sse-sync";
 import { renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { syncUtils } from "~/lib/db.collections";
+import { syncUtils } from "~/collections/sync-utils";
 
 // Mock all external dependencies
 vi.mock("sonner", () => ({
@@ -13,7 +13,7 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("~/lib/db.collections", () => ({
+vi.mock("~/collections/sync-utils", () => ({
   syncUtils: {
     getLastSyncTimestamp: vi.fn().mockReturnValue(0),
     setLastSyncTimestamp: vi.fn(),

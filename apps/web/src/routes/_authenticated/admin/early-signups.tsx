@@ -3,6 +3,7 @@ import { intlFormat } from "date-fns";
 import { MailIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { EarlySignupsCollection } from "~/collections/early-signups";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
 import {
@@ -14,7 +15,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import { EarlySignupsCollection, useEarlySignups } from "~/lib/db.collections";
+import { useEarlySignups } from "~/hooks/use-early-signups";
 
 export const Route = createFileRoute("/_authenticated/admin/early-signups")({
   loader: async () => {

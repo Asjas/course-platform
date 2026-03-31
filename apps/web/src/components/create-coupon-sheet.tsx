@@ -3,6 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { ulid } from "ulid";
+import { CouponsCollection } from "~/collections/coupons";
 import FieldInfo from "~/components/field-info";
 import {
   Sheet,
@@ -11,7 +12,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { CouponsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import { createCouponSchema } from "~/schema/create-coupon";
 

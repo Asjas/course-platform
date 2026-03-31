@@ -13,9 +13,11 @@ const { mockUseEnrollmentsAdmin, mockEnrollmentsAdminCollection } = vi.hoisted(
   }),
 );
 
-vi.mock("~/lib/db.collections", () => ({
-  useEnrollmentsAdmin: mockUseEnrollmentsAdmin,
+vi.mock("~/collections/enrollments", () => ({
   EnrollmentsAdminCollection: mockEnrollmentsAdminCollection,
+}));
+vi.mock("~/hooks/use-enrollments", () => ({
+  useEnrollmentsAdmin: mockUseEnrollmentsAdmin,
 }));
 
 function makeEnrollment(

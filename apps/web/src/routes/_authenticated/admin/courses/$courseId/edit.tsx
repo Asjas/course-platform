@@ -11,15 +11,15 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import {
+  type AdminCourseDetail,
+  CoursesAdminCollection,
+} from "~/collections/courses";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
-import {
-  type AdminCourseDetail,
-  CoursesAdminCollection,
-  useCoursesAdmin,
-} from "~/lib/db.collections";
+import { useCoursesAdmin } from "~/hooks/use-courses";
 import { queryClient } from "~/lib/query.client";
 import { trpc } from "~/lib/trpc.client";
 import {

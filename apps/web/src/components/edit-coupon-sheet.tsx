@@ -2,6 +2,7 @@ import { SelectInput } from "@packages/shared-ui/components/select-input";
 import { useForm } from "@tanstack/react-form";
 import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
+import { type Coupon, CouponsCollection } from "~/collections/coupons";
 import FieldInfo from "~/components/field-info";
 import {
   Sheet,
@@ -10,7 +11,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
-import { type Coupon, CouponsCollection } from "~/lib/db.collections";
 import { cn } from "~/lib/utils";
 import {
   type EditCouponFormData,

@@ -20,6 +20,7 @@ import {
   Popover,
 } from "react-aria-components";
 import { toast } from "sonner";
+import { toggleMessageReaction } from "~/collections/chat-messages";
 import EditMessageSheet from "~/components/edit-message-sheet";
 import { EmojiReactionPicker } from "~/components/emoji-reaction-picker";
 import { MarkdownContent } from "~/components/markdown-content";
@@ -28,7 +29,6 @@ import { ReportMessageDialog } from "~/components/report-message-dialog";
 import UserProfileSheet from "~/components/user-profile-sheet";
 import { useAuth } from "~/lib/auth.context";
 import { isMediaCollapsed, setMediaCollapsed } from "~/lib/collapsed-media";
-import { toggleMessageReaction } from "~/lib/db.collections";
 import { renderMarkdown } from "~/lib/markdown";
 
 // Default color for users without a precomputed color

@@ -3,6 +3,10 @@ import { intlFormat } from "date-fns";
 import { Trash2Icon, XCircleIcon } from "lucide-react";
 import { Suspense, useState } from "react";
 import { toast } from "sonner";
+import {
+  type ChatReport,
+  ChatReportsCollection,
+} from "~/collections/chat-reports";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -15,11 +19,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import {
-  type ChatReport,
-  ChatReportsCollection,
-  useChatReports,
-} from "~/lib/db.collections";
+import { useChatReports } from "~/hooks/use-chat-reports";
 import { trpcClient } from "~/lib/trpc.client";
 import { cn } from "~/lib/utils";
 

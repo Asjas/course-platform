@@ -2,6 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { TriangleAlertIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { SupportTicketsCollection } from "~/collections/support-tickets";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import { EmptyState } from "~/components/empty-state";
 import Loading from "~/components/loading";
@@ -14,11 +15,8 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
+import { useSupportTickets } from "~/hooks/use-support-tickets";
 import { useAuth } from "~/lib/auth.context";
-import {
-  SupportTicketsCollection,
-  useSupportTickets,
-} from "~/lib/db.collections";
 
 export const Route = createFileRoute("/support/")({
   loader: async () => {

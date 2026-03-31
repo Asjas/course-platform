@@ -2,6 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { intlFormat } from "date-fns";
 import { EyeIcon } from "lucide-react";
 import { useState } from "react";
+import {
+  type GdprAuditLog,
+  GdprAuditLogsCollection,
+} from "~/collections/gdpr-audit-logs";
 import { EmptyState } from "~/components/empty-state";
 import {
   Sheet,
@@ -19,11 +23,7 @@ import {
   TableHeaderCell,
   TableHeaderRow,
 } from "~/components/ui/table";
-import {
-  type GdprAuditLog,
-  GdprAuditLogsCollection,
-  useGdprAuditLogs,
-} from "~/lib/db.collections";
+import { useGdprAuditLogs } from "~/hooks/use-gdpr-audit-logs";
 import { cn } from "~/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/admin/audit")({

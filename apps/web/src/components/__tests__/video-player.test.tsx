@@ -45,13 +45,27 @@ describe("VideoPlayer", () => {
   });
 
   it("shows invalid video message for bad URL", () => {
-    render(<VideoPlayer url="not-a-valid-url" />);
-    expect(screen.getByText("Invalid video URL")).toBeInTheDocument();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    try {
+      render(<VideoPlayer url="not-a-valid-url" />);
+      expect(screen.getByText("Invalid video URL")).toBeInTheDocument();
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it("shows invalid video message for empty string", () => {
-    render(<VideoPlayer url="" />);
-    expect(screen.getByText("Invalid video URL")).toBeInTheDocument();
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(vi.fn());
+    try {
+      render(<VideoPlayer url="" />);
+      expect(screen.getByText("Invalid video URL")).toBeInTheDocument();
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   it("applies custom className to the wrapper", () => {
