@@ -10,6 +10,9 @@
  * Uses deterministic fixture IDs seeded by the CI pipeline.
  */
 
+/** Milliseconds to wait for the lesson page to fully load. */
+const LESSON_LOAD_TIMEOUT = 15000;
+
 /** Fixture IDs for the "What is Fastify?" preview lesson (Phase 1 transcript). */
 const TRANSCRIPT_LESSON = {
   courseId: "course:01TESTCOURSE00000000001",
@@ -36,7 +39,9 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
 
     // Wait for the lesson page to fully load
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     // Switch to fullscreen layout to reveal the transcript tab
     cy.contains("button", "Fullscreen").click();
@@ -46,7 +51,9 @@ describe("Lesson Transcript — Timestamp Mode", () => {
 
   it("displays transcript cues in timestamp mode", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
 
@@ -70,7 +77,9 @@ describe("Lesson Transcript — Timestamp Mode", () => {
 
   it("shows cue timestamps and text content", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
@@ -94,7 +103,9 @@ describe("Lesson Transcript — Timestamp Mode", () => {
 
   it("shows the Manual source badge", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
@@ -114,7 +125,9 @@ describe("Lesson Transcript — Paragraph Mode", () => {
 
   it("switches to paragraph mode and shows paragraph content", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
@@ -136,7 +149,9 @@ describe("Lesson Transcript — Paragraph Mode", () => {
 
   it("can switch back to timestamp mode from paragraph mode", () => {
     cy.visit(TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
@@ -161,7 +176,9 @@ describe("Lesson Transcript — Empty State", () => {
 
   it("shows no-transcript message for a lesson without a Phase 1 transcript", () => {
     cy.visit(NO_TRANSCRIPT_LESSON.url);
-    cy.contains("Back to Course", { timeout: 15000 }).should("be.visible");
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
 
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();

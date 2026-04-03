@@ -151,16 +151,12 @@ export function parseVttTimestamp(raw: string): number | null {
 
 /** Strip HTML tags from VTT cue text (including `<c>`, `<v Name>`, etc.). */
 function stripVttTags(text: string): string {
-  // Decode HTML entities FIRST so that entity-encoded tags (e.g. &lt;script&gt;)
-  // become real tags and are removed by the subsequent tag stripper. Decoding
-  // after stripping would allow entity-encoded tags to survive the strip step.
-  const decoded = text
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&nbsp;/g, " ");
-  // Now strip all HTML/VTT markup (e.g. <b>, <v Name>, <c.class>, timing tags).
-  return decoded.replace(/<[^>]+>/g, "").trim();
+  // Use DOMParser for safe, complete entity decoding and tag stripping.
+  // DOMParser correctly handles all HTML entity types (named, numeric, hex)
+  // and malformed/unclosed tags, without the incomplete-sanitization risks of
+  // regex-based stripping.
+  const doc = new DOMParser().parseFromString(text, "text/html");
+  return (doc.body.textContent ?? "").trim();
 }
 
 /**
