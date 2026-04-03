@@ -11,8 +11,8 @@
 > - **Added 4 new web Vitest test files** (+59 tests total):
 >   - `apps/web/src/components/markdown-editor/formatting/__tests__/text-utils.test.ts`
 >     (19 tests, new file) — `isAtStartOfLine`, `getPreviousLine`,
->     `findMarkersAroundCursor`, `findSingleCharMarker`: happy paths,
->     boundary conditions, negative cases
+>     `findMarkersAroundCursor`, `findSingleCharMarker`: happy paths, boundary
+>     conditions, negative cases
 >   - `apps/web/src/components/markdown-editor/formatting/__tests__/handlers.test.ts`
 >     (21 tests, new file) — `insertHeader`, `toggleBold`, `toggleItalic`,
 >     `insertQuote`, `toggleCode`, `insertLink`, `insertBulletList`,
@@ -25,7 +25,8 @@
 >     file-select/no-files, validation error, successful upload
 > - **Added 3 new Cypress E2E spec files**:
 >   - `apps/web/cypress/e2e/course-enrollment.cy.ts` — unauthenticated redirect,
->     dashboard courses grid, course detail navigation, lesson links, back-button
+>     dashboard courses grid, course detail navigation, lesson links,
+>     back-button
 >   - `apps/web/cypress/e2e/reviews.cy.ts` — unauthenticated redirect, admin
 >     CRUD, access control for regular users
 >   - `apps/web/cypress/e2e/direct-messages.cy.ts` — unauthenticated redirect,
@@ -1007,32 +1008,32 @@ These are the largest untested areas containing core business logic.
 
 ### Phase 4: Web Forms and UI Components
 
-| #   | Test to Create                                                        | Target                 | Lines     | Status             |
-| --- | --------------------------------------------------------------------- | ---------------------- | --------- | ------------------ |
-| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`                | Sign in form           | 303 total | - [x] Done         |
-| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`                | Sign up form           | —         | - [x] Done         |
-| 43  | `src/components/forms/__tests__/profile-form.test.tsx`                | Profile form           | —         | - [x] Done         |
-| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`          | Course creation form   | —         | - [x] Skip (empty file — form not yet implemented) |
-| 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx`  | Support ticket form    | —         | - [x] Done         |
-| 46  | `src/components/forms/__tests__/change-password-form.test.tsx`        | Change password form   | —         | - [x] Done         |
-| 47  | `src/components/forms/__tests__/change-email-form.test.tsx`           | Change email form      | —         | - [x] Done         |
-| 47a | `src/components/forms/__tests__/request-password-reset-form.test.tsx` | Request reset form     | —         | - [x] Done         |
-| 47b | `src/components/forms/__tests__/password-reset-form.test.tsx`         | Password reset form    | —         | - [x] Done         |
-| 47c | `src/components/forms/__tests__/delete-account-form.test.tsx`         | Delete account form    | —         | - [x] Done         |
+| #   | Test to Create                                                        | Target                 | Lines     | Status                                                                                                                                              |
+| --- | --------------------------------------------------------------------- | ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 41  | `src/components/forms/__tests__/sign-in-form.test.tsx`                | Sign in form           | 303 total | - [x] Done                                                                                                                                          |
+| 42  | `src/components/forms/__tests__/sign-up-form.test.tsx`                | Sign up form           | —         | - [x] Done                                                                                                                                          |
+| 43  | `src/components/forms/__tests__/profile-form.test.tsx`                | Profile form           | —         | - [x] Done                                                                                                                                          |
+| 44  | `src/components/forms/__tests__/create-course-form.test.tsx`          | Course creation form   | —         | - [x] Skip (empty file — form not yet implemented)                                                                                                  |
+| 45  | `src/components/forms/__tests__/create-support-ticket-form.test.tsx`  | Support ticket form    | —         | - [x] Done                                                                                                                                          |
+| 46  | `src/components/forms/__tests__/change-password-form.test.tsx`        | Change password form   | —         | - [x] Done                                                                                                                                          |
+| 47  | `src/components/forms/__tests__/change-email-form.test.tsx`           | Change email form      | —         | - [x] Done                                                                                                                                          |
+| 47a | `src/components/forms/__tests__/request-password-reset-form.test.tsx` | Request reset form     | —         | - [x] Done                                                                                                                                          |
+| 47b | `src/components/forms/__tests__/password-reset-form.test.tsx`         | Password reset form    | —         | - [x] Done                                                                                                                                          |
+| 47c | `src/components/forms/__tests__/delete-account-form.test.tsx`         | Delete account form    | —         | - [x] Done                                                                                                                                          |
 | 48  | `src/lib/__tests__/auth.client.test.ts`                               | Auth client            | —         | - [x] Skip (thin wrapper over better-auth; no business logic to unit-test; auth flows covered by sign-in/sign-up form tests + E2E auth-forms.cy.ts) |
-| 49  | `src/lib/__tests__/markdown.test.ts`                                  | Markdown utils         | —         | - [x] Done         |
-| 49a | `src/components/ui/__tests__/card.test.tsx`                           | UI card primitives     | —         | - [x] Done         |
-| 49b | `src/components/ui/__tests__/input.test.tsx`                          | UI input primitives    | —         | - [x] Done         |
-| 49c | `src/components/ui/__tests__/label.test.tsx`                          | UI label               | —         | - [x] Done         |
-| 49d | `src/components/ui/__tests__/nav-link.test.tsx`                       | UI nav-link            | —         | - [x] Done         |
-| 49e | `src/components/ui/__tests__/form-status-message.test.tsx`            | UI form status         | —         | - [x] Done         |
-| 49f | `src/components/ui/__tests__/table.test.tsx`                          | UI table primitives    | —         | - [x] Done         |
-| 49g | `src/schema/__tests__/sign-in.test.ts`                                | Sign-in schema         | —         | - [x] Done _(new)_ |
-| 49h | `src/schema/__tests__/change-email.test.ts`                           | Change email schema    | —         | - [x] Done _(new)_ |
-| 49i | `src/schema/__tests__/change-password.test.ts`                        | Change password schema | —         | - [x] Done _(new)_ |
-| 49j | `src/schema/__tests__/password-reset.test.ts`                         | Password reset schema  | —         | - [x] Done _(new)_ |
-| 49k | `src/schema/__tests__/request-password-reset.test.ts`                 | Request reset schema   | —         | - [x] Done _(new)_ |
-| 49l | `src/schema/__tests__/edit-user.test.ts`                              | Edit user schema       | —         | - [x] Done _(new)_ |
+| 49  | `src/lib/__tests__/markdown.test.ts`                                  | Markdown utils         | —         | - [x] Done                                                                                                                                          |
+| 49a | `src/components/ui/__tests__/card.test.tsx`                           | UI card primitives     | —         | - [x] Done                                                                                                                                          |
+| 49b | `src/components/ui/__tests__/input.test.tsx`                          | UI input primitives    | —         | - [x] Done                                                                                                                                          |
+| 49c | `src/components/ui/__tests__/label.test.tsx`                          | UI label               | —         | - [x] Done                                                                                                                                          |
+| 49d | `src/components/ui/__tests__/nav-link.test.tsx`                       | UI nav-link            | —         | - [x] Done                                                                                                                                          |
+| 49e | `src/components/ui/__tests__/form-status-message.test.tsx`            | UI form status         | —         | - [x] Done                                                                                                                                          |
+| 49f | `src/components/ui/__tests__/table.test.tsx`                          | UI table primitives    | —         | - [x] Done                                                                                                                                          |
+| 49g | `src/schema/__tests__/sign-in.test.ts`                                | Sign-in schema         | —         | - [x] Done _(new)_                                                                                                                                  |
+| 49h | `src/schema/__tests__/change-email.test.ts`                           | Change email schema    | —         | - [x] Done _(new)_                                                                                                                                  |
+| 49i | `src/schema/__tests__/change-password.test.ts`                        | Change password schema | —         | - [x] Done _(new)_                                                                                                                                  |
+| 49j | `src/schema/__tests__/password-reset.test.ts`                         | Password reset schema  | —         | - [x] Done _(new)_                                                                                                                                  |
+| 49k | `src/schema/__tests__/request-password-reset.test.ts`                 | Request reset schema   | —         | - [x] Done _(new)_                                                                                                                                  |
+| 49l | `src/schema/__tests__/edit-user.test.ts`                              | Edit user schema       | —         | - [x] Done _(new)_                                                                                                                                  |
 
 ### Phase 5: Missing E2E Tests
 
@@ -1052,22 +1053,22 @@ These are the largest untested areas containing core business logic.
 
 ### Phase 6: Improve Partial Coverage
 
-| #   | File                                                      | Current Lines | Current Branches | Status                                        |
-| --- | --------------------------------------------------------- | ------------- | ---------------- | --------------------------------------------- |
-| 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [x] Done                                    |
-| 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done                                    |
+| #   | File                                                      | Current Lines | Current Branches | Status                                                                                                                   |
+| --- | --------------------------------------------------------- | ------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| 58  | `src/lib/rehype-media-embed.ts`                           | 23%           | 11%              | - [x] Done                                                                                                               |
+| 59  | `src/lib/attachments.ts`                                  | 27%           | 16%              | - [x] Done                                                                                                               |
 | 60  | `src/lib/db.collections.ts`                               | n/a           | n/a              | - [x] Skip (pure data wiring — collection sync logic tested via SSE sync hooks + E2E flows; no unit-testable pure logic) |
-| 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [x] Done                                    |
-| 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [x] Migrated to E2E (`notifications.cy.ts`) |
-| 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [x] Done _(new)_                            |
-| 64  | `src/components/markdown-editor/formatting/text-utils.ts` | 62%           | 33%              | - [x] Done _(new)_                            |
-| 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [x] Done _(new)_                            |
-| 66  | `src/components/emoji-reaction-picker.tsx`                | 4%            | 0%               | - [x] Done                                    |
-| 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [x] Done                                    |
-| 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done                                    |
-| 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [x] Done (`src/lib/tests/logging.test.ts`)  |
-| 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [x] Done                                    |
-| 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [x] Do Not Test (see below)                 |
+| 61  | `src/components/message-reactions.tsx`                    | 40%           | 23%              | - [x] Done                                                                                                               |
+| 62  | `src/components/notifications-bell.tsx`                   | 56%           | 27%              | - [x] Migrated to E2E (`notifications.cy.ts`)                                                                            |
+| 63  | `src/components/markdown-editor/formatting/handlers.ts`   | 55%           | 29%              | - [x] Done _(new)_                                                                                                       |
+| 64  | `src/components/markdown-editor/formatting/text-utils.ts` | 62%           | 33%              | - [x] Done _(new)_                                                                                                       |
+| 65  | `src/components/markdown-editor/hooks/use-file-upload.ts` | 6%            | 0%               | - [x] Done _(new)_                                                                                                       |
+| 66  | `src/components/emoji-reaction-picker.tsx`                | 4%            | 0%               | - [x] Done                                                                                                               |
+| 67  | `src/components/SyncStatusIndicator.tsx`                  | 13%           | 10%              | - [x] Done                                                                                                               |
+| 68  | `src/components/course-card.tsx`                          | partial       | partial          | - [x] Done                                                                                                               |
+| 69  | `server: src/lib/logging.ts`                              | 20%           | 0%               | - [x] Done (`src/lib/tests/logging.test.ts`)                                                                             |
+| 70  | `server: src/lib/sse-sync.ts`                             | 33%           | 29%              | - [x] Done                                                                                                               |
+| 71  | `server: src/lib/metrics.ts`                              | 72%           | 0%               | - [x] Do Not Test (see below)                                                                                            |
 
 ---
 
@@ -1260,7 +1261,8 @@ SMTP configuration.
   _(new)_
 - `src/components/forms/__tests__/delete-account-form.test.tsx` — 5 tests
   _(new)_
-- `src/components/layouts/__tests__/admin-layout.test.tsx` — 5 tests _(expanded)_
+- `src/components/layouts/__tests__/admin-layout.test.tsx` — 5 tests
+  _(expanded)_
 - `src/components/ui/__tests__/button.test.tsx` — 3 tests
 - `src/components/ui/__tests__/card.test.tsx` — 1 test _(new)_
 - `src/components/ui/__tests__/dropdown-menu.test.tsx` — 2 tests
