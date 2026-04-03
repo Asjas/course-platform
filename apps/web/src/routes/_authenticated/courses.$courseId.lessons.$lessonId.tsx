@@ -22,6 +22,7 @@ import { SupportTicketsCollection } from "~/collections/support-tickets";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
+import { TranscriptPanel } from "~/components/transcript-panel";
 import { VideoPlayer } from "~/components/video-player";
 import { useCourseById } from "~/hooks/use-courses";
 import {
@@ -350,14 +351,15 @@ function LessonPage() {
                   </TabList>
 
                   <TabPanel
-                    className="grow overflow-y-auto p-4"
+                    className="grow overflow-hidden p-0"
                     id="transcription"
                   >
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <p className="text-gray-700 dark:text-gray-300">
-                        Transcription coming soon...
-                      </p>
-                    </div>
+                    <TranscriptPanel
+                      transcription={
+                        (lesson as { transcription?: unknown }).transcription
+                      }
+                      hasVideo={Boolean(videoUrl)}
+                    />
                   </TabPanel>
 
                   <TabPanel
