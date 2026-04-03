@@ -525,7 +525,8 @@ export const transcriptDataSchema = z
     if (lastCue && data.durationMs < lastCue.endMs) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "durationMs must be greater than or equal to the last cue endMs",
+        message:
+          "durationMs must be greater than or equal to the last cue endMs",
         path: ["durationMs"],
       });
     }
