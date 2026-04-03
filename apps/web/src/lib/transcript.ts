@@ -206,11 +206,12 @@ export function parseVtt(vttText: string): VttParseResult {
     .split("\n");
 
   // Validate WEBVTT header
-  if (!rawLines[0]?.trim().startsWith("WEBVTT")) {
+  const hasHeader = rawLines[0]?.trim().startsWith("WEBVTT") ?? false;
+  if (!hasHeader) {
     warnings.push({ line: 1, message: "Missing WEBVTT header" });
   }
 
-  let i = 1; // skip header line
+  let i = hasHeader ? 1 : 0;
   let cueIndex = 0;
 
   while (i < rawLines.length) {
