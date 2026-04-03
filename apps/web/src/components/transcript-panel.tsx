@@ -32,8 +32,8 @@ interface TranscriptPanelProps {
   hasVideo?: boolean;
   /**
    * Current video playback position in seconds.
-   * When provided, the active cue is highlighted and auto-scrolled.
-   * Phase 1 — visual-only (no seek callback yet).
+   * When provided, the active cue is highlighted.
+   * Phase 1 — visual-only (no auto-scroll or seek callback yet).
    */
   currentTimeSeconds?: number;
 }
