@@ -12,12 +12,10 @@
  */
 import { useState } from "react";
 import {
-  type TranscriptData,
   buildParagraphs,
-  checkTranscriptEligibility,
   findActiveCueIndex,
   formatCueTime,
-  validateTranscriptData,
+  resolveTranscript,
 } from "~/lib/transcript";
 import { cn } from "~/lib/utils";
 
@@ -61,10 +59,7 @@ export function TranscriptPanel({
 }: TranscriptPanelProps) {
   const [mode, setMode] = useState<ViewMode>("timestamp");
 
-  const eligibility = checkTranscriptEligibility(transcription, hasVideo);
-  const data: TranscriptData | null = eligibility.eligible
-    ? validateTranscriptData(transcription)
-    : null;
+  const { eligibility, data } = resolveTranscript(transcription, hasVideo);
 
   // ---------------------------------------------------------------------------
   // Empty / invalid states

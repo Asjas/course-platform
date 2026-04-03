@@ -589,6 +589,51 @@ export function checkTranscriptEligibility(
   return { eligible: true };
 }
 
+/**
+ * Validate the raw transcription value once and derive both the eligibility
+ * result and the parsed data from that single pass.
+ *
+ * Use this in display components (e.g. TranscriptPanel) instead of calling
+ * `checkTranscriptEligibility` + `validateTranscriptData` separately, which
+ * would run the Zod schema twice for the common "valid transcript" path.
+ */
+export function resolveTranscript(
+  transcription: unknown,
+  hasVideo: boolean,
+): { eligibility: TranscriptEligibility; data: TranscriptData | null } {
+  if (!hasVideo) {
+    // Non-video lessons are always eligible; parse opportunistically.
+    return {
+      eligibility: { eligible: true },
+      data: validateTranscriptData(transcription),
+    };
+  }
+
+  if (transcription === null || transcription === undefined) {
+    return {
+      eligibility: { eligible: false, reason: "missing" },
+      data: null,
+    };
+  }
+
+  const data = validateTranscriptData(transcription);
+  if (!data) {
+    return {
+      eligibility: { eligible: false, reason: "invalid_schema" },
+      data: null,
+    };
+  }
+
+  if (data.cues.length === 0) {
+    return {
+      eligibility: { eligible: false, reason: "no_cues" },
+      data: null,
+    };
+  }
+
+  return { eligibility: { eligible: true }, data };
+}
+
 // ---------------------------------------------------------------------------
 // Formatting helpers
 // ---------------------------------------------------------------------------

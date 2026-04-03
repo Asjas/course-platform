@@ -59,22 +59,12 @@ export const Route = createFileRoute(
   },
 });
 
-// Type for lesson in module
-interface ModuleLesson {
-  id: string;
-  title: string;
-  order: number;
-  duration: number | null;
-}
-
-// Type for module with lessons
-interface ModuleWithLessons {
-  id: string;
-  title: string;
-  order: number;
-  description: string;
-  lessons?: ModuleLesson[];
-}
+// Derive lesson and module types from the server query type so TypeScript
+// enforces all fields — including `transcription` — are present.
+type ModuleWithLessons = NonNullable<
+  CourseWithModulesAndLessons["modules"]
+>[number];
+type LessonInModule = NonNullable<ModuleWithLessons["lessons"]>[number];
 
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0:00";
@@ -115,9 +105,9 @@ function LessonPage() {
   const fullCourse = course as CourseWithModulesAndLessons;
 
   // Find the lesson in the course modules
-  let lesson = null;
+  let lesson: LessonInModule | null = null;
   for (const module of fullCourse.modules || []) {
-    const found = module.lessons?.find((l: ModuleLesson) => l.id === lessonId);
+    const found = module.lessons?.find((l) => l.id === lessonId);
     if (found) {
       lesson = found;
       break;
@@ -133,9 +123,7 @@ function LessonPage() {
   }
 
   const sortedModules: ModuleWithLessons[] = fullCourse.modules
-    ? (fullCourse.modules as ModuleWithLessons[]).sort(
-        (a, b) => a.order - b.order,
-      )
+    ? [...fullCourse.modules].sort((a, b) => a.order - b.order)
     : [];
 
   const toggleLayout = () => {
@@ -354,16 +342,8 @@ function LessonPage() {
                     className="grow overflow-hidden p-0"
                     id="transcription"
                   >
-                    {/*
-                     * TODO: Add `transcription` to the lesson query type so
-                     * this assertion can be replaced with a proper typed field.
-                     * The field exists in the DB (jsonb) but the inferred query
-                     * type currently omits it from the nested lessons array.
-                     */}
                     <TranscriptPanel
-                      transcription={
-                        (lesson as { transcription?: unknown }).transcription
-                      }
+                      transcription={lesson.transcription}
                       hasVideo={Boolean(videoUrl)}
                     />
                   </TabPanel>
