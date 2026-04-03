@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useChildMatches,
+} from "@tanstack/react-router";
 import {
   BookOpen,
   Clock,
@@ -81,6 +86,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function CourseDetailPage() {
+  const childMatches = useChildMatches();
   const { courseId } = Route.useParams();
   const { data: course, isLoading } = useCourseById({ courseId });
   const [isRatingSheetOpen, setIsRatingSheetOpen] = useState(false);
@@ -113,6 +119,11 @@ function CourseDetailPage() {
       setReviewComment("");
     }
   }, [isRatingSheetOpen, existingReview]);
+
+  // When a child route is active (e.g. a lesson page), defer entirely to it.
+  if (childMatches.length > 0) {
+    return <Outlet />;
+  }
 
   if (isLoading) {
     return (

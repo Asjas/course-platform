@@ -59,12 +59,26 @@ export const Route = createFileRoute(
   },
 });
 
-// Derive lesson and module types from the server query type so TypeScript
-// enforces all fields — including `transcription` — are present.
-type ModuleWithLessons = NonNullable<
-  CourseWithModulesAndLessons["modules"]
->[number];
-type LessonInModule = NonNullable<ModuleWithLessons["lessons"]>[number];
+// Manual interfaces for module/lesson data from getCourseById.
+// `transcription` is jsonb (unknown) so it can be passed to TranscriptPanel
+// without a type assertion, while remaining properly typed for Zod validation.
+interface LessonInModule {
+  id: string;
+  title: string;
+  order: number;
+  duration: number | null;
+  videoUrl: string;
+  videoProvider: string;
+  transcription: unknown;
+}
+
+interface ModuleWithLessons {
+  id: string;
+  title: string;
+  order: number;
+  description: string;
+  lessons?: LessonInModule[];
+}
 
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0:00";
@@ -103,10 +117,13 @@ function LessonPage() {
 
   // Cast to CourseWithModulesAndLessons since the loader ensures we have full course data
   const fullCourse = course as CourseWithModulesAndLessons;
+  // Cast modules to the canonical typed shape (Drizzle prepared-statement
+  // inference loses nested relation types, so we assert the shape explicitly).
+  const typedModules = (fullCourse.modules ?? []) as ModuleWithLessons[];
 
   // Find the lesson in the course modules
   let lesson: LessonInModule | null = null;
-  for (const module of fullCourse.modules || []) {
+  for (const module of typedModules) {
     const found = module.lessons?.find((l) => l.id === lessonId);
     if (found) {
       lesson = found;
@@ -123,9 +140,9 @@ function LessonPage() {
   }
 
   // Spread to avoid mutating the original query-result array in-place.
-  const sortedModules: ModuleWithLessons[] = fullCourse.modules
-    ? [...fullCourse.modules].sort((a, b) => a.order - b.order)
-    : [];
+  const sortedModules: ModuleWithLessons[] = [...typedModules].sort(
+    (a, b) => a.order - b.order,
+  );
 
   const toggleLayout = () => {
     setLayoutMode((prev) => (prev === "sidebar" ? "fullscreen" : "sidebar"));
