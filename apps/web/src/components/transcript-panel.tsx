@@ -184,7 +184,7 @@ export function TranscriptPanel({
                     ? "bg-green-50 dark:bg-green-900/20"
                     : "hover:bg-gray-50 dark:hover:bg-gray-700/30",
                 )}
-                key={cue.id}
+                key={`${cue.id}-${cue.startMs}-${idx}`}
                 aria-current={isActive ? "true" : undefined}
                 data-testid="transcript-cue"
               >
