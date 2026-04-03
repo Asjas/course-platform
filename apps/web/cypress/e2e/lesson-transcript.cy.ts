@@ -21,8 +21,8 @@ const TRANSCRIPT_LESSON = {
 };
 
 /**
- * A lesson that only has the old-format segments payload (no valid Phase 1 transcript).
- * Used to verify the empty-state message.
+ * Lesson 2 has `transcription: { segments: [] }` (old-format, empty segments).
+ * This triggers the `invalid_schema` reason and renders the empty-state UI.
  */
 const NO_TRANSCRIPT_LESSON = {
   courseId: "course:01TESTCOURSE00000000001",

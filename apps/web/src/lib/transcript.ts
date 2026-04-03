@@ -155,6 +155,9 @@ function stripVttTags(text: string): string {
   // DOMParser correctly handles all HTML entity types (named, numeric, hex)
   // and malformed/unclosed tags, without the incomplete-sanitization risks of
   // regex-based stripping.
+  //
+  // Browser-only: this function is called only from parseVtt which runs
+  // exclusively in the browser (apps/web client-side bundle).
   const doc = new DOMParser().parseFromString(text, "text/html");
   return (doc.body.textContent ?? "").trim();
 }
