@@ -87,9 +87,9 @@ function isDestructiveCommand(command) {
 function isHardBlockedCommand(command) {
   const text = String(command || "").toLowerCase().trim();
 
-  // Block rm with recursive+force flags targeting root /.
-  // Catches: rm -rf /, rm -r -f /, rm -fr /, rm -rf /*, sudo rm -rf /, etc.
-  // Allows: rm file.txt, rm -rf ./dir, rm -rf /home/user/dir, etc.
+  // Block rm when recursive + force flags are combined.
+  // Catches: rm -rf /, rm -r -f /, rm -fr /, rm -rf ./dir, sudo rm -rf ./dir, etc.
+  // Allows: rm file.txt, rm -r ./dir, rm -f file.txt, etc.
   const rmMatch = text.match(
     /(^|[;&|]\s*)(sudo\s+)?rm\s+(.*)/,
   );
@@ -101,9 +101,8 @@ function isHardBlockedCommand(command) {
     const hasForce =
       /(?:^|\s)-[a-z]*f[a-z]*(?:\s|$)/.test(rmArgs) ||
       /(?:^|\s)--force(?:\s|$)/.test(rmArgs);
-    const targetsRoot = /(?:^|\s)\/(\s|$|;|&&|\|\||\*)/.test(rmArgs);
 
-    if (hasRecursive && hasForce && targetsRoot) {
+    if (hasRecursive && hasForce) {
       return true;
     }
   }
@@ -141,7 +140,7 @@ const command =
   toolInput.command || toolInput.cmd || toolInput.script || toolInput.text || "";
 if (isHardBlockedCommand(command)) {
   printDeny(
-    "Blocked by PreToolUse safety guard: hard stop on rm -rf /.",
+    "Blocked by PreToolUse safety guard: hard stop on rm -rf.",
   );
   process.exit(0);
 }
