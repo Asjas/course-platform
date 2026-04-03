@@ -4,7 +4,7 @@
  * Covers:
  *   - TypeScript types for the normalized transcript payload.
  *   - VTT → cue parser.
- *   - Cue → paragraph chunker (speaker change, 2.5 s gap, 500-700 char limit).
+ *   - Cue → paragraph chunker (speaker change, 2.5 s gap, 600-char limit).
  *   - Simple in-memory cue search.
  *   - Zod validator for persisted transcript JSON.
  *   - Publish-eligibility helper.
@@ -151,13 +151,16 @@ export function parseVttTimestamp(raw: string): number | null {
 
 /** Strip HTML tags from VTT cue text (including `<c>`, `<v Name>`, etc.). */
 function stripVttTags(text: string): string {
-  return text
-    .replace(/<[^>]+>/g, "")
+  // Decode HTML entities FIRST so that entity-encoded tags (e.g. &lt;script&gt;)
+  // become real tags and are removed by the subsequent tag stripper. Decoding
+  // after stripping would allow entity-encoded tags to survive the strip step.
+  const decoded = text
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
-    .replace(/&nbsp;/g, " ")
-    .trim();
+    .replace(/&nbsp;/g, " ");
+  // Now strip all HTML/VTT markup (e.g. <b>, <v Name>, <c.class>, timing tags).
+  return decoded.replace(/<[^>]+>/g, "").trim();
 }
 
 /**

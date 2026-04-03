@@ -214,10 +214,10 @@ export function TranscriptPanel({
           className="grow overflow-y-auto px-4 py-3"
           data-testid="transcript-paragraph-list"
         >
-          {paragraphs.map((para, idx) => (
+          {paragraphs.map((para) => (
             <p
               className="mb-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300"
-              key={idx}
+              key={`${para.startMs}-${para.endMs}`}
               data-testid="transcript-paragraph"
             >
               {para.speaker && (

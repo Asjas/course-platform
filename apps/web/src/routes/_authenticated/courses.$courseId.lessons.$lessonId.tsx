@@ -354,6 +354,12 @@ function LessonPage() {
                     className="grow overflow-hidden p-0"
                     id="transcription"
                   >
+                    {/*
+                     * TODO: Add `transcription` to the lesson query type so
+                     * this assertion can be replaced with a proper typed field.
+                     * The field exists in the DB (jsonb) but the inferred query
+                     * type currently omits it from the nested lessons array.
+                     */}
                     <TranscriptPanel
                       transcription={
                         (lesson as { transcription?: unknown }).transcription
