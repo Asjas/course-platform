@@ -602,10 +602,11 @@ export function resolveTranscript(
   hasVideo: boolean,
 ): { eligibility: TranscriptEligibility; data: TranscriptData | null } {
   if (!hasVideo) {
-    // Non-video lessons are always eligible; parse opportunistically.
+    // Non-video lessons are always eligible; only parse if a value is present.
     return {
       eligibility: { eligible: true },
-      data: validateTranscriptData(transcription),
+      data:
+        transcription != null ? validateTranscriptData(transcription) : null,
     };
   }
 

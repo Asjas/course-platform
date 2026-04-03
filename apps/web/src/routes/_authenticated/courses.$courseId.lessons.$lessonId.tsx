@@ -122,6 +122,7 @@ function LessonPage() {
     );
   }
 
+  // Spread to avoid mutating the original query-result array in-place.
   const sortedModules: ModuleWithLessons[] = fullCourse.modules
     ? [...fullCourse.modules].sort((a, b) => a.order - b.order)
     : [];
