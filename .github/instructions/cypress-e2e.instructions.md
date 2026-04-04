@@ -8,10 +8,17 @@ description: "Cypress E2E test generation instructions for the web application"
 ## Test Writing Guidelines
 
 ### Code Quality Standards
-- **Selectors**: Prioritize `data-testid` attributes for test stability. Use `cy.contains()` for user-facing text and `cy.get()` for specific elements.
+- **Selectors**: Prioritize accessible selectors that mirror real user interaction: role + accessible name, `<label>` associations, and ARIA/state attributes (for example `aria-label`, `aria-expanded`, `aria-invalid`, `aria-busy`). Use `data-testid` only as a last resort when no semantic/ARIA hook is available.
 - **Assertions**: Use Cypress's built-in assertions which automatically retry. Chain assertions with `.should()`.
 - **Waits**: Rely on Cypress's automatic waiting. Avoid `cy.wait()` with arbitrary timeouts; use `cy.intercept()` for network requests.
 - **Clarity**: Use descriptive test titles that clearly state the intent.
+
+### Selector Priority (A11y-First)
+
+1. Query by role and visible name where possible: `cy.contains("button", "Save")`, `cy.contains("a", "Open course")`.
+2. Query by form semantics: `input[name="email"]`, `<label>` + control relationships.
+3. Query by ARIA attributes when behavior is stateful or icon-only: `cy.get('[aria-label="Close dialog"]')`, `cy.get('[aria-expanded="true"]')`, `cy.get('[aria-invalid="true"]')`.
+4. Use `data-testid` only when semantic selectors are not feasible and document why.
 
 ### Test Structure
 - **Imports**: No imports needed - Cypress commands are globally available.
@@ -227,7 +234,7 @@ Cypress.Commands.add("login", (email: string, password: string) => {
 ## Quality Checklist
 
 Before finalizing tests:
-- [ ] Selectors are stable (prefer `data-testid` over CSS classes)
+- [ ] Selectors are stable and accessibility-first (prefer role/label/ARIA over `data-testid`)
 - [ ] Tests are independent and don't rely on order
 - [ ] Network requests are intercepted where appropriate
 - [ ] Tests have meaningful assertions
