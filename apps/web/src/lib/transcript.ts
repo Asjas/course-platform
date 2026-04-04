@@ -468,7 +468,7 @@ export function searchTranscript(
   query: string,
 ): TranscriptSearchResult {
   const trimmedQuery = query.trim();
-  if (!trimmedQuery) return { query, matches: [] };
+  if (!trimmedQuery) return { query: trimmedQuery, matches: [] };
 
   const lower = trimmedQuery.toLowerCase();
   const matches: TranscriptSearchMatch[] = [];
