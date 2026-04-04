@@ -120,8 +120,12 @@ function CourseDetailPage() {
     }
   }, [isRatingSheetOpen, existingReview]);
 
-  // When a child route is active (e.g. a lesson page), defer entirely to it.
-  if (childMatches.length > 0) {
+  // Only defer to nested content when a leaf descendant route is active.
+  // The `/lessons` layout route itself also counts as a child match, but it
+  // currently only renders its own outlet. Requiring more than one child
+  // match avoids rendering a blank page at `/courses/:courseId/lessons`
+  // while still delegating to concrete lesson routes.
+  if (childMatches.length > 1) {
     return <Outlet />;
   }
 
