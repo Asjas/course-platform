@@ -80,6 +80,15 @@ interface ModuleWithLessons {
   lessons?: LessonInModule[];
 }
 
+// Local type for support ticket comments (mirrors supportTicketComment schema).
+// Prepared-statement type inference can lose nested `with` relation types, so
+// we explicitly type the fields accessed in the comments map below.
+interface TicketComment {
+  id: string;
+  comment: string;
+  createdAt: Date;
+}
+
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0:00";
   const minutes = Math.floor(seconds / 60);
@@ -513,14 +522,16 @@ function LessonPage() {
                                 <h4 className="font-semibold text-gray-900 dark:text-white">
                                   Comments
                                 </h4>
-                                {selectedTicket.comments.map((comment) => (
-                                  <SupportComment
-                                    key={comment.id}
-                                    ticket={selectedTicket}
-                                    content={comment.comment}
-                                    date={comment.createdAt}
-                                  />
-                                ))}
+                                {selectedTicket.comments.map(
+                                  (comment: TicketComment) => (
+                                    <SupportComment
+                                      key={comment.id}
+                                      ticket={selectedTicket}
+                                      content={comment.comment}
+                                      date={comment.createdAt}
+                                    />
+                                  ),
+                                )}
                               </div>
                             )}
                         </div>

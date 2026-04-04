@@ -74,6 +74,17 @@ interface ModuleWithLessons {
   lessons?: ModuleLesson[];
 }
 
+// Local type for the user's own course review (fields accessed in this component).
+// Mirrors the server-side courseReview schema; avoids depending on Drizzle's
+// relation-inference for the plain findFirst() return type.
+interface UserReview {
+  id: string;
+  rating: number | null;
+  title: string;
+  comment: string;
+  approved: boolean;
+}
+
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0m";
   const hours = Math.floor(seconds / 3600);
@@ -97,11 +108,18 @@ function CourseDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Fetch user's existing review for this course
-  const { data: existingReview, refetch: refetchReview } = useQuery({
+  // Fetch user's existing review for this course.
+  // `queryOptions` infers the data type from the Drizzle relation query, which
+  // can collapse to `{}` in some toolchain configurations. We explicitly cast to
+  // the local UserReview interface so all downstream references are type-safe.
+  const { data: existingReviewData, refetch: refetchReview } = useQuery({
     ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
     enabled: !!courseId,
   });
+  const existingReview = existingReviewData as unknown as
+    | UserReview
+    | null
+    | undefined;
 
   // Determine if we're editing an existing review
   const isEditing = !!existingReview;
