@@ -87,15 +87,15 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.contains("Transcription").click();
 
     // Wait for the transcript panel to render
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
     // Cue list should be visible by default (timestamp mode)
-    cy.get('[data-testid="transcript-cue-list"]').should("be.visible");
+    cy.get('[aria-label="Transcript cues"]').should("be.visible");
 
     // At least one cue item should be rendered
-    cy.get('[data-testid="transcript-cue"]').should(
+    cy.get('[aria-label="Transcript cues"] li').should(
       "have.length.greaterThan",
       0,
     );
@@ -110,12 +110,12 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
     // First cue starts at 0ms → timestamp "0:00"
-    cy.get('[data-testid="transcript-cue"]')
+    cy.get('[aria-label="Transcript cues"] li')
       .first()
       .within(() => {
         cy.get('[aria-label^="Time:"]').should("contain", "0:00");
@@ -136,7 +136,7 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
@@ -152,12 +152,12 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
     // Cue c4 starts at 3 600 000 ms = exactly 1:00:00.
-    cy.get('[data-testid="transcript-cue"]')
+    cy.get('[aria-label="Transcript cues"] li')
       .last()
       .within(() => {
         cy.get('[aria-label^="Time:"]').should("contain", "1:00:00");
@@ -179,16 +179,16 @@ describe("Lesson Transcript — Paragraph Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
     // Switch to paragraph mode
-    cy.get('[data-testid="transcript-mode-paragraph"]').click();
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
 
     // Paragraph list should appear and cue list should disappear
-    cy.get('[data-testid="transcript-paragraph-list"]').should("be.visible");
-    cy.get('[data-testid="transcript-cue-list"]').should("not.exist");
+    cy.get('[aria-label="Transcript paragraphs"]').should("be.visible");
+    cy.get('[aria-label="Transcript cues"]').should("not.exist");
 
     // Transcript text should still be visible
     cy.contains("Welcome to the Fastify course.").should("be.visible");
@@ -203,16 +203,19 @@ describe("Lesson Transcript — Paragraph Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
-    cy.get('[data-testid="transcript-mode-paragraph"]').click();
-    cy.get('[data-testid="transcript-paragraph-list"]').should("be.visible");
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
+    cy.get('[aria-label="Transcript paragraphs"]').should("be.visible");
 
-    cy.get('[data-testid="transcript-mode-timestamp"]').click();
-    cy.get('[data-testid="transcript-cue-list"]').should("be.visible");
-    cy.get('[data-testid="transcript-paragraph-list"]').should("not.exist");
+    cy.contains(
+      '[aria-label="Lesson transcript"] button',
+      "Timestamps",
+    ).click();
+    cy.get('[aria-label="Transcript cues"]').should("be.visible");
+    cy.get('[aria-label="Transcript paragraphs"]').should("not.exist");
   });
 
   it("shows multiple paragraphs when transcript has speaker changes", () => {
@@ -224,14 +227,14 @@ describe("Lesson Transcript — Paragraph Mode", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 
-    cy.get('[data-testid="transcript-mode-paragraph"]').click();
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
 
     // Speaker change (Alice→Bob at c2) and large gap (c3→c4) create exactly 3 paragraphs.
-    cy.get('[data-testid="transcript-paragraph"]').should("have.length", 3);
+    cy.get('[aria-label="Transcript paragraphs"] li').should("have.length", 3);
   });
 });
 
@@ -250,11 +253,9 @@ describe("Lesson Transcript — Empty State", () => {
     cy.contains("Transcription").click();
 
     // Should show empty state, not a transcript panel
-    cy.get('[data-testid="transcript-empty"]', { timeout: 10000 }).should(
-      "be.visible",
-    );
+    cy.get('[role="status"]', { timeout: 10000 }).should("be.visible");
 
-    cy.get('[data-testid="transcript-panel"]').should("not.exist");
+    cy.get('[aria-label="Lesson transcript"]').should("not.exist");
   });
 
   it("shows empty-cues message for a lesson whose transcript has zero cues", () => {
@@ -267,15 +268,13 @@ describe("Lesson Transcript — Empty State", () => {
     cy.contains("Transcription").click();
 
     // Valid v1 schema with empty cues → "no_cues" reason → distinct message
-    cy.get('[data-testid="transcript-empty"]', { timeout: 10000 }).should(
-      "be.visible",
-    );
+    cy.get('[role="status"]', { timeout: 10000 }).should("be.visible");
 
     cy.contains("The transcript for this lesson is empty.").should(
       "be.visible",
     );
 
-    cy.get('[data-testid="transcript-panel"]').should("not.exist");
+    cy.get('[aria-label="Lesson transcript"]').should("not.exist");
   });
 });
 
@@ -293,7 +292,7 @@ describe("Lesson Transcript — Source Badge", () => {
     cy.contains("button", "Fullscreen").click();
     cy.contains("Transcription").click();
 
-    cy.get('[data-testid="transcript-panel"]', { timeout: 10000 }).should(
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
       "be.visible",
     );
 

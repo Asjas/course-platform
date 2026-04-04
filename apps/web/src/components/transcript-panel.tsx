@@ -76,7 +76,7 @@ export function TranscriptPanel({
     return (
       <div
         className="flex h-full items-center justify-center p-6 text-center"
-        data-testid="transcript-empty"
+        role="status"
       >
         <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
       </div>
@@ -88,7 +88,7 @@ export function TranscriptPanel({
     return (
       <div
         className="flex h-full items-center justify-center p-6 text-center"
-        data-testid="transcript-empty"
+        role="status"
       >
         <p className="text-sm text-gray-500 dark:text-gray-400">
           No transcript has been added for this lesson yet.
@@ -115,7 +115,6 @@ export function TranscriptPanel({
   return (
     <section
       className="flex h-full flex-col"
-      data-testid="transcript-panel"
       aria-label="Lesson transcript"
     >
       {/* Mode toggle */}
@@ -132,7 +131,6 @@ export function TranscriptPanel({
               : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
           )}
           aria-pressed={mode === "timestamp"}
-          data-testid="transcript-mode-timestamp"
           onClick={() => setMode("timestamp")}
           type="button"
         >
@@ -146,7 +144,6 @@ export function TranscriptPanel({
               : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200",
           )}
           aria-pressed={mode === "paragraph"}
-          data-testid="transcript-mode-paragraph"
           onClick={() => setMode("paragraph")}
           type="button"
         >
@@ -167,7 +164,6 @@ export function TranscriptPanel({
         <ol
           className="grow overflow-y-auto"
           aria-label="Transcript cues"
-          data-testid="transcript-cue-list"
         >
           {data.cues.map((cue, idx) => {
             const isActive = idx === activeCueIndex;
@@ -181,7 +177,6 @@ export function TranscriptPanel({
                 )}
                 key={`${cue.id}-${cue.startMs}-${idx}`}
                 aria-current={isActive ? "true" : undefined}
-                data-testid="transcript-cue"
               >
                 <span
                   className="mt-0.5 shrink-0 font-mono text-xs text-gray-400 tabular-nums dark:text-gray-500"
@@ -205,15 +200,14 @@ export function TranscriptPanel({
 
       {/* Paragraph list */}
       {mode === "paragraph" && (
-        <div
+        <ol
           className="grow overflow-y-auto px-4 py-3"
-          data-testid="transcript-paragraph-list"
+          aria-label="Transcript paragraphs"
         >
           {paragraphs.map((para) => (
-            <p
+            <li
               className="mb-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300"
               key={`${para.startMs}-${para.endMs}`}
-              data-testid="transcript-paragraph"
             >
               {para.speaker && (
                 <span className="mr-1 font-medium text-gray-900 dark:text-white">
@@ -221,9 +215,9 @@ export function TranscriptPanel({
                 </span>
               )}
               {para.text}
-            </p>
+            </li>
           ))}
-        </div>
+        </ol>
       )}
     </section>
   );

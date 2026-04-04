@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { TranscriptPanel } from "~/components/transcript-panel";
@@ -75,7 +75,7 @@ describe("TranscriptPanel — empty and invalid states", () => {
         hasVideo={true}
       />,
     );
-    expect(await screen.findByTestId("transcript-empty")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toBeInTheDocument();
   });
 
   it("shows no-transcript message when transcription is undefined", async () => {
@@ -85,7 +85,7 @@ describe("TranscriptPanel — empty and invalid states", () => {
         hasVideo={true}
       />,
     );
-    expect(await screen.findByTestId("transcript-empty")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toBeInTheDocument();
   });
 
   it("shows invalid-schema message for old-format segments payload", async () => {
@@ -96,7 +96,7 @@ describe("TranscriptPanel — empty and invalid states", () => {
         hasVideo={true}
       />,
     );
-    expect(await screen.findByTestId("transcript-empty")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toBeInTheDocument();
   });
 
   it("shows no-cues message for a transcript with empty cue array", async () => {
@@ -112,7 +112,7 @@ describe("TranscriptPanel — empty and invalid states", () => {
         hasVideo={true}
       />,
     );
-    expect(await screen.findByTestId("transcript-empty")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toBeInTheDocument();
   });
 
   it("is always eligible when hasVideo is false, even with no transcript", async () => {
@@ -125,7 +125,7 @@ describe("TranscriptPanel — empty and invalid states", () => {
         hasVideo={false}
       />,
     );
-    expect(await screen.findByTestId("transcript-empty")).toBeInTheDocument();
+    expect(await screen.findByRole("status")).toBeInTheDocument();
   });
 });
 
@@ -136,19 +136,26 @@ describe("TranscriptPanel — empty and invalid states", () => {
 describe("TranscriptPanel — timestamp mode", () => {
   it("renders the transcript panel with cue list", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    expect(await screen.findByTestId("transcript-panel")).toBeInTheDocument();
-    expect(screen.getByTestId("transcript-cue-list")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("region", { name: "Lesson transcript" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Transcript cues" }),
+    ).toBeInTheDocument();
   });
 
   it("renders one list item per cue", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    const cues = await screen.findAllByTestId("transcript-cue");
+    const cueList = await screen.findByRole("list", {
+      name: "Transcript cues",
+    });
+    const cues = within(cueList).getAllByRole("listitem");
     expect(cues).toHaveLength(3);
   });
 
   it("renders cue timestamps", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-cue-list");
+    await screen.findByRole("list", { name: "Transcript cues" });
     // First cue starts at 0ms → "0:00"
     expect(screen.getByLabelText("Time: 0:00")).toBeInTheDocument();
     // Second cue starts at 4000ms → "0:04"
@@ -157,7 +164,7 @@ describe("TranscriptPanel — timestamp mode", () => {
 
   it("renders cue text content", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-cue-list");
+    await screen.findByRole("list", { name: "Transcript cues" });
     expect(screen.getByText("Welcome to the lesson.")).toBeInTheDocument();
     expect(screen.getByText("Today we cover Fastify.")).toBeInTheDocument();
     expect(screen.getByText("Let's build an API.")).toBeInTheDocument();
@@ -165,19 +172,19 @@ describe("TranscriptPanel — timestamp mode", () => {
 
   it("shows 'Manual' source badge for manual transcripts", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
     expect(screen.getByText("Manual")).toBeInTheDocument();
   });
 
   it("shows 'Auto' source badge for auto-generated transcripts", async () => {
     render(<TranscriptPanel transcription={AUTO_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
     expect(screen.getByText("Auto")).toBeInTheDocument();
   });
 
   it("renders speaker labels when present", async () => {
     render(<TranscriptPanel transcription={MULTI_SPEAKER_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-cue-list");
+    await screen.findByRole("list", { name: "Transcript cues" });
     expect(screen.getByText("Alice:")).toBeInTheDocument();
     expect(screen.getByText("Bob:")).toBeInTheDocument();
   });
@@ -191,32 +198,38 @@ describe("TranscriptPanel — paragraph mode", () => {
   it("switches to paragraph mode on button click", async () => {
     const user = userEvent.setup();
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    const paragraphBtn = screen.getByTestId("transcript-mode-paragraph");
-    await user.click(paragraphBtn);
+    await user.click(screen.getByRole("button", { name: "Paragraph" }));
 
-    expect(screen.getByTestId("transcript-paragraph-list")).toBeInTheDocument();
-    expect(screen.queryByTestId("transcript-cue-list")).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Transcript paragraphs" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("list", { name: "Transcript cues" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders at least one paragraph element in paragraph mode", async () => {
     const user = userEvent.setup();
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    await user.click(screen.getByTestId("transcript-mode-paragraph"));
+    await user.click(screen.getByRole("button", { name: "Paragraph" }));
 
-    const paras = screen.getAllByTestId("transcript-paragraph");
+    const paraList = screen.getByRole("list", {
+      name: "Transcript paragraphs",
+    });
+    const paras = within(paraList).getAllByRole("listitem");
     expect(paras.length).toBeGreaterThan(0);
   });
 
   it("contains transcript text content in paragraph mode", async () => {
     const user = userEvent.setup();
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    await user.click(screen.getByTestId("transcript-mode-paragraph"));
+    await user.click(screen.getByRole("button", { name: "Paragraph" }));
 
     // All cue text should appear somewhere in the paragraph list
     expect(screen.getByText(/Welcome to the lesson/)).toBeInTheDocument();
@@ -225,14 +238,16 @@ describe("TranscriptPanel — paragraph mode", () => {
   it("switches back to timestamp mode from paragraph mode", async () => {
     const user = userEvent.setup();
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    await user.click(screen.getByTestId("transcript-mode-paragraph"));
-    await user.click(screen.getByTestId("transcript-mode-timestamp"));
+    await user.click(screen.getByRole("button", { name: "Paragraph" }));
+    await user.click(screen.getByRole("button", { name: "Timestamps" }));
 
-    expect(screen.getByTestId("transcript-cue-list")).toBeInTheDocument();
     expect(
-      screen.queryByTestId("transcript-paragraph-list"),
+      screen.getByRole("list", { name: "Transcript cues" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("list", { name: "Transcript paragraphs" }),
     ).not.toBeInTheDocument();
   });
 });
@@ -244,13 +259,13 @@ describe("TranscriptPanel — paragraph mode", () => {
 describe("TranscriptPanel — mode toggle accessibility", () => {
   it("marks timestamp button as pressed by default", async () => {
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    expect(screen.getByTestId("transcript-mode-timestamp")).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Timestamps" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    expect(screen.getByTestId("transcript-mode-paragraph")).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Paragraph" })).toHaveAttribute(
       "aria-pressed",
       "false",
     );
@@ -259,15 +274,15 @@ describe("TranscriptPanel — mode toggle accessibility", () => {
   it("updates aria-pressed after switching to paragraph mode", async () => {
     const user = userEvent.setup();
     render(<TranscriptPanel transcription={VALID_TRANSCRIPT} />);
-    await screen.findByTestId("transcript-panel");
+    await screen.findByRole("region", { name: "Lesson transcript" });
 
-    await user.click(screen.getByTestId("transcript-mode-paragraph"));
+    await user.click(screen.getByRole("button", { name: "Paragraph" }));
 
-    expect(screen.getByTestId("transcript-mode-paragraph")).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Paragraph" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );
-    expect(screen.getByTestId("transcript-mode-timestamp")).toHaveAttribute(
+    expect(screen.getByRole("button", { name: "Timestamps" })).toHaveAttribute(
       "aria-pressed",
       "false",
     );
