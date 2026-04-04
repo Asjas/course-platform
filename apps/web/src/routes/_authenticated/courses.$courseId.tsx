@@ -112,9 +112,10 @@ function CourseDetailPage() {
   // `queryOptions` infers the data type from the Drizzle relation query, which
   // can collapse to `{}` in some toolchain configurations. We explicitly cast to
   // the local UserReview interface so all downstream references are type-safe.
+  // Only run when on the course detail screen (not on lesson child routes).
   const { data: existingReviewData, refetch: refetchReview } = useQuery({
     ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
-    enabled: !!courseId,
+    enabled: !!courseId && childMatches.length <= 1,
   });
   const existingReview = existingReviewData as unknown as
     | UserReview
