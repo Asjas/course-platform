@@ -1,5 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, createFileRoute } from "@tanstack/react-router";
+import {
+  Link,
+  Outlet,
+  createFileRoute,
+  useChildMatches,
+} from "@tanstack/react-router";
 import {
   BookOpen,
   Clock,
@@ -69,6 +74,17 @@ interface ModuleWithLessons {
   lessons?: ModuleLesson[];
 }
 
+// Local type for the user's own course review (fields accessed in this component).
+// Mirrors the server-side courseReview schema; avoids depending on Drizzle's
+// relation-inference for the plain findFirst() return type.
+interface UserReview {
+  id: string;
+  rating: number | null;
+  title: string;
+  comment: string;
+  approved: boolean;
+}
+
 function formatDuration(seconds: number | null | undefined): string {
   if (!seconds) return "0m";
   const hours = Math.floor(seconds / 3600);
@@ -81,6 +97,7 @@ function formatDuration(seconds: number | null | undefined): string {
 }
 
 function CourseDetailPage() {
+  const childMatches = useChildMatches();
   const { courseId } = Route.useParams();
   const { data: course, isLoading } = useCourseById({ courseId });
   const [isRatingSheetOpen, setIsRatingSheetOpen] = useState(false);
@@ -91,11 +108,19 @@ function CourseDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  // Fetch user's existing review for this course
-  const { data: existingReview, refetch: refetchReview } = useQuery({
+  // Fetch user's existing review for this course.
+  // `queryOptions` infers the data type from the Drizzle relation query, which
+  // can collapse to `{}` in some toolchain configurations. We explicitly cast to
+  // the local UserReview interface so all downstream references are type-safe.
+  // Only run when on the course detail screen (not on lesson child routes).
+  const { data: existingReviewData, refetch: refetchReview } = useQuery({
     ...trpc.reviews.getUserReviewForCourse.queryOptions({ courseId }),
-    enabled: !!courseId,
+    enabled: !!courseId && childMatches.length <= 1,
   });
+  const existingReview = existingReviewData as unknown as
+    | UserReview
+    | null
+    | undefined;
 
   // Determine if we're editing an existing review
   const isEditing = !!existingReview;
@@ -113,6 +138,15 @@ function CourseDetailPage() {
       setReviewComment("");
     }
   }, [isRatingSheetOpen, existingReview]);
+
+  // Only defer to nested content when a leaf descendant route is active.
+  // The `/lessons` layout route itself also counts as a child match, but it
+  // currently only renders its own outlet. Requiring more than one child
+  // match avoids rendering a blank page at `/courses/:courseId/lessons`
+  // while still delegating to concrete lesson routes.
+  if (childMatches.length > 1) {
+    return <Outlet />;
+  }
 
   if (isLoading) {
     return (

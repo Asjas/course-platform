@@ -22,6 +22,7 @@ import { SupportTicketsCollection } from "~/collections/support-tickets";
 import NewSupportTicketForm from "~/components/forms/create-support-ticket-form";
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
+import { TranscriptPanel } from "~/components/transcript-panel";
 import { VideoPlayer } from "~/components/video-player";
 import { useCourseById } from "~/hooks/use-courses";
 import {
@@ -58,21 +59,34 @@ export const Route = createFileRoute(
   },
 });
 
-// Type for lesson in module
-interface ModuleLesson {
+// Manual interfaces for module/lesson data from getCourseById.
+// `transcription` is jsonb (unknown) so it can be passed to TranscriptPanel
+// without a type assertion, while remaining properly typed for Zod validation.
+interface LessonInModule {
   id: string;
   title: string;
   order: number;
   duration: number | null;
+  videoUrl: string;
+  videoProvider: string;
+  transcription: unknown;
 }
 
-// Type for module with lessons
 interface ModuleWithLessons {
   id: string;
   title: string;
   order: number;
   description: string;
-  lessons?: ModuleLesson[];
+  lessons?: LessonInModule[];
+}
+
+// Local type for support ticket comments (mirrors supportTicketComment schema).
+// Prepared-statement type inference can lose nested `with` relation types, so
+// we explicitly type the fields accessed in the comments map below.
+interface TicketComment {
+  id: string;
+  comment: string;
+  createdAt: Date;
 }
 
 function formatDuration(seconds: number | null | undefined): string {
@@ -112,11 +126,14 @@ function LessonPage() {
 
   // Cast to CourseWithModulesAndLessons since the loader ensures we have full course data
   const fullCourse = course as CourseWithModulesAndLessons;
+  // Cast modules to the canonical typed shape (Drizzle prepared-statement
+  // inference loses nested relation types, so we assert the shape explicitly).
+  const typedModules = (fullCourse.modules ?? []) as ModuleWithLessons[];
 
   // Find the lesson in the course modules
-  let lesson = null;
-  for (const module of fullCourse.modules || []) {
-    const found = module.lessons?.find((l: ModuleLesson) => l.id === lessonId);
+  let lesson: LessonInModule | null = null;
+  for (const module of typedModules) {
+    const found = module.lessons?.find((l) => l.id === lessonId);
     if (found) {
       lesson = found;
       break;
@@ -131,11 +148,10 @@ function LessonPage() {
     );
   }
 
-  const sortedModules: ModuleWithLessons[] = fullCourse.modules
-    ? (fullCourse.modules as ModuleWithLessons[]).sort(
-        (a, b) => a.order - b.order,
-      )
-    : [];
+  // Spread to avoid mutating the original query-result array in-place.
+  const sortedModules: ModuleWithLessons[] = [...typedModules].sort(
+    (a, b) => a.order - b.order,
+  );
 
   const toggleLayout = () => {
     setLayoutMode((prev) => (prev === "sidebar" ? "fullscreen" : "sidebar"));
@@ -284,8 +300,11 @@ function LessonPage() {
           </div>
         ) : (
           <div className="flex h-full flex-col overflow-hidden">
-            {/* Fullscreen Video Player */}
-            <div className="w-full shrink-0 bg-black">
+            {/* Fullscreen Video Player — capped at 45 vh so the tabs section
+                below always has room. Without the cap, aspect-video expands
+                to ~720 px on a 1280 px-wide viewport, leaving zero height for
+                the content grid. */}
+            <div className="max-h-[45vh] w-full shrink-0 overflow-hidden bg-black">
               {videoUrl ? (
                 <VideoPlayer url={videoUrl} />
               ) : (
@@ -350,14 +369,13 @@ function LessonPage() {
                   </TabList>
 
                   <TabPanel
-                    className="grow overflow-y-auto p-4"
+                    className="grow overflow-hidden p-0"
                     id="transcription"
                   >
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
-                      <p className="text-gray-700 dark:text-gray-300">
-                        Transcription coming soon...
-                      </p>
-                    </div>
+                    <TranscriptPanel
+                      transcription={lesson.transcription}
+                      hasVideo={Boolean(videoUrl)}
+                    />
                   </TabPanel>
 
                   <TabPanel
@@ -504,14 +522,16 @@ function LessonPage() {
                                 <h4 className="font-semibold text-gray-900 dark:text-white">
                                   Comments
                                 </h4>
-                                {selectedTicket.comments.map((comment) => (
-                                  <SupportComment
-                                    key={comment.id}
-                                    ticket={selectedTicket}
-                                    content={comment.comment}
-                                    date={comment.createdAt}
-                                  />
-                                ))}
+                                {selectedTicket.comments.map(
+                                  (comment: TicketComment) => (
+                                    <SupportComment
+                                      key={comment.id}
+                                      ticket={selectedTicket}
+                                      content={comment.comment}
+                                      date={comment.createdAt}
+                                    />
+                                  ),
+                                )}
                               </div>
                             )}
                         </div>
