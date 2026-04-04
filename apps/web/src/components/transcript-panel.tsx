@@ -186,6 +186,7 @@ export function TranscriptPanel({
                 <span
                   className="mt-0.5 shrink-0 font-mono text-xs text-gray-400 tabular-nums dark:text-gray-500"
                   aria-label={`Time: ${formatCueTime(cue.startMs)}`}
+                  data-testid="transcript-cue-time"
                 >
                   {formatCueTime(cue.startMs)}
                 </span>
