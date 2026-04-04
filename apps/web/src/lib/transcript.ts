@@ -149,16 +149,18 @@ export function parseVttTimestamp(raw: string): number | null {
   return result;
 }
 
+// Module-scoped DOMParser — reused across all cue parse calls to avoid
+// allocating a new parser per cue, which causes a noticeable CPU/memory spike
+// for longer transcripts.
+// Browser-only: parseVtt runs exclusively in the browser client bundle.
+const _domParser = new DOMParser();
+
 /** Strip HTML tags from VTT cue text (including `<c>`, `<v Name>`, etc.). */
 function stripVttTags(text: string): string {
-  // Use DOMParser for safe, complete entity decoding and tag stripping.
   // DOMParser correctly handles all HTML entity types (named, numeric, hex)
   // and malformed/unclosed tags, without the incomplete-sanitization risks of
   // regex-based stripping.
-  //
-  // Browser-only: this function is called only from parseVtt which runs
-  // exclusively in the browser (apps/web client-side bundle).
-  const doc = new DOMParser().parseFromString(text, "text/html");
+  const doc = _domParser.parseFromString(text, "text/html");
   return (doc.body.textContent ?? "").trim();
 }
 

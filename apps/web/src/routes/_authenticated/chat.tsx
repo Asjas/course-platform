@@ -39,6 +39,23 @@ export const Route = createFileRoute("/_authenticated/chat")({
 
 const channels = ["general", "random"];
 
+// Manual interfaces needed because Drizzle prepared-statement `with` relation
+// types collapse to `{}` in some toolchain configurations.
+interface DMConversation {
+  id: string;
+  user1Id: string;
+  user2Id: string;
+  otherUserName: string;
+}
+
+interface SupportTeamMember {
+  id: string;
+  name: string;
+  username: string | null;
+  image: string | null;
+  status: "online" | "offline";
+}
+
 function AuthenticatedChatPage() {
   const navigate = useNavigate();
   const auth = useAuth();
@@ -51,22 +68,27 @@ function AuthenticatedChatPage() {
   );
 
   // Fetch active DM conversations
-  const { data: dmConversations, refetch: refetchDmConversations } = useQuery(
-    trpc.directMessages.getActiveConversations.queryOptions(),
-  );
+  const { data: dmConversationsData, refetch: refetchDmConversations } =
+    useQuery(trpc.directMessages.getActiveConversations.queryOptions());
+  // Cast needed: Drizzle `with` relation type collapses to `{}` in some configs
+  const dmConversations = dmConversationsData as unknown as
+    | DMConversation[]
+    | undefined;
 
   // Fetch support team status
-  const { data: supportTeam } = useQuery(
+  const { data: supportTeamData } = useQuery(
     trpc.supportStatus.getSupportTeam.queryOptions(),
   );
+  // Cast needed: Drizzle `with` relation type collapses to `{}` in some configs
+  const supportTeam = supportTeamData as unknown as
+    | SupportTeamMember[]
+    | undefined;
 
   // Fetch courses for support section
   const { data: courses } = useCourses();
 
   const closeConversationMutation = useMutation(
-    trpc.directMessages.closeConversation.mutationOptions({
-      keyPrefix: undefined,
-    }),
+    trpc.directMessages.closeConversation.mutationOptions(),
   );
 
   async function handleSelectUser(userId: string, userName: string) {

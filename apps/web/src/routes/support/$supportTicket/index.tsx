@@ -25,6 +25,14 @@ export const Route = createFileRoute("/support/$supportTicket/")({
   component: SupportTicketIndexPage,
 });
 
+// Manual interface needed because Drizzle prepared-statement `with` relation
+// types collapse to `{}` in some toolchain configurations.
+interface TicketComment {
+  id: string;
+  comment: string;
+  createdAt: Date;
+}
+
 function SupportTicketIndexPage() {
   const params = useParams({ from: "/support/$supportTicket/" });
   const auth = useAuth();
@@ -176,7 +184,7 @@ function SupportTicketIndexPage() {
         {/* Comments go here */}
         {ticket.comments.length > 0 ? (
           <div className="flex flex-col gap-8">
-            {ticket.comments.map((comment) => (
+            {ticket.comments.map((comment: TicketComment) => (
               <SupportComment
                 key={comment.id}
                 ticket={ticket}
