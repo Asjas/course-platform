@@ -291,8 +291,11 @@ function LessonPage() {
           </div>
         ) : (
           <div className="flex h-full flex-col overflow-hidden">
-            {/* Fullscreen Video Player */}
-            <div className="w-full shrink-0 bg-black">
+            {/* Fullscreen Video Player — capped at 45 vh so the tabs section
+                below always has room. Without the cap, aspect-video expands
+                to ~720 px on a 1280 px-wide viewport, leaving zero height for
+                the content grid. */}
+            <div className="max-h-[45vh] w-full shrink-0 overflow-hidden bg-black">
               {videoUrl ? (
                 <VideoPlayer url={videoUrl} />
               ) : (
