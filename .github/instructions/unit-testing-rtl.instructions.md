@@ -167,10 +167,16 @@ vi.mock("~/lib/trpc.client", () => ({
 | 3 | `getByPlaceholderText` | Input placeholder as a last resort |
 | 4 | `getByText` | Visible static text |
 | 5 | `getByDisplayValue` | Current value of a select / input |
-| 6 | `getByTestId` | **Avoid.** Only when no semantic alternative exists |
+| 6 | `getByTestId` | **Last resort only.** Use only when no role/label/ARIA query is possible |
 
 **Never** use `getByTestId` to find icons, SVGs, or decorative elements — that
 asserts implementation details, not user-visible behaviour.
+
+Prefer selectors based on accessible names and ARIA state:
+
+- `getByRole("button", { name: "Close" })` over `getByTestId("close-btn")`
+- `getByLabelText("Email")` over `getByTestId("email-input")`
+- `getByRole("button", { name: "Filters" })` with `toHaveAttribute("aria-expanded", "true")` for disclosure state
 
 ---
 
