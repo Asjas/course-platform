@@ -113,7 +113,7 @@ export function TranscriptPanel({
   // ---------------------------------------------------------------------------
 
   return (
-    <div
+    <section
       className="flex h-full flex-col"
       data-testid="transcript-panel"
       aria-label="Lesson transcript"
@@ -225,6 +225,6 @@ export function TranscriptPanel({
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
