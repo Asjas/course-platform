@@ -118,7 +118,7 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.get('[data-testid="transcript-cue"]')
       .first()
       .within(() => {
-        cy.get('[data-testid="transcript-cue-time"]').should("contain", "0:00");
+        cy.get('[aria-label^="Time:"]').should("contain", "0:00");
       });
 
     // Fixture transcript text from scripts/fixtures/lessons.ts
@@ -160,10 +160,7 @@ describe("Lesson Transcript — Timestamp Mode", () => {
     cy.get('[data-testid="transcript-cue"]')
       .last()
       .within(() => {
-        cy.get('[data-testid="transcript-cue-time"]').should(
-          "contain",
-          "1:00:00",
-        );
+        cy.get('[aria-label^="Time:"]').should("contain", "1:00:00");
       });
   });
 });
