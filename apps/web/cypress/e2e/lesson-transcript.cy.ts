@@ -1,5 +1,5 @@
 /**
- * Lesson Transcript E2E Tests — Phase 1
+ * Lesson Transcript E2E Tests — Phases 1, 3 & 5
  *
  * Verifies that:
  *   - The lesson page shows a Transcription tab in fullscreen mode.
@@ -10,6 +10,8 @@
  *   - A lesson with an empty cues array shows the "empty" state message.
  *   - An auto-generated transcript shows the "Auto" source badge.
  *   - Cues with a start time > 1 hour render in H:MM:SS format.
+ *   - Search finds matches in both timestamp and paragraph modes (Phase 5).
+ *   - Search query is preserved when switching between modes (Phase 5).
  *
  * Uses deterministic fixture IDs seeded by the CI pipeline.
  */
@@ -515,5 +517,91 @@ describe("Lesson Transcript — Access Control", () => {
 
     // Unauthenticated users should be redirected to sign-in
     cy.url().should("include", "/signin");
+  });
+});
+
+describe("Lesson Transcript — Search in Paragraph Mode (Phase 5)", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("search finds the same matches in paragraph mode as in timestamp mode", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Switch to paragraph mode first
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
+    cy.get('[aria-label="Transcript paragraphs"]').should("be.visible");
+
+    // Open search bar
+    cy.get('[aria-label="Toggle transcript search"]').click();
+    cy.get('[role="search"][aria-label="Transcript search"]').should(
+      "be.visible",
+    );
+
+    // "Fastify" appears in two cues (c0 and c1) — same as in timestamp mode
+    cy.get('[aria-label="Transcript search query"]').type("Fastify");
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+
+    // Navigate to next match
+    cy.get('[aria-label="Next match"]').click();
+    cy.get("#transcript-search-status").should("contain", "2 / 2");
+
+    // Navigate back to first match
+    cy.get('[aria-label="Previous match"]').click();
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+  });
+
+  it("search query and match position are preserved when switching between modes", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Open search and type a query in timestamp mode
+    cy.get('[aria-label="Toggle transcript search"]').click();
+    cy.get('[aria-label="Transcript search query"]').type("Fastify");
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+
+    // Advance to the second match
+    cy.get('[aria-label="Next match"]').click();
+    cy.get("#transcript-search-status").should("contain", "2 / 2");
+
+    // Switch to paragraph mode — query text and match index should persist
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
+    cy.get('[aria-label="Transcript paragraphs"]').should("be.visible");
+    cy.get('[aria-label="Transcript search query"]').should(
+      "have.value",
+      "Fastify",
+    );
+    cy.get("#transcript-search-status").should("contain", "2 / 2");
+
+    // Switch back to timestamp mode — query text and match index should still persist
+    cy.contains(
+      '[aria-label="Lesson transcript"] button',
+      "Timestamps",
+    ).click();
+    cy.get('[aria-label="Transcript cues"]').should("be.visible");
+    cy.get('[aria-label="Transcript search query"]').should(
+      "have.value",
+      "Fastify",
+    );
+    cy.get("#transcript-search-status").should("contain", "2 / 2");
   });
 });
