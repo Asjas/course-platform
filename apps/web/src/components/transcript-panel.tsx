@@ -159,6 +159,11 @@ export function TranscriptPanel({
     totalMatches > 0
       ? (searchResult?.matches[clampedMatchIndex] ?? null)
       : null;
+  // Precompute a Set of matched cue indexes for O(1) membership checks in
+  // the cue/paragraph render loops instead of O(matches) .some() per row.
+  const matchedCueIndexes: ReadonlySet<number> = searchResult
+    ? new Set(searchResult.matches.map((m) => m.cueIndex))
+    : new Set();
 
   // ---------------------------------------------------------------------------
   // Search navigation helpers
@@ -392,9 +397,7 @@ export function TranscriptPanel({
             const isActive = idx === activeCueIndex;
             const isCurrentSearchMatch =
               activeMatch !== null && activeMatch.cueIndex === idx;
-            const isAnySearchMatch =
-              searchResult !== null &&
-              searchResult.matches.some((m) => m.cueIndex === idx);
+            const isAnySearchMatch = matchedCueIndexes.has(idx);
 
             return (
               // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- role="button" is set conditionally when onSeek is provided
