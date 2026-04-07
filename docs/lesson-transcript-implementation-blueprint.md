@@ -56,9 +56,9 @@ repo.
 
 ### Target Shape
 
-- [ ] Define a strict transcription schema in TypeScript (frontend + backend).
-- [ ] Store normalized cue-based structure (single source of truth).
-- [ ] Keep enough metadata for auditing and sync decisions.
+- [x] Define a strict transcription schema in TypeScript (frontend + backend).
+- [x] Store normalized cue-based structure (single source of truth).
+- [x] Keep enough metadata for auditing and sync decisions.
 
 Suggested payload shape:
 
@@ -95,9 +95,9 @@ Version history strategy:
 
 ### API and Validation
 
-- [ ] Add shared runtime validator for transcript JSON.
-- [ ] Validate transcript on lesson create/update when `videoUrl` is present.
-- [ ] Keep draft saves allowed, but return publish eligibility state.
+- [x] Add shared runtime validator for transcript JSON.
+- [x] Validate transcript on lesson create/update when `videoUrl` is present.
+- [x] Keep draft saves allowed, but return publish eligibility state.
 
 ### YouTube Sync Integration
 
@@ -110,10 +110,10 @@ Version history strategy:
 
 ### Publish Gating
 
-- [ ] Gate course publish when any video lesson transcript is invalid/missing.
-- [ ] Keep non-video lessons exempt.
-- [ ] Keep preview lessons under same video transcript rule.
-- [ ] Return actionable errors identifying blocking lessons.
+- [x] Gate course publish when any video lesson transcript is invalid/missing.
+- [x] Keep non-video lessons exempt.
+- [x] Keep preview lessons under same video transcript rule.
+- [x] Return actionable errors identifying blocking lessons.
 
 ### Scheduled Refresh
 
@@ -135,9 +135,9 @@ Version history strategy:
 
 ### Publish UX
 
-- [ ] In course publish flow, show transcript readiness checks.
-- [ ] If blocked, display lesson-level list of transcript issues.
-- [ ] Provide quick links to open blocking lessons in editor.
+- [x] In course publish flow, show transcript readiness checks.
+- [x] If blocked, display lesson-level list of transcript issues.
+- [x] Provide quick links to open blocking lessons in editor.
 
 ## Frontend Learner Plan
 
@@ -209,20 +209,35 @@ Search:
   - [x] Prev/Next disabled when no matches.
   - [x] `onSeek` called for match via Next button.
 
+- [x] **Phase 4** — `CoursePublishSection`:
+  - [x] Shows Draft status and Publish Course button when not published.
+  - [x] Shows Published status and Unpublish button when already published.
+  - [x] Calls `checkPublishReadiness` when Publish Course is clicked.
+  - [x] Calls `updateCourse` mutation when all lessons are ready.
+  - [x] Shows success toast after publishing.
+  - [x] Shows error toast when readiness check throws.
+  - [x] Shows blocking lessons list when there are transcript issues.
+  - [x] `onSelectLesson` called with lesson id when blocking-lesson button clicked.
+  - [x] Reason labels rendered for `missing`, `no_cues`, and `invalid_schema`.
+  - [x] `updateCourse` not called when there are blocking issues.
+  - [x] Unpublish flow calls `updateCourse` with `published: false`.
+  - [x] Success and error toasts shown for unpublish flow.
+
 ### Integration Tests
 
 - [ ] admin upload -> save -> learner render in both modes.
 - [ ] manual re-sync and version snapshot creation.
 - [ ] rollback restores prior transcript.
-- [ ] publish blocked when required transcript invalid/missing.
+- [x] publish blocked when required transcript invalid/missing
+      (`admin-course-editor.cy.ts` — "Publish Section" suite).
 
 ### E2E Tests
 
 - [x] learner can click cue and seek video (`lesson-transcript.cy.ts`).
 - [ ] active cue follows playback.
-- [ ] follow toggle disables auto-scroll.
-- [ ] paragraph mode displays expected chunks.
-- [ ] search works identically across modes.
+- [x] follow toggle renders and toggles `aria-pressed` (`lesson-transcript.cy.ts`).
+- [x] paragraph mode displays expected chunks (`lesson-transcript.cy.ts`).
+- [x] search works identically across modes (`lesson-transcript.cy.ts`).
 
 ## Implementation Phases
 
@@ -238,7 +253,8 @@ Search:
 - [x] Wire `TranscriptEditorSection` into admin lesson editor (`edit.tsx`).
 - [x] Unit tests for `TranscriptEditorSection`.
 - [ ] Add backend sync endpoints and history snapshots.
-- [ ] Add publish readiness signals in admin.
+- [ ] Add `Re-sync from YouTube` button in admin lesson editor.
+- [ ] Add `Restore previous transcript` from history snapshots in admin.
 
 ### Phase 3 - Learner Transcript Experience ✅
 
@@ -249,16 +265,25 @@ Search:
 - [x] Wire lesson page with `currentTimeSeconds` + `onSeek` callback.
 - [x] Unit tests for Phase 3 interactive features.
 
-### Phase 4 - Publish Gating + Scheduled Refresh
+### Phase 4 - Publish Gating + Scheduled Refresh (publish gating ✅)
 
-- [ ] Enforce publish constraints for video lessons.
+- [x] Enforce publish constraints for video lessons (`checkCoursePublishReadiness` +
+      `updateCourse` gate + `checkPublishReadiness` tRPC endpoint).
+- [x] `CoursePublishSection` frontend component with readiness display and
+      quick-link buttons for blocking lessons.
+- [x] Unit tests for `CoursePublishSection`.
+- [x] E2E tests for publish blocking flow (`admin-course-editor.cy.ts`).
 - [ ] Add daily refresh scheduler for auto tracks.
 - [ ] Add operational logs and rollback safeguards.
 
-### Phase 5 - Hardening + Release
+### Phase 5 - Hardening + Release (in progress)
 
-- [ ] Complete integration/e2e coverage.
-- [ ] Validate accessibility acceptance criteria.
+- [x] E2E: search works identically in both timestamp and paragraph modes
+      (`lesson-transcript.cy.ts` — "Search in Paragraph Mode" suite).
+- [x] E2E: search query and match position preserved when switching modes.
+- [ ] Complete remaining integration/e2e coverage (admin upload flow, re-sync,
+      rollback).
+- [ ] Validate accessibility acceptance criteria (run Accessibility Insights).
 - [ ] Run full repo checks before merge.
 
 ## Risks and Mitigations
