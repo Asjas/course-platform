@@ -300,6 +300,212 @@ describe("Lesson Transcript — Source Badge", () => {
   });
 });
 
+describe("Lesson Transcript — Search (Phase 3)", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("opens the search bar and finds matches for a query", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Open search bar
+    cy.get('[aria-label="Toggle transcript search"]').click();
+
+    // Search bar should appear
+    cy.get('[role="search"][aria-label="Transcript search"]').should(
+      "be.visible",
+    );
+
+    // Type a search query that matches at least 2 cues ("Fastify" appears in c0 and c1)
+    cy.get('[aria-label="Transcript search query"]').type("Fastify");
+
+    // Match counter should show results
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+
+    // Navigate to next match
+    cy.get('[aria-label="Next match"]').click();
+    cy.get("#transcript-search-status").should("contain", "2 / 2");
+
+    // Navigate to previous match
+    cy.get('[aria-label="Previous match"]').click();
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+  });
+
+  it("shows 0 results for a query with no matches", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    cy.get('[aria-label="Toggle transcript search"]').click();
+    cy.get('[aria-label="Transcript search query"]').type(
+      "zzzznonexistentterm",
+    );
+
+    cy.get("#transcript-search-status").should("contain", "0 results");
+
+    // Navigation buttons should be disabled
+    cy.get('[aria-label="Next match"]').should("be.disabled");
+    cy.get('[aria-label="Previous match"]').should("be.disabled");
+  });
+
+  it("closes the search bar and clears the query", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Open and type
+    cy.get('[aria-label="Toggle transcript search"]').click();
+    cy.get('[aria-label="Transcript search query"]').type("Fastify");
+    cy.get("#transcript-search-status").should("contain", "1 / 2");
+
+    // Close search
+    cy.get('[aria-label="Close search"]').click();
+
+    // Search bar should disappear
+    cy.get('[role="search"][aria-label="Transcript search"]').should(
+      "not.exist",
+    );
+  });
+});
+
+describe("Lesson Transcript — Follow Playback (Phase 3)", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("shows the Follow button in timestamp mode and toggles it", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Follow button should be visible and pressed by default
+    cy.contains('[aria-label="Transcript controls"] button', "Follow")
+      .should("be.visible")
+      .and("have.attr", "aria-pressed", "true");
+
+    // Toggle Follow off
+    cy.contains('[aria-label="Transcript controls"] button', "Follow").click();
+    cy.contains('[aria-label="Transcript controls"] button', "Follow").should(
+      "have.attr",
+      "aria-pressed",
+      "false",
+    );
+
+    // Toggle Follow back on
+    cy.contains('[aria-label="Transcript controls"] button', "Follow").click();
+    cy.contains('[aria-label="Transcript controls"] button', "Follow").should(
+      "have.attr",
+      "aria-pressed",
+      "true",
+    );
+  });
+
+  it("hides the Follow button in paragraph mode", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Switch to paragraph mode
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
+
+    // Follow button should not be visible in paragraph mode
+    cy.contains('[aria-label="Transcript controls"] button', "Follow").should(
+      "not.exist",
+    );
+  });
+});
+
+describe("Lesson Transcript — Cue Interaction (Phase 3)", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("cues are interactive buttons when video is present", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Cues should have role="button" since the lesson has a video URL
+    cy.get('[aria-label="Transcript cues"] li')
+      .first()
+      .should("have.attr", "role", "button")
+      .and("have.attr", "tabindex", "0");
+  });
+
+  it("paragraphs are interactive buttons when video is present", () => {
+    cy.visit(TRANSCRIPT_LESSON.url);
+    cy.contains("Back to Course", { timeout: LESSON_LOAD_TIMEOUT }).should(
+      "be.visible",
+    );
+
+    cy.contains("button", "Fullscreen").click();
+    cy.contains("Transcription").click();
+
+    cy.get('[aria-label="Lesson transcript"]', { timeout: 10000 }).should(
+      "be.visible",
+    );
+
+    // Switch to paragraph mode
+    cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
+
+    // Paragraphs should have role="button" since the lesson has a video URL
+    cy.get('[aria-label="Transcript paragraphs"] li')
+      .first()
+      .should("have.attr", "role", "button")
+      .and("have.attr", "tabindex", "0");
+  });
+});
+
 describe("Lesson Transcript — Access Control", () => {
   it("requires authentication to view the lesson transcript", () => {
     cy.clearAllCookies();
