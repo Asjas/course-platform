@@ -141,6 +141,12 @@ describe("Admin Course Editor — Publish Section", () => {
   });
 
   it("shows Published status and Unpublish button for a published course", () => {
+    // Ensure the course is in published state regardless of prior test runs
+    cy.task("setCoursePublished", {
+      courseId: decodeURIComponent(TEST_COURSE_ID),
+      published: true,
+    });
+
     cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
 
     // Wait for collection data to populate the page
@@ -155,6 +161,12 @@ describe("Admin Course Editor — Publish Section", () => {
   });
 
   it("shows Draft status and Publish button after unpublishing", () => {
+    // Ensure the course starts in published state for a clean unpublish flow
+    cy.task("setCoursePublished", {
+      courseId: decodeURIComponent(TEST_COURSE_ID),
+      published: true,
+    });
+
     cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
 
     cy.waitForContent(
@@ -162,13 +174,8 @@ describe("Admin Course Editor — Publish Section", () => {
       "Course not found",
     );
 
-    cy.get("body").then(($body) => {
-      if ($body.find("button:contains('Unpublish')").length > 0) {
-        cy.contains("button", "Unpublish").click();
-        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
-      }
-      return null;
-    });
+    cy.contains("button", "Unpublish").click();
+    cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
 
     cy.contains("Draft").should("be.visible");
     cy.contains("Not visible to learners").should("be.visible");
@@ -176,20 +183,18 @@ describe("Admin Course Editor — Publish Section", () => {
   });
 
   it("shows blocking lessons list when publish is attempted with invalid transcripts", () => {
+    // Ensure the course is in draft state so the Publish button is available
+    cy.task("setCoursePublished", {
+      courseId: decodeURIComponent(TEST_COURSE_ID),
+      published: false,
+    });
+
     cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
 
     cy.waitForContent(
       'button:contains("Unpublish"), button:contains("Publish Course")',
       "Course not found",
     );
-
-    cy.get("body").then(($body) => {
-      if ($body.find("button:contains('Unpublish')").length > 0) {
-        cy.contains("button", "Unpublish").click();
-        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
-      }
-      return null;
-    });
 
     cy.contains("button", "Publish Course").click();
 
@@ -204,20 +209,18 @@ describe("Admin Course Editor — Publish Section", () => {
   });
 
   it("clicking a blocking lesson button opens it in the transcript editor", () => {
+    // Ensure the course is in draft state so the Publish button is available
+    cy.task("setCoursePublished", {
+      courseId: decodeURIComponent(TEST_COURSE_ID),
+      published: false,
+    });
+
     cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
 
     cy.waitForContent(
       'button:contains("Unpublish"), button:contains("Publish Course")',
       "Course not found",
     );
-
-    cy.get("body").then(($body) => {
-      if ($body.find("button:contains('Unpublish')").length > 0) {
-        cy.contains("button", "Unpublish").click();
-        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
-      }
-      return null;
-    });
 
     cy.contains("button", "Publish Course").click();
     cy.contains(/Cannot publish/i, { timeout: 10000 }).should("be.visible");

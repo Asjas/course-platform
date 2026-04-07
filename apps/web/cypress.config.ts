@@ -143,6 +143,24 @@ export default defineConfig({
             client.release();
           }
         },
+        async setCoursePublished({
+          courseId,
+          published,
+        }: {
+          courseId: string;
+          published: boolean;
+        }) {
+          const client = await getPool().connect();
+          try {
+            await client.query(
+              `UPDATE "${dbSchema}"."course" SET published = $1 WHERE id = $2`,
+              [published, courseId],
+            );
+            return null;
+          } finally {
+            client.release();
+          }
+        },
       });
 
       return config;

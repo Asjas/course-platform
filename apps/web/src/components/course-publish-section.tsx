@@ -72,6 +72,7 @@ export function CoursePublishSection({
       toast.success(`"${courseName}" is now published.`, { id: toastId });
       await queryClient.invalidateQueries({ queryKey: ["admin", "courses"] });
     } catch {
+      setIssues(null);
       toast.error("Failed to publish course. Please try again.", {
         id: toastId,
       });
