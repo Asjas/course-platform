@@ -397,7 +397,7 @@ export function TranscriptPanel({
               searchResult.matches.some((m) => m.cueIndex === idx);
 
             return (
-              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- role="button" is set conditionally when onSeek is provided
               <li
                 className={cn(
                   "border-b border-gray-100 px-4 py-2 dark:border-gray-700/50",
@@ -464,7 +464,7 @@ export function TranscriptPanel({
               activeMatch.cueIndex <= para.lastCueIndex;
 
             return (
-              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- role="button" is set conditionally when onSeek is provided
               <li
                 className={cn(
                   "mb-4 rounded p-1 text-sm leading-relaxed text-gray-700 dark:text-gray-300",

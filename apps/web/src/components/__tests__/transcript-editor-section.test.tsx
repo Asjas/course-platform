@@ -4,7 +4,7 @@
  * FileReader is mocked so we can trigger onload synchronously in tests
  * without relying on actual DOM file-reading APIs.
  */
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TranscriptEditorSection } from "~/components/transcript-editor-section";
@@ -167,6 +167,10 @@ describe("TranscriptEditorSection — file input", () => {
   });
 
   it("shows an error when a non-VTT file is selected", async () => {
+    // Use applyAccept: false so userEvent.upload does not filter out the
+    // non-.vtt file — the component itself handles the type check and shows
+    // the error message.
+    const user = userEvent.setup({ applyAccept: false });
     render(
       <TranscriptEditorSection
         currentTranscription={null}
@@ -177,9 +181,7 @@ describe("TranscriptEditorSection — file input", () => {
     const badFile = new File(["content"], "transcript.txt", {
       type: "text/plain",
     });
-    // Use fireEvent.change so the file bypasses accept-attribute filtering
-    // applied by userEvent.upload and triggers the onChange handler directly.
-    fireEvent.change(input, { target: { files: [badFile] } });
+    await user.upload(input, badFile);
 
     await waitFor(() => {
       expect(

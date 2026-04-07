@@ -23,7 +23,8 @@ import NewSupportTicketForm from "~/components/forms/create-support-ticket-form"
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import { TranscriptPanel } from "~/components/transcript-panel";
-import { VideoPlayer, type VideoPlayerHandle } from "~/components/video-player";
+import { VideoPlayer } from "~/components/video-player";
+import type { VideoPlayerHandle } from "~/components/video-player";
 import { useCourseById } from "~/hooks/use-courses";
 import {
   useSupportTicketById,
