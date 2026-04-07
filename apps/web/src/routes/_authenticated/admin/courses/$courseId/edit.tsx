@@ -834,7 +834,9 @@ function LessonEditor({
               <TranscriptEditorSection
                 currentTranscription={field.state.value as unknown}
                 onTranscriptChange={(data: TranscriptData | null) => {
-                  field.handleChange((data ?? {}) as never);
+                  const nextTranscription: typeof field.state.value =
+                    data ?? {};
+                  field.handleChange(nextTranscription);
                 }}
               />
             )}
