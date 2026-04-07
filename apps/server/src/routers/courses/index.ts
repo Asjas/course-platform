@@ -37,6 +37,7 @@ import {
   updateModule,
 } from "~/routers/courses/mutations.js";
 import {
+  checkCoursePublishReadiness,
   getAllCourseProgressAsAdmin,
   getCourseProgress,
   getEnrollmentStatus,
@@ -52,7 +53,11 @@ import type {
   LessonById,
   LessonProgress,
   ModulesAndLessonsByCourseId,
+  PublishReadinessResult,
 } from "~/routers/courses/queries.js";
+
+export type { PublishReadinessIssue } from "~/routers/courses/queries.js";
+export type { PublishReadinessResult };
 
 export type CourseSyncUpdate = EntitySyncUpdate<Course>;
 export type ModuleSyncUpdate = EntitySyncUpdate<Module>;
@@ -292,6 +297,32 @@ export const coursesRouter = router({
 
   // ========== Course Mutations ==========
 
+  checkPublishReadiness: publicProcedure
+    .input(z.object({ courseId: z.string() }))
+    .use(isAdmin)
+    .query(async ({ ctx, input }): Promise<PublishReadinessResult> => {
+      const fastify = ctx.reply.server;
+      const { courseId } = input;
+
+      const [err, result] = await fastify.to(
+        checkCoursePublishReadiness(courseId),
+      );
+
+      if (err || !result) {
+        fastify.log.error(
+          { err, courseId },
+          "Failed to check publish readiness",
+        );
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to check publish readiness",
+        });
+      }
+
+      return result;
+    }),
+
   createCourse: publicProcedure
     .input(
       z.object({
@@ -374,6 +405,35 @@ export const coursesRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { id, ...updates } = input;
       const fastify = ctx.reply.server;
+
+      // Publish gating: when the request is explicitly publishing a course,
+      // verify that every video lesson has a valid transcript before allowing it.
+      if (updates.published === true) {
+        const [readinessErr, readiness] = await fastify.to(
+          checkCoursePublishReadiness(id),
+        );
+
+        if (readinessErr) {
+          fastify.log.error(
+            { err: readinessErr, courseId: id },
+            "Failed to check publish readiness",
+          );
+
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to check publish readiness",
+          });
+        }
+
+        if (!readiness?.ready) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message:
+              "Course cannot be published: some lessons are missing valid transcripts",
+            cause: readiness?.issues,
+          });
+        }
+      }
 
       const [err, course] = await fastify.to(
         updateCourse({ courseId: id, updates }),

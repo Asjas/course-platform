@@ -17,6 +17,7 @@ const {
   mockGetCourseProgress,
   mockGetLessonProgress,
   mockGetEnrollmentStatus,
+  mockCheckCoursePublishReadiness,
   mockPublishEntityChange,
   mockCreateSyncUpdate,
   mockGetEntityUpdatesSince,
@@ -37,6 +38,7 @@ const {
   mockGetCourseProgress: vi.fn(),
   mockGetLessonProgress: vi.fn(),
   mockGetEnrollmentStatus: vi.fn(),
+  mockCheckCoursePublishReadiness: vi.fn(),
   mockPublishEntityChange: vi.fn(),
   mockCreateSyncUpdate: vi.fn(),
   mockGetEntityUpdatesSince: vi.fn(),
@@ -62,6 +64,7 @@ vi.mock("~/routers/courses/queries.js", () => ({
   getCourseProgress: mockGetCourseProgress,
   getLessonProgress: mockGetLessonProgress,
   getEnrollmentStatus: mockGetEnrollmentStatus,
+  checkCoursePublishReadiness: mockCheckCoursePublishReadiness,
 }));
 
 vi.mock("~/lib/sse-sync.js", () => ({
@@ -211,5 +214,201 @@ describe("coursesRouter", () => {
       "course~all",
       "course~id~course-3",
     ]);
+  });
+
+  // ========== Publish gating ==========
+
+  test("updateCourse with published:true allows update when all lessons are ready", async () => {
+    const { caller, cache } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: true,
+      issues: [],
+    });
+    mockUpdateCourse.mockResolvedValue({
+      id: "course-4",
+      slug: "ready-course",
+    });
+
+    await caller.updateCourse({ id: "course-4", published: true });
+
+    expect(mockCheckCoursePublishReadiness).toHaveBeenCalledWith("course-4");
+    expect(mockUpdateCourse).toHaveBeenCalledTimes(1);
+    expect(cache.invalidateAll).toHaveBeenCalledWith([
+      "course~all",
+      "course~id~course-4",
+    ]);
+  });
+
+  test("updateCourse with published:true blocks when a lesson has no transcript", async () => {
+    const { caller } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: false,
+      issues: [
+        {
+          lessonId: "lesson-1",
+          lessonTitle: "Intro",
+          reason: "missing",
+        },
+      ],
+    });
+
+    await expect(
+      caller.updateCourse({ id: "course-5", published: true }),
+    ).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+      message: expect.stringContaining("missing valid transcripts"),
+    });
+
+    expect(mockUpdateCourse).not.toHaveBeenCalled();
+  });
+
+  test("updateCourse with published:true blocks when a lesson has invalid transcript schema", async () => {
+    const { caller } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: false,
+      issues: [
+        {
+          lessonId: "lesson-2",
+          lessonTitle: "Advanced Topics",
+          reason: "invalid_schema",
+        },
+      ],
+    });
+
+    await expect(
+      caller.updateCourse({ id: "course-6", published: true }),
+    ).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+    });
+
+    expect(mockUpdateCourse).not.toHaveBeenCalled();
+  });
+
+  test("updateCourse with published:true blocks when a lesson transcript has no cues", async () => {
+    const { caller } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: false,
+      issues: [
+        {
+          lessonId: "lesson-3",
+          lessonTitle: "Empty Transcript",
+          reason: "no_cues",
+        },
+      ],
+    });
+
+    await expect(
+      caller.updateCourse({ id: "course-7", published: true }),
+    ).rejects.toMatchObject({
+      code: "BAD_REQUEST",
+    });
+
+    expect(mockUpdateCourse).not.toHaveBeenCalled();
+  });
+
+  test("updateCourse without published field skips readiness check", async () => {
+    const { caller, cache } = createCaller({ id: "admin-1", role: "admin" });
+    mockUpdateCourse.mockResolvedValue({
+      id: "course-8",
+      slug: "no-publish",
+    });
+
+    await caller.updateCourse({ id: "course-8", name: "New Name" });
+
+    expect(mockCheckCoursePublishReadiness).not.toHaveBeenCalled();
+    expect(mockUpdateCourse).toHaveBeenCalledTimes(1);
+    expect(cache.invalidateAll).toHaveBeenCalledWith([
+      "course~all",
+      "course~id~course-8",
+    ]);
+  });
+
+  test("updateCourse with published:false skips readiness check", async () => {
+    const { caller, cache } = createCaller({ id: "admin-1", role: "admin" });
+    mockUpdateCourse.mockResolvedValue({
+      id: "course-9",
+      slug: "unpublish",
+    });
+
+    await caller.updateCourse({ id: "course-9", published: false });
+
+    expect(mockCheckCoursePublishReadiness).not.toHaveBeenCalled();
+    expect(mockUpdateCourse).toHaveBeenCalledTimes(1);
+    expect(cache.invalidateAll).toHaveBeenCalledWith([
+      "course~all",
+      "course~id~course-9",
+    ]);
+  });
+
+  test("updateCourse returns INTERNAL_SERVER_ERROR when readiness check fails", async () => {
+    const { caller, log } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockRejectedValue(new Error("DB error"));
+
+    await expect(
+      caller.updateCourse({ id: "course-10", published: true }),
+    ).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+    });
+
+    expect(log.error).toHaveBeenCalled();
+    expect(mockUpdateCourse).not.toHaveBeenCalled();
+  });
+
+  // ========== checkPublishReadiness ==========
+
+  test("checkPublishReadiness denies non-admin users", async () => {
+    const { caller } = createCaller({ id: "user-1", role: "student" });
+
+    await expect(
+      caller.checkPublishReadiness({ courseId: "course-1" }),
+    ).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+  });
+
+  test("checkPublishReadiness returns ready result for admin", async () => {
+    const { caller } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: true,
+      issues: [],
+    });
+
+    const result = await caller.checkPublishReadiness({ courseId: "course-1" });
+
+    expect(mockCheckCoursePublishReadiness).toHaveBeenCalledWith("course-1");
+    expect(result).toEqual({ ready: true, issues: [] });
+  });
+
+  test("checkPublishReadiness returns issues when lessons block publish", async () => {
+    const { caller } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockResolvedValue({
+      ready: false,
+      issues: [
+        { lessonId: "l1", lessonTitle: "Intro", reason: "missing" },
+        { lessonId: "l2", lessonTitle: "Module 2", reason: "no_cues" },
+      ],
+    });
+
+    const result = await caller.checkPublishReadiness({ courseId: "course-2" });
+
+    expect(result.ready).toBe(false);
+    expect(result.issues).toHaveLength(2);
+    expect(result.issues[0]).toMatchObject({
+      lessonId: "l1",
+      reason: "missing",
+    });
+  });
+
+  test("checkPublishReadiness throws INTERNAL_SERVER_ERROR when check fails", async () => {
+    const { caller, log } = createCaller({ id: "admin-1", role: "admin" });
+    mockCheckCoursePublishReadiness.mockRejectedValue(new Error("DB error"));
+
+    await expect(
+      caller.checkPublishReadiness({ courseId: "course-1" }),
+    ).rejects.toMatchObject({
+      code: "INTERNAL_SERVER_ERROR",
+    });
+
+    expect(log.error).toHaveBeenCalled();
   });
 });

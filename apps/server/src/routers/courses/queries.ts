@@ -1,5 +1,9 @@
 import { and, eq, sql } from "drizzle-orm";
 import { db } from "~/db/index.js";
+import {
+  type TranscriptIneligibleReason,
+  checkTranscriptEligibility,
+} from "~/lib/transcript.js";
 
 export type AllCourses = Awaited<ReturnType<typeof getAllCourses>>;
 export type AllCoursesAsAdmin = Awaited<
@@ -13,6 +17,19 @@ export type ModulesAndLessonsByCourseId = Awaited<
 export type CourseProgress = Awaited<ReturnType<typeof getCourseProgress>>;
 export type LessonProgress = Awaited<ReturnType<typeof getLessonProgress>>;
 export type EnrollmentStatus = Awaited<ReturnType<typeof getEnrollmentStatus>>;
+
+/** A single lesson blocking course publish due to a transcript issue. */
+export interface PublishReadinessIssue {
+  lessonId: string;
+  lessonTitle: string;
+  reason: TranscriptIneligibleReason;
+}
+
+/** Result of `checkCoursePublishReadiness`. */
+export interface PublishReadinessResult {
+  ready: boolean;
+  issues: PublishReadinessIssue[];
+}
 
 const preparedGetAllCoursesAsAdminStatement = db.query.course
   .findMany({
@@ -211,4 +228,63 @@ const preparedGetAllCourseProgressAsAdmin = db.query.courseProgress
 
 export async function getAllCourseProgressAsAdmin() {
   return preparedGetAllCourseProgressAsAdmin.execute();
+}
+
+// ---------------------------------------------------------------------------
+// Publish readiness
+// ---------------------------------------------------------------------------
+
+const preparedGetLessonsByCourseIdStatement = db.query.courseLesson
+  .findMany({
+    columns: {
+      id: true,
+      title: true,
+      videoUrl: true,
+      transcription: true,
+    },
+    where: (lesson) => eq(lesson.courseId, sql.placeholder("lessonsCourseId")),
+  })
+  .prepare("getLessonsByCourseId");
+
+export async function getLessonsByCourseId({ courseId }: { courseId: string }) {
+  return preparedGetLessonsByCourseIdStatement.execute({
+    lessonsCourseId: courseId,
+  });
+}
+
+/**
+ * Check whether all video lessons in a course have publish-eligible
+ * transcripts.
+ *
+ * Rules (from blueprint):
+ *   - Non-video lessons (empty `videoUrl`) are exempt.
+ *   - Preview lessons follow the same rule as regular video lessons.
+ *   - Returns `{ ready: true, issues: [] }` when everything is eligible.
+ *   - Returns `{ ready: false, issues: [...] }` identifying the blocking
+ *     lessons so the caller can surface actionable errors to the admin.
+ */
+export async function checkCoursePublishReadiness(
+  courseId: string,
+): Promise<PublishReadinessResult> {
+  const lessons = await getLessonsByCourseId({ courseId });
+
+  const issues: PublishReadinessIssue[] = [];
+
+  for (const lesson of lessons) {
+    const hasVideo = !!lesson.videoUrl;
+    const eligibility = checkTranscriptEligibility(
+      lesson.transcription,
+      hasVideo,
+    );
+
+    if (!eligibility.eligible) {
+      issues.push({
+        lessonId: lesson.id,
+        lessonTitle: lesson.title,
+        reason: eligibility.reason,
+      });
+    }
+  }
+
+  return { ready: issues.length === 0, issues };
 }

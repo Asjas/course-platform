@@ -350,7 +350,7 @@ jobs:
         with:
           name: web-e2e-nyc-output-node${{ matrix.node-version }}
           path: apps/web/.nyc_output
-          retention-days: 14
+          retention-days: 30
           if-no-files-found: ignore
 
       - name: Upload Cypress screenshots
@@ -457,19 +457,6 @@ jobs:
         env:
           GITHUB_BASE_REF: ${{ github.base_ref }}
 
-      - name: Download base E2E NYC output (seed for full coverage merge)
-        if: steps.changed-specs.outputs.specs != 'skip' && matrix.node-version == 22
-        uses: dawidd6/action-download-artifact@v18
-        continue-on-error: true
-        with:
-          workflow: ci-build.yml
-          branch: main
-          name: web-e2e-nyc-output-node22
-          path: apps/web/.nyc_output
-          if_no_artifact_found: warn
-          check_artifacts: true
-          search_artifacts: true
-
       - name: Cache Cypress
         if: steps.changed-specs.outputs.specs != 'skip'
         uses: actions/cache@v5
@@ -543,6 +530,19 @@ jobs:
             pnpm --filter @apps/web exec cypress run --browser chrome
           fi
 
+      - name: Merge base E2E NYC output (after Cypress run to avoid resetCoverage wipe)
+        if: always() && steps.changed-specs.outputs.specs != 'skip' && matrix.node-version == 22
+        uses: dawidd6/action-download-artifact@v18
+        continue-on-error: true
+        with:
+          workflow: ci-build.yml
+          branch: main
+          name: web-e2e-nyc-output-node22
+          path: apps/web/.nyc_output
+          if_no_artifact_found: warn
+          check_artifacts: true
+          search_artifacts: true
+
       - name: Generate E2E coverage report
         if: always() && steps.changed-specs.outputs.specs != 'skip'
         working-directory: apps/web
@@ -551,6 +551,7 @@ jobs:
             echo "No NYC coverage output found in .nyc_output; skipping E2E coverage report."
             exit 0
           fi
+          echo "NYC output files: $(ls .nyc_output | wc -l) file(s)"
           pnpm e2e:coverage:report
 
       - name: Upload E2E coverage
