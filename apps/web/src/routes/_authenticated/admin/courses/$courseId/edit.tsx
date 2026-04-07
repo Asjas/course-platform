@@ -131,6 +131,7 @@ function EditCoursePage() {
           courseId={courseId}
           courseName={course.name}
           isPublished={course.published}
+          onSelectLesson={(lessonId) => handleSelectItem(lessonId, "lesson")}
         />
       </div>
 

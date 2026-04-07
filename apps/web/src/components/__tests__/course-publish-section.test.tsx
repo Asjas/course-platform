@@ -5,7 +5,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CoursePublishSection } from "~/components/course-publish-section";
-import { renderWithProviders, renderWithQueryClient } from "~/test-utils";
+import { renderWithQueryClient } from "~/test-utils";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -186,13 +186,39 @@ describe("CoursePublishSection — transcript issues", () => {
       ],
     });
 
-    await renderWithProviders(<CoursePublishSection {...defaultProps} />);
+    renderWithQueryClient(<CoursePublishSection {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: "Publish Course" }));
 
     await screen.findByText(/Cannot publish/i);
-    expect(screen.getByText("Intro to Fastify")).toBeInTheDocument();
-    expect(screen.getByText("Advanced Routes")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Intro to Fastify" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Advanced Routes" }),
+    ).toBeInTheDocument();
     expect(mockUpdateCourseMutationFn).not.toHaveBeenCalled();
+  });
+
+  it("calls onSelectLesson with the lesson id when a blocking-lesson button is clicked", async () => {
+    mockCheckReadinessQuery.mockResolvedValue({
+      ready: false,
+      issues: [
+        { lessonId: "l1", lessonTitle: "Intro to Fastify", reason: "missing" },
+      ],
+    });
+    const onSelectLesson = vi.fn();
+
+    renderWithQueryClient(
+      <CoursePublishSection
+        {...defaultProps}
+        onSelectLesson={onSelectLesson}
+      />,
+    );
+    await user.click(screen.getByRole("button", { name: "Publish Course" }));
+    await screen.findByText(/Cannot publish/i);
+
+    await user.click(screen.getByRole("button", { name: "Intro to Fastify" }));
+    expect(onSelectLesson).toHaveBeenCalledWith("l1");
   });
 
   it("shows 'No transcript uploaded' label for missing reason", async () => {
@@ -201,7 +227,7 @@ describe("CoursePublishSection — transcript issues", () => {
       issues: [{ lessonId: "l1", lessonTitle: "Lesson 1", reason: "missing" }],
     });
 
-    await renderWithProviders(<CoursePublishSection {...defaultProps} />);
+    renderWithQueryClient(<CoursePublishSection {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: "Publish Course" }));
 
     await screen.findByText(/Cannot publish/i);
@@ -214,7 +240,7 @@ describe("CoursePublishSection — transcript issues", () => {
       issues: [{ lessonId: "l1", lessonTitle: "Lesson 1", reason: "no_cues" }],
     });
 
-    await renderWithProviders(<CoursePublishSection {...defaultProps} />);
+    renderWithQueryClient(<CoursePublishSection {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: "Publish Course" }));
 
     await screen.findByText(/Cannot publish/i);
@@ -231,7 +257,7 @@ describe("CoursePublishSection — transcript issues", () => {
       ],
     });
 
-    await renderWithProviders(<CoursePublishSection {...defaultProps} />);
+    renderWithQueryClient(<CoursePublishSection {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: "Publish Course" }));
 
     await screen.findByText(/Cannot publish/i);
@@ -246,7 +272,7 @@ describe("CoursePublishSection — transcript issues", () => {
       issues: [{ lessonId: "l1", lessonTitle: "Intro", reason: "missing" }],
     });
 
-    await renderWithProviders(<CoursePublishSection {...defaultProps} />);
+    renderWithQueryClient(<CoursePublishSection {...defaultProps} />);
     await user.click(screen.getByRole("button", { name: "Publish Course" }));
 
     await screen.findByText(/Cannot publish/i);

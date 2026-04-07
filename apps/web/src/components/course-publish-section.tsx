@@ -1,6 +1,5 @@
 import type { PublishReadinessIssue } from "@apps/server/src/routers/courses/index";
 import { useMutation } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import {
   AlertCircleIcon,
   CheckCircleIcon,
@@ -16,6 +15,8 @@ interface CoursePublishSectionProps {
   courseId: string;
   courseName: string;
   isPublished: boolean;
+  /** Called when the admin clicks a blocking-lesson button to jump to that lesson's editor. */
+  onSelectLesson?: (lessonId: string) => void;
 }
 
 /** Human-readable label for each transcript ineligibility reason. */
@@ -34,6 +35,7 @@ export function CoursePublishSection({
   courseId,
   courseName,
   isPublished,
+  onSelectLesson,
 }: CoursePublishSectionProps) {
   const [issues, setIssues] = useState<PublishReadinessIssue[] | null>(null);
   const [isChecking, setIsChecking] = useState(false);
@@ -182,14 +184,13 @@ export function CoursePublishSection({
                     >
                       ·
                     </span>
-                    <Link
+                    <button
                       className="underline hover:no-underline"
-                      aria-label={`Edit lesson: ${issue.lessonTitle}`}
-                      params={{ courseId }}
-                      to="/admin/courses/$courseId/edit"
+                      onClick={() => onSelectLesson?.(issue.lessonId)}
+                      type="button"
                     >
                       {issue.lessonTitle}
-                    </Link>
+                    </button>
                     <span className="text-red-600 dark:text-red-400">
                       — {readinessReasonLabel(issue.reason)}
                     </span>
