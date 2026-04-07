@@ -7,7 +7,7 @@ import {
   Minimize2,
   Plus,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Tabs as AriaTabs,
   Tab,
@@ -23,7 +23,10 @@ import NewSupportTicketForm from "~/components/forms/create-support-ticket-form"
 import Loading from "~/components/loading";
 import SupportComment from "~/components/support-comment";
 import { TranscriptPanel } from "~/components/transcript-panel";
-import { VideoPlayer } from "~/components/video-player";
+import {
+  type VideoPlayerHandle,
+  VideoPlayer,
+} from "~/components/video-player";
 import { useCourseById } from "~/hooks/use-courses";
 import {
   useSupportTicketById,
@@ -104,6 +107,10 @@ function LessonPage() {
   const [selectedTab, setSelectedTab] = useState("transcription");
   const [viewMode, setViewMode] = useState<"list" | "create" | "view">("list");
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
+  const [currentTimeSeconds, setCurrentTimeSeconds] = useState<number>(0);
+
+  // Ref to the VideoPlayer imperative handle — used to seek on transcript cue click.
+  const videoPlayerRef = useRef<VideoPlayerHandle>(null);
 
   const { data: course, isLoading } = useCourseById({ courseId });
   const { data: allTickets, isLoading: ticketsLoading } = useSupportTickets();
@@ -221,7 +228,13 @@ function LessonPage() {
             {/* Video Player */}
             <div className="flex flex-col bg-black">
               {videoUrl ? (
-                <VideoPlayer url={videoUrl} />
+                <VideoPlayer
+                  ref={videoPlayerRef}
+                  url={videoUrl}
+                  onProgress={({ playedSeconds }) =>
+                    setCurrentTimeSeconds(playedSeconds)
+                  }
+                />
               ) : (
                 <div className="flex aspect-video w-full items-center justify-center bg-gray-900 text-white">
                   <p>No video available</p>
@@ -306,7 +319,13 @@ function LessonPage() {
                 the content grid. */}
             <div className="max-h-[45vh] w-full shrink-0 overflow-hidden bg-black">
               {videoUrl ? (
-                <VideoPlayer url={videoUrl} />
+                <VideoPlayer
+                  ref={videoPlayerRef}
+                  url={videoUrl}
+                  onProgress={({ playedSeconds }) =>
+                    setCurrentTimeSeconds(playedSeconds)
+                  }
+                />
               ) : (
                 <div className="flex aspect-video w-full items-center justify-center bg-gray-900 text-white">
                   <p>No video available</p>
@@ -375,6 +394,10 @@ function LessonPage() {
                     <TranscriptPanel
                       transcription={lesson.transcription}
                       hasVideo={Boolean(videoUrl)}
+                      currentTimeSeconds={currentTimeSeconds}
+                      onSeek={(seconds) =>
+                        videoPlayerRef.current?.seekTo(seconds)
+                      }
                     />
                   </TabPanel>
 

@@ -19,8 +19,10 @@ import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
+import { TranscriptEditorSection } from "~/components/transcript-editor-section";
 import { useCoursesAdmin } from "~/hooks/use-courses";
 import { queryClient } from "~/lib/query.client";
+import type { TranscriptData } from "~/lib/transcript";
 import { trpc } from "~/lib/trpc.client";
 import {
   type CreateLessonFormData,
@@ -827,15 +829,16 @@ function LessonEditor({
             )}
           </form.Field>
 
-          <div className="rounded-lg bg-gray-50 p-4 dark:bg-gray-700/50">
-            <h3 className="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-              Content & Notes
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              Content and transcription fields are JSON objects. Rich editor
-              support coming soon.
-            </p>
-          </div>
+          <form.Field name="transcription">
+            {(field) => (
+              <TranscriptEditorSection
+                currentTranscription={field.state.value as unknown}
+                onTranscriptChange={(data: TranscriptData | null) => {
+                  field.handleChange((data ?? {}) as never);
+                }}
+              />
+            )}
+          </form.Field>
 
           <div className="flex justify-end space-x-3">
             <button
