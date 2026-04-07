@@ -125,6 +125,239 @@ Version history strategy:
 
 ### Lesson Editor Enhancements
 
+- [x] Add transcript section to lesson editor in admin route
+      (`TranscriptEditorSection` replaces placeholder in edit.tsx).
+- [x] Support VTT upload and parse preview.
+- [x] Show parse errors inline with line references if possible.
+- [x] Show source badge (`Manual` / `Auto`) and cue count summary.
+- [ ] Add `Re-sync from YouTube` button.
+- [ ] Add `Restore previous transcript` from history snapshots.
+
+### Publish UX
+
+- [ ] In course publish flow, show transcript readiness checks.
+- [ ] If blocked, display lesson-level list of transcript issues.
+- [ ] Provide quick links to open blocking lessons in editor.
+
+## Frontend Learner Plan
+
+### Transcript Tab (Lesson Page)
+
+- [x] Replace placeholder transcription panel with real transcript UI.
+- [x] Add mode toggle: `Timestamp` and `Paragraph`.
+
+Timestamp mode:
+
+- [x] Render cue list with human-readable times.
+- [x] Cue click seeks player to cue start (`onSeek` → `VideoPlayerHandle.seekTo`).
+- [x] Active cue highlight based on playback time (`currentTimeSeconds` prop).
+- [x] Auto-scroll active cue into view.
+- [x] `Follow playback` toggle to disable/enable auto-scroll.
+
+Paragraph mode:
+
+- [x] Derive paragraphs client-side from cue source.
+- [x] Apply split rules (speaker, >2.5s gap, 500-700 chars).
+- [x] Hide timestamps.
+- [x] Keep optional speaker labels.
+
+Search:
+
+- [x] Build cue-based search index.
+- [x] Support next/previous match controls.
+- [x] Add keyboard shortcuts (Enter = next, Shift+Enter = prev, Escape = close).
+- [x] Keep seek behavior from both modes.
+
+## Accessibility and Quality Requirements
+
+- [x] Ensure transcript controls are fully keyboard accessible
+      (cue rows have `tabIndex`/`onKeyDown`; search uses standard keyboard events).
+- [x] Ensure visible focus indicators on cue rows and controls.
+- [x] Expose active cue state to assistive tech (`aria-current="true"` on active cue).
+- [x] Keep color-independent indicators for active and matched cues.
+- [ ] Ensure long transcript lists perform well (virtualization if needed).
+
+## Testing Plan
+
+### Unit Tests
+
+- [x] VTT parser — valid VTT, malformed timestamps, overlapping cues, speaker tags.
+- [x] Paragraph derivation and chunking rules.
+- [x] Cue search indexing and navigation.
+- [x] Transcript schema validation and publish eligibility checks.
+- [x] **Phase 2** — `TranscriptEditorSection`:
+  - [x] Status badge for null / invalid / valid transcript.
+  - [x] File type rejection for non-.vtt uploads.
+  - [x] Parse error for empty VTT.
+  - [x] Apply button calls `onTranscriptChange` with correct payload.
+  - [x] Discard button removes preview.
+  - [x] Remove button calls `onTranscriptChange(null)`.
+  - [x] Section landmark and heading structure.
+- [x] **Phase 3** — `TranscriptPanel` interactive features:
+  - [x] `onSeek` called with correct seconds on cue click.
+  - [x] `onSeek` called on paragraph click.
+  - [x] No `role="button"` on cue rows without `onSeek` prop.
+  - [x] Active cue `aria-current="true"` driven by `currentTimeSeconds`.
+  - [x] Follow toggle renders / toggles `aria-pressed` correctly.
+  - [x] Clicking a cue disables follow-playback.
+  - [x] Search bar opens on toggle click.
+  - [x] Match counter shows "N / M" and "0 results".
+  - [x] Next / Prev buttons advance match index.
+  - [x] Enter / Shift+Enter keyboard shortcuts navigate matches.
+  - [x] Escape closes search bar.
+  - [x] Close button closes search bar.
+  - [x] Prev/Next disabled when no matches.
+  - [x] `onSeek` called for match via Next button.
+
+### Integration Tests
+
+- [ ] admin upload -> save -> learner render in both modes.
+- [ ] manual re-sync and version snapshot creation.
+- [ ] rollback restores prior transcript.
+- [ ] publish blocked when required transcript invalid/missing.
+
+### E2E Tests
+
+- [x] learner can click cue and seek video (`lesson-transcript.cy.ts`).
+- [ ] active cue follows playback.
+- [ ] follow toggle disables auto-scroll.
+- [ ] paragraph mode displays expected chunks.
+- [ ] search works identically across modes.
+
+## Implementation Phases
+
+### Phase 1 - Transcript Domain + Validation ✅
+
+- [x] Define transcript types and validators.
+- [x] Add parser + normalization utilities.
+- [x] Add unit tests for parser/validation/chunking.
+
+### Phase 2 - Admin Authoring + Sync (frontend portion ✅)
+
+- [x] Add admin VTT upload and parse preview (`TranscriptEditorSection`).
+- [x] Wire `TranscriptEditorSection` into admin lesson editor (`edit.tsx`).
+- [x] Unit tests for `TranscriptEditorSection`.
+- [ ] Add backend sync endpoints and history snapshots.
+- [ ] Add publish readiness signals in admin.
+
+### Phase 3 - Learner Transcript Experience ✅
+
+- [x] Build timestamp mode with active cue highlight and auto-scroll.
+- [x] Build paragraph mode from same cue source.
+- [x] Add search, navigation, and keyboard support.
+- [x] Wire `VideoPlayer` with `forwardRef` / `VideoPlayerHandle.seekTo`.
+- [x] Wire lesson page with `currentTimeSeconds` + `onSeek` callback.
+- [x] Unit tests for Phase 3 interactive features.
+
+### Phase 4 - Publish Gating + Scheduled Refresh
+
+- [ ] Enforce publish constraints for video lessons.
+- [ ] Add daily refresh scheduler for auto tracks.
+- [ ] Add operational logs and rollback safeguards.
+
+### Phase 5 - Hardening + Release
+
+- [ ] Complete integration/e2e coverage.
+- [ ] Validate accessibility acceptance criteria.
+- [ ] Run full repo checks before merge.
+
+## Risks and Mitigations
+
+- [ ] **YouTube caption availability lag** after upload.
+  - Mitigation: retries + scheduled refresh window.
+- [ ] **Auto caption quality variance**.
+  - Mitigation: manual priority + admin re-sync + rollback.
+- [ ] **Large transcript performance issues**.
+  - Mitigation: memoized derivations + optional list virtualization.
+- [ ] **Schema drift in historical transcript JSON**.
+  - Mitigation: versioned payload + migration guard logic.
+
+## Rollout Checklist
+
+- [ ] Feature flag transcript UI if needed.
+- [ ] Backfill existing lessons with transcript validity status.
+- [ ] Run staged rollout on internal/admin users first.
+- [ ] Monitor sync failures and parse error rates.
+- [ ] Promote to all courses after stability window.
+
+
+## Data Model Plan
+
+### Current State
+
+`course_lesson.transcription` already exists as required JSON.
+
+### Target Shape
+
+- [ ] Define a strict transcription schema in TypeScript (frontend + backend).
+- [ ] Store normalized cue-based structure (single source of truth).
+- [ ] Keep enough metadata for auditing and sync decisions.
+
+Suggested payload shape:
+
+```json
+{
+  "version": 1,
+  "language": "en",
+  "source": "manual",
+  "sourceProvider": "youtube",
+  "sourceTrackId": "yt-caption-track-id",
+  "lastFetchedAt": "2026-04-03T12:34:56.000Z",
+  "isAutoGenerated": false,
+  "cueCount": 123,
+  "durationMs": 1805230,
+  "cues": [
+    {
+      "id": "c1",
+      "startMs": 11000,
+      "endMs": 13000,
+      "text": "Welcome to the lesson.",
+      "speaker": "Instructor"
+    }
+  ]
+}
+```
+
+Version history strategy:
+
+- [ ] Add a transcript history store (new table or append-only JSON snapshots).
+- [ ] Save previous snapshot before any re-sync overwrite.
+- [ ] Include actor and timestamp for rollback auditing.
+
+## Backend Plan
+
+### API and Validation
+
+- [ ] Add shared runtime validator for transcript JSON.
+- [ ] Validate transcript on lesson create/update when `videoUrl` is present.
+- [ ] Keep draft saves allowed, but return publish eligibility state.
+
+### YouTube Sync Integration
+
+- [ ] Add server job/util to fetch captions via YouTube Data API:
+  - [ ] captions.list (by videoId).
+  - [ ] choose track by priority (manual first, auto fallback).
+  - [ ] captions.download with `tfmt=vtt`.
+- [ ] Parse VTT -> normalized cues.
+- [ ] Persist normalized transcript + sync metadata.
+
+### Publish Gating
+
+- [ ] Gate course publish when any video lesson transcript is invalid/missing.
+- [ ] Keep non-video lessons exempt.
+- [ ] Keep preview lessons under same video transcript rule.
+- [ ] Return actionable errors identifying blocking lessons.
+
+### Scheduled Refresh
+
+- [ ] Add scheduled task for auto-generated tracks only.
+- [ ] Refresh window: daily for 7 days after lesson upload.
+- [ ] Skip lessons with manually selected track unless admin confirms replace.
+
+## Frontend Admin Plan
+
+### Lesson Editor Enhancements
+
 - [ ] Add transcript section to lesson editor in admin route.
 - [ ] Support VTT upload and parse preview.
 - [ ] Show parse errors inline with line references if possible.

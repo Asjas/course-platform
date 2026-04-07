@@ -78,6 +78,35 @@ export function TranscriptPanel({
   const { eligibility, data } = resolveTranscript(transcription, hasVideo);
 
   // ---------------------------------------------------------------------------
+  // Derived data — computed before hooks so hooks are never called after a
+  // conditional return (Rules of Hooks).
+  // ---------------------------------------------------------------------------
+
+  const positionMs =
+    currentTimeSeconds !== undefined ? currentTimeSeconds * 1000 : -1;
+  const activeCueIndex =
+    data && positionMs >= 0 ? findActiveCueIndex(data.cues, positionMs) : -1;
+
+  // ---------------------------------------------------------------------------
+  // Auto-scroll active cue
+  // ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (!followPlayback || activeCueIndex < 0 || mode !== "timestamp") return;
+    const el = cueListRef.current?.querySelector<HTMLElement>(
+      `[data-cue-index="${activeCueIndex}"]`,
+    );
+    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [activeCueIndex, followPlayback, mode]);
+
+  // Focus search input when search bar opens
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
+
+  // ---------------------------------------------------------------------------
   // Empty / invalid states
   // ---------------------------------------------------------------------------
 
@@ -114,45 +143,22 @@ export function TranscriptPanel({
   }
 
   // ---------------------------------------------------------------------------
-  // Derived data
+  // Remaining derived data (requires data to be non-null)
   // ---------------------------------------------------------------------------
-
-  const positionMs =
-    currentTimeSeconds !== undefined ? currentTimeSeconds * 1000 : -1;
-  const activeCueIndex =
-    positionMs >= 0 ? findActiveCueIndex(data.cues, positionMs) : -1;
 
   const paragraphs = mode === "paragraph" ? buildParagraphs(data.cues) : [];
 
-  const searchResult =
-    searchQuery.trim() ? searchTranscript(data, searchQuery) : null;
+  const searchResult = searchQuery.trim()
+    ? searchTranscript(data, searchQuery)
+    : null;
   const totalMatches = searchResult?.matches.length ?? 0;
   // Clamp current match index to valid range
   const clampedMatchIndex =
     totalMatches > 0 ? Math.min(searchMatchIndex, totalMatches - 1) : 0;
   const activeMatch =
-    totalMatches > 0 ? (searchResult?.matches[clampedMatchIndex] ?? null) : null;
-
-  // ---------------------------------------------------------------------------
-  // Auto-scroll active cue
-  // ---------------------------------------------------------------------------
-
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (!followPlayback || activeCueIndex < 0 || mode !== "timestamp") return;
-    const el = cueListRef.current?.querySelector<HTMLElement>(
-      `[data-cue-index="${activeCueIndex}"]`,
-    );
-    el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [activeCueIndex, followPlayback, mode]);
-
-  // Focus search input when search bar opens
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  useEffect(() => {
-    if (searchOpen) {
-      searchInputRef.current?.focus();
-    }
-  }, [searchOpen]);
+    totalMatches > 0
+      ? (searchResult?.matches[clampedMatchIndex] ?? null)
+      : null;
 
   // ---------------------------------------------------------------------------
   // Search navigation helpers
@@ -312,8 +318,8 @@ export function TranscriptPanel({
           aria-label="Transcript search"
         >
           <input
-            ref={searchInputRef}
             className="min-w-0 flex-1 rounded border border-gray-300 bg-white px-2 py-1 text-xs text-gray-900 placeholder-gray-400 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-500"
+            ref={searchInputRef}
             type="search"
             placeholder="Search transcript…"
             aria-label="Transcript search query"
@@ -328,8 +334,8 @@ export function TranscriptPanel({
 
           {/* Match counter */}
           <span
+            className="shrink-0 text-xs text-gray-500 tabular-nums dark:text-gray-400"
             id="transcript-search-status"
-            className="shrink-0 text-xs tabular-nums text-gray-500 dark:text-gray-400"
             aria-live="polite"
             aria-atomic="true"
           >
@@ -378,8 +384,8 @@ export function TranscriptPanel({
       {/* ── Cue list (timestamp mode) ────────────────────────────────────── */}
       {mode === "timestamp" && (
         <ol
-          ref={cueListRef}
           className="grow overflow-y-auto"
+          ref={cueListRef}
           aria-label="Transcript cues"
         >
           {data.cues.map((cue, idx) => {
@@ -391,8 +397,8 @@ export function TranscriptPanel({
               searchResult.matches.some((m) => m.cueIndex === idx);
 
             return (
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <li
-                data-cue-index={idx}
                 className={cn(
                   "border-b border-gray-100 px-4 py-2 dark:border-gray-700/50",
                   onSeek ? "cursor-pointer" : "",
@@ -406,6 +412,7 @@ export function TranscriptPanel({
                           ? "hover:bg-gray-50 dark:hover:bg-gray-700/30"
                           : "",
                 )}
+                data-cue-index={idx}
                 key={`${cue.id}-${cue.startMs}-${idx}`}
                 aria-current={isActive ? "true" : undefined}
                 onClick={onSeek ? () => handleCueClick(cue.startMs) : undefined}
@@ -457,6 +464,7 @@ export function TranscriptPanel({
               activeMatch.cueIndex <= para.lastCueIndex;
 
             return (
+              // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
               <li
                 className={cn(
                   "mb-4 rounded p-1 text-sm leading-relaxed text-gray-700 dark:text-gray-300",
