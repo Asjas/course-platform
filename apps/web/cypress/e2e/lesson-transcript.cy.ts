@@ -583,17 +583,25 @@ describe("Lesson Transcript — Search in Paragraph Mode (Phase 5)", () => {
     cy.get('[aria-label="Next match"]').click();
     cy.get("#transcript-search-status").should("contain", "2 / 2");
 
-    // Switch to paragraph mode — query and match index should persist
+    // Switch to paragraph mode — query text and match index should persist
     cy.contains('[aria-label="Lesson transcript"] button', "Paragraph").click();
     cy.get('[aria-label="Transcript paragraphs"]').should("be.visible");
+    cy.get('[aria-label="Transcript search query"]').should(
+      "have.value",
+      "Fastify",
+    );
     cy.get("#transcript-search-status").should("contain", "2 / 2");
 
-    // Switch back to timestamp mode — query and match index should still persist
+    // Switch back to timestamp mode — query text and match index should still persist
     cy.contains(
       '[aria-label="Lesson transcript"] button',
       "Timestamps",
     ).click();
     cy.get('[aria-label="Transcript cues"]').should("be.visible");
+    cy.get('[aria-label="Transcript search query"]').should(
+      "have.value",
+      "Fastify",
+    );
     cy.get("#transcript-search-status").should("contain", "2 / 2");
   });
 });
