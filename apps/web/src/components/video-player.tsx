@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import YouTube, { type YouTubeEvent, type YouTubeProps } from "react-youtube";
 
 /** Imperative handle exposed via `ref` on `VideoPlayer`. */
@@ -82,11 +82,26 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const ytPlayerRef = useRef<any>(null);
 
+    // Holds the setInterval ID for progress polling so we can clear it on
+    // unmount or when the player is re-initialized, preventing stale intervals.
+    const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+      null,
+    );
+
     useImperativeHandle(ref, () => ({
       seekTo: (seconds: number) => {
         ytPlayerRef.current?.seekTo(seconds, true);
       },
     }));
+
+    // Clear the progress polling interval whenever the component unmounts.
+    useEffect(() => {
+      return () => {
+        if (progressIntervalRef.current !== null) {
+          clearInterval(progressIntervalRef.current);
+        }
+      };
+    }, []);
 
     if (!videoId) {
       console.error("Invalid YouTube URL or ID:", url);
@@ -117,10 +132,14 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
       ytPlayerRef.current = event.target;
       onReady?.();
 
-      // Set up progress tracking if callback provided
+      // Set up progress tracking if callback provided.
+      // Clear any previously-running interval first (e.g. player re-init).
       if (onProgress) {
         const player = event.target;
-        const interval = setInterval(() => {
+        if (progressIntervalRef.current !== null) {
+          clearInterval(progressIntervalRef.current);
+        }
+        progressIntervalRef.current = setInterval(() => {
           const currentTime = player.getCurrentTime();
           const duration = player.getDuration();
           if (duration > 0) {
@@ -130,21 +149,14 @@ export const VideoPlayer = forwardRef<VideoPlayerHandle, VideoPlayerProps>(
             });
           }
         }, 1000);
-
-        // Store interval ID on player to clean up later
-        (
-          player as unknown as { _progressInterval?: NodeJS.Timeout }
-        )._progressInterval = interval;
       }
     };
 
-    const handleEnd = (event: YouTubeEvent) => {
-      // Clean up progress interval
-      const player = event.target as unknown as {
-        _progressInterval?: NodeJS.Timeout;
-      };
-      if (player._progressInterval) {
-        clearInterval(player._progressInterval);
+    const handleEnd = () => {
+      // Clean up progress interval when playback ends naturally.
+      if (progressIntervalRef.current !== null) {
+        clearInterval(progressIntervalRef.current);
+        progressIntervalRef.current = null;
       }
       onEnded?.();
     };

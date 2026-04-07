@@ -15,7 +15,12 @@ import type {
   VttParseResult,
   VttParseWarning,
 } from "~/lib/transcript";
-import { buildTranscriptData, formatCueTime, parseVtt } from "~/lib/transcript";
+import {
+  buildTranscriptData,
+  formatCueTime,
+  parseVtt,
+  validateTranscriptData,
+} from "~/lib/transcript";
 import { cn } from "~/lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -65,16 +70,9 @@ export function TranscriptEditorSection({
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
-  // Detect whether there is already a saved transcript
-  const hasExistingTranscript =
-    currentTranscription != null &&
-    typeof currentTranscription === "object" &&
-    "version" in (currentTranscription as object) &&
-    (currentTranscription as { version: unknown }).version === 1;
-
-  const existingData = hasExistingTranscript
-    ? (currentTranscription as TranscriptData)
-    : null;
+  // Validate current transcript against the full Zod schema so malformed DB
+  // objects (e.g. { version: 1, ...garbage }) are rejected rather than cast.
+  const existingData = validateTranscriptData(currentTranscription);
 
   // ---------------------------------------------------------------------------
   // File handling
