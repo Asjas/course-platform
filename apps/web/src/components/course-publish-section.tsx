@@ -64,6 +64,7 @@ export function CoursePublishSection({
       return;
     }
 
+    setIssues([]);
     const toastId = toast.loading(`Publishing "${courseName}"...`);
     try {
       await updateCourseMutation.mutateAsync({ id: courseId, published: true });
