@@ -162,6 +162,25 @@ const SPEC_MAPPINGS: { patterns: string[]; specs: string[] }[] = [
     specs: ["navigation-and-guards.cy.ts"],
   },
 
+  // Lesson page + transcript feature
+  {
+    patterns: [
+      "components/transcript-panel",
+      "components/transcript-editor-section",
+      "components/video-player",
+      "routes/_authenticated/courses.$courseId.lessons",
+    ],
+    specs: ["lesson-transcript.cy.ts"],
+  },
+  // Course enrollment (lesson / course detail pages)
+  {
+    patterns: [
+      "routes/_authenticated/courses.$courseId",
+      "components/video-player",
+    ],
+    specs: ["course-enrollment.cy.ts"],
+  },
+
   // Specific components with clear spec coverage
   {
     patterns: ["components/theme-toggle"],
