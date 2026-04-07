@@ -17,6 +17,7 @@ import {
 } from "~/collections/courses";
 import { ConfirmDialog } from "~/components/confirm-dialog";
 import CourseEditorSidebar from "~/components/course-editor-sidebar";
+import { CoursePublishSection } from "~/components/course-publish-section";
 import FieldInfo from "~/components/field-info";
 import Loading from "~/components/loading";
 import { TranscriptEditorSection } from "~/components/transcript-editor-section";
@@ -123,6 +124,15 @@ function EditCoursePage() {
 
       {/* Course Stats Bar */}
       <CourseStatsBar course={course} />
+
+      {/* Publish Section */}
+      <div className="mt-4">
+        <CoursePublishSection
+          courseId={courseId}
+          courseName={course.name}
+          isPublished={course.published}
+        />
+      </div>
 
       {/* Main Content Area */}
       <div className="mt-8 flex flex-1 gap-6 overflow-hidden">
