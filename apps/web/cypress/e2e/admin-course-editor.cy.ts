@@ -134,3 +134,98 @@ describe("Admin Course Editor Access Control", () => {
     cy.assertAccessDenied();
   });
 });
+
+describe("Admin Course Editor — Publish Section", () => {
+  beforeEach(() => {
+    cy.loginAsAdmin();
+  });
+
+  it("shows Published status and Unpublish button for a published course", () => {
+    cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
+
+    // Wait for collection data to populate the page
+    cy.waitForContent(
+      'button:contains("Unpublish"), button:contains("Publish Course")',
+      "Course not found",
+    );
+
+    cy.contains("Published").should("be.visible");
+    cy.contains("Visible to enrolled learners").should("be.visible");
+    cy.contains("button", "Unpublish").should("be.visible");
+  });
+
+  it("shows Draft status and Publish button after unpublishing", () => {
+    cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
+
+    cy.waitForContent(
+      'button:contains("Unpublish"), button:contains("Publish Course")',
+      "Course not found",
+    );
+
+    cy.get("body").then(($body) => {
+      if ($body.find("button:contains('Unpublish')").length > 0) {
+        cy.contains("button", "Unpublish").click();
+        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
+      }
+      return null;
+    });
+
+    cy.contains("Draft").should("be.visible");
+    cy.contains("Not visible to learners").should("be.visible");
+    cy.contains("button", "Publish Course").should("be.visible");
+  });
+
+  it("shows blocking lessons list when publish is attempted with invalid transcripts", () => {
+    cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
+
+    cy.waitForContent(
+      'button:contains("Unpublish"), button:contains("Publish Course")',
+      "Course not found",
+    );
+
+    cy.get("body").then(($body) => {
+      if ($body.find("button:contains('Unpublish')").length > 0) {
+        cy.contains("button", "Unpublish").click();
+        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
+      }
+      return null;
+    });
+
+    cy.contains("button", "Publish Course").click();
+
+    // Blocking list should appear with the "Cannot publish" heading
+    cy.contains(/Cannot publish/i, { timeout: 10000 }).should("be.visible");
+
+    // A lesson with an invalid transcript should be listed
+    cy.contains("button", "Setting Up Your First Project").should("be.visible");
+
+    // At least one reason label should be visible
+    cy.contains(/Transcript data is malformed/i).should("be.visible");
+  });
+
+  it("clicking a blocking lesson button opens it in the transcript editor", () => {
+    cy.visit(`/admin/courses/${TEST_COURSE_ID}/edit`);
+
+    cy.waitForContent(
+      'button:contains("Unpublish"), button:contains("Publish Course")',
+      "Course not found",
+    );
+
+    cy.get("body").then(($body) => {
+      if ($body.find("button:contains('Unpublish')").length > 0) {
+        cy.contains("button", "Unpublish").click();
+        cy.contains(/is now a draft/i, { timeout: 10000 }).should("be.visible");
+      }
+      return null;
+    });
+
+    cy.contains("button", "Publish Course").click();
+    cy.contains(/Cannot publish/i, { timeout: 10000 }).should("be.visible");
+
+    // Click the blocking lesson button — it should invoke onSelectLesson
+    cy.contains("button", "Setting Up Your First Project").click();
+
+    // Transcript editor section should open for the selected lesson
+    cy.contains("h3", "Transcript", { timeout: 10000 }).should("be.visible");
+  });
+});

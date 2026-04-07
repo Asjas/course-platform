@@ -177,6 +177,11 @@ const SPEC_MAPPINGS: { patterns: string[]; specs: string[] }[] = [
     patterns: ["components/transcript-editor-section"],
     specs: ["admin-course-editor.cy.ts"],
   },
+  // Publish gating section (renders in admin course edit page)
+  {
+    patterns: ["components/course-publish-section"],
+    specs: ["admin-course-editor.cy.ts"],
+  },
   // Course enrollment (lesson / course detail pages)
   {
     patterns: [
