@@ -55,7 +55,6 @@ export function CoursePublishSection({
       });
     } catch {
       toast.error("Failed to check publish readiness. Please try again.");
-      setIsChecking(false);
       return;
     } finally {
       setIsChecking(false);
