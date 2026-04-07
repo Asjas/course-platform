@@ -392,10 +392,13 @@ function LessonPage() {
                     <TranscriptPanel
                       transcription={lesson.transcription}
                       hasVideo={Boolean(videoUrl)}
-                      currentTimeSeconds={currentTimeSeconds}
-                      onSeek={(seconds) =>
-                        videoPlayerRef.current?.seekTo(seconds)
-                      }
+                      {...(videoUrl
+                        ? {
+                            currentTimeSeconds,
+                            onSeek: (seconds: number) =>
+                              videoPlayerRef.current?.seekTo(seconds),
+                          }
+                        : {})}
                     />
                   </TabPanel>
 
