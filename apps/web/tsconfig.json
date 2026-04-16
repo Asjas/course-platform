@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.d.ts"],
   "references": [{ "path": "../server" }],
   "compilerOptions": {
     "incremental": true,
@@ -20,7 +20,6 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ES2022",
-    "typeRoots": ["./node_modules/@types", "./types/"],
     "verbatimModuleSyntax": true,
     "paths": {
       "~/*": ["./src/*"]
