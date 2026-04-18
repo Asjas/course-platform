@@ -193,14 +193,14 @@ importers:
         specifier: 0.45.2
         version: 0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0))
       fastify:
-        specifier: 5.8.4
-        version: 5.8.4
+        specifier: 5.8.5
+        version: 5.8.5
       fastify-allow:
         specifier: 2.1.1
         version: 2.1.1
       fastify-better-auth:
         specifier: 1.2.0
-        version: 1.2.0(better-auth@1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0)))(mongodb@7.1.0)(pg@8.20.0(pg-native@3.7.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(solid-js@1.9.11)(vitest@4.1.4))(fastify@5.8.4)
+        version: 1.2.0(better-auth@1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0)))(mongodb@7.1.0)(pg@8.20.0(pg-native@3.7.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(solid-js@1.9.11)(vitest@4.1.4))(fastify@5.8.5)
       fastify-favicon:
         specifier: 5.0.0
         version: 5.0.0
@@ -212,7 +212,7 @@ importers:
         version: 5.0.1
       fastify-type-provider-zod:
         specifier: 6.1.0
-        version: 6.1.0(@fastify/swagger@9.7.0)(fastify@5.8.4)(openapi-types@12.1.3)(zod@4.3.6)
+        version: 6.1.0(@fastify/swagger@9.7.0)(fastify@5.8.5)(openapi-types@12.1.3)(zod@4.3.6)
       ioredis:
         specifier: 5.10.1
         version: 5.10.1
@@ -7047,8 +7047,8 @@ packages:
       openapi-types: ^12.1.3
       zod: '>=4.1.5'
 
-  fastify@5.8.4:
-    resolution: {integrity: sha512-sa42J1xylbBAYUWALSBoyXKPDUvM3OoNOibIefA+Oha57FryXKKCZarA1iDntOCWp3O35voZLuDg2mdODXtPzQ==}
+  fastify@5.8.5:
+    resolution: {integrity: sha512-Yqptv59pQzPgQUSIm87hMqHJmdkb1+GPxdE6vW6FRyVE9G86mt7rOghitiU4JHRaTyDUk9pfeKmDeu70lAwM4Q==}
 
   fastq@1.20.1:
     resolution: {integrity: sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==}
@@ -18068,10 +18068,10 @@ snapshots:
     dependencies:
       fastify-plugin: 4.5.1
 
-  fastify-better-auth@1.2.0(better-auth@1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0)))(mongodb@7.1.0)(pg@8.20.0(pg-native@3.7.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(solid-js@1.9.11)(vitest@4.1.4))(fastify@5.8.4):
+  fastify-better-auth@1.2.0(better-auth@1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0)))(mongodb@7.1.0)(pg@8.20.0(pg-native@3.7.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(solid-js@1.9.11)(vitest@4.1.4))(fastify@5.8.5):
     dependencies:
       better-auth: 1.5.6(@opentelemetry/api@1.9.0)(drizzle-kit@0.31.10)(drizzle-orm@0.45.2(@opentelemetry/api@1.9.0)(@types/pg@8.20.0)(kysely@0.28.12)(pg@8.20.0(pg-native@3.7.0)))(mongodb@7.1.0)(pg@8.20.0(pg-native@3.7.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(solid-js@1.9.11)(vitest@4.1.4)
-      fastify: 5.8.4
+      fastify: 5.8.5
       fastify-plugin: 5.1.0
 
   fastify-favicon@5.0.0:
@@ -18093,15 +18093,15 @@ snapshots:
       table: 6.9.0
       zod: 4.3.6
 
-  fastify-type-provider-zod@6.1.0(@fastify/swagger@9.7.0)(fastify@5.8.4)(openapi-types@12.1.3)(zod@4.3.6):
+  fastify-type-provider-zod@6.1.0(@fastify/swagger@9.7.0)(fastify@5.8.5)(openapi-types@12.1.3)(zod@4.3.6):
     dependencies:
       '@fastify/error': 4.2.0
       '@fastify/swagger': 9.7.0
-      fastify: 5.8.4
+      fastify: 5.8.5
       openapi-types: 12.1.3
       zod: 4.3.6
 
-  fastify@5.8.4:
+  fastify@5.8.5:
     dependencies:
       '@fastify/ajv-compiler': 4.0.5
       '@fastify/error': 4.2.0
