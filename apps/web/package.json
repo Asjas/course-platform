@@ -25,7 +25,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@epic-web/invariant": "1.0.0",
     "@giphy/js-fetch-api": "5.7.0",
-    "@giphy/react-components": "10.1.1",
+    "@giphy/react-components": "10.1.2",
     "@headlessui/react": "2.2.10",
     "@hookform/resolvers": "5.2.2",
     "@packages/shared-ui": "workspace:^",

@@ -309,8 +309,8 @@ importers:
         specifier: 5.7.0
         version: 5.7.0
       '@giphy/react-components':
-        specifier: 10.1.1
-        version: 10.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.0(css-to-react-native@3.2.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
+        specifier: 10.1.2
+        version: 10.1.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.0(css-to-react-native@3.2.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
       '@headlessui/react':
         specifier: 2.2.10
         version: 2.2.10(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -2308,8 +2308,8 @@ packages:
   '@giphy/js-util@5.2.0':
     resolution: {integrity: sha512-Qt7pGh2cqiNmXLeWAgb459wK8+BuMLtIxTfg4ZksnPHPsLthiHT9hhzs2QhqUh7Pp/HOq+Cbv2etGDfnq+xiKA==}
 
-  '@giphy/react-components@10.1.1':
-    resolution: {integrity: sha512-K5Qnipj+QEoZCMFRZ3PqxMv7FgTIP474xIUFFGFa9x6zJIx0OpilKOFqwNtJS/CtVu9VFmHNkDO/Y9xsHfdplA==}
+  '@giphy/react-components@10.1.2':
+    resolution: {integrity: sha512-DVyIgf5az0uzHwnkS8tUaqO4qNx8DoxJupnRLhOl8M5CcvV9ykeZBLDxLj+jyDTySPYaIIJtrlR+8SeV2dHZwQ==}
     peerDependencies:
       react: 18 - 19
       styled-components: '>= 5'
@@ -12018,7 +12018,7 @@ snapshots:
       '@giphy/js-types': 5.1.0
       uuid: 9.0.1
 
-  '@giphy/react-components@10.1.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.0(css-to-react-native@3.2.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))':
+  '@giphy/react-components@10.1.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.0(css-to-react-native@3.2.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))':
     dependencies:
       '@giphy/colors': 1.0.1
       '@giphy/js-analytics': 5.0.0
