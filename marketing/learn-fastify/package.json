@@ -11,7 +11,7 @@
     "@astrojs/react": "5.0.4",
     "@tailwindcss/vite": "4.2.3",
     "@trpc/client": "11.16.0",
-    "astro": "6.1.9",
+    "astro": "6.1.10",
     "clsx": "2.1.1",
     "lucide-react": "0.577.0",
     "react": "19.2.5",
