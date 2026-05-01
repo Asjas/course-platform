@@ -16,9 +16,9 @@
   "useTabs": false,
   "plugins": [
     "@trivago/prettier-plugin-sort-imports",
+    "@xeonlink/prettier-plugin-organize-attributes",
     "prettier-plugin-tailwindcss",
-    "prettier-plugin-astro",
-    "@xeonlink/prettier-plugin-organize-attributes"
+    "prettier-plugin-astro"
   ],
   "overrides": [
     {
