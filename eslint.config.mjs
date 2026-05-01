@@ -202,6 +202,7 @@ export default defineConfig(
       "apps/web/src-tauri/**",
       "apps/web/coverage/**",
       "marketing/learn-fastify/.astro/**",
+      "marketing/learn-fastify/dist/**",
     ],
   },
 );
