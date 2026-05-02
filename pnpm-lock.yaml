@@ -306,8 +306,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@giphy/js-fetch-api':
-        specifier: 5.7.0
-        version: 5.7.0
+        specifier: 5.8.0
+        version: 5.8.0
       '@giphy/react-components':
         specifier: 10.1.2
         version: 10.1.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
@@ -2303,8 +2303,8 @@ packages:
   '@giphy/js-analytics@5.0.0':
     resolution: {integrity: sha512-jBZG6OqyMWB6meLi8Sz3iLplXYnhkbj+DJhS4ChmRX8Y6UA7i5dbbsUN/So1s7tTjhZOvu0rxA6rWJE73S1FvQ==}
 
-  '@giphy/js-fetch-api@5.7.0':
-    resolution: {integrity: sha512-5W8j7QUEnWRhW2KKlRhwHNCz0HwUeW0SlFryKFrqzE5XB8kjoAwZ2GvwtLNnkpjN0cniLE+bSGAzMKcL5Bt5Vg==}
+  '@giphy/js-fetch-api@5.8.0':
+    resolution: {integrity: sha512-DWdNauYaBSLPeAe/O+uzXtPIoUvmSnYV8Q49p+cPjEQ7Ncj1mDg1fuSKyl0OmPxCm6fzGJ4kuJjsWzyWn9ubbA==}
 
   '@giphy/js-types@5.1.0':
     resolution: {integrity: sha512-BZYCDtYNRR7cUWkbDLB4wmm3qmWMsVCQdUiBNOfmZ3yAazCgygKJoDI/5Rq4CK5MBaOc5LVdF8viC2WtoBdaPA==}
@@ -11774,7 +11774,7 @@ snapshots:
       append-query: 2.1.1
       throttle-debounce: 3.0.1
 
-  '@giphy/js-fetch-api@5.7.0':
+  '@giphy/js-fetch-api@5.8.0':
     dependencies:
       '@giphy/js-types': 5.1.0
       '@giphy/js-util': 5.2.0
@@ -11790,7 +11790,7 @@ snapshots:
     dependencies:
       '@giphy/colors': 1.0.1
       '@giphy/js-analytics': 5.0.0
-      '@giphy/js-fetch-api': 5.7.0
+      '@giphy/js-fetch-api': 5.8.0
       '@giphy/js-types': 5.1.0
       '@giphy/js-util': 5.2.0
       intersection-observer: 0.12.2
