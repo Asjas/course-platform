@@ -7,6 +7,7 @@ import esxPlugin from "eslint-plugin-es-x";
 import html from "eslint-plugin-html";
 import importZod from "eslint-plugin-import-zod";
 import jsonPlugin from "eslint-plugin-json";
+import n from "eslint-plugin-n";
 import pluginPromise from "eslint-plugin-promise";
 import react from "eslint-plugin-react";
 import reactCompiler from "eslint-plugin-react-compiler";
@@ -178,16 +179,22 @@ export default defineConfig(
           },
         },
       },
-      extends: fixupConfigRules(
-        compat.extends(
-          "plugin:import/recommended",
-          "plugin:import/typescript",
-          "plugin:n/recommended",
+      extends: [
+        n.configs["flat/recommended"],
+        ...fixupConfigRules(
+          compat.extends(
+            "plugin:import/recommended",
+            "plugin:import/typescript",
+          ),
         ),
-      ),
+      ],
       rules: {
         "n/no-unpublished-import": "off",
         "n/exports-style": ["error", "module.exports"],
+        "n/no-unsupported-features/node-builtins": [
+          "error",
+          { ignores: ["import.meta.dirname", "import.meta.filename"] },
+        ],
       },
     },
   ],
