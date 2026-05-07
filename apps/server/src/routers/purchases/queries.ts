@@ -72,16 +72,16 @@ function mapOrderToResponse(order: PolarOrder): PolarOrderResponse {
     description: order.description,
     customer: {
       id: order.customer.id,
-      email: order.customer.email,
+      email: order.customer.email ?? "",
       emailVerified: order.customer.emailVerified,
       name: order.customer.name,
-      avatarUrl: order.customer.avatarUrl,
+      avatarUrl: order.customer.avatarUrl ?? "",
       organizationId: order.customer.organizationId,
     },
     product: order.product
       ? {
           id: order.product.id,
-          name: order.product.name,
+          name: order.product.name ?? "",
           description: order.product.description,
           isRecurring: order.product.isRecurring,
           isArchived: order.product.isArchived,
