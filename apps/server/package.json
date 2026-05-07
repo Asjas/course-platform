@@ -29,7 +29,7 @@
     "@fastify/rate-limit": "10.3.0",
     "@fastify/sensible": "6.0.4",
     "@polar-sh/better-auth": "1.8.4",
-    "@polar-sh/sdk": "0.46.7",
+    "@polar-sh/sdk": "0.47.0",
     "@trpc/server": "11.16.0",
     "argon2": "0.44.0",
     "async-cache-dedupe": "3.4.0",
