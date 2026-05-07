@@ -1,3 +1,4 @@
+import { fromAny } from "@total-typescript/shoehorn";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   clearCollapsedMedia,
@@ -67,7 +68,7 @@ describe("collapsed-media", () => {
   beforeEach(() => {
     // Reset localStorage mock before each test
     localStorageMock.reset();
-    vi.stubGlobal("localStorage", localStorageMock as unknown as Storage);
+    vi.stubGlobal("localStorage", fromAny(localStorageMock));
   });
 
   afterEach(() => {

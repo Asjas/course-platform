@@ -6,6 +6,7 @@
  */
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { fromAny } from "@total-typescript/shoehorn";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TranscriptEditorSection } from "~/components/transcript-editor-section";
 import type { TranscriptData } from "~/lib/transcript";
@@ -26,9 +27,11 @@ function mockFileReader(textToReturn: string) {
 
     readAsText() {
       if (this.onload) {
-        this.onload({
-          target: { result: textToReturn },
-        } as unknown as ProgressEvent<FileReader>);
+        this.onload(
+          fromAny({
+            target: { result: textToReturn },
+          }),
+        );
       }
     }
   }

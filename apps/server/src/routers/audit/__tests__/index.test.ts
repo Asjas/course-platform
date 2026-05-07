@@ -1,4 +1,5 @@
 import { auditRouter } from "../index.js";
+import { fromPartial } from "@total-typescript/shoehorn";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { mockGetAllGdprAuditLogs } = vi.hoisted(() => ({
@@ -15,10 +16,12 @@ interface TestUser {
 }
 
 function createCaller(user?: TestUser) {
-  return auditRouter.createCaller({
-    user,
-    hasRole: (role: string) => user?.role === role,
-  } as never);
+  return auditRouter.createCaller(
+    fromPartial({
+      user,
+      hasRole: (role: string) => user?.role === role,
+    }),
+  );
 }
 
 describe("auditRouter", () => {

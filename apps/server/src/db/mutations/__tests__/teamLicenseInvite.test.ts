@@ -3,6 +3,7 @@ import {
   insertTeamLicenseInvite,
   updateTeamLicenseInviteById,
 } from "../teamLicenseInvite.js";
+import { fromPartial } from "@total-typescript/shoehorn";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { mockReturning } = vi.hoisted(() => ({
@@ -65,7 +66,7 @@ describe("insertTeamLicenseInvite", () => {
     };
     mockReturning.mockResolvedValueOnce([newInvite]);
 
-    const result = await insertTeamLicenseInvite(newInvite as never);
+    const result = await insertTeamLicenseInvite(fromPartial(newInvite));
     expect(result).toEqual([newInvite]);
   });
 
@@ -73,7 +74,7 @@ describe("insertTeamLicenseInvite", () => {
     mockReturning.mockRejectedValueOnce(new Error("Duplicate invite"));
 
     await expect(
-      insertTeamLicenseInvite({ id: "tli:dup" } as never),
+      insertTeamLicenseInvite(fromPartial({ id: "tli:dup" })),
     ).rejects.toThrow("Duplicate invite");
   });
 });
@@ -92,7 +93,7 @@ describe("updateTeamLicenseInviteById", () => {
 
     const result = await updateTeamLicenseInviteById({
       teamLicenseId: "tli:1",
-      updates: { acceptedAt: updated.acceptedAt } as never,
+      updates: fromPartial({ acceptedAt: updated.acceptedAt }),
     });
     expect(result).toEqual([updated]);
   });
@@ -102,7 +103,7 @@ describe("updateTeamLicenseInviteById", () => {
 
     const result = await updateTeamLicenseInviteById({
       teamLicenseId: "tli:nonexistent",
-      updates: {} as never,
+      updates: fromPartial({}),
     });
     expect(result).toEqual([]);
   });
@@ -113,7 +114,7 @@ describe("updateTeamLicenseInviteById", () => {
     await expect(
       updateTeamLicenseInviteById({
         teamLicenseId: "tli:1",
-        updates: {} as never,
+        updates: fromPartial({}),
       }),
     ).rejects.toThrow("Update error");
   });

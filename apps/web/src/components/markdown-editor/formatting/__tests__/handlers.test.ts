@@ -8,6 +8,7 @@ import {
   toggleCode,
   toggleItalic,
 } from "../handlers";
+import { fromAny } from "@total-typescript/shoehorn";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /** Create a minimal HTMLTextAreaElement stub for testing formatting handlers. */
@@ -16,14 +17,13 @@ function makeTextarea(
   selectionStart: number,
   selectionEnd: number,
 ): HTMLTextAreaElement {
-  const el = {
+  return fromAny({
     value,
     selectionStart,
     selectionEnd,
     focus: vi.fn(),
     setSelectionRange: vi.fn(),
-  } as unknown as HTMLTextAreaElement;
-  return el;
+  });
 }
 
 beforeEach(() => {

@@ -4,6 +4,7 @@ import {
   refundedPaymentById,
   updatePaymentById,
 } from "../payment.js";
+import { fromPartial } from "@total-typescript/shoehorn";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { mockReturning } = vi.hoisted(() => ({
@@ -67,14 +68,14 @@ describe("insertPayment", () => {
     };
     mockReturning.mockResolvedValueOnce([newPayment]);
 
-    const result = await insertPayment(newPayment as never);
+    const result = await insertPayment(fromPartial(newPayment));
     expect(result).toEqual([newPayment]);
   });
 
   test("throws when insert fails", async () => {
     mockReturning.mockRejectedValueOnce(new Error("Duplicate transaction ID"));
 
-    await expect(insertPayment({ id: "pay:dup" } as never)).rejects.toThrow(
+    await expect(insertPayment(fromPartial({ id: "pay:dup" }))).rejects.toThrow(
       "Duplicate transaction ID",
     );
   });
@@ -89,23 +90,26 @@ describe("updatePaymentById", () => {
     const updated = { id: "pay:1", amount: 4900 };
     mockReturning.mockResolvedValueOnce([updated]);
 
-    const result = await updatePaymentById("pay:1", {
-      amount: 4900,
-    } as never);
+    const result = await updatePaymentById(
+      "pay:1",
+      fromPartial({
+        amount: 4900,
+      }),
+    );
     expect(result).toEqual([updated]);
   });
 
   test("returns empty array when payment ID does not exist", async () => {
     mockReturning.mockResolvedValueOnce([]);
 
-    const result = await updatePaymentById("pay:nonexistent", {} as never);
+    const result = await updatePaymentById("pay:nonexistent", fromPartial({}));
     expect(result).toEqual([]);
   });
 
   test("throws when update fails", async () => {
     mockReturning.mockRejectedValueOnce(new Error("Update failed"));
 
-    await expect(updatePaymentById("pay:1", {} as never)).rejects.toThrow(
+    await expect(updatePaymentById("pay:1", fromPartial({}))).rejects.toThrow(
       "Update failed",
     );
   });
@@ -124,16 +128,19 @@ describe("refundedPaymentById", () => {
     };
     mockReturning.mockResolvedValueOnce([refunded]);
 
-    const result = await refundedPaymentById("pay:1", {
-      status: "refunded",
-    } as never);
+    const result = await refundedPaymentById(
+      "pay:1",
+      fromPartial({
+        status: "refunded",
+      }),
+    );
     expect(result).toEqual([refunded]);
   });
 
   test("throws when refund operation fails", async () => {
     mockReturning.mockRejectedValueOnce(new Error("Refund failed"));
 
-    await expect(refundedPaymentById("pay:1", {} as never)).rejects.toThrow(
+    await expect(refundedPaymentById("pay:1", fromPartial({}))).rejects.toThrow(
       "Refund failed",
     );
   });
@@ -147,7 +154,7 @@ describe("deletePaymentById", () => {
   test("deletes payment and returns deleted ID", async () => {
     mockReturning.mockResolvedValueOnce([{ id: "pay:1" }]);
 
-    const result = await deletePaymentById({ id: "pay:1" } as never);
+    const result = await deletePaymentById(fromPartial({ id: "pay:1" }));
     expect(result).toBeDefined();
   });
 
@@ -156,8 +163,8 @@ describe("deletePaymentById", () => {
       new Error("Foreign key constraint violation"),
     );
 
-    await expect(deletePaymentById({ id: "pay:1" } as never)).rejects.toThrow(
-      "Foreign key constraint violation",
-    );
+    await expect(
+      deletePaymentById(fromPartial({ id: "pay:1" })),
+    ).rejects.toThrow("Foreign key constraint violation");
   });
 });

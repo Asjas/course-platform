@@ -1,5 +1,6 @@
 import type { AnyFieldApi } from "@tanstack/react-form";
 import { render, screen } from "@testing-library/react";
+import { fromAny } from "@total-typescript/shoehorn";
 import { describe, expect, it } from "vitest";
 import FieldInfo from "~/components/field-info";
 
@@ -11,7 +12,7 @@ function makeFieldApi(
     errors?: { message: string }[];
   } = {},
 ): AnyFieldApi {
-  return {
+  return fromAny({
     state: {
       meta: {
         isTouched: overrides.isTouched ?? false,
@@ -20,7 +21,7 @@ function makeFieldApi(
         errors: overrides.errors ?? [],
       },
     },
-  } as unknown as AnyFieldApi;
+  });
 }
 
 describe("FieldInfo", () => {

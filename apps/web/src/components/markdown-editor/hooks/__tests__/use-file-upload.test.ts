@@ -1,6 +1,7 @@
 import { useFileUpload } from "../use-file-upload";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook } from "@testing-library/react";
+import { fromAny } from "@total-typescript/shoehorn";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -57,8 +58,8 @@ function makeTextareaRef(
     selectionStart: value.length,
     focus: vi.fn(),
     setSelectionRange: vi.fn(),
-  } as unknown as HTMLTextAreaElement;
-  return { current: el };
+  };
+  return fromAny({ current: el });
 }
 
 describe("useFileUpload", () => {
@@ -98,10 +99,10 @@ describe("useFileUpload", () => {
       { wrapper },
     );
 
-    const event = {
+    const event: React.DragEvent<Element> = fromAny({
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
-    } as unknown as React.DragEvent;
+    });
 
     act(() => {
       result.current.handleDragOver(event);
@@ -120,11 +121,11 @@ describe("useFileUpload", () => {
       { wrapper },
     );
 
-    const event = {
+    const event: React.DragEvent<Element> = fromAny({
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
       dataTransfer: { files: [] },
-    } as unknown as React.DragEvent;
+    });
 
     await act(async () => {
       await result.current.handleDrop(event);
@@ -143,9 +144,9 @@ describe("useFileUpload", () => {
       { wrapper },
     );
 
-    const event = {
+    const event: React.ChangeEvent<HTMLInputElement> = fromAny({
       target: { files: null, value: "" },
-    } as unknown as React.ChangeEvent<HTMLInputElement>;
+    });
 
     await act(async () => {
       await result.current.handleFileSelect(event);
@@ -167,11 +168,11 @@ describe("useFileUpload", () => {
     );
 
     const file = new File(["content"], "big.jpg", { type: "image/jpeg" });
-    const event = {
+    const event: React.DragEvent<Element> = fromAny({
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
       dataTransfer: { files: [file] },
-    } as unknown as React.DragEvent;
+    });
 
     await act(async () => {
       await result.current.handleDrop(event);
@@ -200,11 +201,11 @@ describe("useFileUpload", () => {
     );
 
     const file = new File(["img"], "photo.jpg", { type: "image/jpeg" });
-    const event = {
+    const event: React.DragEvent<Element> = fromAny({
       preventDefault: vi.fn(),
       stopPropagation: vi.fn(),
       dataTransfer: { files: [file] },
-    } as unknown as React.DragEvent;
+    });
 
     await act(async () => {
       await result.current.handleDrop(event);

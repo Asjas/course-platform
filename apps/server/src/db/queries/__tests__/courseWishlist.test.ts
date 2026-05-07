@@ -4,6 +4,7 @@ import {
   getCourseWishlistByUser,
   getCourseWishlistCount,
 } from "../courseWishlist.js";
+import { fromPartial } from "@total-typescript/shoehorn";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("~/db/index.js", () => ({
@@ -48,7 +49,7 @@ describe("getCourseWishlistByEmailAndCourse", () => {
       courseId: "course:1",
     };
     vi.mocked(db.query.courseWishlist.findFirst).mockResolvedValueOnce(
-      mockEntry as never,
+      fromPartial(mockEntry),
     );
 
     const result = await getCourseWishlistByEmailAndCourse(
@@ -80,7 +81,7 @@ describe("getCourseWishlistById", () => {
     const { db } = await import("~/db/index.js");
     const mockEntry = { id: "cwl:123", email: "test@example.com" };
     vi.mocked(db.query.courseWishlist.findFirst).mockResolvedValueOnce(
-      mockEntry as never,
+      fromPartial(mockEntry),
     );
 
     const result = await getCourseWishlistById("cwl:123");
@@ -104,11 +105,13 @@ describe("getCourseWishlistCount", () => {
 
   test("returns the count of wishlist entries", async () => {
     const { db } = await import("~/db/index.js");
-    vi.mocked(db.select).mockReturnValueOnce({
-      from: vi.fn().mockReturnValue({
-        where: vi.fn().mockResolvedValue([{ count: 5 }]),
+    vi.mocked(db.select).mockReturnValueOnce(
+      fromPartial({
+        from: vi.fn().mockReturnValue({
+          where: vi.fn().mockResolvedValue([{ count: 5 }]),
+        }),
       }),
-    } as never);
+    );
 
     const result = await getCourseWishlistCount("course:1");
     expect(result).toBe(5);
@@ -136,7 +139,7 @@ describe("getCourseWishlistByUser", () => {
       { id: "cwl:2", userId: "user:1", courseId: "course:2" },
     ];
     vi.mocked(db.query.courseWishlist.findMany).mockResolvedValueOnce(
-      mockEntries as never,
+      fromPartial(mockEntries),
     );
 
     const result = await getCourseWishlistByUser("user:1");

@@ -1,4 +1,5 @@
 import courseWishlistRoutes from "../index.js";
+import { fromAny, fromPartial } from "@total-typescript/shoehorn";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import {
   confirmCourseWishlistEntry,
@@ -72,7 +73,7 @@ function setupRouteHandler() {
   };
 
   const done = vi.fn();
-  courseWishlistRoutes(fastify as never, {} as never, done as never);
+  courseWishlistRoutes(fromPartial(fastify), fromPartial({}), fromAny(done));
 
   if (!capturedHandler) {
     throw new Error("Verification route handler was not registered");

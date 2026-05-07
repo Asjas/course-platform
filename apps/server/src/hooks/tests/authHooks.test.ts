@@ -1,4 +1,6 @@
 import { auth, isAdmin } from "../authHooks.js";
+import { fromAny, fromPartial } from "@total-typescript/shoehorn";
+import type { PartialDeep } from "@total-typescript/shoehorn";
 import type {
   DoneFuncWithErrOrRes,
   FastifyReply,
@@ -7,20 +9,20 @@ import type {
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 function createMockRequest(
-  overrides: Partial<FastifyRequest> = {},
+  overrides: PartialDeep<FastifyRequest> = {},
 ): FastifyRequest {
-  return {
+  return fromPartial<FastifyRequest>({
     headers: { authorization: "Bearer token" },
     user: { id: "user-1", role: "member", banned: false },
     ...overrides,
-  } as unknown as FastifyRequest;
+  });
 }
 
 function createMockReply(): FastifyReply {
-  return {
+  return fromPartial<FastifyReply>({
     unauthorized: vi.fn(() => new Error("Unauthorized")),
     forbidden: vi.fn(() => new Error("Forbidden")),
-  } as unknown as FastifyReply;
+  });
 }
 
 describe("auth hook", () => {
@@ -29,7 +31,7 @@ describe("auth hook", () => {
 
   beforeEach(() => {
     reply = createMockReply();
-    done = vi.fn() as unknown as DoneFuncWithErrOrRes;
+    done = fromAny(vi.fn());
   });
 
   test("throws unauthorized when no authorization header", async () => {
@@ -43,7 +45,7 @@ describe("auth hook", () => {
   test("throws forbidden when user id is ghost", async () => {
     const request = createMockRequest({
       user: { id: "ghost", role: "member", banned: false },
-    } as Partial<FastifyRequest>);
+    });
 
     await expect(auth(request, reply, done)).rejects.toThrow();
     expect(reply.forbidden).toHaveBeenCalled();
@@ -53,7 +55,7 @@ describe("auth hook", () => {
   test("throws forbidden when user is banned", async () => {
     const request = createMockRequest({
       user: { id: "user-1", role: "member", banned: true },
-    } as Partial<FastifyRequest>);
+    });
 
     await expect(auth(request, reply, done)).rejects.toThrow();
     expect(reply.forbidden).toHaveBeenCalled();
@@ -76,13 +78,13 @@ describe("isAdmin hook", () => {
 
   beforeEach(() => {
     reply = createMockReply();
-    done = vi.fn() as unknown as DoneFuncWithErrOrRes;
+    done = fromAny(vi.fn());
   });
 
   test("throws forbidden when user is not admin", async () => {
     const request = createMockRequest({
       user: { id: "user-1", role: "member", banned: false },
-    } as Partial<FastifyRequest>);
+    });
 
     await expect(isAdmin(request, reply, done)).rejects.toThrow();
     expect(reply.forbidden).toHaveBeenCalled();
@@ -92,7 +94,7 @@ describe("isAdmin hook", () => {
   test("calls done for admin user", async () => {
     const request = createMockRequest({
       user: { id: "user-1", role: "admin", banned: false },
-    } as Partial<FastifyRequest>);
+    });
 
     await isAdmin(request, reply, done);
     expect(done).toHaveBeenCalled();
