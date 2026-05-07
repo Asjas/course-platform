@@ -3,6 +3,14 @@ packages:
   - marketing/**
   - packages/**
 
+allowBuilds:
+  argon2: true
+  cypress: true
+  esbuild: true
+  libpq: true
+  sharp: true
+  unrs-resolver: true
+
 onlyBuiltDependencies:
   - "@tailwindcss/oxide"
   - argon2
