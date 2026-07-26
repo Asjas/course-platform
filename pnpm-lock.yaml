@@ -157,8 +157,8 @@ importers:
         specifier: 13.0.2
         version: 13.0.2
       '@fastify/http-proxy':
-        specifier: 11.4.4
-        version: 11.4.4
+        specifier: 11.6.0
+        version: 11.6.0
       '@fastify/multipart':
         specifier: 10.0.0
         version: 10.0.0
@@ -1704,11 +1704,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -2255,8 +2255,8 @@ packages:
   '@fastify/helmet@13.0.2':
     resolution: {integrity: sha512-tO1QMkOfNeCt9l4sG/FiWErH4QMm+RjHzbMTrgew1DYOQ2vb/6M1G2iNABBrD7Xq6dUk+HLzWW8u+rmmhQHifA==}
 
-  '@fastify/http-proxy@11.4.4':
-    resolution: {integrity: sha512-wXoKaxW31pQc6H48Xqx//j6A2ikOiadht55DNkEFaseEUkJ9MzvURLK6Qqg0OOIEZGjTiEjjnbERv3NLFBc2Ug==}
+  '@fastify/http-proxy@11.6.0':
+    resolution: {integrity: sha512-S5Ntqs2Elurxik+OmTUUHEAxYMHTef6UexPfPj9QqOT3S6MnJuZREGUWRxkxRTHFEO7hBTtyAbzKO36NO7L5FQ==}
 
   '@fastify/merge-json-schemas@0.2.1':
     resolution: {integrity: sha512-OA3KGBCy6KtIvLf8DINC5880o5iBlDX4SxzLQS8HorJAbqluzLRn80UXU0bxZn7UOFhFgpRJDasfwn9nG4FG4A==}
@@ -6389,6 +6389,9 @@ packages:
   fastify-plugin@5.1.0:
     resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
 
+  fastify-plugin@6.0.0:
+    resolution: {integrity: sha512-fZOty7z3O7vOliF6d8bHE3wiEh1KcNnKEQensSgTk9C1DvN6nRLS++XVd86v33Hw/8u9Un8A1zDrQ8ujcQDHEg==}
+
   fastify-print-routes@5.0.1:
     resolution: {integrity: sha512-tCIDnUyl6ZDhesuhLczbCdlLLpVPv+lFMYQ01UpwN5y6UNREte9vQ6DKh8wnAXrCJEM/Y8RjAL8Nz52eBklirA==}
     engines: {node: '>= 22.21.0'}
@@ -9113,6 +9116,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -11677,11 +11681,11 @@ snapshots:
       fastify-plugin: 5.1.0
       helmet: 8.1.0
 
-  '@fastify/http-proxy@11.4.4':
+  '@fastify/http-proxy@11.6.0':
     dependencies:
       '@fastify/reply-from': 12.6.2
       fast-querystring: 1.1.2
-      fastify-plugin: 5.1.0
+      fastify-plugin: 6.0.0
       ws: 8.20.0
     transitivePeerDependencies:
       - bufferutil
@@ -16165,6 +16169,8 @@ snapshots:
   fastify-plugin@4.5.1: {}
 
   fastify-plugin@5.1.0: {}
+
+  fastify-plugin@6.0.0: {}
 
   fastify-print-routes@5.0.1:
     dependencies:
