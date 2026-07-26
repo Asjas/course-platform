@@ -339,8 +339,8 @@ importers:
         specifier: 4.0.2
         version: 4.0.2
       '@tanstack/offline-transactions':
-        specifier: 1.0.30
-        version: 1.0.30(typescript@5.9.3)
+        specifier: 1.0.42
+        version: 1.0.42(typescript@5.9.3)
       '@tanstack/query-async-storage-persister':
         specifier: 5.100.9
         version: 5.100.9
@@ -1704,11 +1704,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -3995,6 +3995,11 @@ packages:
     peerDependencies:
       typescript: '>=4.7'
 
+  '@tanstack/db@0.6.17':
+    resolution: {integrity: sha512-/i6+dedEkOCVQbTQtCjQHx3Nqlkqe6zvi+9/JPnSgm47o+akoaPqcSwxTmesDZxc/efHokUtzeD2ocow257RdQ==}
+    peerDependencies:
+      typescript: '>=4.7'
+
   '@tanstack/db@0.6.5':
     resolution: {integrity: sha512-gtCuAo4UtC9SR/kTMu5fVEff6qZ2R1FZi9X7MybtHKA6wve7RePifGG6qBI4OmMB+7juT5/+glNbnqZOrG0/pg==}
     peerDependencies:
@@ -4081,8 +4086,8 @@ packages:
     resolution: {integrity: sha512-NaOGLRrddszbQj9upGat6HG/4TKvXLvu+osAIgfxPYA+eIvYKv8GKDJOrY2D3/U9MRnKfMWD7bU4jeD4xmqyIg==}
     engines: {node: '>=20.19'}
 
-  '@tanstack/offline-transactions@1.0.30':
-    resolution: {integrity: sha512-PL6co2ibQZzYthkMqsPQL9F/lmXkBHnxySVa3kbomgNPDuxy3T/r6Y6Gpz4+Ahzif+Kjk5ZhTqBQyYXtRziljQ==}
+  '@tanstack/offline-transactions@1.0.42':
+    resolution: {integrity: sha512-wn9/hhBRf1iK7DDx6njwIBv/eFyi9CzmMyM8AHvQs+f9G/xaBmIa1VvlJ7n5YokBASlxffaTnA2CS0+/v0uL5Q==}
     peerDependencies:
       '@react-native-community/netinfo': '>=11.0.0'
       react-native: '>=0.70.0'
@@ -9113,6 +9118,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -13507,6 +13513,13 @@ snapshots:
       sorted-btree: 1.8.1
       typescript: 5.9.3
 
+  '@tanstack/db@0.6.17(typescript@5.9.3)':
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      '@tanstack/db-ivm': 0.1.18(typescript@5.9.3)
+      '@tanstack/pacer-lite': 0.2.1
+      typescript: 5.9.3
+
   '@tanstack/db@0.6.5(typescript@5.9.3)':
     dependencies:
       '@standard-schema/spec': 1.1.0
@@ -13617,9 +13630,9 @@ snapshots:
 
   '@tanstack/history@1.161.6': {}
 
-  '@tanstack/offline-transactions@1.0.30(typescript@5.9.3)':
+  '@tanstack/offline-transactions@1.0.42(typescript@5.9.3)':
     dependencies:
-      '@tanstack/db': 0.6.5(typescript@5.9.3)
+      '@tanstack/db': 0.6.17(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
