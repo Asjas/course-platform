@@ -18,7 +18,7 @@ services:
     restart: always
   cw-dragonfly:
     container_name: cw-dragonfly
-    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.38.1
+    image: docker.dragonflydb.io/dragonflydb/dragonfly:v1.39.0
     volumes:
       - cw-dragonfly-data:/data
     environment:
