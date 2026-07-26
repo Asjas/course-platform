@@ -1,7 +1,7 @@
 {
   "author": "A-J Roos <asjasroos@proton.me>",
   "license": "MIT",
-  "packageManager": "pnpm@11.0.9",
+  "packageManager": "pnpm@11.17.0",
   "scripts": {
     "dev": "pnpm run --parallel --filter \"./apps/**\" dev",
     "tauri:dev": "pnpm run --filter \"./apps/web\" tauri:dev",
