@@ -85,7 +85,7 @@
     "@rolldown/plugin-babel": "0.2.3",
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "4.2.4",
-    "@tanstack/devtools-vite": "0.6.0",
+    "@tanstack/devtools-vite": "0.8.3",
     "@tanstack/react-devtools": "0.10.2",
     "@tanstack/react-form-devtools": "0.2.22",
     "@tanstack/react-query-devtools": "5.100.9",
