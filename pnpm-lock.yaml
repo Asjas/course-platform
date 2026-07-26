@@ -313,7 +313,7 @@ importers:
         version: 5.8.0
       '@giphy/react-components':
         specifier: 10.1.2
-        version: 10.1.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
+        version: 10.1.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))
       '@headlessui/react':
         specifier: 2.2.10
         version: 2.2.10(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -441,8 +441,8 @@ importers:
         specifier: 2.0.7
         version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       styled-components:
-        specifier: 6.4.1
-        version: 6.4.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+        specifier: 6.4.4
+        version: 6.4.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       superjson:
         specifier: 2.2.6
         version: 2.2.6
@@ -1704,11 +1704,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -8895,8 +8895,8 @@ packages:
   style-to-object@1.0.14:
     resolution: {integrity: sha512-LIN7rULI0jBscWQYaSswptyderlarFkjQ+t79nzty8tcIAceVomEVlLzH5VP4Cmsv6MtKhs7qaAiwlcp+Mgaxw==}
 
-  styled-components@6.4.1:
-    resolution: {integrity: sha512-ADu2dF53esUzzM4I0ewxhxFtsDd6v4V6dNkg3vG0iFKhnt06sJneTZnRvujAosZwW0XD58IKgGMQoqri4wHRqg==}
+  styled-components@6.4.4:
+    resolution: {integrity: sha512-tJk5CmKUPMDoTsZQ8m0hHInBk9HFKUPSusqmbBuefDX+yUbMBWea2Ob/wdXFyHW8XZqXkprJscysAdKeGWNqlA==}
     engines: {node: '>= 16'}
     peerDependencies:
       css-to-react-native: '>= 3.2.0'
@@ -9113,6 +9113,7 @@ packages:
   tsconfck@3.1.6:
     resolution: {integrity: sha512-ks6Vjr/jEw0P1gmOVwutM3B7fWxoWBL2KRDb1JfqGVawBmO5UsvmWOQFGHBPl5yxYz4eERr19E6L7NMv+Fej4w==}
     engines: {node: ^18 || >=20}
+    deprecated: unmaintained
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -11791,7 +11792,7 @@ snapshots:
       '@giphy/js-types': 5.1.0
       uuid: 9.0.1
 
-  '@giphy/react-components@10.1.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
+  '@giphy/react-components@10.1.2(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(styled-components@6.4.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6))':
     dependencies:
       '@giphy/colors': 1.0.1
       '@giphy/js-analytics': 5.0.0
@@ -11801,7 +11802,7 @@ snapshots:
       intersection-observer: 0.12.2
       react: 19.2.6
       react-use: 17.6.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      styled-components: 6.4.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      styled-components: 6.4.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       throttle-debounce: 3.0.1
     transitivePeerDependencies:
       - react-dom
@@ -19212,7 +19213,7 @@ snapshots:
     dependencies:
       inline-style-parser: 0.2.7
 
-  styled-components@6.4.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
+  styled-components@6.4.4(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@emotion/is-prop-valid': 1.4.0
       csstype: 3.2.3
