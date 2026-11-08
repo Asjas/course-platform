@@ -57,7 +57,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "1.65.0",
+    "@dotenvx/dotenvx": "1.75.1",
     "@total-typescript/shoehorn": "0.1.2",
     "@total-typescript/ts-reset": "0.6.1",
     "@types/node": "25.6.2",
